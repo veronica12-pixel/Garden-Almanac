@@ -2190,11 +2190,25 @@ async function getNotesFor(season, slug){
 async function getNotes(slug){
   const arr = await getNotesFor(activeSeason, slug);
   let migrated = false;
-  // Older saves stored notes with no timestamp. Give those a timestamp the
-  // first time they're loaded so the 1-day edit lock has a starting point
-  // to count from (same treatment as varieties/actual dates/journal above).
+  // Older saves stored notes with no timestamp, so isEntryLocked() (which
+  // short-circuits on a falsy addedAt) would never lock them. Backfill from
+  // the note's own "Mon D" date — resolved to a real year via
+  // seasonYearForMonth — so old notes lock immediately instead of getting a
+  // fresh 24-hour grace period starting now.
   const normalized = (arr || []).map(n => {
-    if(!n.addedAt){ migrated = true; return { ...n, addedAt: Date.now() }; }
+    if(!n.addedAt){
+      migrated = true;
+      const m = /^([A-Za-z]{3})\s+(\d{1,2})$/.exec(n.date || "");
+      let parsed = Date.now();
+      if(m){
+        const monthIdx = MONTHS.indexOf(m[1]);
+        if(monthIdx !== -1){
+          const year = seasonYearForMonth(activeSeason, monthIdx + 1);
+          parsed = new Date(year, monthIdx, Number(m[2])).getTime();
+        }
+      }
+      return { ...n, addedAt: parsed };
+    }
     return n;
   });
   if(migrated) await setNotes(slug, normalized);
@@ -2208,7 +2222,23 @@ async function setNotes(slug, arr){
 async function getJournal(){
   try{
     const r = await window.storage.get(`journal:${activeSeason}`, false);
-    return r ? JSON.parse(r.value) : [];
+    const arr = r ? JSON.parse(r.value) : [];
+    let migrated = false;
+    // Entries logged before the 1-day edit lock existed have no addedAt, so
+    // isEntryLocked() (which short-circuits on a falsy addedAt) never locks
+    // them — they'd stay editable forever. Backfill from the entry's own
+    // logged date, which locks them immediately instead of giving decade-old
+    // notes a fresh 24-hour grace period starting now.
+    const normalized = (arr || []).map(n => {
+      if(!n.addedAt){
+        migrated = true;
+        const parsed = /^\d{4}-\d{2}-\d{2}$/.test(n.date) ? new Date(`${n.date}T00:00:00`).getTime() : Date.now();
+        return { ...n, addedAt: parsed };
+      }
+      return n;
+    });
+    if(migrated) await setJournal(normalized);
+    return normalized;
   }catch(e){ return []; }
 }
 async function setJournal(arr){
@@ -2238,15 +2268,35 @@ const DEFAULT_HARVEST_LOG = {
 function sortLog(arr){
   return [...arr].sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 }
+// Older/seeded harvest log entries have no addedAt, so isEntryLocked()
+// (which short-circuits on a falsy addedAt) never locks them. Backfill from
+// the entry's own ISO date so old entries lock immediately instead of
+// getting a fresh 24-hour grace period starting now.
+function migrateHarvestLogAddedAt(arr){
+  let migrated = false;
+  const normalized = (arr || []).map(entry => {
+    if(!entry.addedAt){
+      migrated = true;
+      const parsed = /^\d{4}-\d{2}-\d{2}$/.test(entry.date) ? new Date(`${entry.date}T00:00:00`).getTime() : Date.now();
+      return { ...entry, addedAt: parsed };
+    }
+    return entry;
+  });
+  return { normalized, migrated };
+}
 async function getHarvestLogFor(season, kind){
   const key = kind === "vegetable" ? `harvestlogVeg:${season}` : `harvestlog:${season}`;
   try{
     const r = await window.storage.get(key, false);
-    if(r) return JSON.parse(r.value);
+    if(r){
+      const { normalized, migrated } = migrateHarvestLogAddedAt(JSON.parse(r.value));
+      if(migrated) await window.storage.set(key, JSON.stringify(normalized), false);
+      return normalized;
+    }
     if(kind !== "vegetable"){
-      const seed = DEFAULT_HARVEST_LOG[season] || [];
-      if(seed.length) await window.storage.set(key, JSON.stringify(seed), false);
-      return seed;
+      const { normalized } = migrateHarvestLogAddedAt(DEFAULT_HARVEST_LOG[season] || []);
+      if(normalized.length) await window.storage.set(key, JSON.stringify(normalized), false);
+      return normalized;
     }
     return [];
   }catch(e){ return kind === "vegetable" ? [] : (DEFAULT_HARVEST_LOG[season] || []); }
