@@ -2136,10 +2136,18 @@ function withF(raw){
   if(!t) return "";
   return /f$/i.test(t) ? t : `${t}F`;
 }
+// Displays a stored temp string (e.g. "76F", saved by withF above) as
+// "(76°F)" — a real degree symbol instead of a typed "F", since that's a
+// character most keyboards don't have a direct key for.
+function fmtTemp(raw){
+  if(!raw) return "";
+  const num = raw.trim().replace(/f$/i, "").trim();
+  return `(${num}°F)`;
+}
 function fmtActualEntry(d, fallbackTemp){
   const dt = entryDate(d);
   const tp = entryTemp(d) || fallbackTemp || "";
-  return tp ? `${dt} ${tp}` : dt;
+  return tp ? `${dt} ${fmtTemp(tp)}` : dt;
 }
 function entryVarieties(d){ return (typeof d === "object" && d && d.varieties) || []; }
 function sowSummaryLabel(d, fallbackTemp){
@@ -3898,14 +3906,14 @@ async function generateSeasonPDF(seasonKey){
         const iso = entryDate(d);
         const [, mm, dd] = iso.split("-").map(Number);
         const tp = entryTemp(d) || sowTemp;
-        const suffix = tp ? ` (${tp})` : "";
+        const suffix = tp ? ` ${fmtTemp(tp)}` : "";
         addToMonth(mm, dd, `${p.name} — Actual sow: ${fmtISO(iso)}${suffix}`, true);
       });
       transplant.forEach(d => {
         const iso = entryDate(d);
         const [, mm, dd] = iso.split("-").map(Number);
         const tp = entryTemp(d) || transplantTemp;
-        const suffix = tp ? ` (${tp})` : "";
+        const suffix = tp ? ` ${fmtTemp(tp)}` : "";
         addToMonth(mm, dd, `${p.name} — Actual transplant: ${fmtISO(iso)}${suffix}`, true);
       });
     }
