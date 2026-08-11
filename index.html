@@ -4501,25 +4501,6 @@ function expandTaskDays(t){
   return days;
 }
 
-function getMonthTasks(year, month){
-  const map = {};
-  ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
-    (DATA_now()[sectionKey] || []).forEach(p => {
-      p.dates.forEach(wave => {
-        wave.forEach(t => {
-          expandTaskDays(t).forEach(day => {
-            if(day.y === year && day.m === month){
-              if(!map[day.d]) map[day.d] = [];
-              map[day.d].push({ name: p.name, action: actionLabelForDate(t.a, new Date(day.y, day.m - 1, day.d)), color: p.color });
-            }
-          });
-        });
-      });
-    });
-  });
-  return map;
-}
-
 /* Which biodynamic type(s) — fruit/leaf/root/flower — are active on a given
    calendar date. The transcribed BC_DATA only covers Aug-Dec 2026, and
    bcEntryFor() itself doesn't check year (it's always been called from
@@ -4555,6 +4536,25 @@ function bioCellBackground(types){
     stops.push(`${c} ${(100*i/n).toFixed(3)}%`, `${c} ${(100*(i+1)/n).toFixed(3)}%`);
   });
   return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
+function getMonthTasks(year, month){
+  const map = {};
+  ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
+    (DATA_now()[sectionKey] || []).forEach(p => {
+      p.dates.forEach(wave => {
+        wave.forEach(t => {
+          expandTaskDays(t).forEach(day => {
+            if(day.y === year && day.m === month){
+              if(!map[day.d]) map[day.d] = [];
+              map[day.d].push({ name: p.name, action: actionLabelForDate(t.a, new Date(day.y, day.m - 1, day.d)), color: p.color });
+            }
+          });
+        });
+      });
+    });
+  });
+  return map;
 }
 
 function renderCalDayDetail(tasksByDay){
