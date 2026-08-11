@@ -257,6 +257,13 @@
     background:var(--paper-2); color:var(--evergreen); font-size:18px; font-weight:700;
     display:flex; align-items:center; justify-content:center; flex:none;
   }
+  .cal-bio-legend{
+    display:flex; flex-wrap:wrap; align-items:center; gap:4px 14px;
+    margin:-2px 0 10px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-soft);
+  }
+  .cal-bio-note{
+    flex-basis:100%; font-size:10px; font-style:italic; color:var(--ink-soft); opacity:.85;
+  }
   .cal-dow-row{
     display:grid; grid-template-columns:repeat(7,1fr); text-align:center;
     font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-soft);
@@ -270,7 +277,7 @@
   }
   .cal-day.empty{background:transparent; cursor:default;}
   .cal-day.today{border-color:var(--evergreen); background:var(--card);}
-  .cal-day.selected{background:var(--evergreen);}
+  .cal-day.selected{background:var(--evergreen) !important;}
   .cal-day.selected .cal-daynum{color:#fff;}
   .cal-daynum{font-size:11.5px; font-weight:600; color:var(--ink);}
   .cal-dots{display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:3px;}
@@ -1155,7 +1162,7 @@
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-how" data-hometab="how"><span class="home-tab-icon">🌿</span><span>How This Calendar Works</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
-          <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>View Full Calendar</span></button>
+          <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
         </div>
@@ -1504,6 +1511,13 @@
       <button type="button" id="calPrevBtn" class="cal-nav" aria-label="Previous month">‹</button>
       <h3 id="calMonthLabel">Month Year</h3>
       <button type="button" id="calNextBtn" class="cal-nav" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-bio-legend">
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#a6362c"></span>Fruit</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#4a6b2a"></span>Leaf</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#8a5a2e"></span>Root</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#c08a1f"></span>Flower</span>
+      <div class="cal-bio-note">Biodynamic coloring covers August – December 2026 only.</div>
     </div>
     <div class="cal-dow-row">
       <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
@@ -2174,7 +2188,17 @@ async function getNotesFor(season, slug){
   }catch(e){ return []; }
 }
 async function getNotes(slug){
-  return getNotesFor(activeSeason, slug);
+  const arr = await getNotesFor(activeSeason, slug);
+  let migrated = false;
+  // Older saves stored notes with no timestamp. Give those a timestamp the
+  // first time they're loaded so the 1-day edit lock has a starting point
+  // to count from (same treatment as varieties/actual dates/journal above).
+  const normalized = (arr || []).map(n => {
+    if(!n.addedAt){ migrated = true; return { ...n, addedAt: Date.now() }; }
+    return n;
+  });
+  if(migrated) await setNotes(slug, normalized);
+  return normalized;
 }
 async function setNotes(slug, arr){
   try{ await window.storage.set(`notes:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
@@ -3586,13 +3610,18 @@ async function renderGrid(sectionKey, containerId){
       let editingNoteIndex = null;
 
       const renderNotes = () => {
-        notesListEl.innerHTML = notes.map((n, i) => `
-          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}" data-i="${i}">
+        notesListEl.innerHTML = notes.map((n, i) => {
+          const locked = isEntryLocked(n.addedAt);
+          return `
+          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
             <span class="note-date">${n.date}</span>
             <span class="note-text">${n.text}</span>
-            <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
-            <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
-          </div>`).join("");
+            ${!locked ? `
+              <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
+              <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
+            ` : ""}
+          </div>`;
+        }).join("");
         function startEditNote(i){
           editingNoteIndex = i;
           notesInput.value = notes[i].text;
@@ -3624,7 +3653,7 @@ async function renderGrid(sectionKey, containerId){
             startEditNote(Number(btn.dataset.i));
           });
         });
-        notesListEl.querySelectorAll(".note-entry").forEach(row => {
+        notesListEl.querySelectorAll(".note-entry[data-i]").forEach(row => {
           row.addEventListener("click", () => startEditNote(Number(row.dataset.i)));
         });
       };
@@ -3634,11 +3663,12 @@ async function renderGrid(sectionKey, containerId){
         const val = notesInput.value.trim();
         if(!val) return;
         if(editingNoteIndex !== null){
+          if(isEntryLocked(notes[editingNoteIndex].addedAt)){ editingNoteIndex = null; notesInput.value = ""; return; }
           notes[editingNoteIndex].text = val;
           editingNoteIndex = null;
         } else {
           const now = new Date();
-          notes.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, text: val });
+          notes.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, text: val, addedAt: Date.now() });
         }
         notesInput.value = "";
         notesInput.style.height = "auto";
@@ -4402,17 +4432,37 @@ document.getElementById("importJsonInput").addEventListener("change", async (e) 
 /* ---------------- month-grid calendar ---------------- */
 let calYear, calMonth, calSelectedDay = null;
 
+/* Expands a task into every calendar day it covers. Most tasks are a
+   single day, but some (like a multi-day "Start seeds" window) carry an
+   end date via m2/d2, e.g. Aug 12-14. Returns one {y,m,d} per day so the
+   calendar can drop a dot on each date in the range, not just the first. */
+function expandTaskDays(t){
+  const startY = seasonYearForMonth(activeSeason, t.m);
+  const endM = t.m2 || t.m;
+  const endD = t.d2 != null ? t.d2 : t.d;
+  const endY = seasonYearForMonth(activeSeason, endM);
+  const cur = new Date(startY, t.m - 1, t.d);
+  const end = new Date(endY, endM - 1, endD);
+  const days = [];
+  while(cur.getTime() <= end.getTime()){
+    days.push({ y: cur.getFullYear(), m: cur.getMonth() + 1, d: cur.getDate() });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
 function getMonthTasks(year, month){
   const map = {};
   ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
     (DATA_now()[sectionKey] || []).forEach(p => {
       p.dates.forEach(wave => {
         wave.forEach(t => {
-          const y = seasonYearForMonth(activeSeason, t.m);
-          if(y === year && t.m === month){
-            if(!map[t.d]) map[t.d] = [];
-            map[t.d].push({ name: p.name, action: actionLabelForDate(t.a, new Date(y, t.m - 1, t.d)), color: p.color });
-          }
+          expandTaskDays(t).forEach(day => {
+            if(day.y === year && day.m === month){
+              if(!map[day.d]) map[day.d] = [];
+              map[day.d].push({ name: p.name, action: actionLabelForDate(t.a, new Date(day.y, day.m - 1, day.d)), color: p.color });
+            }
+          });
         });
       });
     });
@@ -4420,21 +4470,70 @@ function getMonthTasks(year, month){
   return map;
 }
 
+/* Which biodynamic type(s) — fruit/leaf/root/flower — are active on a given
+   calendar date. The transcribed BC_DATA only covers Aug-Dec 2026, and
+   bcEntryFor() itself doesn't check year (it's always been called from
+   contexts already anchored to 2026), so we guard on year here to avoid
+   mis-painting the same month/day in a different year. More than one type
+   can be active the same day when one window ends and the next begins. */
+function getDayBioTypes(year, month, day){
+  if(year !== 2026) return [];
+  return ["fruit","leaf","root","flower"].filter(type => bcEntryFor(type, month, day));
+}
+
+/* Same fruit/leaf/root/flower colors used by the Biodynamic Calendar tab
+   (see the --bc-* custom properties on .bc-cal). Hardcoded here rather than
+   read via var() because those custom properties are scoped to .bc-cal and
+   wouldn't resolve inside the calendar modal. */
+const BC_COLORS = {
+  fruit: { strong:"#a6362c", bg:"#e9beb6" },
+  leaf: { strong:"#4a6b2a", bg:"#c3d3ab" },
+  root: { strong:"#8a5a2e", bg:"#dcc4a3" },
+  flower: { strong:"#c08a1f", bg:"#edd497" }
+};
+
+/* Builds a CSS background for a calendar day cell: a solid color for a
+   single active biodynamic type, or an even split (diagonal hard-stop
+   gradient) across however many types are active that day. */
+function bioCellBackground(types){
+  if(types.length === 0) return null;
+  const colors = types.map(t => BC_COLORS[t].bg);
+  if(colors.length === 1) return colors[0];
+  const n = colors.length;
+  const stops = [];
+  colors.forEach((c, i) => {
+    stops.push(`${c} ${(100*i/n).toFixed(3)}%`, `${c} ${(100*(i+1)/n).toFixed(3)}%`);
+  });
+  return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
 function renderCalDayDetail(tasksByDay){
   const el = document.getElementById("calDayDetail");
   if(!calSelectedDay){ el.innerHTML = ""; return; }
   const tasks = tasksByDay[calSelectedDay] || [];
+  const bioTypes = getDayBioTypes(calYear, calMonth, calSelectedDay);
   const title = `${MONTHS[calMonth-1]} ${calSelectedDay}`;
-  if(tasks.length === 0){
+  const bioRows = bioTypes.map(type => {
+    const entry = bcEntryFor(type, calMonth, calSelectedDay);
+    const label = type.charAt(0).toUpperCase() + type.slice(1);
+    return `
+    <div class="cal-task-row">
+      <span class="cal-dot" style="background:${BC_COLORS[type].strong}; width:8px; height:8px;"></span>
+      <span>${label} day</span>
+      <span class="cal-task-action">${entry.time}</span>
+    </div>`;
+  }).join("");
+  if(tasks.length === 0 && bioTypes.length === 0){
     el.innerHTML = `<div class="cal-day-detail-title">${title}</div><div class="harvest-empty">Nothing planned.</div>`;
     return;
   }
-  el.innerHTML = `<div class="cal-day-detail-title">${title}</div>` + tasks.map(t => `
+  const taskRows = tasks.map(t => `
     <div class="cal-task-row">
       <span class="cal-dot" style="background:${t.color}; width:8px; height:8px;"></span>
       <span>${t.name}</span>
       <span class="cal-task-action">${t.action}</span>
     </div>`).join("");
+  el.innerHTML = `<div class="cal-day-detail-title">${title}</div>` + bioRows + taskRows;
 }
 
 function renderCalendar(){
@@ -4452,7 +4551,9 @@ function renderCalendar(){
     const isSelected = calSelectedDay === d;
     const tasks = tasksByDay[d] || [];
     const dots = tasks.slice(0, 4).map(t => `<span class="cal-dot" style="background:${t.color}"></span>`).join("");
-    html += `<div class="cal-day${isToday ? " today" : ""}${isSelected ? " selected" : ""}" data-day="${d}">
+    const bioBg = isSelected ? null : bioCellBackground(getDayBioTypes(calYear, calMonth, d));
+    const styleAttr = bioBg ? ` style="background:${bioBg};"` : "";
+    html += `<div class="cal-day${isToday ? " today" : ""}${isSelected ? " selected" : ""}" data-day="${d}"${styleAttr}>
       <div class="cal-daynum">${d}</div>
       <div class="cal-dots">${dots}</div>
     </div>`;
@@ -4753,6 +4854,11 @@ const BC_DATA = {
       ["24","Mon","all day",""]
     ],
     "September 2026": [
+      ["1","Tue","4am – 8pm",""],
+      ["7","Mon","from 9pm",""],
+      ["8","Tue","until 10am, then again from 7pm",""],
+      ["9","Wed","all day",""],
+      ["10","Thu","until 8am",""],
       ["18","Fri","from 10pm",""],
       ["19","Sat","all day",""],
       ["20","Sun","all day",""],
@@ -4772,12 +4878,24 @@ const BC_DATA = {
       ["27","Tue","until 10am",""]
     ],
     "November 2026": [
+      ["3","Tue","from 2am",""],
+      ["4","Wed","until 10am",""],
+      ["12","Thu","from 1pm",""],
+      ["13","Fri","all day",""],
+      ["14","Sat","all day",""],
+      ["15","Sun","until 1am",""],
       ["22","Sun","from 6am",""],
       ["23","Mon","until 12pm",""],
       ["29","Sun","2pm – 6pm",""],
       ["30","Mon","from 7am",""]
     ],
     "December 2026": [
+      ["1","Tue","all day",""],
+      ["2","Wed","until 3am",""],
+      ["9","Wed","from 8pm",""],
+      ["10","Thu","all day",""],
+      ["11","Fri","until 1am, then again from 12pm",""],
+      ["12","Sat","until 8am",""],
       ["19","Sat","from 3pm",""],
       ["20","Sun","all day",""],
       ["21","Mon","until 6am",""],
@@ -4806,6 +4924,9 @@ const BC_DATA = {
       ["31","Mon","all day (especially good 6am–11pm)",""]
     ],
     "September 2026": [
+      ["1","Tue","until 3am",""],
+      ["6","Sun","from 9am",""],
+      ["7","Mon","until 12pm",""],
       ["17","Thu","from 9am",""],
       ["18","Fri","until 1pm",""],
       ["26","Sat","from 5am",""],
@@ -4825,6 +4946,11 @@ const BC_DATA = {
       ["31","Sat","from 9pm",""]
     ],
     "November 2026": [
+      ["1","Sun","all day",""],
+      ["2","Mon","until 6am",""],
+      ["10","Tue","all day",""],
+      ["11","Wed","all day",""],
+      ["12","Thu","until 12pm",""],
       ["19","Thu","from 10am",""],
       ["20","Fri","until 8pm",""],
       ["23","Mon","1pm – 10pm",""],
@@ -4832,6 +4958,10 @@ const BC_DATA = {
       ["29","Sun","10am – 1pm",""]
     ],
     "December 2026": [
+      ["7","Mon","all day (especially good 6am–8am)",""],
+      ["8","Tue","all day",""],
+      ["9","Wed","until 7pm",""],
+      ["11","Fri","2am – 11am",""],
       ["16","Wed","from 6pm",""],
       ["17","Thu","all day",""],
       ["18","Fri","all day",""],
@@ -4855,6 +4985,15 @@ const BC_DATA = {
       ["27","Thu","until 8am",""]
     ],
     "September 2026": [
+      ["1","Tue","from 9pm",""],
+      ["2","Wed","all day",""],
+      ["3","Thu","all day",""],
+      ["4","Fri","until 9am",""],
+      ["10","Thu","from 9am",""],
+      ["11","Fri","all day (especially good 6am–3pm)",""],
+      ["12","Sat","all day",""],
+      ["13","Sun","all day (especially good from 5pm)",""],
+      ["14","Mon","until 5am (especially good until 2am), then again from 11am to 8pm",""],
       ["21","Mon","from 11am",""],
       ["22","Tue","all day",""],
       ["23","Wed","until 4pm",""],
@@ -4879,12 +5018,22 @@ const BC_DATA = {
       ["29","Thu","3am – 9pm",""]
     ],
     "November 2026": [
+      ["6","Fri","from 12pm",""],
+      ["7","Sat","until 3am, then again from 9am",""],
+      ["8","Sun","until 11am",""],
+      ["15","Sun","from 2am",""],
       ["16","Mon","all day",""],
       ["24","Tue","all day",""],
       ["25","Wed","until 3am",""],
       ["29","Sun","12am – 9am",""]
     ],
     "December 2026": [
+      ["2","Wed","from 4am",""],
+      ["3","Thu","all day",""],
+      ["4","Fri","all day",""],
+      ["5","Sat","until 5pm",""],
+      ["12","Sat","9am – 5pm",""],
+      ["14","Mon","12pm – 4pm",""],
       ["21","Mon","from 7am",""],
       ["22","Tue","all day",""],
       ["23","Wed","until 3pm",""],
@@ -4904,6 +5053,11 @@ const BC_DATA = {
       ["29","Sat","until 7am",""]
     ],
     "September 2026": [
+      ["4","Fri","from 10am",""],
+      ["5","Sat","all day",""],
+      ["6","Sun","until 4am",""],
+      ["14","Mon","from 9pm",""],
+      ["15","Tue","until 7pm",""],
       ["18","Fri","2pm – 10pm",""],
       ["24","Thu","from 3am",""],
       ["25","Fri","until 3pm",""]
@@ -4921,6 +5075,8 @@ const BC_DATA = {
       ["31","Sat","until 8pm",""]
     ],
     "November 2026": [
+      ["8","Sun","from 12pm",""],
+      ["9","Mon","until 10pm",""],
       ["17","Tue","from 11am",""],
       ["18","Wed","all day",""],
       ["19","Thu","until 9am",""],
@@ -4928,6 +5084,10 @@ const BC_DATA = {
       ["27","Fri","all day",""]
     ],
     "December 2026": [
+      ["5","Sat","from 6pm",""],
+      ["6","Sun","until 10pm",""],
+      ["14","Mon","from 5pm",""],
+      ["15","Tue","all day",""],
       ["16","Wed","until 5pm",""],
       ["24","Thu","from 5pm",""],
       ["25","Fri","until 12pm",""]
