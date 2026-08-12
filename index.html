@@ -786,7 +786,16 @@
 
   /* ---------- tab bar ---------- */
   nav.tabbar{
-    position:fixed; left:50%; transform:translateX(-50%); bottom:0;
+    position:fixed; left:50%; bottom:0;
+    /* translateZ(0) forces this onto its own GPU compositing layer.
+       Without it, position:fixed + backdrop-filter together are a known
+       trigger (mainly WebKit/mobile webviews) for the bar visually
+       "detaching" and floating mid-content during scroll/momentum instead
+       of staying pinned to the true bottom edge. */
+    transform:translateX(-50%) translateZ(0);
+    -webkit-transform:translateX(-50%) translateZ(0);
+    backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    will-change:transform;
     width:100%; max-width:480px;
     padding:8px 10px calc(10px + env(safe-area-inset-bottom));
     background:rgba(246,240,226,0.92); backdrop-filter:blur(12px);
