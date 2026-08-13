@@ -629,6 +629,19 @@
   }
   .sow-variety-input::placeholder{color:#BBA9CC;}
   .sow-variety-input:focus{border-color:var(--sage);}
+  .sow-variety-meta-row{ display:flex; gap:6px; margin-top:6px; }
+  .sow-variety-type-input, .sow-variety-dtm-input{
+    box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    padding:6px 8px; outline:none;
+  }
+  .sow-variety-type-input{ flex:1 1 60%; }
+  .sow-variety-dtm-input{ flex:1 1 40%; }
+  .sow-variety-type-input:focus, .sow-variety-dtm-input:focus{ border-color:var(--sage); }
+  .sow-variety-dtm-input::placeholder{ color:#BBA9CC; }
+  .sow-pending-tag .variety-meta-badge, .variety-chip .variety-meta-badge{
+    opacity:.85; font-weight:400; margin-left:2px;
+  }
   .sow-variety-pending{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
   .sow-pending-tag{
     position:relative; cursor:pointer;
@@ -675,6 +688,22 @@
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:20px; padding:3px 10px; outline:none;
     width:130px; max-width:40vw;
+  }
+  .variety-edit-group{ display:inline-flex; flex-wrap:wrap; gap:4px; align-items:center; }
+  .variety-edit-group .variety-edit-input{ width:110px; }
+  .variety-edit-type, .variety-edit-dtm{
+    font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); background:#fff;
+    border:1px solid var(--evergreen-2); border-radius:20px; padding:3px 8px; outline:none;
+  }
+  .variety-edit-type{ width:100px; }
+  .variety-edit-dtm{ width:64px; }
+  .date-missing-flash{
+    animation: dateMissingFlash 0.9s ease;
+    border-color:#D9534F !important;
+  }
+  @keyframes dateMissingFlash{
+    0%, 100% { box-shadow: none; }
+    20%, 60% { box-shadow: 0 0 0 2px rgba(217,83,79,0.35); }
   }
   .actual-row{margin-top:8px; display:flex; flex-direction:column; gap:12px;}
   .actual-field{flex:1 1 100%; min-width:0;}
@@ -2173,10 +2202,23 @@ function fmtActualEntry(d, fallbackTemp){
   return tp ? `${dt} ${fmtTemp(tp)}` : dt;
 }
 function entryVarieties(d){ return (typeof d === "object" && d && d.varieties) || []; }
+// A logged variety is either a plain string (every crop but tomatoes) or,
+// for tomatoes, an object { name, type, dtm } carrying the growth habit
+// (Indeterminate/Determinate/Semi-determinate) and days-to-maturity typed
+// alongside the variety name. These helpers read either shape.
+function varietyName(v){ return (typeof v === "object" && v) ? (v.name || "") : (v || ""); }
+function varietyMetaText(v){
+  if(typeof v !== "object" || !v) return "";
+  const bits = [];
+  if(v.type) bits.push(v.type);
+  if(v.dtm) bits.push(`${v.dtm}d`);
+  return bits.length ? ` (${bits.join(", ")})` : "";
+}
+function varietyDisplay(v){ return `${varietyName(v)}${varietyMetaText(v)}`; }
 function sowSummaryLabel(d, fallbackTemp){
   const base = fmtActualEntry(d, fallbackTemp);
   const vs = entryVarieties(d);
-  return vs.length ? `${base} — ${vs.join(", ")}` : base;
+  return vs.length ? `${base} — ${vs.map(varietyDisplay).join(", ")}` : base;
 }
 async function getTempFor(season, slug, kind){
   try{
@@ -3226,6 +3268,16 @@ async function renderGrid(sectionKey, containerId){
                 <input id="sow-temp-${p.slug}" class="temp-select" type="text" placeholder="TEMP" autocomplete="off" aria-label="Temperature at sow time">
               </div>
               <input id="sow-variety-${p.slug}" type="text" class="sow-variety-input" placeholder="Variety seeded, press Enter" autocomplete="off">
+              ${p.slug === "tomatoes" ? `
+              <div class="sow-variety-meta-row">
+                <select id="sow-variety-type-${p.slug}" class="sow-variety-type-input" aria-label="Tomato type">
+                  <option value="">Type…</option>
+                  <option value="Indeterminate">Indeterminate</option>
+                  <option value="Determinate">Determinate</option>
+                  <option value="Semi-determinate">Semi-determinate</option>
+                </select>
+                <input id="sow-variety-dtm-${p.slug}" type="number" min="0" class="sow-variety-dtm-input" placeholder="Days to maturity" aria-label="Days to maturity">
+              </div>` : ""}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
@@ -3320,7 +3372,7 @@ async function renderGrid(sectionKey, containerId){
           return;
         }
         const varietyList = [];
-        sowDates.forEach(d => entryVarieties(d).forEach(v => { if(!varietyList.includes(v)) varietyList.push(v); }));
+        sowDates.forEach(d => entryVarieties(d).forEach(v => { const disp = varietyDisplay(v); if(!varietyList.includes(disp)) varietyList.push(disp); }));
         combo.style.display = "block";
         combo.innerHTML = `
           <div class="combo-head">${p.name} — sow to transplant</div>
@@ -3339,6 +3391,99 @@ async function renderGrid(sectionKey, containerId){
         const varietyInput = opts.varietyInput;
         const varietyPendingEl = opts.varietyPendingEl;
         const addBtn = opts.addBtn;
+        // Tomatoes-only: growth-habit dropdown and days-to-maturity field
+        // that ride alongside the variety name when present.
+        const varietyTypeEl = opts.varietyTypeEl;
+        const varietyDtmEl = opts.varietyDtmEl;
+        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl);
+        // Dropdown offers the full word for clarity while picking; once the
+        // variety is actually committed (Enter/Add), the type is stored and
+        // shown abbreviated instead.
+        const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
+        const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
+        function composeVariety(name, typeRaw, dtmRaw){
+          if(!hasVarietyMeta) return name;
+          const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
+          const dtm = (dtmRaw || "").trim();
+          if(!type && !dtm) return name;
+          const entry = { name };
+          if(type) entry.type = type;
+          if(dtm) entry.dtm = dtm;
+          return entry;
+        }
+        function buildVarietyEntry(name){
+          return composeVariety(name, varietyTypeEl ? varietyTypeEl.value : "", varietyDtmEl ? varietyDtmEl.value : "");
+        }
+        function clearVarietyMetaInputs(){
+          if(varietyTypeEl) varietyTypeEl.value = "";
+          if(varietyDtmEl) varietyDtmEl.value = "";
+        }
+        // Builds the inline editor shown when a variety chip/tag is tapped
+        // to edit — name field plus, for tomatoes, the type/days fields too
+        // (editable for the same 24h window as everything else, since the
+        // caller only ever opens this on a not-yet-locked chip). Commits on
+        // Enter in any field or on focus leaving the whole group (except
+        // onto the Add/Confirm button itself, which finishes the edit via
+        // its own click handler so it doesn't also start a new entry).
+        // Escape cancels. Returns {commit, cancel} so the caller can also
+        // trigger a commit from elsewhere (the Add/Confirm button).
+        function openVarietyEditor(hostEl, current, onCommit, onCancel){
+          const wrap = document.createElement("span");
+          wrap.className = "variety-edit-group";
+          const nameInput = document.createElement("input");
+          nameInput.type = "text";
+          nameInput.className = "variety-edit-input";
+          nameInput.value = varietyName(current);
+          wrap.appendChild(nameInput);
+          let typeSel = null, dtmInput = null;
+          if(hasVarietyMeta){
+            typeSel = document.createElement("select");
+            typeSel.className = "variety-edit-type";
+            [["", "Type…"], ["Indeterminate", "Indeterminate"], ["Determinate", "Determinate"], ["Semi-determinate", "Semi-determinate"]].forEach(([val, label]) => {
+              const opt = document.createElement("option");
+              opt.value = val; opt.textContent = label;
+              typeSel.appendChild(opt);
+            });
+            const currentType = (typeof current === "object" && current) ? (current.type || "") : "";
+            typeSel.value = VARIETY_TYPE_FULL[currentType] || currentType || "";
+            wrap.appendChild(typeSel);
+            dtmInput = document.createElement("input");
+            dtmInput.type = "number";
+            dtmInput.min = "0";
+            dtmInput.className = "variety-edit-dtm";
+            dtmInput.placeholder = "Days";
+            dtmInput.value = (typeof current === "object" && current) ? (current.dtm || "") : "";
+            wrap.appendChild(dtmInput);
+          }
+          hostEl.textContent = "";
+          hostEl.appendChild(wrap);
+          nameInput.focus();
+          nameInput.select();
+          let done = false;
+          const commit = () => {
+            if(done) return;
+            done = true;
+            const val = nameInput.value.trim();
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "") : null);
+          };
+          const cancel = () => {
+            if(done) return;
+            done = true;
+            onCancel();
+          };
+          [nameInput, typeSel, dtmInput].filter(Boolean).forEach(f => {
+            f.addEventListener("keydown", (ke) => {
+              if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
+              if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
+            });
+            f.addEventListener("click", (ce) => ce.stopPropagation());
+          });
+          wrap.addEventListener("focusout", (e) => {
+            if(addBtn && e.relatedTarget === addBtn) return; // addBtn's own click finishes the edit instead
+            if(!wrap.contains(e.relatedTarget)) commit();
+          });
+          return { commit, cancel };
+        }
         let dates = await getActualDates(p.slug, kind);
         // Past tense since these are actual logged dates (something that
         // already happened), not the planned/imperative action.
@@ -3359,7 +3504,7 @@ async function renderGrid(sectionKey, containerId){
         function renderPendingVarieties(){
           if(!varietyPendingEl) return;
           varietyPendingEl.innerHTML = pendingVarieties.map((v, vi) =>
-            `<span class="sow-pending-tag" data-vi="${vi}">${v}</span>`
+            `<span class="sow-pending-tag" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`
           ).join("");
           varietyPendingEl.querySelectorAll(".sow-pending-tag").forEach(tag => {
             tag.addEventListener("click", (e) => {
@@ -3376,40 +3521,28 @@ async function renderGrid(sectionKey, containerId){
                 ev.stopPropagation();
                 menu.remove();
                 const current = pendingVarieties[vi];
-                const input = document.createElement("input");
-                input.type = "text";
-                input.className = "variety-edit-input";
-                input.value = current;
-                tag.textContent = "";
-                tag.appendChild(input);
-                input.focus();
-                input.select();
                 const endVarietyEdit = () => {
                   activeVarietyCommit = null;
                   if(addBtn) addBtn.textContent = ADD_LABEL;
                 };
-                const commitRename = () => {
-                  const val = input.value.trim();
-                  if(val) pendingVarieties[vi] = val;
+                const editor = openVarietyEditor(tag, current, (composed) => {
+                  if(composed !== null) pendingVarieties[vi] = composed;
                   renderPendingVarieties();
                   endVarietyEdit();
-                };
-                activeVarietyCommit = commitRename;
-                if(addBtn) addBtn.textContent = CONFIRM_LABEL;
-                input.addEventListener("keydown", (ke) => {
-                  if(ke.key === "Enter"){ ke.preventDefault(); commitRename(); }
-                  if(ke.key === "Escape"){ ke.preventDefault(); endVarietyEdit(); renderPendingVarieties(); }
+                }, () => {
+                  endVarietyEdit();
+                  renderPendingVarieties();
                 });
-                input.addEventListener("blur", commitRename);
-                input.addEventListener("click", (ce) => ce.stopPropagation());
+                activeVarietyCommit = editor.commit;
+                if(addBtn) addBtn.textContent = CONFIRM_LABEL;
               });
               menu.querySelector(".delete").addEventListener("click", (ev) => {
                 ev.stopPropagation();
                 const removedVariety = pendingVarieties[vi];
-                requestGenericDelete(`Delete the variety "${removedVariety}"?`, () => {
+                requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, () => {
                   pendingVarieties.splice(vi, 1);
                   renderPendingVarieties();
-                  showUndoToast(`"${removedVariety}" deleted.`, () => {
+                  showUndoToast(`"${varietyName(removedVariety)}" deleted.`, () => {
                     pendingVarieties.splice(vi, 0, removedVariety);
                     renderPendingVarieties();
                   });
@@ -3422,15 +3555,29 @@ async function renderGrid(sectionKey, containerId){
           const addPendingVariety = () => {
             const val = varietyInput.value.trim();
             if(val){
-              pendingVarieties.push(val);
+              pendingVarieties.push(buildVarietyEntry(val));
               varietyInput.value = "";
+              clearVarietyMetaInputs();
               renderPendingVarieties();
             }
           };
           varietyInput.addEventListener("keydown", (e) => {
             if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
           });
-          varietyInput.addEventListener("blur", addPendingVariety);
+          if(varietyTypeEl || varietyDtmEl){
+            // Tomatoes: the name field is followed by a Type/Days-to-maturity
+            // pair before the variety is done being tagged, so don't commit
+            // on blur — that would fire the instant focus moves into those
+            // fields, before they're filled in. Enter from the DTM field
+            // (the last stop) adds the fully-tagged variety instead.
+            if(varietyDtmEl){
+              varietyDtmEl.addEventListener("keydown", (e) => {
+                if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
+              });
+            }
+          } else {
+            varietyInput.addEventListener("blur", addPendingVariety);
+          }
         }
 
         function renderDateChips(){
@@ -3439,7 +3586,7 @@ async function renderGrid(sectionKey, containerId){
               const label = fmtActualEntry(d);
               const locked = isPastSeason || isEntryLocked(entryAddedAt(d));
               const vs = entryVarieties(d);
-              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}" data-vi="${vi}">${v}</span>`).join("")}</div>` : "";
+              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
                 <div class="sow-card-head">${prefix} ${label}${locked ? " 🔒" : ""}</div>
                 ${varietiesLine}
@@ -3535,44 +3682,36 @@ async function renderGrid(sectionKey, containerId){
                   ev.stopPropagation();
                   menu.remove();
                   const current = dates[i].varieties[vi];
-                  const input = document.createElement("input");
-                  input.type = "text";
-                  input.className = "variety-edit-input";
-                  input.value = current;
-                  chip.textContent = "";
-                  chip.appendChild(input);
-                  input.focus();
-                  input.select();
                   const endVarietyEdit = () => {
                     activeVarietyCommit = null;
                     if(addBtn) addBtn.textContent = ADD_LABEL;
                   };
-                  const commitRename = async () => {
-                    const val = input.value.trim();
-                    if(val) dates[i].varieties[vi] = val;
-                    renderDateChips();
-                    await setActualDates(p.slug, kind, dates);
-                    await renderCombo();
+                  const editor = openVarietyEditor(chip, current, async (composed) => {
+                    if(composed !== null){
+                      dates[i].varieties[vi] = composed;
+                      renderDateChips();
+                      await setActualDates(p.slug, kind, dates);
+                      await renderCombo();
+                    } else {
+                      renderDateChips();
+                    }
                     endVarietyEdit();
-                  };
-                  activeVarietyCommit = commitRename;
-                  if(addBtn) addBtn.textContent = CONFIRM_LABEL;
-                  input.addEventListener("keydown", (ke) => {
-                    if(ke.key === "Enter"){ ke.preventDefault(); commitRename(); }
-                    if(ke.key === "Escape"){ ke.preventDefault(); endVarietyEdit(); renderDateChips(); }
+                  }, () => {
+                    endVarietyEdit();
+                    renderDateChips();
                   });
-                  input.addEventListener("blur", commitRename);
-                  input.addEventListener("click", (ce) => ce.stopPropagation());
+                  activeVarietyCommit = editor.commit;
+                  if(addBtn) addBtn.textContent = CONFIRM_LABEL;
                 });
                 menu.querySelector(".delete").addEventListener("click", (ev) => {
                   ev.stopPropagation();
                   const removedVariety = dates[i].varieties[vi];
-                  requestGenericDelete(`Delete the variety "${removedVariety}"?`, async () => {
+                  requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, async () => {
                     dates[i].varieties.splice(vi, 1);
                     renderDateChips();
                     await setActualDates(p.slug, kind, dates);
                     await renderCombo();
-                    showUndoToast(`"${removedVariety}" deleted.`, async () => {
+                    showUndoToast(`"${varietyName(removedVariety)}" deleted.`, async () => {
                       dates[i].varieties.splice(vi, 0, removedVariety);
                       renderDateChips();
                       await setActualDates(p.slug, kind, dates);
@@ -3593,13 +3732,22 @@ async function renderGrid(sectionKey, containerId){
         }
 
         async function commitEntry(){
-          if(!dateEl.value) return;
+          if(!dateEl.value){
+            // Previously this just silently did nothing, which looked like
+            // the button was broken. Now it focuses the date field and
+            // flashes it so it's clear a date is the missing piece.
+            dateEl.focus();
+            dateEl.classList.add("date-missing-flash");
+            setTimeout(() => dateEl.classList.remove("date-missing-flash"), 900);
+            return;
+          }
           const temp = withF(tempEl.value);
           const entry = { date: dateEl.value, temp: temp || "", addedAt: Date.now() };
           if(kind === "sow"){
             if(varietyInput && varietyInput.value.trim()){
-              pendingVarieties.push(varietyInput.value.trim());
+              pendingVarieties.push(buildVarietyEntry(varietyInput.value.trim()));
               varietyInput.value = "";
+              clearVarietyMetaInputs();
             }
             entry.varieties = pendingVarieties.slice();
             pendingVarieties = [];
@@ -3638,7 +3786,9 @@ async function renderGrid(sectionKey, containerId){
       await wireDateChips("sow", card.querySelector(`#sow-${p.slug}`), card.querySelector(`#sow-temp-${p.slug}`), card.querySelector(`#sow-chips-${p.slug}`), {
         varietyInput: card.querySelector(`#sow-variety-${p.slug}`),
         varietyPendingEl: card.querySelector(`#sow-variety-pending-${p.slug}`),
-        addBtn: card.querySelector(`#sow-add-${p.slug}`)
+        addBtn: card.querySelector(`#sow-add-${p.slug}`),
+        varietyTypeEl: card.querySelector(`#sow-variety-type-${p.slug}`),
+        varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`)
       });
       await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       await renderCombo();
