@@ -629,6 +629,26 @@
   }
   .sow-variety-input::placeholder{color:#BBA9CC;}
   .sow-variety-input:focus{border-color:var(--sage);}
+  .sow-variety-input-wrap{ position:relative; }
+  /* Autocomplete dropdown for known tomato varieties (see
+     COMMON_TOMATO_VARIETIES) — appears under the name field as the person
+     types, e.g. typing "gold" surfaces "Gold Nugget". */
+  .variety-suggest{
+    position:absolute; left:0; right:0; top:100%; margin-top:2px; z-index:20;
+    background:#fff; border:1px solid var(--evergreen-2); border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15); overflow:hidden; display:none;
+  }
+  .variety-suggest.open{ display:block; }
+  .variety-suggest-item{
+    padding:7px 10px; font-size:12.5px; color:var(--ink); cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    border-bottom:1px solid var(--paper-2);
+  }
+  .variety-suggest-item:last-child{ border-bottom:none; }
+  .variety-suggest-item:hover, .variety-suggest-item:active{ background:var(--paper-2); }
+  .variety-suggest-item .vs-name{ font-weight:600; }
+  .variety-suggest-item .vs-meta{ font-size:11px; color:var(--ink-soft); white-space:nowrap; }
+  .variety-suggest-item .vs-link-hint{ font-size:11px; opacity:.6; margin-left:4px; }
   .sow-variety-meta-row{ display:flex; gap:6px; margin-top:6px; }
   .sow-variety-type-input, .sow-variety-dtm-input{
     box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
@@ -644,8 +664,25 @@
     font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); white-space:nowrap;
   }
   .sow-variety-f1-label input{ margin:0; }
+  /* Multi-select color checkboxes (Red/Orange/Yellow/Black/Brown/Green) —
+     a tomato variety can be tagged with more than one, e.g. red fruit with
+     brown stripes. Shown as a wrapped row of small labeled checkboxes. */
+  .sow-variety-color-row{ display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:6px; }
+  .variety-color-check{
+    display:inline-flex; align-items:center; gap:4px;
+    font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); white-space:nowrap;
+  }
+  .variety-color-check input{ margin:0; }
+  .variety-edit-color-row{ display:flex; flex-wrap:wrap; gap:3px 10px; flex-basis:100%; margin-top:2px; }
   .sow-pending-tag .variety-meta-badge, .variety-chip .variety-meta-badge{
     opacity:.85; font-weight:400; margin-left:2px;
+  }
+  /* Small color swatch(es) shown right after a variety's other details,
+     one square per color tagged on it (e.g. a bicolor variety shows two
+     squares side by side). */
+  .variety-color-swatch{
+    display:inline-block; width:9px; height:9px; margin-left:3px;
+    border-radius:2px; border:1px solid rgba(0,0,0,0.25); vertical-align:middle;
   }
   /* Small globe icon next to each typed-in variety — opens a search for
      that variety across seed sellers (Baker Creek/Rare Seeds, Johnny's,
@@ -733,6 +770,16 @@
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
   }
   .variety-edit-f1-label input{ margin:0; }
+  /* Confirm button lives at the bottom of the edit box itself, right under
+     the fields, so committing an edit doesn't mean hunting for the
+     "+ Add sow entry" button further down the card. */
+  .variety-edit-confirm-btn{
+    flex:1 1 100%; width:100%; margin-top:2px; text-align:center;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border-radius:8px; padding:6px; cursor:pointer; border:1px solid var(--evergreen-2);
+    background:var(--evergreen); color:#fff;
+  }
+  .variety-edit-confirm-btn:hover, .variety-edit-confirm-btn:active{ filter:brightness(1.08); }
   .date-missing-flash{
     animation: dateMissingFlash 0.9s ease;
     border-color:#D9534F !important;
@@ -847,6 +894,40 @@
     font-size:15px; width:26px; height:26px; border-radius:7px;
     display:flex; align-items:center; justify-content:center;
     background:var(--card); color:var(--evergreen); padding:0;
+  }
+  /* Finished Seed Packets: a short structured log (what ran out, and
+     when) separate from freeform Notes below it. */
+  .seedpacket-field{ margin-top:10px; }
+  .seedpacket-field label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
+  }
+  .seedpacket-input-row{ display:flex; gap:6px; }
+  .seedpacket-input-row input{
+    flex:1; min-width:0; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    padding:6px 8px; outline:none;
+  }
+  .seedpacket-input-row input:focus{ border-color:var(--sage); }
+  .seedpacket-add-btn{
+    flex:none; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border-radius:8px; padding:6px 10px; cursor:pointer; border:1px solid var(--evergreen-2);
+    background:var(--paper-2); color:var(--evergreen); white-space:nowrap;
+  }
+  .seedpacket-add-btn:hover{ filter:brightness(0.97); }
+  .seedpacket-list{ margin-top:6px; display:flex; flex-wrap:wrap; gap:5px; }
+  .seedpacket-entry{
+    display:flex; align-items:center; gap:5px;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:20px; padding:4px 6px 4px 10px;
+    font-size:11.5px; color:var(--ink);
+  }
+  .seedpacket-entry.locked{ opacity:.8; }
+  .seedpacket-entry .sp-date{
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--clay-dark); font-weight:600;
+  }
+  .seedpacket-entry button{
+    background:none; border:none; color:var(--ink-soft); font-size:13px; line-height:1;
+    cursor:pointer; flex:none; padding:0 2px;
   }
 
   /* ---------- tab bar ---------- */
@@ -1011,7 +1092,7 @@
     color:var(--bc-ink-soft); position:relative; display:flex; align-items:center;
     justify-content:center; gap:.4rem;
   }
-  nav.bc-tabs button .bc-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+  nav.bc-tabs button .bc-dot{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; }
   nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ background:var(--bc-fruit); }
   nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ background:var(--bc-leaf); }
   nav.bc-tabs button[data-bctype="root"] .bc-dot{ background:var(--bc-root); }
@@ -1878,48 +1959,60 @@ const C = {
 };
 
 // A small built-in reference list of well-known tomato varieties' growth
-// habit, days-to-maturity, and whether they're an F1 hybrid — sourced from
+// habit, days-to-maturity, whether they're an F1 hybrid, and — for some —
+// a direct link to a real seed-company or reference page. Sourced from
 // seed-company listings. This is NOT a live internet lookup (the app has
 // no way to search the web on its own); it only covers the varieties
-// below. Keys are lowercased variety names. When a typed-in variety
-// matches one of these, whichever of Type/F1/Days the person left blank
-// gets filled in automatically — anything they already typed is left
-// untouched, and anything not in this list still needs to be typed by hand.
+// below. Keys are lowercased variety names, matched as a substring while
+// typing to power the suggestion dropdown. When a typed-in variety matches
+// one of these, whichever of Type/F1/Days the person left blank gets
+// filled in automatically — anything they already typed is left
+// untouched, and anything not in this list still needs to be typed by
+// hand (the 🌐 search icon covers that case instead).
+// The six color options offered for tagging a tomato variety (checkboxes,
+// multi-select — a variety can be more than one, e.g. red with brown
+// stripes), and the swatch hex shown next to a variety once tagged.
+const TOMATO_COLORS = ["Red", "Orange", "Yellow", "Black", "Brown", "Green"];
+const TOMATO_COLOR_HEX = { Red:"#C0392B", Orange:"#E07B1E", Yellow:"#E8C93A", Black:"#3A2E2E", Brown:"#7B4A2D", Green:"#5B8A3C" };
+function varietyColorCheckboxesHTML(){
+  return TOMATO_COLORS.map(c => `<label class="variety-color-check"><input type="checkbox" class="variety-color-input" value="${c}"> ${c}</label>`).join("");
+}
 const COMMON_TOMATO_VARIETIES = {
-  "black strawberry": { type:"Indeterminate", dtm:"60" },
-  "sweet million": { type:"Indeterminate", dtm:"65", f1:true },
-  "principe borghese": { type:"Determinate", dtm:"75" },
-  "sun gold": { type:"Indeterminate", dtm:"57", f1:true },
-  "sungold": { type:"Indeterminate", dtm:"57", f1:true },
-  "sweet 100": { type:"Indeterminate", dtm:"65", f1:true },
-  "sweet 100s": { type:"Indeterminate", dtm:"65", f1:true },
-  "yellow pear": { type:"Indeterminate", dtm:"78" },
-  "juliet": { type:"Indeterminate", dtm:"60", f1:true },
-  "green grape": { type:"Indeterminate", dtm:"70" },
-  "green zebra": { type:"Indeterminate", dtm:"78" },
-  "green zebra cherry": { type:"Indeterminate", dtm:"70" },
-  "black zebra cherry": { type:"Indeterminate", dtm:"70" },
-  "cherokee purple": { type:"Indeterminate", dtm:"80" },
-  "brandywine": { type:"Indeterminate", dtm:"90" },
-  "black krim": { type:"Indeterminate", dtm:"80" },
-  "mortgage lifter": { type:"Indeterminate", dtm:"85" },
-  "amish paste": { type:"Indeterminate", dtm:"85" },
-  "san marzano": { type:"Indeterminate", dtm:"80" },
-  "roma": { type:"Determinate", dtm:"75" },
-  "early girl": { type:"Indeterminate", dtm:"50", f1:true },
-  "better boy": { type:"Indeterminate", dtm:"75", f1:true },
-  "big beef": { type:"Indeterminate", dtm:"73", f1:true },
-  "celebrity": { type:"Determinate", dtm:"70", f1:true },
-  "rutgers": { type:"Determinate", dtm:"75" },
-  "marglobe": { type:"Determinate", dtm:"75" },
-  "beefsteak": { type:"Indeterminate", dtm:"80" },
-  "tigerella": { type:"Indeterminate", dtm:"59" },
-  "alicante": { type:"Indeterminate", dtm:"60" },
-  "campari": { type:"Indeterminate", dtm:"80", f1:true },
-  "fourth of july": { type:"Indeterminate", dtm:"49", f1:true },
-  "pineapple": { type:"Indeterminate", dtm:"85" },
-  "german johnson": { type:"Indeterminate", dtm:"80" },
-  "san diego": { type:"Determinate", dtm:"70" }
+  "black strawberry": { name:"Black Strawberry", type:"Indeterminate", dtm:"60", colors:["Black","Red"], url:"https://www.rareseeds.com/tomato-black-strawberry" },
+  "sweet million": { name:"Sweet Million", type:"Indeterminate", dtm:"65", f1:true, colors:["Red"], url:"https://territorialseed.com/products/tomato-sweet-million" },
+  "principe borghese": { name:"Principe Borghese", type:"Determinate", dtm:"75", colors:["Red"], url:"https://www.rareseeds.com/tomato-principe-borghese" },
+  "gold nugget": { name:"Gold Nugget", type:"Determinate", dtm:"60", colors:["Yellow"], url:"https://www.johnnyseeds.com/vegetables/tomatoes/cherry-tomatoes/gold-nugget-organic-tomato-seed-738.html" },
+  "sun gold": { name:"Sun Gold", type:"Indeterminate", dtm:"57", f1:true, colors:["Orange"] },
+  "sungold": { name:"Sungold", type:"Indeterminate", dtm:"57", f1:true, colors:["Orange"] },
+  "sweet 100": { name:"Sweet 100", type:"Indeterminate", dtm:"65", f1:true, colors:["Red"] },
+  "sweet 100s": { name:"Sweet 100s", type:"Indeterminate", dtm:"65", f1:true, colors:["Red"] },
+  "yellow pear": { name:"Yellow Pear", type:"Indeterminate", dtm:"78", colors:["Yellow"] },
+  "juliet": { name:"Juliet", type:"Indeterminate", dtm:"60", f1:true, colors:["Red"] },
+  "green grape": { name:"Green Grape", type:"Indeterminate", dtm:"70", colors:["Green"] },
+  "green zebra": { name:"Green Zebra", type:"Indeterminate", dtm:"78", colors:["Green","Yellow"], url:"https://en.wikipedia.org/wiki/Green_Zebra" },
+  "green zebra cherry": { name:"Green Zebra Cherry", type:"Indeterminate", dtm:"70", colors:["Green"] },
+  "black zebra cherry": { name:"Black Zebra Cherry", type:"Indeterminate", dtm:"70", colors:["Black","Green"] },
+  "cherokee purple": { name:"Cherokee Purple", type:"Indeterminate", dtm:"80", colors:["Black","Red"], url:"https://en.wikipedia.org/wiki/Cherokee_Purple_(tomato)" },
+  "brandywine": { name:"Brandywine", type:"Indeterminate", dtm:"90", colors:["Red"], url:"https://en.wikipedia.org/wiki/Brandywine_(tomato)" },
+  "black krim": { name:"Black Krim", type:"Indeterminate", dtm:"80", colors:["Black","Red"] },
+  "mortgage lifter": { name:"Mortgage Lifter", type:"Indeterminate", dtm:"85", colors:["Red"] },
+  "amish paste": { name:"Amish Paste", type:"Indeterminate", dtm:"85", colors:["Red"] },
+  "san marzano": { name:"San Marzano", type:"Indeterminate", dtm:"80", colors:["Red"] },
+  "roma": { name:"Roma", type:"Determinate", dtm:"75", colors:["Red"] },
+  "early girl": { name:"Early Girl", type:"Indeterminate", dtm:"50", f1:true, colors:["Red"], url:"https://en.wikipedia.org/wiki/Early_Girl" },
+  "better boy": { name:"Better Boy", type:"Indeterminate", dtm:"75", f1:true, colors:["Red"] },
+  "big beef": { name:"Big Beef", type:"Indeterminate", dtm:"73", f1:true, colors:["Red"] },
+  "celebrity": { name:"Celebrity", type:"Determinate", dtm:"70", f1:true, colors:["Red"] },
+  "rutgers": { name:"Rutgers", type:"Determinate", dtm:"75", colors:["Red"] },
+  "marglobe": { name:"Marglobe", type:"Determinate", dtm:"75", colors:["Red"] },
+  "beefsteak": { name:"Beefsteak", type:"Indeterminate", dtm:"80", colors:["Red"] },
+  "tigerella": { name:"Tigerella", type:"Indeterminate", dtm:"59", colors:["Red","Yellow"] },
+  "alicante": { name:"Alicante", type:"Indeterminate", dtm:"60", colors:["Red"], url:"https://en.wikipedia.org/wiki/Alicante_tomato" },
+  "campari": { name:"Campari", type:"Indeterminate", dtm:"80", f1:true, colors:["Red"], url:"https://en.wikipedia.org/wiki/Campari_tomato" },
+  "fourth of july": { name:"Fourth of July", type:"Indeterminate", dtm:"49", f1:true, colors:["Red"], url:"https://en.wikipedia.org/wiki/Fourth_of_July_tomato" },
+  "pineapple": { name:"Pineapple", type:"Indeterminate", dtm:"85", colors:["Yellow","Red"] },
+  "german johnson": { name:"German Johnson", type:"Indeterminate", dtm:"80", colors:["Red"] },
+  "san diego": { name:"San Diego", type:"Determinate", dtm:"70", colors:["Red"] }
 };
 // One friendly little emoji per crop for its card header, matching the
 // style of the home page's icon buttons. Falls back to a section-level
@@ -2336,7 +2429,11 @@ function varietyMetaText(v){
   if(v.type) bits.push(v.type);
   if(v.dtm) bits.push(`${v.dtm}d`);
   if(v.f1) bits.push("F1");
-  return bits.length ? ` (${bits.join(", ")})` : "";
+  let out = bits.length ? ` (${bits.join(", ")})` : "";
+  if(v.colors && v.colors.length){
+    out += v.colors.map(c => `<span class="variety-color-swatch" style="background:${TOMATO_COLOR_HEX[c] || "#ccc"}" title="${c}"></span>`).join("");
+  }
+  return out;
 }
 function varietyDisplay(v){ return `${varietyName(v)}${varietyMetaText(v)}`; }
 // Builds a search-engine link for a typed-in variety, so tapping the globe
@@ -2418,6 +2515,20 @@ async function getNotes(slug){
 }
 async function setNotes(slug, arr){
   try{ await window.storage.set(`notes:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
+}
+
+/* ---------------- finished seed packets (per crop, per season) ---------------- */
+async function getFinishedSeedsFor(season, slug){
+  try{
+    const r = await window.storage.get(`finishedSeeds:${season}:${slug}`, false);
+    return r ? JSON.parse(r.value) : [];
+  }catch(e){ return []; }
+}
+async function getFinishedSeeds(slug){
+  return getFinishedSeedsFor(activeSeason, slug);
+}
+async function setFinishedSeeds(slug, arr){
+  try{ await window.storage.set(`finishedSeeds:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
 }
 
 /* ---------------- daily journal (Home tab, not tied to any one crop) ---------------- */
@@ -3335,6 +3446,7 @@ async function renderGrid(sectionKey, containerId){
     const sowActualCheck = await getActualDates(p.slug, "sow");
     const transplantActualCheck = await getActualDates(p.slug, "transplant");
     const notes = await getNotes(p.slug);
+    const finishedSeeds = await getFinishedSeeds(p.slug);
     const seasonDone = isPastSeason ? false : await getSeasonDone(p.slug);
     const sowTemp = isPastSeason ? "" : await getTemp(p.slug, "sow");
     const transplantTemp = isPastSeason ? "" : await getTemp(p.slug, "transplant");
@@ -3389,6 +3501,20 @@ async function renderGrid(sectionKey, containerId){
         <div class="notes-list" id="notes-list-${p.slug}"></div>
       </div>
     `;
+    // Lets a person flag a specific variety/packet as run out of seed, so
+    // next season (or mid-season, if they need to reorder) they can see at
+    // a glance what to restock — separate from Notes since it's a
+    // short, structured log rather than freeform observations.
+    const seedPacketsFieldHTML = `
+      <div class="seedpacket-field">
+        <label for="seedpacket-${p.slug}">Finished Seed Packets</label>
+        <div class="seedpacket-input-row">
+          <input id="seedpacket-${p.slug}" type="text" placeholder="Which variety/packet ran out?" autocomplete="off">
+          <button type="button" class="seedpacket-add-btn" id="seedpacket-add-${p.slug}">+ Mark finished</button>
+        </div>
+        <div class="seedpacket-list" id="seedpacket-list-${p.slug}"></div>
+      </div>
+    `;
 
     let editableSectionsHTML = "";
     if(!isPastSeason){
@@ -3408,6 +3534,7 @@ async function renderGrid(sectionKey, containerId){
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual sow:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${notesFieldHTML}
+          ${seedPacketsFieldHTML}
         `;
       } else {
         editableSectionsHTML = `
@@ -3416,9 +3543,12 @@ async function renderGrid(sectionKey, containerId){
               <label for="sow-${p.slug}">Actual sow</label>
               <div class="actual-input-row">
                 <input id="sow-${p.slug}" type="date">
-                <input id="sow-temp-${p.slug}" class="temp-select" type="text" placeholder="TEMP" autocomplete="off" aria-label="Temperature at sow time">
+                <input id="sow-temp-${p.slug}" class="temp-select" type="text" placeholder="Temp" autocomplete="off" aria-label="Temperature at sow time">
               </div>
-              <input id="sow-variety-${p.slug}" type="text" class="sow-variety-input" placeholder="Variety seeded, press Enter" autocomplete="off">
+              <div class="sow-variety-input-wrap">
+                <input id="sow-variety-${p.slug}" type="text" class="sow-variety-input" placeholder="Variety seeded, press Enter" autocomplete="off">
+                <div class="variety-suggest" id="sow-variety-suggest-${p.slug}"></div>
+              </div>
               ${p.slug === "tomatoes" ? `
               <div class="sow-variety-meta-row">
                 <select id="sow-variety-type-${p.slug}" class="sow-variety-type-input" aria-label="Tomato type">
@@ -3429,7 +3559,8 @@ async function renderGrid(sectionKey, containerId){
                 </select>
                 <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
                 <input id="sow-variety-dtm-${p.slug}" type="number" min="0" class="sow-variety-dtm-input" placeholder="Days to maturity" aria-label="Days to maturity">
-              </div>` : ""}
+              </div>
+              <div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML()}</div>` : ""}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
@@ -3438,13 +3569,14 @@ async function renderGrid(sectionKey, containerId){
               <label for="transplant-${p.slug}">Actual transplant</label>
               <div class="actual-input-row">
                 <input id="transplant-${p.slug}" type="date">
-                <input id="transplant-temp-${p.slug}" class="temp-select" type="text" placeholder="TEMP" autocomplete="off" aria-label="Temperature at transplant time">
+                <input id="transplant-temp-${p.slug}" class="temp-select" type="text" placeholder="Temp" autocomplete="off" aria-label="Temperature at transplant time">
               </div>
               <div class="date-chips" id="transplant-chips-${p.slug}"></div>
             </div>
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${notesFieldHTML}
+          ${seedPacketsFieldHTML}
           <div class="season-actions-row">
             <button type="button" class="season-done-btn" data-slug="${p.slug}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.4l2.6 2.6L16 9.4"></path></svg>
@@ -3549,27 +3681,32 @@ async function renderGrid(sectionKey, containerId){
         const varietyInput = opts.varietyInput;
         const varietyPendingEl = opts.varietyPendingEl;
         const addBtn = opts.addBtn;
-        // Tomatoes-only: growth-habit dropdown, F1 checkbox, and
-        // days-to-maturity field that ride alongside the variety name.
+        // Tomatoes-only: growth-habit dropdown, F1 checkbox, color
+        // checkboxes, and days-to-maturity field that ride alongside the
+        // variety name.
         const varietyTypeEl = opts.varietyTypeEl;
         const varietyF1El = opts.varietyF1El;
         const varietyDtmEl = opts.varietyDtmEl;
-        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyF1El);
+        const varietyColorEl = opts.varietyColorEl;
+        const varietySuggestEl = opts.varietySuggestEl;
+        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyF1El || varietyColorEl);
         // Dropdown offers the full word for clarity while picking; once the
         // variety is actually committed (Enter/Add), the type is stored and
         // shown abbreviated instead.
         const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
         const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
-        function composeVariety(name, typeRaw, dtmRaw, f1Raw){
+        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw){
           if(!hasVarietyMeta) return name;
           const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
           const dtm = (dtmRaw || "").trim();
           const f1 = !!f1Raw;
-          if(!type && !dtm && !f1) return name;
+          const colors = Array.isArray(colorsRaw) ? colorsRaw.filter(Boolean) : [];
+          if(!type && !dtm && !f1 && !colors.length) return name;
           const entry = { name };
           if(type) entry.type = type;
           if(dtm) entry.dtm = dtm;
           if(f1) entry.f1 = true;
+          if(colors.length) entry.colors = colors;
           return entry;
         }
         function buildVarietyEntry(name){
@@ -3577,13 +3714,15 @@ async function renderGrid(sectionKey, containerId){
             name,
             varietyTypeEl ? varietyTypeEl.value : "",
             varietyDtmEl ? varietyDtmEl.value : "",
-            varietyF1El ? varietyF1El.checked : false
+            varietyF1El ? varietyF1El.checked : false,
+            varietyColorEl ? Array.from(varietyColorEl.querySelectorAll(".variety-color-input:checked")).map(cb => cb.value) : []
           );
         }
         function clearVarietyMetaInputs(){
           if(varietyTypeEl) varietyTypeEl.value = "";
           if(varietyDtmEl) varietyDtmEl.value = "";
           if(varietyF1El) varietyF1El.checked = false;
+          if(varietyColorEl) varietyColorEl.querySelectorAll(".variety-color-input").forEach(cb => cb.checked = false);
         }
         // Builds the inline editor shown when a variety chip/tag is tapped
         // to edit — name field plus, for tomatoes, the type/F1/days fields
@@ -3602,7 +3741,7 @@ async function renderGrid(sectionKey, containerId){
           nameInput.className = "variety-edit-input";
           nameInput.value = varietyName(current);
           wrap.appendChild(nameInput);
-          let typeSel = null, f1Box = null, dtmInput = null;
+          let typeSel = null, f1Box = null, dtmInput = null, colorBoxes = [];
           if(hasVarietyMeta){
             typeSel = document.createElement("select");
             typeSel.className = "variety-edit-type";
@@ -3631,7 +3770,29 @@ async function renderGrid(sectionKey, containerId){
             dtmInput.placeholder = "Days";
             dtmInput.value = (typeof current === "object" && current) ? (current.dtm || "") : "";
             wrap.appendChild(dtmInput);
+
+            const currentColors = (typeof current === "object" && current && current.colors) ? current.colors : [];
+            const colorRow = document.createElement("span");
+            colorRow.className = "variety-edit-color-row";
+            TOMATO_COLORS.forEach(c => {
+              const label = document.createElement("label");
+              label.className = "variety-color-check";
+              const box = document.createElement("input");
+              box.type = "checkbox";
+              box.value = c;
+              box.checked = currentColors.includes(c);
+              label.appendChild(box);
+              label.appendChild(document.createTextNode(" " + c));
+              colorRow.appendChild(label);
+              colorBoxes.push(box);
+            });
+            wrap.appendChild(colorRow);
           }
+          const confirmBtn = document.createElement("button");
+          confirmBtn.type = "button";
+          confirmBtn.className = "variety-edit-confirm-btn";
+          confirmBtn.textContent = "Confirm changes";
+          wrap.appendChild(confirmBtn);
           hostEl.textContent = "";
           hostEl.appendChild(wrap);
           nameInput.focus();
@@ -3641,19 +3802,24 @@ async function renderGrid(sectionKey, containerId){
             if(done) return;
             done = true;
             const val = nameInput.value.trim();
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false) : null);
+            const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors) : null);
           };
           const cancel = () => {
             if(done) return;
             done = true;
             onCancel();
           };
-          [nameInput, typeSel, f1Box, dtmInput].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, dtmInput, ...colorBoxes].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
             });
             f.addEventListener("click", (ce) => ce.stopPropagation());
+          });
+          confirmBtn.addEventListener("click", (ce) => {
+            ce.stopPropagation();
+            commit();
           });
           wrap.addEventListener("focusout", (e) => {
             if(addBtn && e.relatedTarget === addBtn) return; // addBtn's own click finishes the edit instead
@@ -3753,12 +3919,17 @@ async function renderGrid(sectionKey, containerId){
           // already typed themselves, if this variety's name matches
           // something on that list. No-op for crops without those fields.
           const tryAutofillVarietyMeta = () => {
-            if(!varietyTypeEl && !varietyDtmEl && !varietyF1El) return;
+            if(!varietyTypeEl && !varietyDtmEl && !varietyF1El && !varietyColorEl) return;
             const info = COMMON_TOMATO_VARIETIES[varietyInput.value.trim().toLowerCase()];
             if(!info) return;
             if(varietyTypeEl && !varietyTypeEl.value && info.type) varietyTypeEl.value = info.type;
             if(varietyDtmEl && !varietyDtmEl.value && info.dtm) varietyDtmEl.value = info.dtm;
             if(varietyF1El && !varietyF1El.checked && info.f1) varietyF1El.checked = true;
+            if(varietyColorEl && info.colors && info.colors.length){
+              const boxes = varietyColorEl.querySelectorAll(".variety-color-input");
+              const noneChecked = Array.from(boxes).every(cb => !cb.checked);
+              if(noneChecked) boxes.forEach(cb => { if(info.colors.includes(cb.value)) cb.checked = true; });
+            }
           };
           const addPendingVariety = () => {
             const val = varietyInput.value.trim();
@@ -3773,7 +3944,7 @@ async function renderGrid(sectionKey, containerId){
           varietyInput.addEventListener("keydown", (e) => {
             if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
           });
-          if(varietyTypeEl || varietyDtmEl || varietyF1El){
+          if(varietyTypeEl || varietyDtmEl || varietyF1El || varietyColorEl){
             // Tomatoes: the name field is followed by a Type/F1/DTM group
             // before the variety is done being tagged, so don't commit on
             // blur — that would fire the instant focus moves into those
@@ -3790,6 +3961,62 @@ async function renderGrid(sectionKey, containerId){
             }
           } else {
             varietyInput.addEventListener("blur", addPendingVariety);
+          }
+          // Autocomplete dropdown: as the person types, show any
+          // COMMON_TOMATO_VARIETIES names containing what they've typed
+          // (e.g. "gold" surfaces "Gold Nugget"). Picking one fills in the
+          // name plus whatever Type/F1/Days that variety has on file, and
+          // opens its reference page in a new tab if one is known —
+          // otherwise falls back to the same search the 🌐 icon uses.
+          if(varietySuggestEl && hasVarietyMeta){
+            const closeSuggestions = () => {
+              varietySuggestEl.classList.remove("open");
+              varietySuggestEl.innerHTML = "";
+            };
+            const renderSuggestions = () => {
+              const q = varietyInput.value.trim().toLowerCase();
+              if(!q){ closeSuggestions(); return; }
+              const matches = Object.keys(COMMON_TOMATO_VARIETIES).filter(key => key.includes(q)).slice(0, 6);
+              if(!matches.length){ closeSuggestions(); return; }
+              varietySuggestEl.innerHTML = matches.map(key => {
+                const info = COMMON_TOMATO_VARIETIES[key];
+                const label = info.name || key;
+                const metaBits = [];
+                if(info.type) metaBits.push(VARIETY_TYPE_ABBR[info.type] || info.type);
+                if(info.f1) metaBits.push("F1");
+                if(info.dtm) metaBits.push(`${info.dtm}d`);
+                if(info.colors && info.colors.length) metaBits.push(info.colors.join("/"));
+                return `<div class="variety-suggest-item" data-key="${key}"><span class="vs-name">${label}</span><span class="vs-meta">${metaBits.join(", ")}${info.url ? '<span class="vs-link-hint">🌐</span>' : ""}</span></div>`;
+              }).join("");
+              varietySuggestEl.classList.add("open");
+              varietySuggestEl.querySelectorAll(".variety-suggest-item").forEach(item => {
+                // mousedown+preventDefault (not click) so this fires before
+                // the input would otherwise blur, keeping focus in place.
+                item.addEventListener("mousedown", (e) => {
+                  e.preventDefault();
+                  const info = COMMON_TOMATO_VARIETIES[item.dataset.key];
+                  varietyInput.value = info.name || item.dataset.key;
+                  if(varietyTypeEl) varietyTypeEl.value = info.type || "";
+                  if(varietyDtmEl) varietyDtmEl.value = info.dtm || "";
+                  if(varietyF1El) varietyF1El.checked = !!info.f1;
+                  if(varietyColorEl){
+                    const infoColors = info.colors || [];
+                    varietyColorEl.querySelectorAll(".variety-color-input").forEach(cb => {
+                      cb.checked = infoColors.includes(cb.value);
+                    });
+                  }
+                  closeSuggestions();
+                  if(info.url) window.open(info.url, "_blank", "noopener");
+                  varietyInput.focus();
+                });
+              });
+            };
+            varietyInput.addEventListener("input", renderSuggestions);
+            varietyInput.addEventListener("focus", renderSuggestions);
+            varietyInput.addEventListener("blur", closeSuggestions);
+            varietyInput.addEventListener("keydown", (e) => {
+              if(e.key === "Escape") closeSuggestions();
+            });
           }
         }
 
@@ -4011,7 +4238,9 @@ async function renderGrid(sectionKey, containerId){
         addBtn: card.querySelector(`#sow-add-${p.slug}`),
         varietyTypeEl: card.querySelector(`#sow-variety-type-${p.slug}`),
         varietyF1El: card.querySelector(`#sow-variety-f1-${p.slug}`),
-        varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`)
+        varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`),
+        varietySuggestEl: card.querySelector(`#sow-variety-suggest-${p.slug}`),
+        varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`)
       });
       await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       await renderCombo();
@@ -4119,6 +4348,54 @@ async function renderGrid(sectionKey, containerId){
         notesInput.style.height = Math.min(notesInput.scrollHeight, maxHeight) + "px";
       }
       notesInput.addEventListener("input", autoGrowNotesInput);
+
+      // Finished Seed Packets: quick log of which variety/packet ran out
+      // and when, so it's easy to see what to restock before next season.
+      const seedPacketInput = card.querySelector(`#seedpacket-${p.slug}`);
+      const seedPacketAddBtn = card.querySelector(`#seedpacket-add-${p.slug}`);
+      const seedPacketListEl = card.querySelector(`#seedpacket-list-${p.slug}`);
+      const renderFinishedSeeds = () => {
+        seedPacketListEl.innerHTML = finishedSeeds.map((s, i) => {
+          const locked = isEntryLocked(s.addedAt);
+          return `
+          <span class="seedpacket-entry${locked ? " locked" : ""}">
+            <span class="sp-name">${s.name}</span>
+            <span class="sp-date">${s.date}</span>
+            ${!locked ? `<button type="button" class="sp-remove" data-i="${i}" aria-label="Remove">×</button>` : ""}
+          </span>`;
+        }).join("");
+        seedPacketListEl.querySelectorAll(".sp-remove").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const i = Number(btn.dataset.i);
+            const removed = finishedSeeds[i];
+            requestGenericDelete(`Remove "${removed.name}" from finished packets?`, async () => {
+              finishedSeeds.splice(i, 1);
+              renderFinishedSeeds();
+              await setFinishedSeeds(p.slug, finishedSeeds);
+              showUndoToast(`"${removed.name}" restored.`, async () => {
+                finishedSeeds.splice(i, 0, removed);
+                renderFinishedSeeds();
+                await setFinishedSeeds(p.slug, finishedSeeds);
+              });
+            });
+          });
+        });
+      };
+      renderFinishedSeeds();
+      async function addFinishedSeed(){
+        const val = seedPacketInput.value.trim();
+        if(!val) return;
+        const now = new Date();
+        finishedSeeds.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, name: val, addedAt: Date.now() });
+        seedPacketInput.value = "";
+        renderFinishedSeeds();
+        await setFinishedSeeds(p.slug, finishedSeeds);
+      }
+      seedPacketInput.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){ e.preventDefault(); addFinishedSeed(); }
+      });
+      if(seedPacketAddBtn) seedPacketAddBtn.addEventListener("click", addFinishedSeed);
     }
   }
 }
