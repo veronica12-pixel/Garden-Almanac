@@ -698,20 +698,28 @@
   .variety-chip.locked{ cursor:default; opacity:.7; }
   .variety-chip:not(.locked):hover{ background:rgba(58,92,58,0.12); }
   .variety-edit-input{
-    font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); background:#fff;
-    border:1px solid var(--evergreen-2); border-radius:20px; padding:3px 10px; outline:none;
-    width:130px; max-width:40vw;
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); background:#fff;
+    border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 9px; outline:none;
   }
-  .variety-edit-group{ display:inline-flex; flex-wrap:wrap; gap:4px; align-items:center; }
-  .variety-edit-group .variety-edit-input{ width:110px; }
+  /* The chip being edited expands to the full width of its box (instead of
+     staying pinned to its old content-sized width), and the name field
+     takes its own full-width row with the type/F1/days fields wrapping
+     onto a second row below — so the whole variety name is visible and
+     editable instead of being squeezed into a small pill. */
+  .sow-pending-tag:has(.variety-edit-group),
+  .variety-chip:has(.variety-edit-group){
+    display:flex; width:100%; flex-basis:100%; padding:4px 0;
+  }
+  .variety-edit-group{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; width:100%; }
+  .variety-edit-group .variety-edit-input{ flex:1 1 100%; width:100%; box-sizing:border-box; }
   .variety-edit-type, .variety-edit-dtm{
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); background:#fff;
-    border:1px solid var(--evergreen-2); border-radius:20px; padding:3px 8px; outline:none;
+    border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 8px; outline:none;
   }
-  .variety-edit-type{ width:100px; }
-  .variety-edit-dtm{ width:64px; }
+  .variety-edit-type{ flex:1 1 auto; min-width:100px; }
+  .variety-edit-dtm{ width:70px; flex:0 0 70px; }
   .variety-edit-f1-label{
-    display:inline-flex; align-items:center; gap:3px;
+    display:inline-flex; align-items:center; gap:3px; flex:0 0 auto;
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
   }
   .variety-edit-f1-label input{ margin:0; }
@@ -1781,6 +1789,16 @@ function fmtDate(t){
   if(m2 === t.m) return `${MONTHS[t.m-1]} ${t.d}-${t.d2}`;
   return `${MONTHS[t.m-1]} ${t.d}-${MONTHS[m2-1]} ${t.d2}`;
 }
+/* Same as fmtDate, but for the "Coming Up" ledger's narrow date pill: a
+   same-month range ("Aug 12-14") still fits on one line, but a range that
+   crosses months ("Aug 30-Sep 1") gets a line break between the two dates
+   instead of being squeezed onto a single cramped line. */
+function fmtDateLedger(t){
+  if(t.d2 == null) return `${MONTHS[t.m-1]} ${t.d}`;
+  const m2 = t.m2 || t.m;
+  if(m2 === t.m) return `${MONTHS[t.m-1]} ${t.d}-${t.d2}`;
+  return `${MONTHS[t.m-1]} ${t.d}<br>${MONTHS[m2-1]} ${t.d2}`;
+}
 
 /* A season like "2025-26" runs Aug(2025) through Jul(2026). Given a task's
    month, this returns which calendar year that month actually falls in. */
@@ -2199,6 +2217,38 @@ async function setActualDates(slug, kind, arr){
 function entryDate(d){ return typeof d === "string" ? d : d.date; }
 function entryTemp(d){ return typeof d === "string" ? "" : (d.temp || ""); }
 function entryAddedAt(d){ return typeof d === "string" ? null : (d.addedAt || null); }
+// Tomatoes only: multiple sow entries logged for the exact same date get
+// folded into one entry with all their varieties combined, rather than
+// staying as separate same-day cards — matches how it was actually
+// planted (one seeding session), and lets the days-to-maturity sort
+// (applied at render time) work across that whole day's varieties
+// together instead of just within each separate entry.
+function mergeSameDaySowVarieties(entries){
+  const order = [];
+  const byDate = new Map();
+  entries.forEach(d => {
+    const key = entryDate(d);
+    if(!byDate.has(key)){
+      byDate.set(key, {
+        date: entryDate(d),
+        temp: entryTemp(d),
+        addedAt: entryAddedAt(d),
+        varieties: entryVarieties(d).slice()
+      });
+      order.push(key);
+    } else {
+      const g = byDate.get(key);
+      if(!g.temp) g.temp = entryTemp(d);
+      const at = entryAddedAt(d);
+      if(at && (!g.addedAt || at < g.addedAt)) g.addedAt = at;
+      g.varieties = g.varieties.concat(entryVarieties(d));
+    }
+  });
+  return order.map(key => {
+    const g = byDate.get(key);
+    return { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
+  });
+}
 // Appends an F suffix when saving a temperature, unless one's already there
 // (so re-editing a chip and re-saving doesn't pile up "84FF").
 function withF(raw){
@@ -3540,6 +3590,15 @@ async function renderGrid(sectionKey, containerId){
           return { commit, cancel };
         }
         let dates = await getActualDates(p.slug, kind);
+        if(kind === "sow" && p.slug === "tomatoes"){
+          const merged = mergeSameDaySowVarieties(dates);
+          if(merged.length !== dates.length){
+            dates = merged;
+            await setActualDates(p.slug, kind, dates);
+          } else {
+            dates = merged;
+          }
+        }
         // Past tense since these are actual logged dates (something that
         // already happened), not the planned/imperative action.
         const prefix = kind === "sow" ? "Seeded" : "Transplanted";
@@ -3818,6 +3877,7 @@ async function renderGrid(sectionKey, containerId){
             renderPendingVarieties();
           }
           dates.push(entry);
+          if(kind === "sow" && p.slug === "tomatoes") dates = mergeSameDaySowVarieties(dates);
           dateEl.value = "";
           tempEl.value = "";
           renderDateChips();
@@ -4133,7 +4193,7 @@ function renderLedger(){
     const when = x.diff === 0 ? "Today" : x.diff === 1 ? "Tomorrow" : `in ${x.diff}d`;
     return `
       <div class="ledger-row" data-section="${x.sectionKey}" data-slug="${x.slug}">
-        <div class="ledger-date">${fmtDate(x)}<span class="dow">${DOW[target.getDay()]}</span></div>
+        <div class="ledger-date">${fmtDateLedger(x)}<span class="dow">${DOW[target.getDay()]}</span></div>
         <div class="ledger-icon">${cropIcon(x, x.sectionKey)}</div>
         <div class="ledger-mid">
           <div class="name">${x.name}</div>
