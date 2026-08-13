@@ -41,6 +41,32 @@
     --sage:#8FC1A0;
     --line:#E4D9F0;
     --shadow: 0 1px 2px rgba(90,70,110,0.06), 0 6px 16px rgba(90,70,110,0.07);
+    --topbar-bg: rgba(246,240,226,0.88);
+    --tabbar-bg: rgba(246,240,226,0.92);
+  }
+  /* Night view: overrides the same custom properties everything else in
+     the app already builds on, so most surfaces (cards, inputs, borders,
+     text) pick it up automatically without needing separate dark-mode
+     rules everywhere. The colorful crop/badge/day-type colors are left
+     as-is — they're accent colors, not backgrounds, so they still read
+     fine against a dark page. */
+  body.night-mode{
+    --paper:#1E1B24;
+    --paper-2:#2A2632;
+    --card:#26222E;
+    --ink:#EDE7F5;
+    --ink-soft:#A99BC0;
+    --evergreen:#7FC9A6;
+    --evergreen-2:#6FAF93;
+    --clay:#E7A0BC;
+    --clay-dark:#E39BB9;
+    --gold:#C7ACEB;
+    --sage:#8FC1A0;
+    --line:#3A3446;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.35);
+    --topbar-bg: rgba(30,27,36,0.9);
+    --tabbar-bg: rgba(30,27,36,0.92);
+    color-scheme: dark;
   }
   *{box-sizing:border-box;}
   body.read-only-mode .harvest-add-card,
@@ -78,7 +104,7 @@
   header.topbar{
     position:sticky; top:0; z-index:20;
     padding:calc(env(safe-area-inset-top) + 14px) 16px 12px;
-    background:rgba(246,240,226,0.88);
+    background:var(--topbar-bg);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
   }
@@ -96,6 +122,15 @@
     padding:8px 16px;
   }
   .header-btn-row{display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:6px; flex:none;}
+  /* Icon-only, sitting top-right in the header, vertically centered with
+     the brandmark image on the left via align-self on the flex row. */
+  .night-toggle-btn{
+    display:flex; align-items:center; justify-content:center; align-self:center;
+    width:38px; height:38px; border-radius:50%; flex:none; cursor:pointer;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+  }
+  .night-toggle-btn:hover{ background:var(--paper-2); }
+  .night-toggle-icon{ font-size:18px; line-height:1; }
   .header-btn-row button{text-align:center;}
   .sync-btn{
     flex:none; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
@@ -276,9 +311,14 @@
     padding:4px 2px 2px; cursor:pointer; position:relative;
   }
   .cal-day.empty{background:transparent; cursor:default;}
-  .cal-day.today{border-color:var(--evergreen); background:var(--card);}
-  .cal-day.selected{background:var(--evergreen) !important;}
-  .cal-day.selected .cal-daynum{color:#fff;}
+  /* "Today" and "selected" use a border/ring instead of a solid fill, so
+     the underlying Fruit/Leaf/Root/Flower day-type color (and the task
+     dots) stay visible instead of being covered up — today defaults to
+     selected, so a solid fill there used to hide which kind of day it
+     actually was. */
+  .cal-day.today{border-color:var(--evergreen);}
+  .cal-day.selected{box-shadow:inset 0 0 0 2px var(--evergreen);}
+  .cal-day.selected .cal-daynum{color:var(--ink); font-weight:800;}
   .cal-daynum{font-size:11.5px; font-weight:600; color:var(--ink);}
   .cal-dots{display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:3px;}
   .cal-dot{width:15px; height:15px; border-radius:50%;}
@@ -941,7 +981,7 @@
     will-change:transform;
     width:100%; max-width:480px;
     padding:8px 10px calc(10px + env(safe-area-inset-bottom));
-    background:rgba(246,240,226,0.92); backdrop-filter:blur(12px);
+    background:var(--tabbar-bg); backdrop-filter:blur(12px);
     border-top:1px solid var(--line);
     display:flex; justify-content:space-around; z-index:30;
     overflow-x:auto;
@@ -951,7 +991,15 @@
     background:none; border:none; color:var(--ink-soft); font-family:'Inter',sans-serif;
     font-size:9.5px; font-weight:600; padding:4px 3px; border-radius:12px; flex:none;
   }
-  .tabbtn svg{width:20px; height:20px;}
+  /* Same colorful rounded-badge-with-emoji look used for crop icons
+     throughout the app (see .plant-icon), just sized down for the tab
+     bar — each tab keeps its own theme color as the badge background all
+     the time, not just once active. */
+  .tabbtn-icon{
+    width:32px; height:32px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px; line-height:1;
+  }
   .tabbtn.active{color:var(--evergreen); background:#DCEFE4;}
   .tabbtn.tab-home.active{color:#4F8863; background:#DCEFE4;}
   .tabbtn.tab-veg.active{color:#5A8A2E; background:#E2F0CB;}
@@ -960,7 +1008,6 @@
   .tabbtn.tab-cover.active{color:#A67C2E; background:#F5E6C8;}
   .tabbtn.tab-harvests.active{color:#C17A3E; background:#FBE3D2;}
   .tabbtn.tab-bio.active{color:#7A5AA8; background:#E9DDF7;}
-  .tabbtn.active svg{stroke:currentColor;}
   .tabbtn-2line{line-height:1.2; text-align:center;}
 
   /* ---------- modal ---------- */
@@ -1145,8 +1192,8 @@
     padding:1rem 1.1rem 0; border-top:1px solid var(--bc-line); font-size:11px;
     color:var(--bc-ink-soft); font-family:'IBM Plex Mono', monospace; line-height:1.8;
   }
-  .bc-key-item{ display:inline-flex; align-items:center; gap:5px; margin-right:14px; }
-  .bc-key-dot{ width:7px; height:7px; border-radius:50%; display:inline-block; }
+  .bc-key-item{ display:inline-flex; align-items:center; gap:6px; margin-right:14px; }
+  .bc-key-dot{ width:16px; height:16px; border-radius:50%; display:inline-block; flex:none; }
   .bc-search{
     padding:1rem 1.2rem; border-bottom:1px solid var(--bc-line); background:var(--bc-paper-2);
   }
@@ -1303,6 +1350,9 @@
           </div>
         </div>
       </div>
+      <button type="button" id="nightModeToggle" class="night-toggle-btn" aria-pressed="false" aria-label="Toggle night view">
+        <span class="night-toggle-icon">🌙</span>
+      </button>
     </div>
   </header>
   <div class="read-only-banner">VIEW ONLY — this is a shared, non-editable copy</div>
@@ -1376,13 +1426,11 @@
         <div class="notes-list" id="journalList"></div>
         </div>
         <div id="howBody" class="home-tab-body" style="display:none;">
-        <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden the previous year, then get shifted onto the nearest matching Root / Leaf / Flower / Fruit day on the Biodynamic Calendar for the current year. Fall 2026 dates also carry a small note with the exact biodynamic window they land in — the full calendar (Fruit / Leaf / Root / Flower, month by month) has its own <b>Biodynamic Calendar</b> tab in the bottom nav.</p>
-        <p>Tap any crop card to expand it. Crops on each tab sort themselves automatically by whichever date is coming up soonest — so the next thing you need to do is always near the top. A crop shows an <b>Overdue</b> flag if its planned date has passed with nothing logged yet in Actual sow or Actual transplant.</p>
-        <p>Don't see a crop you grow? Each of the <b>Vegetables</b>, <b>Herbs</b>, <b>Flowers</b>, and <b>Cover Crops</b> tabs has its own <b>+ Add</b> button at the top — give it a name and it gets added as a full card, right alongside the built-in crops, ready for its own variety, dates, and notes. The ✕ next to Season DONE (or Undo, once a season's marked done) removes that crop from the tab for the season, along with its variety, dates, and notes.</p>
-        <p>Log what actually happens in <b>Actual sow</b> and <b>Actual transplant</b> on each plant card. For a sow entry, tag which varieties you seeded that round before tapping <b>+ Add sow entry</b> — the date, temperature, and varieties commit together as one card. Entries stay editable for 24 hours, then lock in place automatically so the record can't drift once you've committed to it. Once you're finished with a crop for the season, tap <b>Season DONE</b> — it swaps the inputs for a quiet read-only summary of what you logged, drops the Overdue flag, and leaves Notes open in case anything else comes up.</p>
-        <p>The colored buttons above hold the rest of this tab's tools: <b>View Full Calendar</b> for a real month grid you can flip through, <b>Compare Seasons Year-Over-Year</b> to line this year's dates up against last year's, <b>Rain Log</b> for real recorded rainfall — genuine measured data from a weather archive, not an estimate — for any date range you pick, and <b>Daily Journal</b> for general garden notes that aren't tied to any one crop. The <b>By Month</b> drop-downs further down break the whole season out month by month.</p>
-        <p>The <b>Harvests</b> tab (bottom nav) keeps a running log of what you actually pick, in separate Fruits and Vegetables sections, plus a <b>Harvest Calendar</b> further down with one box per month — every crop that's come in during that month, fruits and vegetables together, listed right inside it.</p>
-        <p>Everything you enter stays on this device only — there's no cloud sync, so a second device or browser won't show the same data unless you're using the same saved copy of this file in the same place.</p>
+        <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
+        <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
+        <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. For tomatoes, tag each variety's type, F1 status, days-to-maturity, and color as you go — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 24 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
+        <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
+        <p>Your data syncs automatically — no manual backup needed. Tap 🌙 <b>Night View</b> above anytime for a dark theme.</p>
         </div>
       </div>
 
@@ -1565,12 +1613,6 @@
       <h2 class="section-title">Biodynamic Calendar</h2>
       <div class="sub">Fruit, Leaf, Root &amp; Flower days from your printed almanac</div>
       <div class="bc-cal">
-        <div class="bc-header">
-          <div class="bc-eyebrow">Sowing &amp; tending by the moon</div>
-          <h3>Biodynamic planting calendar</h3>
-          <p class="bc-sub">Transcribed from the printed almanac, August 1 – December 31, 2026. Times use the almanac's own notation — "a" for morning, "p" for afternoon/evening.</p>
-          <div class="bc-missing">Pages for Sep 1–15 and Nov 1–15 weren't among the photographs provided, so those windows are omitted below.</div>
-        </div>
         <div class="bc-search">
           <label for="bcSearchDate">Search by date</label>
           <div class="bc-search-row">
@@ -1618,31 +1660,31 @@
 
   <nav class="tabbar">
     <button class="tabbtn tab-home active" data-tab="today">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+      <span class="tabbtn-icon" style="background:#DCEFE4">🏡</span>
       Home
     </button>
     <button class="tabbtn tab-veg" data-tab="vegetables">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-5-1-7-5-7-9a7 7 0 0 1 14 0c0 4-2 8-7 9Z"></path><path d="M12 12V4M12 4c0 0 3-2 5 0"></path></svg>
+      <span class="tabbtn-icon" style="background:#E2F0CB">🥕</span>
       Vegetables
     </button>
     <button class="tabbtn tab-herbs" data-tab="herbs">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 3 8 0 11-3-3-3-8 0-11Z"></path><path d="M12 14v7M12 17c-2-1-4-1-5-3M12 17c2-1 4-1 5-3"></path></svg>
+      <span class="tabbtn-icon" style="background:#D3F1EA">🌿</span>
       Herbs
     </button>
     <button class="tabbtn tab-flowers" data-tab="flowers">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.6"></circle><circle cx="12" cy="5.5" r="3"></circle><circle cx="12" cy="18.5" r="3"></circle><circle cx="5.5" cy="12" r="3"></circle><circle cx="18.5" cy="12" r="3"></circle></svg>
+      <span class="tabbtn-icon" style="background:#FBE0EA">🌸</span>
       Flowers
     </button>
     <button class="tabbtn tab-cover" data-tab="coverCrops">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V10"></path><path d="M12 12c0-3.5-2.5-6-6-6 0 3.5 2.5 6 6 6Z"></path><path d="M12 10c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6Z"></path></svg>
+      <span class="tabbtn-icon" style="background:#F5E6C8">🌱</span>
       <span class="tabbtn-2line">Cover<br>Crop</span>
     </button>
     <button class="tabbtn tab-harvests" data-tab="fruits">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10C8 5 16 5 16 10"></path><path d="M5 10L19 10L17.3 20C17.1 20.6 16.6 21 16 21H8C7.4 21 6.9 20.6 6.7 20L5 10Z"></path><path d="M9 13.5L9.6 20M15 13.5L14.4 20"></path></svg>
+      <span class="tabbtn-icon" style="background:#FBE3D2">🧺</span>
       Harvests
     </button>
     <button class="tabbtn tab-bio" data-tab="biodynamic">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5A8.5 8.5 0 1 1 11.5 4a6.8 6.8 0 0 0 8.5 8.5Z"></path></svg>
+      <span class="tabbtn-icon" style="background:#E9DDF7">🌙</span>
       <span class="tabbtn-2line">Biodynamic<br>Calendar</span>
     </button>
   </nav>
@@ -2928,8 +2970,13 @@ async function renderHarvestChart(){
   }
 
   const monthGroups = buildHarvestByMonth(entries);
+  // Always lead with the current month instead of a fixed Jan-Dec order,
+  // so what's relevant right now is the first box rather than something
+  // you have to scroll/hunt for.
+  const startIdx = new Date().getMonth();
+  const orderedGroups = monthGroups.slice(startIdx).concat(monthGroups.slice(0, startIdx));
 
-  const boxesHTML = monthGroups.map(m => `
+  const boxesHTML = orderedGroups.map(m => `
     <div class="hchart-month-box hm-${m.month}${m.crops.length === 0 ? " empty" : ""}">
       <div class="hchart-month-title">${MONTHS[m.month]}</div>
       ${m.crops.length ? m.crops.map(c => `
@@ -4642,8 +4689,42 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       if(body) body.style.display = "none";
       toggle.classList.remove("open");
     });
-    window.scrollTo(0,0);
+    if(btn.dataset.tab === "biodynamic"){
+      // Opens on whichever month is current instead of resetting to the
+      // very top of the page (which would always show August first).
+      const activeBcBtn = document.querySelector("#tab-biodynamic nav.bc-tabs button.bc-active");
+      scrollBcToCurrentMonth(activeBcBtn ? activeBcBtn.dataset.bctype : "fruit");
+    } else {
+      window.scrollTo(0,0);
+    }
   });
+});
+
+/* ---------------- night view ---------------- */
+async function getNightMode(){
+  try{
+    const r = await window.storage.get("nightMode", false);
+    return r ? r.value === "true" : false;
+  }catch(e){ return false; }
+}
+async function setNightMode(on){
+  try{ await window.storage.set("nightMode", on ? "true" : "false", false); }catch(e){}
+}
+function applyNightMode(on){
+  document.body.classList.toggle("night-mode", on);
+  const btn = document.getElementById("nightModeToggle");
+  if(btn){
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.querySelector(".night-toggle-icon").textContent = on ? "☀️" : "🌙";
+  }
+}
+(async () => {
+  applyNightMode(await getNightMode());
+})();
+document.getElementById("nightModeToggle").addEventListener("click", async () => {
+  const on = !document.body.classList.contains("night-mode");
+  applyNightMode(on);
+  await setNightMode(on);
 });
 
 /* ---------------- PDF recap (black & white, printable) ---------------- */
@@ -5955,6 +6036,7 @@ function renderBiodynamic(type){
     if(!days.length) return;
     const monthEl = document.createElement("div");
     monthEl.className = "bc-month";
+    monthEl.dataset.month = monthName;
     monthEl.innerHTML = `<h4>${monthName}<span class="bc-count">${days.length} day${days.length===1?"":"s"}</span></h4>`;
     const rows = document.createElement("div");
     rows.className = "bc-rows";
@@ -5975,6 +6057,23 @@ function renderBiodynamic(type){
   });
 }
 ["fruit","leaf","root","flower"].forEach(renderBiodynamic);
+// Whichever Fruit/Leaf/Root/Flower list is showing, jumps straight to the
+// current month's section instead of always starting at August — so the
+// biodynamic tab opens on "now" rather than making you scroll down to it
+// as the season moves past August.
+function currentBcMonthName(){
+  const now = new Date();
+  if(now.getFullYear() !== 2026 || now.getMonth() + 1 < 8 || now.getMonth() + 1 > 12) return null;
+  return BC_MONTH_NAMES_2026[now.getMonth() + 1];
+}
+function scrollBcToCurrentMonth(type){
+  const monthName = currentBcMonthName();
+  if(!monthName) return;
+  const container = document.getElementById("bc-list-" + type);
+  if(!container) return;
+  const target = container.querySelector(`.bc-month[data-month="${monthName}"]`);
+  if(target) target.scrollIntoView({ block: "start" });
+}
 
 // Date search: given a single date, checks all four Fruit/Leaf/Root/Flower
 // tables and reports whichever one(s) that date falls under, plus the
@@ -6016,6 +6115,7 @@ document.querySelectorAll("#tab-biodynamic nav.bc-tabs button").forEach(btn => {
     document.querySelectorAll("#tab-biodynamic .bc-panel").forEach(p => p.classList.remove("bc-active"));
     btn.classList.add("bc-active");
     document.getElementById("bc-panel-" + btn.dataset.bctype).classList.add("bc-active");
+    scrollBcToCurrentMonth(btn.dataset.bctype);
   });
 });
 
