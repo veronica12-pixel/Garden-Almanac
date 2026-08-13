@@ -639,17 +639,30 @@
   .sow-variety-dtm-input{ flex:1 1 40%; }
   .sow-variety-type-input:focus, .sow-variety-dtm-input:focus{ border-color:var(--sage); }
   .sow-variety-dtm-input::placeholder{ color:#BBA9CC; }
+  .sow-variety-f1-label{
+    display:flex; align-items:center; gap:4px; flex:0 0 auto;
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); white-space:nowrap;
+  }
+  .sow-variety-f1-label input{ margin:0; }
   .sow-pending-tag .variety-meta-badge, .variety-chip .variety-meta-badge{
     opacity:.85; font-weight:400; margin-left:2px;
   }
-  .sow-variety-pending{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+  /* All typed/logged varieties sit together in a single bordered box rather
+     than as separate floating pills — easier to scan as one list, and for
+     tomatoes the box is kept sorted by days-to-maturity. */
+  .sow-variety-pending, .sow-card-varieties{
+    display:flex; flex-wrap:wrap; align-items:center; gap:2px 0; margin-top:6px;
+    border:1px solid var(--evergreen-2); border-radius:10px;
+    padding:7px 9px; background:var(--paper-2);
+  }
   .sow-pending-tag{
     position:relative; cursor:pointer;
     display:flex; align-items:center; gap:4px;
-    background:var(--evergreen); color:#fff; font-size:11.5px; font-weight:500;
-    border-radius:20px; padding:3px 10px; line-height:1.2;
+    background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
+    border-radius:6px; padding:2px 6px; line-height:1.3;
   }
-  .sow-pending-tag:hover{ filter:brightness(0.97); }
+  .sow-pending-tag:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
+  .sow-pending-tag:hover{ background:rgba(58,92,58,0.12); }
   .sow-add-btn{
     margin-top:8px; width:100%; text-align:center; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
     border-radius:8px; padding:7px; cursor:pointer; border:1px solid var(--evergreen-2);
@@ -677,13 +690,13 @@
     font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700;
     text-transform:uppercase; letter-spacing:.02em; color:var(--evergreen);
   }
-  .sow-card-varieties{ display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }
   .variety-chip{
-    position:relative; background:var(--evergreen); color:#fff; font-size:11.5px; font-weight:500;
-    border-radius:20px; padding:3px 10px; line-height:1.3; cursor:pointer;
+    position:relative; background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
+    border-radius:6px; padding:2px 6px; line-height:1.3; cursor:pointer;
   }
-  .variety-chip.locked{ cursor:default; opacity:.85; }
-  .variety-chip:not(.locked):hover{ filter:brightness(0.97); }
+  .variety-chip:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
+  .variety-chip.locked{ cursor:default; opacity:.7; }
+  .variety-chip:not(.locked):hover{ background:rgba(58,92,58,0.12); }
   .variety-edit-input{
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:20px; padding:3px 10px; outline:none;
@@ -697,6 +710,11 @@
   }
   .variety-edit-type{ width:100px; }
   .variety-edit-dtm{ width:64px; }
+  .variety-edit-f1-label{
+    display:inline-flex; align-items:center; gap:3px;
+    font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
+  }
+  .variety-edit-f1-label input{ margin:0; }
   .date-missing-flash{
     animation: dateMissingFlash 0.9s ease;
     border-color:#D9534F !important;
@@ -1927,34 +1945,34 @@ const SEASONS = {
     {slug:"tomatoes", name:"Tomatoes", shape:"circleTop", color:C.red,
       dates:[[
         {a:"Start seeds", m:8, d:12, m2:8, d2:14},
-        {a:"Start seeds", m:8, d:24},
+        {a:"Start seeds", m:8, d:22, m2:8, d2:24},
         {a:"Transplant", m:9, d:29}
       ]],
       note:"Take cuttings end of Dec (small/cherry only) for emergency use after a freeze."},
     {slug:"peppers", name:"Peppers", shape:"teardrop", color:C.greenMed,
-      dates:[[{a:"Start seeds", m:8, d:5},{a:"Transplant", m:9, d:29}]],
+      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}]],
       note:"Spring round pending 2027 calendar."},
     {slug:"eggplants", name:"Eggplants", shape:"teardrop", color:C.purple,
-      dates:[[{a:"Start seeds", m:8, d:5},{a:"Transplant", m:9, d:29}]],
+      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}]],
       note:"Spring round pending 2027 calendar."},
     {slug:"squash", name:"Squash", shape:"oval", color:C.orange,
       dates:[], note:"Spring-only crop — pending 2027 calendar."},
     {slug:"cucumbers", name:"Cucumbers", shape:"oval", color:C.greenMed,
       dates:[], note:"Spring-only crop — pending 2027 calendar."},
     {slug:"leafygreens", name:"Leafy greens", shape:"leaf", color:C.greenDark,
-      dates:[[{a:"Start seeds", m:8, d:30},{a:"Transplant", m:10, d:15}]]},
+      dates:[[{a:"Start seeds", m:8, d:30, m2:9, d2:1},{a:"Transplant", m:10, d:15, m2:10, d2:16}]]},
     {slug:"broccoli", name:"Broccoli", shape:"cluster", color:C.greenDark,
-      dates:[[{a:"Start seeds", m:8, d:28},{a:"Transplant", m:10, d:22}]]},
+      dates:[[{a:"Start seeds", m:8, d:28, m2:8, d2:29},{a:"Transplant", m:10, d:22}]]},
     {slug:"bushbeans", name:"Bush beans", shape:"oval", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:9, d:29}],[{a:"Start (direct)", m:10, d:7}]],
+      dates:[[{a:"Start (direct)", m:9, d:29}],[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}]],
       note:"Spring round pending 2027 calendar."},
     {slug:"snappeas", name:"Sugar snap peas", shape:"oval", color:C.yellowGreen,
-      dates:[[{a:"Start (direct)", m:10, d:7}],[{a:"Start (direct)", m:10, d:26}]]},
+      dates:[[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}],[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]]},
     {slug:"rattlesnake", name:"Rattlesnake beans", shape:"oval", color:C.greenDark,
-      dates:[[{a:"Start (direct)", m:10, d:26}]],
+      dates:[[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]],
       note:"Spring round pending 2027 calendar."},
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
-      dates:[[{a:"Start (direct)", m:11, d:1}]]},
+      dates:[[{a:"Start (direct)", m:11, d:1, m2:11, d2:2}]]},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
@@ -1964,9 +1982,9 @@ const SEASONS = {
     {slug:"garlic", name:"Garlic", shape:"bulb", color:C.cream,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"onionslips", name:"Onion slips", shape:"bulb", color:C.lavender,
-      dates:[[{a:"Start", m:12, d:4}]]},
+      dates:[[{a:"Start", m:12, d:4, m2:12, d2:5}]]},
     {slug:"strawberries", name:"Strawberries", shape:"circleTop", color:C.red,
-      dates:[[{a:"Transplant", m:10, d:17}]]},
+      dates:[[{a:"Transplant", m:10, d:17, m2:10, d2:18}]]},
     {slug:"muskmelon", name:"Muskmelon", shape:"circle", color:C.orangeLight,
       dates:[], note:"Spring-only crop — pending 2027 calendar."},
     {slug:"watermelon", name:"Watermelon", shape:"circle", color:C.greenDark,
@@ -1982,15 +2000,15 @@ const SEASONS = {
     {slug:"basil", name:"Basil", shape:"leaf", color:C.greenMed,
       dates:[], note:"Spring-only crop — pending 2027 calendar."},
     {slug:"parsley", name:"Parsley", shape:"leaf", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:10, d:24}]]},
+      dates:[[{a:"Start (direct)", m:10, d:24, m2:10, d2:25}]]},
     {slug:"dill", name:"Dill", shape:"leaf", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:10, d:24}]]},
+      dates:[[{a:"Start (direct)", m:10, d:24, m2:10, d2:25}]]},
     {slug:"cilantro", name:"Cilantro", shape:"leaf", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:11, d:1}]]},
+      dates:[[{a:"Start (direct)", m:11, d:1, m2:11, d2:2}]]},
   ],
   flowers: [
     {slug:"nasturtium", name:"Nasturtium", shape:"flower", color:C.orange,
-      dates:[[{a:"Start (indoor)", m:10, d:12},{a:"Start (direct)", m:10, d:31},{a:"Transplant", m:10, d:30}]]},
+      dates:[[{a:"Start (indoor)", m:10, d:12, m2:10, d2:13},{a:"Start (direct)", m:10, d:31},{a:"Transplant", m:10, d:30, m2:10, d2:31}]]},
     {slug:"roselle", name:"Roselle", shape:"flower", color:C.magenta,
       dates:[], note:"Spring-only crop — pending 2027 calendar."},
   ],
@@ -2203,18 +2221,29 @@ function fmtActualEntry(d, fallbackTemp){
 }
 function entryVarieties(d){ return (typeof d === "object" && d && d.varieties) || []; }
 // A logged variety is either a plain string (every crop but tomatoes) or,
-// for tomatoes, an object { name, type, dtm } carrying the growth habit
-// (Indeterminate/Determinate/Semi-determinate) and days-to-maturity typed
-// alongside the variety name. These helpers read either shape.
+// for tomatoes, an object { name, type, dtm, f1 } carrying the growth habit
+// (Indeterminate/Determinate/Semi-determinate, stored abbreviated), the
+// days-to-maturity, and whether it's an F1 hybrid, typed alongside the
+// variety name. These helpers read either shape.
 function varietyName(v){ return (typeof v === "object" && v) ? (v.name || "") : (v || ""); }
 function varietyMetaText(v){
   if(typeof v !== "object" || !v) return "";
   const bits = [];
   if(v.type) bits.push(v.type);
   if(v.dtm) bits.push(`${v.dtm}d`);
+  if(v.f1) bits.push("F1");
   return bits.length ? ` (${bits.join(", ")})` : "";
 }
 function varietyDisplay(v){ return `${varietyName(v)}${varietyMetaText(v)}`; }
+// Tomatoes only: sorts a list of varieties by days-to-maturity, shortest
+// first, so quicker-maturing varieties always list before slower ones.
+// Varieties with no DTM typed in sort to the end. No-op comparator for
+// other crops since they never carry a dtm field.
+function varietyDtmCompare(a, b){
+  const da = (typeof a === "object" && a && a.dtm) ? Number(a.dtm) : Infinity;
+  const db = (typeof b === "object" && b && b.dtm) ? Number(b.dtm) : Infinity;
+  return da - db;
+}
 function sowSummaryLabel(d, fallbackTemp){
   const base = fmtActualEntry(d, fallbackTemp);
   const vs = entryVarieties(d);
@@ -3276,6 +3305,7 @@ async function renderGrid(sectionKey, containerId){
                   <option value="Determinate">Determinate</option>
                   <option value="Semi-determinate">Semi-determinate</option>
                 </select>
+                <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
                 <input id="sow-variety-dtm-${p.slug}" type="number" min="0" class="sow-variety-dtm-input" placeholder="Days to maturity" aria-label="Days to maturity">
               </div>` : ""}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}"></div>
@@ -3372,11 +3402,17 @@ async function renderGrid(sectionKey, containerId){
           return;
         }
         const varietyList = [];
-        sowDates.forEach(d => entryVarieties(d).forEach(v => { const disp = varietyDisplay(v); if(!varietyList.includes(disp)) varietyList.push(disp); }));
+        const varietyItems = [];
+        sowDates.forEach(d => entryVarieties(d).forEach(v => {
+          const disp = varietyDisplay(v);
+          if(!varietyList.includes(disp)){ varietyList.push(disp); varietyItems.push(v); }
+        }));
+        if(p.slug === "tomatoes") varietyItems.sort(varietyDtmCompare);
+        const varietyListSorted = varietyItems.map(varietyDisplay);
         combo.style.display = "block";
         combo.innerHTML = `
           <div class="combo-head">${p.name} — sow to transplant</div>
-          ${varietyList.length ? `<div class="combo-line"><span class="combo-label">Variety</span>${varietyList.join(", ")}</div>` : ""}
+          ${varietyListSorted.length ? `<div class="combo-line"><span class="combo-label">Variety</span>${varietyListSorted.join(", ")}</div>` : ""}
           <div class="combo-line"><span class="combo-label">Sow</span>${sowDates.map(d => fmtActualEntry(d)).join(", ")}</div>
           <div class="combo-line"><span class="combo-label">Transplant</span>${transplantDates.map(d => fmtActualEntry(d)).join(", ")}</div>
         `;
@@ -3391,42 +3427,51 @@ async function renderGrid(sectionKey, containerId){
         const varietyInput = opts.varietyInput;
         const varietyPendingEl = opts.varietyPendingEl;
         const addBtn = opts.addBtn;
-        // Tomatoes-only: growth-habit dropdown and days-to-maturity field
-        // that ride alongside the variety name when present.
+        // Tomatoes-only: growth-habit dropdown, F1 checkbox, and
+        // days-to-maturity field that ride alongside the variety name.
         const varietyTypeEl = opts.varietyTypeEl;
+        const varietyF1El = opts.varietyF1El;
         const varietyDtmEl = opts.varietyDtmEl;
-        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl);
+        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyF1El);
         // Dropdown offers the full word for clarity while picking; once the
         // variety is actually committed (Enter/Add), the type is stored and
         // shown abbreviated instead.
         const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
         const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
-        function composeVariety(name, typeRaw, dtmRaw){
+        function composeVariety(name, typeRaw, dtmRaw, f1Raw){
           if(!hasVarietyMeta) return name;
           const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
           const dtm = (dtmRaw || "").trim();
-          if(!type && !dtm) return name;
+          const f1 = !!f1Raw;
+          if(!type && !dtm && !f1) return name;
           const entry = { name };
           if(type) entry.type = type;
           if(dtm) entry.dtm = dtm;
+          if(f1) entry.f1 = true;
           return entry;
         }
         function buildVarietyEntry(name){
-          return composeVariety(name, varietyTypeEl ? varietyTypeEl.value : "", varietyDtmEl ? varietyDtmEl.value : "");
+          return composeVariety(
+            name,
+            varietyTypeEl ? varietyTypeEl.value : "",
+            varietyDtmEl ? varietyDtmEl.value : "",
+            varietyF1El ? varietyF1El.checked : false
+          );
         }
         function clearVarietyMetaInputs(){
           if(varietyTypeEl) varietyTypeEl.value = "";
           if(varietyDtmEl) varietyDtmEl.value = "";
+          if(varietyF1El) varietyF1El.checked = false;
         }
         // Builds the inline editor shown when a variety chip/tag is tapped
-        // to edit — name field plus, for tomatoes, the type/days fields too
-        // (editable for the same 24h window as everything else, since the
-        // caller only ever opens this on a not-yet-locked chip). Commits on
-        // Enter in any field or on focus leaving the whole group (except
-        // onto the Add/Confirm button itself, which finishes the edit via
-        // its own click handler so it doesn't also start a new entry).
-        // Escape cancels. Returns {commit, cancel} so the caller can also
-        // trigger a commit from elsewhere (the Add/Confirm button).
+        // to edit — name field plus, for tomatoes, the type/F1/days fields
+        // too (editable for the same 24h window as everything else, since
+        // the caller only ever opens this on a not-yet-locked chip).
+        // Commits on Enter in any field or on focus leaving the whole group
+        // (except onto the Add/Confirm button itself, which finishes the
+        // edit via its own click handler so it doesn't also start a new
+        // entry). Escape cancels. Returns {commit, cancel} so the caller
+        // can also trigger a commit from elsewhere (the Add/Confirm button).
         function openVarietyEditor(hostEl, current, onCommit, onCancel){
           const wrap = document.createElement("span");
           wrap.className = "variety-edit-group";
@@ -3435,7 +3480,7 @@ async function renderGrid(sectionKey, containerId){
           nameInput.className = "variety-edit-input";
           nameInput.value = varietyName(current);
           wrap.appendChild(nameInput);
-          let typeSel = null, dtmInput = null;
+          let typeSel = null, f1Box = null, dtmInput = null;
           if(hasVarietyMeta){
             typeSel = document.createElement("select");
             typeSel.className = "variety-edit-type";
@@ -3447,6 +3492,16 @@ async function renderGrid(sectionKey, containerId){
             const currentType = (typeof current === "object" && current) ? (current.type || "") : "";
             typeSel.value = VARIETY_TYPE_FULL[currentType] || currentType || "";
             wrap.appendChild(typeSel);
+
+            const f1Label = document.createElement("label");
+            f1Label.className = "variety-edit-f1-label";
+            f1Box = document.createElement("input");
+            f1Box.type = "checkbox";
+            f1Box.checked = (typeof current === "object" && current) ? !!current.f1 : false;
+            f1Label.appendChild(f1Box);
+            f1Label.appendChild(document.createTextNode(" F1"));
+            wrap.appendChild(f1Label);
+
             dtmInput = document.createElement("input");
             dtmInput.type = "number";
             dtmInput.min = "0";
@@ -3464,14 +3519,14 @@ async function renderGrid(sectionKey, containerId){
             if(done) return;
             done = true;
             const val = nameInput.value.trim();
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "") : null);
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false) : null);
           };
           const cancel = () => {
             if(done) return;
             done = true;
             onCancel();
           };
-          [nameInput, typeSel, dtmInput].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, dtmInput].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
@@ -3503,6 +3558,10 @@ async function renderGrid(sectionKey, containerId){
 
         function renderPendingVarieties(){
           if(!varietyPendingEl) return;
+          // Keep the whole box sorted by days-to-maturity for tomatoes —
+          // sorted in place (not just for display) so the data-vi index
+          // used by the click handlers below always lines up.
+          if(p.slug === "tomatoes") pendingVarieties.sort(varietyDtmCompare);
           varietyPendingEl.innerHTML = pendingVarieties.map((v, vi) =>
             `<span class="sow-pending-tag" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`
           ).join("");
@@ -3564,10 +3623,10 @@ async function renderGrid(sectionKey, containerId){
           varietyInput.addEventListener("keydown", (e) => {
             if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
           });
-          if(varietyTypeEl || varietyDtmEl){
-            // Tomatoes: the name field is followed by a Type/Days-to-maturity
-            // pair before the variety is done being tagged, so don't commit
-            // on blur — that would fire the instant focus moves into those
+          if(varietyTypeEl || varietyDtmEl || varietyF1El){
+            // Tomatoes: the name field is followed by a Type/F1/DTM group
+            // before the variety is done being tagged, so don't commit on
+            // blur — that would fire the instant focus moves into those
             // fields, before they're filled in. Enter from the DTM field
             // (the last stop) adds the fully-tagged variety instead.
             if(varietyDtmEl){
@@ -3586,6 +3645,11 @@ async function renderGrid(sectionKey, containerId){
               const label = fmtActualEntry(d);
               const locked = isPastSeason || isEntryLocked(entryAddedAt(d));
               const vs = entryVarieties(d);
+              // Keep this entry's box sorted by days-to-maturity for
+              // tomatoes — sorted in place so the data-vi index used by
+              // the click handlers below (and by setActualDates on save)
+              // always matches what's on screen.
+              if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
                 <div class="sow-card-head">${prefix} ${label}${locked ? " 🔒" : ""}</div>
@@ -3788,6 +3852,7 @@ async function renderGrid(sectionKey, containerId){
         varietyPendingEl: card.querySelector(`#sow-variety-pending-${p.slug}`),
         addBtn: card.querySelector(`#sow-add-${p.slug}`),
         varietyTypeEl: card.querySelector(`#sow-variety-type-${p.slug}`),
+        varietyF1El: card.querySelector(`#sow-variety-f1-${p.slug}`),
         varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`)
       });
       await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
@@ -3910,6 +3975,28 @@ function daysUntil(m, d, from){
   return Math.round((target - today) / 86400000);
 }
 
+// Same idea as daysUntil, but range-aware: a task can carry an end date
+// (m2/d2) for a multi-day biodynamic window, e.g. Aug 12-14. Once the
+// start day has passed but the window is still open (today falls inside
+// it), this still counts it as current (diff 0) instead of assuming the
+// whole thing is over and rolling it forward to next year — so a range
+// keeps showing in "Coming Up" for every day it actually covers, and only
+// rolls to next year once its last day has passed.
+function daysUntilTask(t, from){
+  if(t.d2 == null) return daysUntil(t.m, t.d, from);
+  const y = from.getFullYear();
+  const m2 = t.m2 || t.m;
+  let start = new Date(y, t.m-1, t.d); start.setHours(0,0,0,0);
+  let end = new Date(y, m2-1, t.d2); end.setHours(0,0,0,0);
+  const today = new Date(from); today.setHours(0,0,0,0);
+  if(end < today){
+    start = new Date(y+1, t.m-1, t.d); start.setHours(0,0,0,0);
+    end = new Date(y+1, m2-1, t.d2); end.setHours(0,0,0,0);
+  }
+  if(today >= start && today <= end) return 0;
+  return Math.round((start - today) / 86400000);
+}
+
 // Nearest upcoming planned date for a plant, across all its waves/tasks.
 // Plants with no dates yet (pending) sort to the end.
 function nextDateOffset(p){
@@ -3917,7 +4004,7 @@ function nextDateOffset(p){
   const now = new Date();
   let min = Infinity;
   p.dates.forEach(wave => wave.forEach(t => {
-    const d = daysUntil(t.m, t.d, now);
+    const d = daysUntilTask(t, now);
     if(d < min) min = d;
   }));
   return min;
@@ -4027,7 +4114,7 @@ function renderLedger(){
     for(const p of DATA_now()[sectionKey]){
       for(const wave of p.dates){
         for(const t of wave){
-          const diff = daysUntil(t.m, t.d, now);
+          const diff = daysUntilTask(t, now);
           all.push({diff, name:p.name, action:t.a, shape:p.shape, color:p.color, m:t.m, d:t.d, m2:t.m2, d2:t.d2, sectionKey, slug:p.slug});
         }
       }
@@ -5535,9 +5622,15 @@ async function getPlantingTasksForOffset(offsetDays){
           const isSow = /^Start/.test(t.a);
           const isTransplant = /^Transplant/.test(t.a);
           if(!isSow && !isTransplant) continue;
-          const planned = plannedDateObj(activeSeason, t);
-          planned.setHours(0,0,0,0);
-          if(planned.getTime() === target.getTime()){
+          // Multi-day windows (m2/d2) are valid for every day they cover per
+          // the biodynamic calendar, not just the first day — so the heads-up
+          // should fire on each day in the range, not only day one.
+          const matches = expandTaskDays(t).some(day => {
+            const d = new Date(day.y, day.m - 1, day.d);
+            d.setHours(0, 0, 0, 0);
+            return d.getTime() === target.getTime();
+          });
+          if(matches){
             const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
             results.push({
               name: p.name,
