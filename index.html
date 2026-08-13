@@ -647,6 +647,16 @@
   .sow-pending-tag .variety-meta-badge, .variety-chip .variety-meta-badge{
     opacity:.85; font-weight:400; margin-left:2px;
   }
+  /* Small globe icon next to each typed-in variety — opens a search for
+     that variety across seed sellers (Baker Creek/Rare Seeds, Johnny's,
+     Reimer Seeds, etc.) in a new tab. Sized for an easy tap without
+     making the surrounding chip feel crowded. */
+  .variety-search-link{
+    display:inline-flex; align-items:center; justify-content:center;
+    margin-left:4px; font-size:11px; text-decoration:none; opacity:.6;
+    line-height:1;
+  }
+  .variety-search-link:hover, .variety-search-link:active{ opacity:1; }
   /* All typed/logged varieties sit together in a single bordered box rather
      than as separate floating pills — easier to scan as one list, and for
      tomatoes the box is kept sorted by days-to-maturity. */
@@ -1867,6 +1877,50 @@ const C = {
   orangeLight:"#F2C6AC", cream:"#EFE2E9", magenta:"#D993C2"
 };
 
+// A small built-in reference list of well-known tomato varieties' growth
+// habit, days-to-maturity, and whether they're an F1 hybrid — sourced from
+// seed-company listings. This is NOT a live internet lookup (the app has
+// no way to search the web on its own); it only covers the varieties
+// below. Keys are lowercased variety names. When a typed-in variety
+// matches one of these, whichever of Type/F1/Days the person left blank
+// gets filled in automatically — anything they already typed is left
+// untouched, and anything not in this list still needs to be typed by hand.
+const COMMON_TOMATO_VARIETIES = {
+  "black strawberry": { type:"Indeterminate", dtm:"60" },
+  "sweet million": { type:"Indeterminate", dtm:"65", f1:true },
+  "principe borghese": { type:"Determinate", dtm:"75" },
+  "sun gold": { type:"Indeterminate", dtm:"57", f1:true },
+  "sungold": { type:"Indeterminate", dtm:"57", f1:true },
+  "sweet 100": { type:"Indeterminate", dtm:"65", f1:true },
+  "sweet 100s": { type:"Indeterminate", dtm:"65", f1:true },
+  "yellow pear": { type:"Indeterminate", dtm:"78" },
+  "juliet": { type:"Indeterminate", dtm:"60", f1:true },
+  "green grape": { type:"Indeterminate", dtm:"70" },
+  "green zebra": { type:"Indeterminate", dtm:"78" },
+  "green zebra cherry": { type:"Indeterminate", dtm:"70" },
+  "black zebra cherry": { type:"Indeterminate", dtm:"70" },
+  "cherokee purple": { type:"Indeterminate", dtm:"80" },
+  "brandywine": { type:"Indeterminate", dtm:"90" },
+  "black krim": { type:"Indeterminate", dtm:"80" },
+  "mortgage lifter": { type:"Indeterminate", dtm:"85" },
+  "amish paste": { type:"Indeterminate", dtm:"85" },
+  "san marzano": { type:"Indeterminate", dtm:"80" },
+  "roma": { type:"Determinate", dtm:"75" },
+  "early girl": { type:"Indeterminate", dtm:"50", f1:true },
+  "better boy": { type:"Indeterminate", dtm:"75", f1:true },
+  "big beef": { type:"Indeterminate", dtm:"73", f1:true },
+  "celebrity": { type:"Determinate", dtm:"70", f1:true },
+  "rutgers": { type:"Determinate", dtm:"75" },
+  "marglobe": { type:"Determinate", dtm:"75" },
+  "beefsteak": { type:"Indeterminate", dtm:"80" },
+  "tigerella": { type:"Indeterminate", dtm:"59" },
+  "alicante": { type:"Indeterminate", dtm:"60" },
+  "campari": { type:"Indeterminate", dtm:"80", f1:true },
+  "fourth of july": { type:"Indeterminate", dtm:"49", f1:true },
+  "pineapple": { type:"Indeterminate", dtm:"85" },
+  "german johnson": { type:"Indeterminate", dtm:"80" },
+  "san diego": { type:"Determinate", dtm:"70" }
+};
 // One friendly little emoji per crop for its card header, matching the
 // style of the home page's icon buttons. Falls back to a section-level
 // emoji for any crop not listed here (mainly custom, user-added crops).
@@ -2285,14 +2339,32 @@ function varietyMetaText(v){
   return bits.length ? ` (${bits.join(", ")})` : "";
 }
 function varietyDisplay(v){ return `${varietyName(v)}${varietyMetaText(v)}`; }
+// Builds a search-engine link for a typed-in variety, so tapping the globe
+// icon next to it opens a search covering seed sellers (Baker Creek/Rare
+// Seeds, Johnny's, Reimer Seeds, etc.) and any other source carrying that
+// variety, rather than guessing at one specific store's product URL.
+function varietySearchUrl(name, cropName){
+  const q = encodeURIComponent(`${name} ${cropName} seeds`.trim());
+  return `https://www.google.com/search?q=${q}`;
+}
 // Tomatoes only: sorts a list of varieties by days-to-maturity, shortest
 // first, so quicker-maturing varieties always list before slower ones.
-// Varieties with no DTM typed in sort to the end. No-op comparator for
-// other crops since they never carry a dtm field.
+// Varieties with no DTM typed in sort to the end. Ties (same DTM, or both
+// missing one) break alphabetically by name, and any still-tied after
+// that break by growth habit (Determinate, then Indeterminate, then
+// Semi-determinate, then anything else). No-op comparator for other crops
+// since they never carry a dtm/type field.
 function varietyDtmCompare(a, b){
   const da = (typeof a === "object" && a && a.dtm) ? Number(a.dtm) : Infinity;
   const db = (typeof b === "object" && b && b.dtm) ? Number(b.dtm) : Infinity;
-  return da - db;
+  if(da !== db) return da - db;
+  const na = varietyName(a).toLowerCase();
+  const nb = varietyName(b).toLowerCase();
+  if(na !== nb) return na < nb ? -1 : 1;
+  const TYPE_ORDER = { "D": 0, "IN": 1, "SD": 2 };
+  const ta = (typeof a === "object" && a && a.type in TYPE_ORDER) ? TYPE_ORDER[a.type] : 3;
+  const tb = (typeof b === "object" && b && b.type in TYPE_ORDER) ? TYPE_ORDER[b.type] : 3;
+  return ta - tb;
 }
 function sowSummaryLabel(d, fallbackTemp){
   const base = fmtActualEntry(d, fallbackTemp);
@@ -3358,7 +3430,7 @@ async function renderGrid(sectionKey, containerId){
                 <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
                 <input id="sow-variety-dtm-${p.slug}" type="number" min="0" class="sow-variety-dtm-input" placeholder="Days to maturity" aria-label="Days to maturity">
               </div>` : ""}
-              <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}"></div>
+              <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
@@ -3621,9 +3693,15 @@ async function renderGrid(sectionKey, containerId){
           // sorted in place (not just for display) so the data-vi index
           // used by the click handlers below always lines up.
           if(p.slug === "tomatoes") pendingVarieties.sort(varietyDtmCompare);
+          // Hide the box entirely when there's nothing pending yet, instead
+          // of showing an empty bordered bar above "+ Add sow entry".
+          varietyPendingEl.style.display = pendingVarieties.length ? "" : "none";
           varietyPendingEl.innerHTML = pendingVarieties.map((v, vi) =>
-            `<span class="sow-pending-tag" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`
+            `<span class="sow-pending-tag" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`
           ).join("");
+          varietyPendingEl.querySelectorAll(".variety-search-link").forEach(a => {
+            a.addEventListener("click", (e) => e.stopPropagation());
+          });
           varietyPendingEl.querySelectorAll(".sow-pending-tag").forEach(tag => {
             tag.addEventListener("click", (e) => {
               e.stopPropagation();
@@ -3670,9 +3748,22 @@ async function renderGrid(sectionKey, containerId){
           });
         }
         if(varietyInput){
+          // Best-effort autofill against the built-in COMMON_TOMATO_VARIETIES
+          // list: fills in whichever of Type/F1/Days the person hasn't
+          // already typed themselves, if this variety's name matches
+          // something on that list. No-op for crops without those fields.
+          const tryAutofillVarietyMeta = () => {
+            if(!varietyTypeEl && !varietyDtmEl && !varietyF1El) return;
+            const info = COMMON_TOMATO_VARIETIES[varietyInput.value.trim().toLowerCase()];
+            if(!info) return;
+            if(varietyTypeEl && !varietyTypeEl.value && info.type) varietyTypeEl.value = info.type;
+            if(varietyDtmEl && !varietyDtmEl.value && info.dtm) varietyDtmEl.value = info.dtm;
+            if(varietyF1El && !varietyF1El.checked && info.f1) varietyF1El.checked = true;
+          };
           const addPendingVariety = () => {
             const val = varietyInput.value.trim();
             if(val){
+              tryAutofillVarietyMeta();
               pendingVarieties.push(buildVarietyEntry(val));
               varietyInput.value = "";
               clearVarietyMetaInputs();
@@ -3686,8 +3777,12 @@ async function renderGrid(sectionKey, containerId){
             // Tomatoes: the name field is followed by a Type/F1/DTM group
             // before the variety is done being tagged, so don't commit on
             // blur — that would fire the instant focus moves into those
-            // fields, before they're filled in. Enter from the DTM field
-            // (the last stop) adds the fully-tagged variety instead.
+            // fields, before they're filled in. Filling in the autofill
+            // here too means the fields are visibly populated as soon as
+            // focus leaves the name field, not just at the final commit.
+            // Enter from the DTM field (the last stop) adds the
+            // fully-tagged variety.
+            varietyInput.addEventListener("blur", tryAutofillVarietyMeta);
             if(varietyDtmEl){
               varietyDtmEl.addEventListener("keydown", (e) => {
                 if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
@@ -3709,7 +3804,7 @@ async function renderGrid(sectionKey, containerId){
               // the click handlers below (and by setActualDates on save)
               // always matches what's on screen.
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
-              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span></span>`).join("")}</div>` : "";
+              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
                 <div class="sow-card-head">${prefix} ${label}${locked ? " 🔒" : ""}</div>
                 ${varietiesLine}
@@ -3725,6 +3820,9 @@ async function renderGrid(sectionKey, containerId){
               return `<span class="date-chip" data-i="${i}">${prefix}:${label}</span>`;
             }).join("");
           }
+          chipsContainer.querySelectorAll(".variety-search-link").forEach(a => {
+            a.addEventListener("click", (e) => e.stopPropagation());
+          });
           if(!isPastSeason){
             const itemSelector = kind === "sow" ? ".sow-card:not(.locked)" : ".date-chip:not(.locked)";
             chipsContainer.querySelectorAll(itemSelector).forEach(item => {
