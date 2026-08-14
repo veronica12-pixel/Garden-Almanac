@@ -689,21 +689,27 @@
   .variety-suggest-item .vs-name{ font-weight:600; }
   .variety-suggest-item .vs-meta{ font-size:11px; color:var(--ink-soft); white-space:nowrap; }
   .variety-suggest-item .vs-link-hint{ font-size:11px; opacity:.6; margin-left:4px; }
-  .sow-variety-meta-row{ display:flex; gap:6px; margin-top:6px; }
+  .sow-variety-meta-row{ display:flex; align-items:center; gap:6px; margin-top:6px; }
   .sow-variety-type-input, .sow-variety-dtm-input{
     box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
     background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
     padding:6px 8px; outline:none;
   }
-  .sow-variety-type-input{ flex:1 1 60%; }
-  .sow-variety-dtm-input{ flex:1 1 40%; }
+  .sow-variety-type-input{ flex:1 1 30%; min-width:0; }
+  .sow-variety-dtm-input{ flex:0 0 42px; width:42px; min-width:0; text-align:center; padding:6px 2px; -moz-appearance:textfield; }
+  .sow-variety-dtm-input::-webkit-outer-spin-button, .sow-variety-dtm-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
   .sow-variety-type-input:focus, .sow-variety-dtm-input:focus{ border-color:var(--sage); }
   .sow-variety-dtm-input::placeholder{ color:#BBA9CC; }
-  .sow-variety-f1-label{
+  .sow-variety-f1-label, .sow-variety-op-label{
     display:flex; align-items:center; gap:4px; flex:0 0 auto;
     font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); white-space:nowrap;
+    height:100%;
   }
-  .sow-variety-f1-label input{ margin:0; }
+  .sow-variety-f1-label input, .sow-variety-op-label input{ margin:0; }
+  /* Non-tomato crops don't get the full type/F1/days/color group, but OP
+     (open-pollinated) still applies to any variety — shown as its own
+     compact row instead of alongside fields that don't apply. */
+  .sow-variety-meta-row-op-only{ margin-top:6px; }
   /* Multi-select color checkboxes (Red/Orange/Yellow/Black/Brown/Green) —
      a tomato variety can be tagged with more than one, e.g. red fruit with
      brown stripes. Shown as a wrapped row of small labeled checkboxes. */
@@ -805,11 +811,11 @@
   }
   .variety-edit-type{ flex:1 1 auto; min-width:100px; }
   .variety-edit-dtm{ width:70px; flex:0 0 70px; }
-  .variety-edit-f1-label{
+  .variety-edit-f1-label, .variety-edit-op-label{
     display:inline-flex; align-items:center; gap:3px; flex:0 0 auto;
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
   }
-  .variety-edit-f1-label input{ margin:0; }
+  .variety-edit-f1-label input, .variety-edit-op-label input{ margin:0; }
   /* Confirm button lives at the bottom of the edit box itself, right under
      the fields, so committing an edit doesn't mean hunting for the
      "+ Add sow entry" button further down the card. */
@@ -1428,7 +1434,7 @@
         <div id="howBody" class="home-tab-body" style="display:none;">
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
-        <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. For tomatoes, tag each variety's type, F1 status, days-to-maturity, and color as you go — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 24 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
+        <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. Every crop lets you tag a variety as F1 or OP (open-pollinated) as you type it in; for tomatoes you can also tag type, days-to-maturity, and color — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 24 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
         <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
         <p>Your data syncs automatically — no manual backup needed. Tap 🌙 <b>Night View</b> above anytime for a dark theme.</p>
         </div>
@@ -2468,6 +2474,7 @@ function varietyMetaText(v){
   if(v.type) bits.push(v.type);
   if(v.dtm) bits.push(`${v.dtm}d`);
   if(v.f1) bits.push("F1");
+  if(v.op) bits.push("OP");
   let out = bits.length ? ` (${bits.join(", ")})` : "";
   if(v.colors && v.colors.length){
     out += v.colors.map(c => `<span class="variety-color-swatch" style="background:${TOMATO_COLOR_HEX[c] || "#ccc"}" title="${c}"></span>`).join("");
@@ -3602,9 +3609,14 @@ async function renderGrid(sectionKey, containerId){
                   <option value="Semi-determinate">Semi-determinate</option>
                 </select>
                 <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
-                <input id="sow-variety-dtm-${p.slug}" type="number" min="0" class="sow-variety-dtm-input" placeholder="Days to maturity" aria-label="Days to maturity">
+                <label class="sow-variety-op-label"><input id="sow-variety-op-${p.slug}" type="checkbox" class="sow-variety-op-input"> OP</label>
+                <input id="sow-variety-dtm-${p.slug}" type="text" inputmode="numeric" pattern="[0-9]*" class="sow-variety-dtm-input" placeholder="Days" aria-label="Days to maturity" title="Days to maturity">
               </div>
-              <div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML()}</div>` : ""}
+              <div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML()}</div>` : `
+              <div class="sow-variety-meta-row sow-variety-meta-row-op-only">
+                <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
+                <label class="sow-variety-op-label"><input id="sow-variety-op-${p.slug}" type="checkbox" class="sow-variety-op-input"> OP</label>
+              </div>`}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
@@ -3730,26 +3742,30 @@ async function renderGrid(sectionKey, containerId){
         // variety name.
         const varietyTypeEl = opts.varietyTypeEl;
         const varietyF1El = opts.varietyF1El;
+        const varietyOpEl = opts.varietyOpEl;
         const varietyDtmEl = opts.varietyDtmEl;
         const varietyColorEl = opts.varietyColorEl;
         const varietySuggestEl = opts.varietySuggestEl;
-        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyF1El || varietyColorEl);
+        // Tomatoes-only fields (type/DTM/colors). F1 and OP are separate —
+        // both apply to every crop, not just tomatoes.
+        const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyColorEl);
         // Dropdown offers the full word for clarity while picking; once the
         // variety is actually committed (Enter/Add), the type is stored and
         // shown abbreviated instead.
         const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
         const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
-        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw){
-          if(!hasVarietyMeta) return name;
+        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw, opRaw){
           const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
           const dtm = (dtmRaw || "").trim();
           const f1 = !!f1Raw;
+          const op = !!opRaw;
           const colors = Array.isArray(colorsRaw) ? colorsRaw.filter(Boolean) : [];
-          if(!type && !dtm && !f1 && !colors.length) return name;
+          if(!type && !dtm && !f1 && !op && !colors.length) return name;
           const entry = { name };
           if(type) entry.type = type;
           if(dtm) entry.dtm = dtm;
           if(f1) entry.f1 = true;
+          if(op) entry.op = true;
           if(colors.length) entry.colors = colors;
           return entry;
         }
@@ -3759,13 +3775,15 @@ async function renderGrid(sectionKey, containerId){
             varietyTypeEl ? varietyTypeEl.value : "",
             varietyDtmEl ? varietyDtmEl.value : "",
             varietyF1El ? varietyF1El.checked : false,
-            varietyColorEl ? Array.from(varietyColorEl.querySelectorAll(".variety-color-input:checked")).map(cb => cb.value) : []
+            varietyColorEl ? Array.from(varietyColorEl.querySelectorAll(".variety-color-input:checked")).map(cb => cb.value) : [],
+            varietyOpEl ? varietyOpEl.checked : false
           );
         }
         function clearVarietyMetaInputs(){
           if(varietyTypeEl) varietyTypeEl.value = "";
           if(varietyDtmEl) varietyDtmEl.value = "";
           if(varietyF1El) varietyF1El.checked = false;
+          if(varietyOpEl) varietyOpEl.checked = false;
           if(varietyColorEl) varietyColorEl.querySelectorAll(".variety-color-input").forEach(cb => cb.checked = false);
         }
         // Builds the inline editor shown when a variety chip/tag is tapped
@@ -3785,7 +3803,30 @@ async function renderGrid(sectionKey, containerId){
           nameInput.className = "variety-edit-input";
           nameInput.value = varietyName(current);
           wrap.appendChild(nameInput);
-          let typeSel = null, f1Box = null, dtmInput = null, colorBoxes = [];
+          let typeSel = null, f1Box = null, opBox = null, dtmInput = null, colorBoxes = [];
+          // F1 and OP both apply to every crop, not just tomatoes, so
+          // they're built once each and placed depending on whether the
+          // full tomato meta group (type/days/colors) is also present.
+          const buildF1Label = () => {
+            const f1Label = document.createElement("label");
+            f1Label.className = "variety-edit-f1-label";
+            f1Box = document.createElement("input");
+            f1Box.type = "checkbox";
+            f1Box.checked = (typeof current === "object" && current) ? !!current.f1 : false;
+            f1Label.appendChild(f1Box);
+            f1Label.appendChild(document.createTextNode(" F1"));
+            return f1Label;
+          };
+          const buildOpLabel = () => {
+            const opLabel = document.createElement("label");
+            opLabel.className = "variety-edit-op-label";
+            opBox = document.createElement("input");
+            opBox.type = "checkbox";
+            opBox.checked = (typeof current === "object" && current) ? !!current.op : false;
+            opLabel.appendChild(opBox);
+            opLabel.appendChild(document.createTextNode(" OP"));
+            return opLabel;
+          };
           if(hasVarietyMeta){
             typeSel = document.createElement("select");
             typeSel.className = "variety-edit-type";
@@ -3798,14 +3839,9 @@ async function renderGrid(sectionKey, containerId){
             typeSel.value = VARIETY_TYPE_FULL[currentType] || currentType || "";
             wrap.appendChild(typeSel);
 
-            const f1Label = document.createElement("label");
-            f1Label.className = "variety-edit-f1-label";
-            f1Box = document.createElement("input");
-            f1Box.type = "checkbox";
-            f1Box.checked = (typeof current === "object" && current) ? !!current.f1 : false;
-            f1Label.appendChild(f1Box);
-            f1Label.appendChild(document.createTextNode(" F1"));
+            const f1Label = buildF1Label();
             wrap.appendChild(f1Label);
+            wrap.appendChild(buildOpLabel());
 
             dtmInput = document.createElement("input");
             dtmInput.type = "number";
@@ -3831,6 +3867,9 @@ async function renderGrid(sectionKey, containerId){
               colorBoxes.push(box);
             });
             wrap.appendChild(colorRow);
+          } else {
+            if(varietyF1El) wrap.appendChild(buildF1Label());
+            if(varietyOpEl) wrap.appendChild(buildOpLabel());
           }
           const confirmBtn = document.createElement("button");
           confirmBtn.type = "button";
@@ -3847,14 +3886,14 @@ async function renderGrid(sectionKey, containerId){
             done = true;
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors) : null);
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false) : null);
           };
           const cancel = () => {
             if(done) return;
             done = true;
             onCancel();
           };
-          [nameInput, typeSel, f1Box, dtmInput, ...colorBoxes].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, opBox, dtmInput, ...colorBoxes].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
@@ -3961,8 +4000,11 @@ async function renderGrid(sectionKey, containerId){
           // Best-effort autofill against the built-in COMMON_TOMATO_VARIETIES
           // list: fills in whichever of Type/F1/Days the person hasn't
           // already typed themselves, if this variety's name matches
-          // something on that list. No-op for crops without those fields.
+          // something on that list. Tomatoes only — this reference list is
+          // tomato-specific, so it shouldn't fire for other crops just
+          // because they now also have an F1/OP checkbox.
           const tryAutofillVarietyMeta = () => {
+            if(p.slug !== "tomatoes") return;
             if(!varietyTypeEl && !varietyDtmEl && !varietyF1El && !varietyColorEl) return;
             const info = COMMON_TOMATO_VARIETIES[varietyInput.value.trim().toLowerCase()];
             if(!info) return;
@@ -3988,18 +4030,23 @@ async function renderGrid(sectionKey, containerId){
           varietyInput.addEventListener("keydown", (e) => {
             if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
           });
-          if(varietyTypeEl || varietyDtmEl || varietyF1El || varietyColorEl){
-            // Tomatoes: the name field is followed by a Type/F1/DTM group
+          if(varietyTypeEl || varietyDtmEl || varietyF1El || varietyColorEl || varietyOpEl){
+            // Tomatoes: the name field is followed by a Type/F1/OP/DTM group
             // before the variety is done being tagged, so don't commit on
             // blur — that would fire the instant focus moves into those
             // fields, before they're filled in. Filling in the autofill
             // here too means the fields are visibly populated as soon as
             // focus leaves the name field, not just at the final commit.
-            // Enter from the DTM field (the last stop) adds the
-            // fully-tagged variety.
+            // Enter from the DTM field (or, for non-tomato crops, the OP
+            // checkbox — the last stop either way) adds the tagged variety.
             varietyInput.addEventListener("blur", tryAutofillVarietyMeta);
             if(varietyDtmEl){
               varietyDtmEl.addEventListener("keydown", (e) => {
+                if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
+              });
+            }
+            if(varietyOpEl){
+              varietyOpEl.addEventListener("keydown", (e) => {
                 if(e.key === "Enter"){ e.preventDefault(); addPendingVariety(); }
               });
             }
@@ -4282,6 +4329,7 @@ async function renderGrid(sectionKey, containerId){
         addBtn: card.querySelector(`#sow-add-${p.slug}`),
         varietyTypeEl: card.querySelector(`#sow-variety-type-${p.slug}`),
         varietyF1El: card.querySelector(`#sow-variety-f1-${p.slug}`),
+        varietyOpEl: card.querySelector(`#sow-variety-op-${p.slug}`),
         varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`),
         varietySuggestEl: card.querySelector(`#sow-variety-suggest-${p.slug}`),
         varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`)
