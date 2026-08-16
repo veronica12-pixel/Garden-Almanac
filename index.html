@@ -796,7 +796,7 @@
     padding:6px 10px; cursor:pointer;
   }
   .sow-card:hover{ background:var(--paper-2); }
-  .sow-card.locked{ cursor:pointer; border-color:var(--line); }
+  .sow-card.locked{ cursor:default; border-color:var(--line); }
   .sow-card-head{
     font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700;
     text-transform:uppercase; letter-spacing:.02em; color:var(--evergreen);
@@ -806,8 +806,8 @@
     border-radius:6px; padding:2px 6px; line-height:1.3; cursor:pointer;
   }
   .variety-chip:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
-  .variety-chip.locked{ cursor:pointer; opacity:.7; }
-  .variety-chip:hover{ background:rgba(58,92,58,0.12); }
+  .variety-chip.locked{ cursor:default; opacity:.7; }
+  .variety-chip:not(.locked):hover{ background:rgba(58,92,58,0.12); }
   .variety-edit-input{
     font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 9px; outline:none;
@@ -890,9 +890,9 @@
     border:1px solid var(--evergreen-2);
     border-radius:20px; padding:3px 10px; line-height:1.2;
   }
-  .date-chip.locked{padding:4px 10px; cursor:pointer;}
+  .date-chip.locked{padding:4px 10px; cursor:default;}
   .date-chip:not(.locked){cursor:pointer;}
-  .date-chip:hover{background:var(--paper-2);}
+  .date-chip:not(.locked):hover{background:var(--paper-2);}
   .date-chip-menu{
     position:absolute; top:calc(100% + 4px); left:0; z-index:20;
     display:flex; gap:4px; background:#fff; border:1px solid var(--evergreen-2);
@@ -4219,12 +4219,13 @@ async function renderGrid(sectionKey, containerId){
             a.addEventListener("click", (e) => e.stopPropagation());
           });
           if(!isPastSeason){
-            // Locked items (past the 48h edit window) are still clickable —
-            // just with Edit dropped from the menu, so a mistaken entry can
-            // always be deleted even once it's no longer editable. Only the
-            // isPastSeason case above (an archived prior season) blocks
-            // this entirely.
-            const itemSelector = kind === "sow" ? ".sow-card" : ".date-chip";
+            // Locked items (past the 48h edit window) get no menu at all —
+            // neither Edit nor Delete. The global unlock toggle (in the
+            // Save a copy box) is the way back in once it's locked; while
+            // it's on, isEntryLocked() returns false everywhere so these
+            // render without the .locked class and pick up a click handler
+            // normally.
+            const itemSelector = kind === "sow" ? ".sow-card:not(.locked)" : ".date-chip:not(.locked)";
             chipsContainer.querySelectorAll(itemSelector).forEach(item => {
               item.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -4232,15 +4233,11 @@ async function renderGrid(sectionKey, containerId){
                 document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
                 if(already) return; // clicking an already-open item just closes it
                 const i = Number(item.dataset.i);
-                const itemLocked = item.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = itemLocked
-                  ? `<button type="button" class="delete">Delete</button>`
-                  : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
                 item.appendChild(menu);
-                const editBtn = menu.querySelector(".edit");
-                if(editBtn) editBtn.addEventListener("click", async (ev) => {
+                menu.querySelector(".edit").addEventListener("click", async (ev) => {
                   ev.stopPropagation();
                   const entry = dates[i];
                   dateEl.value = entryDate(entry);
