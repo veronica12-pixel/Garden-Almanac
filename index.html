@@ -834,16 +834,26 @@
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
   }
   .variety-edit-f1-label input, .variety-edit-op-label input{ margin:0; }
-  /* Confirm button lives at the bottom of the edit box itself, right under
+  /* Confirm/Delete live at the bottom of the edit box itself, right under
      the fields, so committing an edit doesn't mean hunting for the
      "+ Add sow entry" button further down the card. */
+  .variety-edit-btn-row{ display:flex; gap:6px; width:100%; flex:1 1 100%; margin-top:2px; }
   .variety-edit-confirm-btn{
-    flex:1 1 100%; width:100%; margin-top:2px; text-align:center;
+    flex:1; text-align:center;
     font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
     border-radius:8px; padding:6px; cursor:pointer; border:1px solid var(--evergreen-2);
     background:var(--evergreen); color:#fff;
   }
   .variety-edit-confirm-btn:hover, .variety-edit-confirm-btn:active{ filter:brightness(1.08); }
+  /* Smaller and muted (outline, not solid) on purpose — visually secondary
+     next to Confirm, so it doesn't compete with it for the eye/thumb. */
+  .variety-edit-delete-btn{
+    flex:0 0 auto; text-align:center;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border-radius:8px; padding:6px 12px; cursor:pointer; border:1px solid var(--line);
+    background:transparent; color:var(--clay-dark);
+  }
+  .variety-edit-delete-btn:hover, .variety-edit-delete-btn:active{ background:rgba(199,116,155,0.12); }
   .date-missing-flash{
     animation: dateMissingFlash 0.9s ease;
     border-color:#D9534F !important;
@@ -3839,7 +3849,7 @@ async function renderGrid(sectionKey, containerId){
         // edit via its own click handler so it doesn't also start a new
         // entry). Escape cancels. Returns {commit, cancel} so the caller
         // can also trigger a commit from elsewhere (the Add/Confirm button).
-        function openVarietyEditor(hostEl, current, onCommit, onCancel){
+        function openVarietyEditor(hostEl, current, onCommit, onCancel, onDelete){
           const wrap = document.createElement("span");
           wrap.className = "variety-edit-group";
           const nameInput = document.createElement("input");
@@ -3919,7 +3929,20 @@ async function renderGrid(sectionKey, containerId){
           confirmBtn.type = "button";
           confirmBtn.className = "variety-edit-confirm-btn";
           confirmBtn.textContent = "Confirm changes";
-          wrap.appendChild(confirmBtn);
+          // Delete lives here, inside the edit form, instead of as its own
+          // stray button in the quick tap-menu — a lone Delete button
+          // sitting one tap away was too easy to hit by mistake; this way
+          // deleting still takes deliberately opening Edit first, then a
+          // separate confirm dialog on top of that.
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "variety-edit-delete-btn";
+          deleteBtn.textContent = "Delete";
+          const btnRow = document.createElement("span");
+          btnRow.className = "variety-edit-btn-row";
+          btnRow.appendChild(confirmBtn);
+          btnRow.appendChild(deleteBtn);
+          wrap.appendChild(btnRow);
           hostEl.textContent = "";
           hostEl.appendChild(wrap);
           nameInput.focus();
@@ -3947,6 +3970,15 @@ async function renderGrid(sectionKey, containerId){
           confirmBtn.addEventListener("click", (ce) => {
             ce.stopPropagation();
             commit();
+          });
+          // Deliberately doesn't set done/close the editor itself — the
+          // caller's onDelete opens a confirm dialog, and only actually
+          // deletes (which re-renders and naturally closes this editor)
+          // if the person confirms. Canceling that dialog leaves the
+          // editor exactly as it was, still fully usable.
+          deleteBtn.addEventListener("click", (ce) => {
+            ce.stopPropagation();
+            onDelete();
           });
           wrap.addEventListener("focusout", (e) => {
             if(addBtn && e.relatedTarget === addBtn) return; // addBtn's own click finishes the edit instead
@@ -4004,7 +4036,9 @@ async function renderGrid(sectionKey, containerId){
               const vi = Number(tag.dataset.vi);
               const menu = document.createElement("div");
               menu.className = "date-chip-menu";
-              menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+              // Delete now lives inside the edit form itself (see
+              // openVarietyEditor) rather than as its own button here.
+              menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
               tag.appendChild(menu);
               menu.querySelector(".edit").addEventListener("click", (ev) => {
                 ev.stopPropagation();
@@ -4021,21 +4055,20 @@ async function renderGrid(sectionKey, containerId){
                 }, () => {
                   endVarietyEdit();
                   renderPendingVarieties();
+                }, () => {
+                  const removedVariety = pendingVarieties[vi];
+                  requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, () => {
+                    pendingVarieties.splice(vi, 1);
+                    endVarietyEdit();
+                    renderPendingVarieties();
+                    showUndoToast(`"${varietyName(removedVariety)}" deleted.`, () => {
+                      pendingVarieties.splice(vi, 0, removedVariety);
+                      renderPendingVarieties();
+                    });
+                  });
                 });
                 activeVarietyCommit = editor.commit;
                 if(addBtn) addBtn.textContent = CONFIRM_LABEL;
-              });
-              menu.querySelector(".delete").addEventListener("click", (ev) => {
-                ev.stopPropagation();
-                const removedVariety = pendingVarieties[vi];
-                requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, () => {
-                  pendingVarieties.splice(vi, 1);
-                  renderPendingVarieties();
-                  showUndoToast(`"${varietyName(removedVariety)}" deleted.`, () => {
-                    pendingVarieties.splice(vi, 0, removedVariety);
-                    renderPendingVarieties();
-                  });
-                });
               });
             });
           });
@@ -4256,11 +4289,15 @@ async function renderGrid(sectionKey, containerId){
           }
           // Individual variety chips inside a committed sow entry: click
           // one to rename or delete just that variety, without touching
-          // the rest of the entry (date/temp/other varieties). Locked
-          // chips (past the 48h edit window) still open for Delete only —
-          // same reasoning as the locked sow-card/date-chip case above.
+          // the rest of the entry (date/temp/other varieties). Only wired
+          // up while the chip is still inside its 48h edit window — a
+          // locked chip gets no menu/editor at all; the global unlock
+          // toggle (in the Save a copy box) is the way back in once it's
+          // past that. Delete lives inside the edit form itself instead of
+          // as its own button in this tap-menu, so it's never a single
+          // stray tap away.
           if(kind === "sow" && !isPastSeason){
-            chipsContainer.querySelectorAll(".variety-chip").forEach(chip => {
+            chipsContainer.querySelectorAll(".variety-chip:not(.locked)").forEach(chip => {
               chip.addEventListener("click", (e) => {
                 e.stopPropagation();
                 const already = chip.querySelector(".date-chip-menu");
@@ -4268,15 +4305,11 @@ async function renderGrid(sectionKey, containerId){
                 if(already) return;
                 const i = Number(chip.dataset.i);
                 const vi = Number(chip.dataset.vi);
-                const chipLocked = chip.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = chipLocked
-                  ? `<button type="button" class="delete">Delete</button>`
-                  : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
                 chip.appendChild(menu);
-                const editBtn = menu.querySelector(".edit");
-                if(editBtn) editBtn.addEventListener("click", (ev) => {
+                menu.querySelector(".edit").addEventListener("click", (ev) => {
                   ev.stopPropagation();
                   menu.remove();
                   const current = dates[i].varieties[vi];
@@ -4297,25 +4330,24 @@ async function renderGrid(sectionKey, containerId){
                   }, () => {
                     endVarietyEdit();
                     renderDateChips();
-                  });
-                  activeVarietyCommit = editor.commit;
-                  if(addBtn) addBtn.textContent = CONFIRM_LABEL;
-                });
-                menu.querySelector(".delete").addEventListener("click", (ev) => {
-                  ev.stopPropagation();
-                  const removedVariety = dates[i].varieties[vi];
-                  requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, async () => {
-                    dates[i].varieties.splice(vi, 1);
-                    renderDateChips();
-                    await setActualDates(p.slug, kind, dates);
-                    await renderCombo();
-                    showUndoToast(`"${varietyName(removedVariety)}" deleted.`, async () => {
-                      dates[i].varieties.splice(vi, 0, removedVariety);
+                  }, () => {
+                    const removedVariety = dates[i].varieties[vi];
+                    requestGenericDelete(`Delete the variety "${varietyName(removedVariety)}"?`, async () => {
+                      dates[i].varieties.splice(vi, 1);
+                      endVarietyEdit();
                       renderDateChips();
                       await setActualDates(p.slug, kind, dates);
                       await renderCombo();
+                      showUndoToast(`"${varietyName(removedVariety)}" deleted.`, async () => {
+                        dates[i].varieties.splice(vi, 0, removedVariety);
+                        renderDateChips();
+                        await setActualDates(p.slug, kind, dates);
+                        await renderCombo();
+                      });
                     });
                   });
+                  activeVarietyCommit = editor.commit;
+                  if(addBtn) addBtn.textContent = CONFIRM_LABEL;
                 });
               });
             });
