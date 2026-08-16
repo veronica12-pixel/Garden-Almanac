@@ -132,6 +132,23 @@
   }
   .night-toggle-btn:hover{ background:var(--paper-2); }
   .night-toggle-icon{ font-size:18px; line-height:1; }
+  /* Master unlock icon (padlock) next to the night-mode toggle: reuses the
+     same circular icon-button look. Turns solid clay-colored while active
+     so it's obvious editing is unlocked app-wide, not just a subtle
+     state change easy to forget about. */
+  .global-unlock-btn.unlocked{
+    background:var(--clay); border-color:var(--clay-dark); color:#fff;
+  }
+  .global-unlock-btn.unlocked:hover{ background:var(--clay-dark); }
+  .unlock-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin:14px 0 10px; padding:10px 12px;
+    border:1px solid var(--line); border-radius:10px; background:var(--paper-2);
+  }
+  .unlock-row-title{ font-size:13.5px; font-weight:600; color:var(--ink); }
+  .unlock-row-hint{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4; }
+  body.read-only-mode #globalUnlockToggle{ display:none !important; }
+  body.read-only-mode .unlock-row{ display:none !important; }
   .header-btn-row button{text-align:center;}
   .sync-btn{
     flex:none; font-family:'Inter',sans-serif; font-size:13px; font-weight:600;
@@ -312,13 +329,13 @@
     padding:4px 2px 2px; cursor:pointer; position:relative;
   }
   .cal-day.empty{background:transparent; cursor:default;}
-  /* "Today" and "selected" use a border/ring instead of a solid fill, so
-     the underlying Fruit/Leaf/Root/Flower day-type color (and the task
-     dots) stay visible instead of being covered up — today defaults to
-     selected, so a solid fill there used to hide which kind of day it
-     actually was. */
+  /* "Today" uses a thin border; "selected" uses a thick border and adds no
+     fill of its own — days with a Fruit/Leaf/Root/Flower color still show
+     that color underneath (set inline per-day), so selecting a day never
+     covers up which kind of day it is. Only a day with no biodynamic
+     color falls back to fully transparent here. */
   .cal-day.today{border-color:var(--evergreen);}
-  .cal-day.selected{box-shadow:inset 0 0 0 2px var(--evergreen);}
+  .cal-day.selected{ background:transparent; border:6px solid var(--evergreen); box-shadow:none; }
   .cal-day.selected .cal-daynum{color:var(--ink); font-weight:800;}
   .cal-daynum{font-size:11.5px; font-weight:600; color:var(--ink);}
   .cal-dots{display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:3px;}
@@ -752,7 +769,7 @@
   .sow-pending-tag{
     position:relative; cursor:pointer;
     display:flex; align-items:center; gap:4px;
-    background:transparent; color:var(--evergreen); font-size:15px; font-weight:600;
+    background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
     border-radius:6px; padding:2px 6px; line-height:1.3;
   }
   .sow-pending-tag:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
@@ -779,18 +796,18 @@
     padding:6px 10px; cursor:pointer;
   }
   .sow-card:hover{ background:var(--paper-2); }
-  .sow-card.locked{ cursor:default; border-color:var(--line); }
+  .sow-card.locked{ cursor:pointer; border-color:var(--line); }
   .sow-card-head{
     font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700;
     text-transform:uppercase; letter-spacing:.02em; color:var(--evergreen);
   }
   .variety-chip{
-    position:relative; background:transparent; color:var(--evergreen); font-size:15px; font-weight:600;
+    position:relative; background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
     border-radius:6px; padding:2px 6px; line-height:1.3; cursor:pointer;
   }
   .variety-chip:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
-  .variety-chip.locked{ cursor:default; opacity:.7; }
-  .variety-chip:not(.locked):hover{ background:rgba(58,92,58,0.12); }
+  .variety-chip.locked{ cursor:pointer; opacity:.7; }
+  .variety-chip:hover{ background:rgba(58,92,58,0.12); }
   .variety-edit-input{
     font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 9px; outline:none;
@@ -863,9 +880,9 @@
     border:1px solid var(--evergreen-2);
     border-radius:20px; padding:3px 10px; line-height:1.2;
   }
-  .date-chip.locked{padding:4px 10px;}
+  .date-chip.locked{padding:4px 10px; cursor:pointer;}
   .date-chip:not(.locked){cursor:pointer;}
-  .date-chip:not(.locked):hover{background:var(--paper-2);}
+  .date-chip:hover{background:var(--paper-2);}
   .date-chip-menu{
     position:absolute; top:calc(100% + 4px); left:0; z-index:20;
     display:flex; gap:4px; background:#fff; border:1px solid var(--evergreen-2);
@@ -1143,11 +1160,15 @@
     color:var(--bc-ink-soft); position:relative; display:flex; align-items:center;
     justify-content:center; gap:.4rem;
   }
+  /* Solid fill, no border — matches the actual color used on the calendar
+     day cells themselves (BC_COLORS.bg in the JS), and matches every other
+     Fruit/Leaf/Root/Flower dot in the app (home-page legend, this tab's
+     own footer key). */
   nav.bc-tabs button .bc-dot{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; }
-  nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ background:var(--bc-fruit); }
-  nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ background:var(--bc-leaf); }
-  nav.bc-tabs button[data-bctype="root"] .bc-dot{ background:var(--bc-root); }
-  nav.bc-tabs button[data-bctype="flower"] .bc-dot{ background:var(--bc-flower); }
+  nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ background:#e9beb6; }
+  nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ background:#c3d3ab; }
+  nav.bc-tabs button[data-bctype="root"] .bc-dot{ background:#dcc4a3; }
+  nav.bc-tabs button[data-bctype="flower"] .bc-dot{ background:#edd497; }
   nav.bc-tabs button::after{
     content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:transparent;
   }
@@ -1652,10 +1673,10 @@
         </div>
         <div class="bc-footer">
           <div>
-            <span class="bc-key-item"><span class="bc-key-dot" style="background:#f4dcd6; border:2px solid #a6362c"></span>Fruit</span>
-            <span class="bc-key-item"><span class="bc-key-dot" style="background:#e2e9cd; border:2px solid #4a6b2a"></span>Leaf</span>
-            <span class="bc-key-item"><span class="bc-key-dot" style="background:#ecdcc4; border:2px solid #8a5a2e"></span>Root</span>
-            <span class="bc-key-item"><span class="bc-key-dot" style="background:#f6e6bd; border:2px solid #c08a1f"></span>Flower</span>
+            <span class="bc-key-item"><span class="bc-key-dot" style="background:#e9beb6;"></span>Fruit</span>
+            <span class="bc-key-item"><span class="bc-key-dot" style="background:#c3d3ab;"></span>Leaf</span>
+            <span class="bc-key-item"><span class="bc-key-dot" style="background:#dcc4a3;"></span>Root</span>
+            <span class="bc-key-item"><span class="bc-key-dot" style="background:#edd497;"></span>Flower</span>
           </div>
           <div style="margin-top:.5rem;">Transplanting windows (descending moon, N. hemisphere): Aug 8 10p–Aug 22 5a · Sep 5–Sep 18 1p · Oct 2 9a–Oct 15 9p &amp; Oct 29 4p–Nov 12 · Nov 25 11p–Dec 9 · Dec 23 9a–Jan 5. Grey/unlabeled stretches on the source pages (transitional or void-of-course periods) aren't included as a plant-part day.</div>
         </div>
@@ -1714,10 +1735,10 @@
       <button type="button" id="calNextBtn" class="cal-nav" aria-label="Next month">›</button>
     </div>
     <div class="cal-bio-legend">
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#f4dcd6; border:2px solid #a6362c"></span>Fruit</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#e2e9cd; border:2px solid #4a6b2a"></span>Leaf</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#ecdcc4; border:2px solid #8a5a2e"></span>Root</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#f6e6bd; border:2px solid #c08a1f"></span>Flower</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#e9beb6;"></span>Fruit</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#c3d3ab;"></span>Leaf</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#dcc4a3;"></span>Root</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#edd497;"></span>Flower</span>
       <div class="cal-bio-note">Biodynamic coloring covers August – December 2026 only.</div>
     </div>
     <div class="cal-dow-row">
@@ -1805,6 +1826,15 @@
     <div id="importStatus" class="backup-status"></div>
     <p class="backup-hint" style="margin-top:14px;">Print-friendly, black &amp; white PDF of everything you planted, by season.</p>
     <div id="savePdfList"></div>
+    <div class="unlock-row">
+      <div class="unlock-row-text">
+        <div class="unlock-row-title">Editing lock</div>
+        <div class="unlock-row-hint">Entries lock 48h after you log them. Unlock to edit or delete anything, anywhere in the app.</div>
+      </div>
+      <button type="button" id="globalUnlockToggle" class="night-toggle-btn global-unlock-btn" aria-pressed="false" aria-label="Unlock all locked entries app-wide for editing">
+        <span class="night-toggle-icon">🔒</span>
+      </button>
+    </div>
     <button class="modal-close" id="saveModalClose" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Close</button>
   </div>
 </div>
@@ -2375,7 +2405,14 @@ async function setVarieties(slug, arr){
 // entries, and journal entries: edit/delete controls disappear once an
 // entry is this old, so old records stay as a clean, permanent record.
 const EDIT_LOCK_MS = 48 * 60 * 60 * 1000; // 48 hours
+// Master override toggled from the lock icon in the header: when on, every
+// isEntryLocked() check below returns false app-wide, so any entry can be
+// edited/deleted regardless of age. In-memory only (not persisted to
+// storage) — it resets to off on reload, so it's a deliberate per-session
+// choice rather than something that can be silently left on forever.
+let GLOBAL_UNLOCK = false;
 function isEntryLocked(addedAt){
+  if(GLOBAL_UNLOCK) return false;
   return !!(addedAt && (Date.now() - addedAt) >= EDIT_LOCK_MS);
 }
 function isVarietyLocked(v){
@@ -4140,7 +4177,7 @@ async function renderGrid(sectionKey, containerId){
               const label = fmtActualEntry(d);
               const locked = isPastSeason || isEntryLocked(entryAddedAt(d));
               if(locked){
-                return `<span class="date-chip locked">${prefix}:${label}</span>`;
+                return `<span class="date-chip locked" data-i="${i}">${prefix}:${label}</span>`;
               }
               return `<span class="date-chip" data-i="${i}">${prefix}:${label}</span>`;
             }).join("");
@@ -4149,7 +4186,12 @@ async function renderGrid(sectionKey, containerId){
             a.addEventListener("click", (e) => e.stopPropagation());
           });
           if(!isPastSeason){
-            const itemSelector = kind === "sow" ? ".sow-card:not(.locked)" : ".date-chip:not(.locked)";
+            // Locked items (past the 48h edit window) are still clickable —
+            // just with Edit dropped from the menu, so a mistaken entry can
+            // always be deleted even once it's no longer editable. Only the
+            // isPastSeason case above (an archived prior season) blocks
+            // this entirely.
+            const itemSelector = kind === "sow" ? ".sow-card" : ".date-chip";
             chipsContainer.querySelectorAll(itemSelector).forEach(item => {
               item.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -4157,11 +4199,15 @@ async function renderGrid(sectionKey, containerId){
                 document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
                 if(already) return; // clicking an already-open item just closes it
                 const i = Number(item.dataset.i);
+                const itemLocked = item.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = itemLocked
+                  ? `<button type="button" class="delete">Delete</button>`
+                  : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
                 item.appendChild(menu);
-                menu.querySelector(".edit").addEventListener("click", async (ev) => {
+                const editBtn = menu.querySelector(".edit");
+                if(editBtn) editBtn.addEventListener("click", async (ev) => {
                   ev.stopPropagation();
                   const entry = dates[i];
                   dateEl.value = entryDate(entry);
@@ -4210,9 +4256,11 @@ async function renderGrid(sectionKey, containerId){
           }
           // Individual variety chips inside a committed sow entry: click
           // one to rename or delete just that variety, without touching
-          // the rest of the entry (date/temp/other varieties).
+          // the rest of the entry (date/temp/other varieties). Locked
+          // chips (past the 48h edit window) still open for Delete only —
+          // same reasoning as the locked sow-card/date-chip case above.
           if(kind === "sow" && !isPastSeason){
-            chipsContainer.querySelectorAll(".variety-chip:not(.locked)").forEach(chip => {
+            chipsContainer.querySelectorAll(".variety-chip").forEach(chip => {
               chip.addEventListener("click", (e) => {
                 e.stopPropagation();
                 const already = chip.querySelector(".date-chip-menu");
@@ -4220,11 +4268,15 @@ async function renderGrid(sectionKey, containerId){
                 if(already) return;
                 const i = Number(chip.dataset.i);
                 const vi = Number(chip.dataset.vi);
+                const chipLocked = chip.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = chipLocked
+                  ? `<button type="button" class="delete">Delete</button>`
+                  : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
                 chip.appendChild(menu);
-                menu.querySelector(".edit").addEventListener("click", (ev) => {
+                const editBtn = menu.querySelector(".edit");
+                if(editBtn) editBtn.addEventListener("click", (ev) => {
                   ev.stopPropagation();
                   menu.remove();
                   const current = dates[i].varieties[vi];
@@ -4780,6 +4832,27 @@ document.getElementById("nightModeToggle").addEventListener("click", async () =>
   const on = !document.body.classList.contains("night-mode");
   applyNightMode(on);
   await setNightMode(on);
+});
+
+// Master unlock: overrides every 48h edit lock app-wide (sow/transplant
+// entries, variety chips, notes, harvest log, journal, finished seed
+// packets) so a mistaken entry is never permanently stuck. Lives in the
+// "Save a copy" modal (opened via the © footer). Deliberately not
+// persisted — it's a per-session toggle that resets to locked (🔒) on
+// reload, rather than a setting that could be silently left open.
+function applyGlobalUnlock(on){
+  GLOBAL_UNLOCK = on;
+  const btn = document.getElementById("globalUnlockToggle");
+  if(btn){
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.classList.toggle("unlocked", on);
+    btn.querySelector(".night-toggle-icon").textContent = on ? "🔓" : "🔒";
+    btn.setAttribute("aria-label", on ? "Editing unlocked app-wide — tap to re-lock" : "Unlock all locked entries app-wide for editing");
+  }
+}
+document.getElementById("globalUnlockToggle").addEventListener("click", async () => {
+  applyGlobalUnlock(!GLOBAL_UNLOCK);
+  await renderAll();
 });
 
 /* ---------------- PDF recap (black & white, printable) ---------------- */
@@ -5466,7 +5539,7 @@ function renderCalendar(){
     const isSelected = calSelectedDay === d;
     const tasks = tasksByDay[d] || [];
     const dots = tasks.slice(0, 4).map(t => `<span class="cal-dot" style="background:${t.color}"></span>`).join("");
-    const bioBg = isSelected ? null : bioCellBackground(getDayBioTypes(calYear, calMonth, d));
+    const bioBg = bioCellBackground(getDayBioTypes(calYear, calMonth, d));
     const styleAttr = bioBg ? ` style="background:${bioBg};"` : "";
     html += `<div class="cal-day${isToday ? " today" : ""}${isSelected ? " selected" : ""}" data-day="${d}"${styleAttr}>
       <div class="cal-daynum">${d}</div>
