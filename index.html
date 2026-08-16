@@ -43,6 +43,7 @@
     --shadow: 0 1px 2px rgba(90,70,110,0.06), 0 6px 16px rgba(90,70,110,0.07);
     --topbar-bg: rgba(246,240,226,0.88);
     --tabbar-bg: rgba(246,240,226,0.92);
+    --narrow-field-w: 42px;
   }
   /* Night view: overrides the same custom properties everything else in
      the app already builds on, so most surfaces (cards, inputs, borders,
@@ -696,7 +697,7 @@
     padding:6px 8px; outline:none;
   }
   .sow-variety-type-input{ flex:1 1 30%; min-width:0; }
-  .sow-variety-dtm-input{ flex:0 0 42px; width:42px; min-width:0; text-align:center; padding:6px 2px; -moz-appearance:textfield; }
+  .sow-variety-dtm-input{ flex:0 0 var(--narrow-field-w); width:var(--narrow-field-w); min-width:var(--narrow-field-w); max-width:var(--narrow-field-w); box-sizing:border-box; text-align:center; padding:6px 2px; -moz-appearance:textfield; }
   .sow-variety-dtm-input::-webkit-outer-spin-button, .sow-variety-dtm-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
   .sow-variety-type-input:focus, .sow-variety-dtm-input:focus{ border-color:var(--sage); }
   .sow-variety-dtm-input::placeholder{ color:#BBA9CC; }
@@ -751,7 +752,7 @@
   .sow-pending-tag{
     position:relative; cursor:pointer;
     display:flex; align-items:center; gap:4px;
-    background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
+    background:transparent; color:var(--evergreen); font-size:15px; font-weight:600;
     border-radius:6px; padding:2px 6px; line-height:1.3;
   }
   .sow-pending-tag:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
@@ -784,7 +785,7 @@
     text-transform:uppercase; letter-spacing:.02em; color:var(--evergreen);
   }
   .variety-chip{
-    position:relative; background:transparent; color:var(--evergreen); font-size:11.5px; font-weight:600;
+    position:relative; background:transparent; color:var(--evergreen); font-size:15px; font-weight:600;
     border-radius:6px; padding:2px 6px; line-height:1.3; cursor:pointer;
   }
   .variety-chip:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
@@ -810,7 +811,7 @@
     border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 8px; outline:none;
   }
   .variety-edit-type{ flex:1 1 auto; min-width:100px; }
-  .variety-edit-dtm{ width:70px; flex:0 0 70px; }
+  .variety-edit-dtm{ width:var(--narrow-field-w); flex:0 0 var(--narrow-field-w); }
   .variety-edit-f1-label, .variety-edit-op-label{
     display:inline-flex; align-items:center; gap:3px; flex:0 0 auto;
     font-family:'Inter',sans-serif; font-size:11.5px; color:var(--ink); white-space:nowrap;
@@ -848,7 +849,7 @@
   }
   .actual-field input:focus{border-color:var(--sage);}
   .actual-input-row input.temp-select{
-    width:42px; flex:none; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:13px; font-weight:500;
+    width:var(--narrow-field-w); flex:none; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:13px; font-weight:500;
     color:var(--clay-dark); background:var(--paper-2); border:1px solid var(--line);
     border-radius:8px; padding:6px 2px; outline:none; text-align:center;
   }
@@ -1434,7 +1435,7 @@
         <div id="howBody" class="home-tab-body" style="display:none;">
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
-        <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. Every crop lets you tag a variety as F1 or OP (open-pollinated) as you type it in; for tomatoes you can also tag type, days-to-maturity, and color — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 24 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
+        <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. Every crop lets you tag a variety as F1 or OP (open-pollinated) as you type it in; for tomatoes you can also tag type, days-to-maturity, and color — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 48 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
         <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
         <p>Your data syncs automatically — no manual backup needed. Tap 🌙 <b>Night View</b> above anytime for a dark theme.</p>
         </div>
@@ -2373,7 +2374,7 @@ async function setVarieties(slug, arr){
 // Shared across variety chips, actual sow/transplant dates, harvest log
 // entries, and journal entries: edit/delete controls disappear once an
 // entry is this old, so old records stay as a clean, permanent record.
-const EDIT_LOCK_MS = 24 * 60 * 60 * 1000; // 24 hours
+const EDIT_LOCK_MS = 48 * 60 * 60 * 1000; // 48 hours
 function isEntryLocked(addedAt){
   return !!(addedAt && (Date.now() - addedAt) >= EDIT_LOCK_MS);
 }
@@ -3702,8 +3703,14 @@ async function renderGrid(sectionKey, containerId){
       // one combined summary window instead of leaving them scattered
       // across two separate lists.
       async function renderCombo(){
+        // Disabled: this used to show a "sow to transplant" recap box
+        // (variety list + sow date + transplant date) under the transplant
+        // field whenever both existed. Removed per request — logging a
+        // transplant date should just add that date/chip, with no variety
+        // recap reappearing.
         const combo = card.querySelector(`#combo-summary-${p.slug}`);
-        if(!combo) return;
+        if(combo){ combo.style.display = "none"; combo.innerHTML = ""; }
+        return;
         const sowDates = await getActualDates(p.slug, "sow");
         const transplantDates = await getActualDates(p.slug, "transplant");
         if(!sowDates.length || !transplantDates.length){
