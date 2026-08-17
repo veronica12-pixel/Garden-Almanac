@@ -1397,6 +1397,15 @@
 
   <main>
     <section class="tab-panel active" id="tab-today">
+
+      <h2 class="section-title">Coming Up</h2>
+      <div class="sub">Sowing &amp; transplant dates in the weeks ahead</div>
+      <div class="ledger" id="ledger"></div>
+
+      <h2 class="section-title" style="margin-top:22px;">By Month</h2>
+      <div class="sub">Every planned task, month by month</div>
+      <div id="monthDropdowns"></div>
+
       <div class="legend-card home-tabs-card">
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
@@ -1471,22 +1480,6 @@
         <p>Your data syncs automatically — no manual backup needed. Tap 🌙 <b>Night View</b> above anytime for a dark theme.</p>
         </div>
       </div>
-
-      <div class="search-box">
-        <div class="harvest-add-row">
-          <input type="text" id="search-home" placeholder="Type a crop name, e.g. Tomatoes" autocomplete="off">
-          <button id="search-home-go" type="button" class="pdf-btn" style="flex:none; width:auto; padding:0 16px;">Go</button>
-        </div>
-        <div id="search-home-status" class="backup-status"></div>
-      </div>
-
-      <h2 class="section-title">Coming Up</h2>
-      <div class="sub">Sowing &amp; transplant dates in the weeks ahead</div>
-      <div class="ledger" id="ledger"></div>
-
-      <h2 class="section-title" style="margin-top:22px;">By Month</h2>
-      <div class="sub">Every planned task, month by month</div>
-      <div id="monthDropdowns"></div>
     </section>
 
     <section class="tab-panel" id="tab-vegetables">
@@ -3800,6 +3793,66 @@ async function renderGrid(sectionKey, containerId){
         const varietyDtmEl = opts.varietyDtmEl;
         const varietyColorEl = opts.varietyColorEl;
         const varietySuggestEl = opts.varietySuggestEl;
+        // "Delete this entry" lives here, as a small link that only shows
+        // up once an existing entry is loaded into the form for editing —
+        // instead of a bare Delete button sitting in the tap-menu one
+        // click away from the whole entry (date + temp + every variety in
+        // it). Built once per field-set (sow/transplant) and inserted
+        // right after the date/temp row.
+        const entryDeleteLink = document.createElement("button");
+        entryDeleteLink.type = "button";
+        entryDeleteLink.className = "entry-delete-link";
+        entryDeleteLink.textContent = "Delete this entry";
+        entryDeleteLink.style.display = "none";
+        const dateRow = dateEl.closest(".actual-input-row");
+        if(dateRow) dateRow.insertAdjacentElement("afterend", entryDeleteLink);
+        let editingEntryOriginalIndex = null;
+        let editingRemovedEntry = null;
+        function showEntryDeleteLink(i, entry){
+          editingEntryOriginalIndex = i;
+          editingRemovedEntry = entry;
+          entryDeleteLink.style.display = "";
+        }
+        function hideEntryDeleteLink(){
+          editingEntryOriginalIndex = null;
+          editingRemovedEntry = null;
+          entryDeleteLink.style.display = "none";
+        }
+        entryDeleteLink.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if(editingRemovedEntry === null) return;
+          const removedEntry = editingRemovedEntry;
+          const restoreIndex = editingEntryOriginalIndex;
+          const label = fmtActualEntry(removedEntry);
+          requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : "transplant"} entry (${label})?`, async () => {
+            // The entry being edited was already spliced out of `dates`
+            // when Edit was tapped — so deleting it here just means
+            // discarding the in-progress edit and resetting the form,
+            // nothing left to remove from `dates` itself.
+            dateEl.value = "";
+            tempEl.value = "";
+            if(kind === "sow" && varietyInput){
+              pendingVarieties = [];
+              renderPendingVarieties();
+            }
+            hideEntryDeleteLink();
+            if(addBtn) addBtn.textContent = ADD_LABEL;
+            renderDateChips();
+            await setActualDates(p.slug, kind, dates);
+            await renderCombo();
+            await updateOverdueFlag();
+            await updateLoggedCheck();
+            showUndoToast(`${kind === "sow" ? "Seeded" : "Transplanted"} entry deleted.`, async () => {
+              const insertAt = Math.min(restoreIndex != null ? restoreIndex : dates.length, dates.length);
+              dates.splice(insertAt, 0, removedEntry);
+              renderDateChips();
+              await setActualDates(p.slug, kind, dates);
+              await renderCombo();
+              await updateOverdueFlag();
+              await updateLoggedCheck();
+            });
+          });
+        });
         // Tomatoes-only fields (type/DTM/colors). F1 and OP are separate —
         // both apply to every crop, not just tomatoes.
         const hasVarietyMeta = !!(varietyTypeEl || varietyDtmEl || varietyColorEl);
@@ -4235,7 +4288,10 @@ async function renderGrid(sectionKey, containerId){
                 const i = Number(item.dataset.i);
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                // Delete now lives on the "Delete this entry" link that
+                // appears below the date/temp fields once Edit is open —
+                // not as its own button here.
+                menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
                 item.appendChild(menu);
                 menu.querySelector(".edit").addEventListener("click", async (ev) => {
                   ev.stopPropagation();
@@ -4256,30 +4312,10 @@ async function renderGrid(sectionKey, containerId){
                   // to recover, since they'd only have existed in these
                   // unsaved form fields.
                   dates.splice(i, 1);
+                  showEntryDeleteLink(i, entry);
                   renderDateChips();
                   if(addBtn) addBtn.textContent = CONFIRM_LABEL;
                   if(kind === "sow" && varietyInput) varietyInput.focus(); else tempEl.focus();
-                });
-                menu.querySelector(".delete").addEventListener("click", (ev) => {
-                  ev.stopPropagation();
-                  const removedEntry = dates[i];
-                  const label = fmtActualEntry(removedEntry);
-                  requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : "transplant"} entry (${label})?`, async () => {
-                    dates.splice(i, 1);
-                    renderDateChips();
-                    await setActualDates(p.slug, kind, dates);
-                    await renderCombo();
-                    await updateOverdueFlag();
-                    await updateLoggedCheck();
-                    showUndoToast(`${prefix} entry deleted.`, async () => {
-                      dates.splice(i, 0, removedEntry);
-                      renderDateChips();
-                      await setActualDates(p.slug, kind, dates);
-                      await renderCombo();
-                      await updateOverdueFlag();
-                      await updateLoggedCheck();
-                    });
-                  });
                 });
               });
             });
@@ -4384,6 +4420,7 @@ async function renderGrid(sectionKey, containerId){
           if(kind === "sow" && p.slug === "tomatoes") dates = mergeSameDaySowVarieties(dates);
           dateEl.value = "";
           tempEl.value = "";
+          hideEntryDeleteLink();
           renderDateChips();
           if(addBtn) addBtn.textContent = ADD_LABEL;
           await setActualDates(p.slug, kind, dates);
@@ -4747,6 +4784,7 @@ function renderMonthDropdowns(){
 function goToCrop(){
   const input = document.getElementById("search-home");
   const statusEl = document.getElementById("search-home-status");
+  if(!input || !statusEl) return;
   const q = input.value.trim().toLowerCase();
   if(!q){
     statusEl.textContent = "";
@@ -4765,10 +4803,17 @@ function goToCrop(){
   statusEl.textContent = "";
   goToCropDirect(foundSection, foundPlant.slug);
 }
-document.getElementById("search-home-go").addEventListener("click", goToCrop);
-document.getElementById("search-home").addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){ e.preventDefault(); goToCrop(); }
-});
+// The home-page search box was removed; goToCrop/goToCropDirect stay since
+// goToCropDirect is still used elsewhere (Coming Up / By Month rows). The
+// two listeners below only wire up if that box is ever added back.
+if(document.getElementById("search-home-go")){
+  document.getElementById("search-home-go").addEventListener("click", goToCrop);
+}
+if(document.getElementById("search-home")){
+  document.getElementById("search-home").addEventListener("keydown", (e) => {
+    if(e.key === "Enter"){ e.preventDefault(); goToCrop(); }
+  });
+}
 
 function renderLedger(){
   const now = new Date();
@@ -4825,14 +4870,10 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       if(body) body.style.display = "none";
       toggle.classList.remove("open");
     });
-    if(btn.dataset.tab === "biodynamic"){
-      // Opens on whichever month is current instead of resetting to the
-      // very top of the page (which would always show August first).
-      const activeBcBtn = document.querySelector("#tab-biodynamic nav.bc-tabs button.bc-active");
-      scrollBcToCurrentMonth(activeBcBtn ? activeBcBtn.dataset.bctype : "fruit");
-    } else {
-      window.scrollTo(0,0);
-    }
+    // Always opens at the top of the page — the Biodynamic Calendar tab
+    // used to jump straight to whichever month was current instead, which
+    // looked like the tab had opened partway down the page.
+    window.scrollTo(0,0);
   });
 });
 
@@ -6272,7 +6313,9 @@ document.querySelectorAll("#tab-biodynamic nav.bc-tabs button").forEach(btn => {
     document.querySelectorAll("#tab-biodynamic .bc-panel").forEach(p => p.classList.remove("bc-active"));
     btn.classList.add("bc-active");
     document.getElementById("bc-panel-" + btn.dataset.bctype).classList.add("bc-active");
-    scrollBcToCurrentMonth(btn.dataset.bctype);
+    // Switching between Fruit/Leaf/Root/Flower always starts that list at
+    // its own top now, instead of jumping to whichever month is current.
+    window.scrollTo(0,0);
   });
 });
 
