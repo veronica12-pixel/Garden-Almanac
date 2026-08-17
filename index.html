@@ -3621,7 +3621,6 @@ async function renderGrid(sectionKey, containerId){
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual sow:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${notesFieldHTML}
-          ${seedPacketsFieldHTML}
         `;
       } else {
         editableSectionsHTML = `
@@ -4565,10 +4564,14 @@ async function renderGrid(sectionKey, containerId){
       // and when, so it's easy to see what to restock before next season.
       // Same visual language as the Actual Sow variety boxes: one card per
       // date, that date's packets listed inside it, each one tappable to
-      // rename or delete for 24 hours before it locks.
+      // rename or delete for 24 hours before it locks. Not rendered at all
+      // once a crop's season is marked done (see seedPacketsFieldHTML
+      // above), so every element here is guarded — there's nothing left
+      // to reorder for a season that's already finished.
       const seedPacketInput = card.querySelector(`#seedpacket-${p.slug}`);
       const seedPacketAddBtn = card.querySelector(`#seedpacket-add-${p.slug}`);
       const seedPacketListEl = card.querySelector(`#seedpacket-list-${p.slug}`);
+      if(seedPacketListEl && seedPacketInput){
       const renderFinishedSeeds = () => {
         if(!finishedSeeds.length){ seedPacketListEl.innerHTML = ""; return; }
         const groups = [];
@@ -4659,6 +4662,7 @@ async function renderGrid(sectionKey, containerId){
         if(e.key === "Enter"){ e.preventDefault(); addFinishedSeed(); }
       });
       if(seedPacketAddBtn) seedPacketAddBtn.addEventListener("click", addFinishedSeed);
+      }
     }
   }
 }
