@@ -3611,12 +3611,6 @@ async function renderGrid(sectionKey, containerId){
         editableSectionsHTML = `
           <div class="season-done-banner">
             <span>✓ Season marked done</span>
-            <div class="season-done-actions">
-              <button type="button" class="season-undo-btn" data-slug="${p.slug}">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8L4 12L8 16"></path><path d="M4 12H14.5C17.5 12 20 14.2 20 17c0 2.8-2.5 5-5.5 5H9"></path></svg>
-                Undo
-              </button>
-            </div>
           </div>
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual sow:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
@@ -3711,17 +3705,6 @@ async function renderGrid(sectionKey, containerId){
       }
     }
 
-    if(!isPastSeason && seasonDone){
-      const undoBtn = card.querySelector(".season-undo-btn");
-      undoBtn.addEventListener("click", () => {
-        requestSeasonDoneChange(p.name, false, async () => {
-          await setSeasonDone(p.slug, false);
-          await renderGrid(sectionKey, containerId);
-          reopenCard(containerId, p.slug);
-        });
-      });
-    }
-
     if(!isPastSeason && !seasonDone){
       const doneBtn = card.querySelector(".season-done-btn");
       doneBtn.addEventListener("click", () => {
@@ -3729,6 +3712,15 @@ async function renderGrid(sectionKey, containerId){
           await setSeasonDone(p.slug, true);
           await renderGrid(sectionKey, containerId);
           reopenCard(containerId, p.slug);
+          // Undo lives here now — a toast right after marking done, gone
+          // after a few seconds — instead of a button that used to sit
+          // permanently in the banner for as long as the season stayed
+          // marked done.
+          showUndoToast(`${p.name} season marked done.`, async () => {
+            await setSeasonDone(p.slug, false);
+            await renderGrid(sectionKey, containerId);
+            reopenCard(containerId, p.slug);
+          });
         });
       });
 
