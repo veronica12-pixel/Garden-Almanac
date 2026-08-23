@@ -848,12 +848,18 @@
   .variety-chip.no-germ{ color:#C0392B; text-decoration:line-through; }
   .variety-chip.no-germ .variety-meta-badge{ text-decoration:line-through; }
   .variety-chip.no-germ .variety-search-link{ opacity:.5; text-decoration:none; }
-  .sow-no-germ-label{
-    display:flex; align-items:center; gap:6px; margin-top:8px;
-    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
-    color:#C0392B; cursor:pointer;
+  .sow-pending-tag.no-germ{ color:#C0392B; text-decoration:line-through; }
+  .sow-pending-tag.no-germ .variety-meta-badge{ text-decoration:line-through; }
+  .sow-pending-tag.no-germ .variety-search-link{ opacity:.5; text-decoration:none; }
+  /* "Seeds didn't germinate" checkbox inside the per-variety Rename editor
+     — sits alongside F1/OP, so marking germination is part of editing
+     that one variety and never touches the rest of the entry. */
+  .variety-edit-nogerm-label{
+    display:inline-flex; align-items:center; gap:3px; flex:0 0 auto;
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:600;
+    color:#C0392B; white-space:nowrap; cursor:pointer;
   }
-  .sow-no-germ-label input{ margin:0; cursor:pointer; }
+  .variety-edit-nogerm-label input{ margin:0; cursor:pointer; }
   .variety-edit-input{
     font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 9px; outline:none;
@@ -2378,8 +2384,7 @@ function mergeSameDaySowVarieties(entries){
         date: entryDate(d),
         temp: entryTemp(d),
         addedAt: entryAddedAt(d),
-        varieties: entryVarieties(d).slice(),
-        noGerm: entryNoGerm(d)
+        varieties: entryVarieties(d).slice()
       });
       order.push(key);
     } else {
@@ -2388,14 +2393,11 @@ function mergeSameDaySowVarieties(entries){
       const at = entryAddedAt(d);
       if(at && (!g.addedAt || at < g.addedAt)) g.addedAt = at;
       g.varieties = g.varieties.concat(entryVarieties(d));
-      if(entryNoGerm(d)) g.noGerm = true;
     }
   });
   return order.map(key => {
     const g = byDate.get(key);
-    const out = { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
-    if(g.noGerm) out.noGerm = true;
-    return out;
+    return { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
   });
 }
 // Appends an F suffix when saving a temperature, unless one's already there
@@ -2439,10 +2441,10 @@ function varietyMetaText(v){
   return out;
 }
 function varietyDisplay(v){ return `${varietyName(v)}${varietyMetaText(v)}`; }
-// Whether a whole logged sow entry has been flagged "Seeds didn't
-// germinate" — this is a per-entry flag (not per-variety), set via the
-// checkbox that sits above the "+ Add sow entry" button.
-function entryNoGerm(d){ return (typeof d === "object" && d && d.noGerm) ? true : false; }
+// Whether one specific logged variety has been flagged "didn't germinate"
+// — set per-variety, from the checkbox inside that variety's own Rename
+// editor, so checking it never affects any other variety in the entry.
+function varietyNoGerm(v){ return (typeof v === "object" && v && v.noGerm) ? true : false; }
 // Builds a search-engine link for a typed-in variety, so tapping the globe
 // icon next to it opens a search covering seed sellers (Baker Creek/Rare
 // Seeds, Johnny's, Reimer Seeds, etc.) and any other source carrying that
@@ -3567,7 +3569,6 @@ async function renderGrid(sectionKey, containerId){
                 <label class="sow-variety-op-label"><input id="sow-variety-op-${p.slug}" type="checkbox" class="sow-variety-op-input"> OP</label>
               </div>`}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
-              <label class="sow-no-germ-label" id="sow-no-germ-label-${p.slug}" style="display:none"><input type="checkbox" id="sow-no-germ-${p.slug}"> Seeds didn't germinate</label>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
@@ -3700,13 +3701,6 @@ async function renderGrid(sectionKey, containerId){
         const varietyDtmEl = opts.varietyDtmEl;
         const varietyColorEl = opts.varietyColorEl;
         const varietySuggestEl = opts.varietySuggestEl;
-        // Sow-only: "Seeds didn't germinate" checkbox above the Add button,
-        // flags the whole entry (every variety in it) rather than one at a
-        // time. Only ever shown while editing an existing (unlocked)
-        // entry — never for a brand-new entry being added, since there's
-        // nothing to judge germination on yet.
-        const noGermEl = opts.noGermEl;
-        const noGermLabelEl = opts.noGermLabelEl;
         // "Delete this entry" lives here, as a small link that only shows
         // up once an existing entry is loaded into the form for editing —
         // instead of a bare Delete button sitting in the tap-menu one
@@ -3748,8 +3742,6 @@ async function renderGrid(sectionKey, containerId){
             if(kind === "sow" && varietyInput){
               pendingVarieties = [];
               renderPendingVarieties();
-              if(noGermEl) noGermEl.checked = false;
-              if(noGermLabelEl) noGermLabelEl.style.display = "none";
             }
             hideEntryDeleteLink();
             if(addBtn) addBtn.textContent = ADD_LABEL;
@@ -3777,19 +3769,21 @@ async function renderGrid(sectionKey, containerId){
         // shown abbreviated instead.
         const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
         const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
-        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw, opRaw){
+        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw, opRaw, noGermRaw){
           const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
           const dtm = (dtmRaw || "").trim();
           const f1 = !!f1Raw;
           const op = !!opRaw;
+          const noGerm = !!noGermRaw;
           const colors = Array.isArray(colorsRaw) ? colorsRaw.filter(Boolean) : [];
-          if(!type && !dtm && !f1 && !op && !colors.length) return name;
+          if(!type && !dtm && !f1 && !op && !colors.length && !noGerm) return name;
           const entry = { name };
           if(type) entry.type = type;
           if(dtm) entry.dtm = dtm;
           if(f1) entry.f1 = true;
           if(op) entry.op = true;
           if(colors.length) entry.colors = colors;
+          if(noGerm) entry.noGerm = true;
           return entry;
         }
         function buildVarietyEntry(name){
@@ -3826,7 +3820,7 @@ async function renderGrid(sectionKey, containerId){
           nameInput.className = "variety-edit-input";
           nameInput.value = varietyName(current);
           wrap.appendChild(nameInput);
-          let typeSel = null, f1Box = null, opBox = null, dtmInput = null, colorBoxes = [];
+          let typeSel = null, f1Box = null, opBox = null, dtmInput = null, colorBoxes = [], noGermBox = null;
           // F1 and OP both apply to every crop, not just tomatoes, so
           // they're built once each and placed depending on whether the
           // full tomato meta group (type/days/colors) is also present.
@@ -3849,6 +3843,18 @@ async function renderGrid(sectionKey, containerId){
             opLabel.appendChild(opBox);
             opLabel.appendChild(document.createTextNode(" OP"));
             return opLabel;
+          };
+          // Applies to every crop, and only to this one variety — checking
+          // it here never touches any other variety in the same entry.
+          const buildNoGermLabel = () => {
+            const noGermLabel = document.createElement("label");
+            noGermLabel.className = "variety-edit-nogerm-label";
+            noGermBox = document.createElement("input");
+            noGermBox.type = "checkbox";
+            noGermBox.checked = varietyNoGerm(current);
+            noGermLabel.appendChild(noGermBox);
+            noGermLabel.appendChild(document.createTextNode(" Seeds didn't germinate"));
+            return noGermLabel;
           };
           if(hasVarietyMeta){
             typeSel = document.createElement("select");
@@ -3894,6 +3900,7 @@ async function renderGrid(sectionKey, containerId){
             if(varietyF1El) wrap.appendChild(buildF1Label());
             if(varietyOpEl) wrap.appendChild(buildOpLabel());
           }
+          wrap.appendChild(buildNoGermLabel());
           const confirmBtn = document.createElement("button");
           confirmBtn.type = "button";
           confirmBtn.className = "variety-edit-confirm-btn";
@@ -3922,14 +3929,14 @@ async function renderGrid(sectionKey, containerId){
             done = true;
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false) : null);
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false) : null);
           };
           const cancel = () => {
             if(done) return;
             done = true;
             onCancel();
           };
-          [nameInput, typeSel, f1Box, opBox, dtmInput, ...colorBoxes].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, ...colorBoxes].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
@@ -3991,7 +3998,7 @@ async function renderGrid(sectionKey, containerId){
           // of showing an empty bordered bar above "+ Add sow entry".
           varietyPendingEl.style.display = pendingVarieties.length ? "" : "none";
           varietyPendingEl.innerHTML = pendingVarieties.map((v, vi) =>
-            `<span class="sow-pending-tag" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`
+            `<span class="sow-pending-tag${varietyNoGerm(v) ? " no-germ" : ""}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`
           ).join("");
           varietyPendingEl.querySelectorAll(".variety-search-link").forEach(a => {
             a.addEventListener("click", (e) => e.stopPropagation());
@@ -4168,8 +4175,7 @@ async function renderGrid(sectionKey, containerId){
               // the click handlers below (and by setActualDates on save)
               // always matches what's on screen.
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
-              const noGerm = entryNoGerm(d);
-              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${noGerm ? " no-germ" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
+              const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}<span class="variety-meta-badge">${varietyMetaText(v)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
                 <div class="sow-card-head">${prefix} ${label}${locked ? " 🔒" : ""}</div>
                 ${varietiesLine}
@@ -4218,8 +4224,6 @@ async function renderGrid(sectionKey, containerId){
                   if(kind === "sow" && varietyInput){
                     pendingVarieties = entryVarieties(entry).slice();
                     renderPendingVarieties();
-                    if(noGermEl) noGermEl.checked = entryNoGerm(entry);
-                    if(noGermLabelEl) noGermLabelEl.style.display = "";
                   }
                   // Only remove the entry from the in-memory list (so it
                   // doesn't show twice while its fields are open for
@@ -4334,11 +4338,6 @@ async function renderGrid(sectionKey, containerId){
             entry.varieties = pendingVarieties.slice();
             pendingVarieties = [];
             renderPendingVarieties();
-            if(noGermEl){
-              if(noGermEl.checked) entry.noGerm = true;
-              noGermEl.checked = false;
-              if(noGermLabelEl) noGermLabelEl.style.display = "none";
-            }
           }
           dates.push(entry);
           if(kind === "sow" && p.slug === "tomatoes") dates = mergeSameDaySowVarieties(dates);
@@ -4381,9 +4380,7 @@ async function renderGrid(sectionKey, containerId){
         varietyOpEl: card.querySelector(`#sow-variety-op-${p.slug}`),
         varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`),
         varietySuggestEl: card.querySelector(`#sow-variety-suggest-${p.slug}`),
-        varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`),
-        noGermEl: card.querySelector(`#sow-no-germ-${p.slug}`),
-        noGermLabelEl: card.querySelector(`#sow-no-germ-label-${p.slug}`)
+        varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`)
       });
       await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       await renderCombo();
