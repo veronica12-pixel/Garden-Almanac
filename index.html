@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Odessa Garden</title>
 
 <!-- Prevents the browser (especially iOS's standalone home-screen mode)
@@ -3927,6 +3927,7 @@ async function renderGrid(sectionKey, containerId){
           const commit = () => {
             if(done) return;
             done = true;
+            document.removeEventListener("pointerdown", outsideTapHandler, true);
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
             onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false) : null);
@@ -3934,6 +3935,7 @@ async function renderGrid(sectionKey, containerId){
           const cancel = () => {
             if(done) return;
             done = true;
+            document.removeEventListener("pointerdown", outsideTapHandler, true);
             onCancel();
           };
           [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, ...colorBoxes].filter(Boolean).forEach(f => {
@@ -3956,10 +3958,30 @@ async function renderGrid(sectionKey, containerId){
             ce.stopPropagation();
             onDelete();
           });
-          wrap.addEventListener("focusout", (e) => {
-            if(addBtn && e.relatedTarget === addBtn) return; // addBtn's own click finishes the edit instead
-            if(!wrap.contains(e.relatedTarget)) commit();
-          });
+          // Auto-commit when the person taps anywhere outside this editor —
+          // deliberately NOT wrap's own "focusout" + relatedTarget (what
+          // this used to be). On iOS Safari, tapping a checkbox or a plain
+          // <button> inside this very form blurs the still-focused name
+          // field first, and that focusout's relatedTarget comes back null
+          // instead of pointing at the checkbox/button — so the old check
+          // saw "focus left the form" and called commit() immediately,
+          // closing/re-rendering the whole editor before the tap's own
+          // click handler (checking the box, opening the delete confirm)
+          // ever got to run. Checking the real tap target's position in
+          // the DOM at pointerdown time works the same on touch and mouse.
+          const outsideTapHandler = (e) => {
+            if(done) return;
+            if(addBtn && e.target === addBtn) return; // addBtn's own click finishes the edit instead
+            if(wrap.contains(e.target)) return;
+            // Delete deliberately leaves this editor open underneath its
+            // confirm modal (see the comment above) in case the person
+            // cancels — so a tap on that modal's own Confirm/Cancel
+            // buttons isn't "tapping away" from this editor either.
+            const deleteModal = document.getElementById("genericDeleteModalBackdrop");
+            if(deleteModal && deleteModal.contains(e.target)) return;
+            commit();
+          };
+          document.addEventListener("pointerdown", outsideTapHandler, true);
           return { commit, cancel };
         }
         let dates = await getActualDates(p.slug, kind);
@@ -4515,7 +4537,7 @@ async function renderGrid(sectionKey, containerId){
         seedPacketListEl.innerHTML = `<div class="sow-cards">${groups.map(g => {
           const groupLocked = g.indexes.every(i => isEntryLocked(finishedSeeds[i].addedAt));
           return `<div class="sow-card${groupLocked ? " locked" : ""}">
-            <div class="sow-card-head">${g.date}${groupLocked ? " 🔒" : ""}</div>
+            <div class="sow-card-head">${g.date} Finished seed packets${groupLocked ? " 🔒" : ""}</div>
             <div class="sow-card-varieties">${g.indexes.map(i => {
               const locked = isEntryLocked(finishedSeeds[i].addedAt);
               return `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}">${finishedSeeds[i].name}</span>`;
