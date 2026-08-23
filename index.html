@@ -40,6 +40,8 @@
     --gold:#B99AE0;
     --sage:#8FC1A0;
     --line:#E4D9F0;
+    --seedpacket-bg:#F9E4F0;
+    --seedpacket-border:#E7A0BC;
     --shadow: 0 1px 2px rgba(90,70,110,0.06), 0 6px 16px rgba(90,70,110,0.07);
     --topbar-bg: rgba(246,240,226,0.88);
     --tabbar-bg: rgba(246,240,226,0.92);
@@ -64,6 +66,8 @@
     --gold:#C7ACEB;
     --sage:#8FC1A0;
     --line:#3A3446;
+    --seedpacket-bg:#3A2632;
+    --seedpacket-border:#6E4258;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.35);
     --topbar-bg: rgba(30,27,36,0.9);
     --tabbar-bg: rgba(30,27,36,0.92);
@@ -1031,7 +1035,7 @@
   .seedpacket-input-row{ display:flex; gap:6px; }
   .seedpacket-input-row input{
     flex:1; min-width:0; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--ink);
-    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    background:var(--seedpacket-bg); border:1px solid var(--seedpacket-border); border-radius:8px;
     padding:6px 8px; outline:none;
   }
   .seedpacket-input-row input:focus{ border-color:var(--sage); }
@@ -1043,10 +1047,14 @@
   .seedpacket-add-btn:hover{ filter:brightness(0.97); }
   /* The list itself reuses .sow-card / .sow-card-varieties / .variety-chip
      styling directly — one card per date, with that date's finished
-     packets listed inside it, same visual language as the Actual Sow
-     variety boxes. */
+     packets listed inside it, same layout as the Actual Sow variety boxes
+     but tinted with the same rose shade as the input above it, so the
+     whole Finished Seed Packets field reads as its own section rather
+     than blending into the lavender Actual Sow boxes above it. */
   .seedpacket-list{ margin-top:6px; }
   .seedpacket-list .sow-cards{ margin-top:0; }
+  .seedpacket-list .sow-card{ border-color:var(--seedpacket-border); }
+  .seedpacket-list .sow-card-varieties{ background:var(--seedpacket-bg); border-color:var(--seedpacket-border); }
   /* Only the variety itself is tappable here (to edit/delete) — the date
      header and card background aren't a click target the way a sow entry's
      card is, so it shouldn't hint otherwise. */
