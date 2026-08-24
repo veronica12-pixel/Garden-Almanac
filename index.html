@@ -325,12 +325,35 @@
   .backup-status{
     margin-top:8px; font-size:12px; color:var(--ink-soft); min-height:16px;
   }
-  .compare-list{max-height:50vh; overflow-y:auto; margin:6px 0 4px;}
-  .compare-row{padding:10px 4px; border-bottom:1px solid var(--line);}
-  .compare-row:last-child{border-bottom:none;}
-  .compare-name{font-weight:600; font-size:14px; color:var(--ink); margin-bottom:3px;}
-  .compare-dates{font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
-  .compare-dates b{color:var(--evergreen); font-weight:600;}
+  /* Column layout: crop names down the left (sticky), one column per
+     season across the top (sticky), with both horizontal and vertical
+     scrollbars so wide/tall tables stay usable inside the modal. */
+  .compare-table-wrap{
+    max-height:50vh; overflow:auto; margin:6px 0 4px;
+    border:1px solid var(--line); border-radius:10px;
+  }
+  .compare-table{display:table; border-collapse:collapse; width:100%;}
+  .compare-thead{display:table-header-group;}
+  .compare-tbody{display:table-row-group;}
+  .compare-tr{display:table-row;}
+  .compare-th, .compare-td{
+    display:table-cell; padding:9px 12px; white-space:nowrap;
+    border-bottom:1px solid var(--line); font-size:12.5px; vertical-align:middle;
+  }
+  .compare-th{
+    font-family:'Fraunces', serif; font-weight:600; color:var(--evergreen);
+    background:var(--paper-2); position:sticky; top:0; z-index:1;
+    border-bottom:1px solid var(--evergreen-2);
+  }
+  .compare-td{color:var(--ink-soft);}
+  .compare-crop-col{
+    position:sticky; left:0; z-index:2; background:var(--card);
+    font-weight:600; color:var(--ink); text-align:left;
+    box-shadow:2px 0 4px rgba(90,70,110,0.08);
+    width:92px; max-width:92px; white-space:normal; line-height:1.25;
+  }
+  .compare-th.compare-crop-col{ z-index:3; background:var(--paper-2); }
+  .compare-tr:last-child .compare-td, .compare-tr:last-child .compare-crop-col{border-bottom:none;}
 
   /* ---------- calendar modal ---------- */
   .modal-wide{max-width:480px;}
@@ -1403,8 +1426,8 @@
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
         <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. Every crop lets you tag a variety as F1 or OP (open-pollinated) as you type it in; for tomatoes you can also tag type, days-to-maturity, and color — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 48 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
-        <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
-        <p>Your data syncs automatically — no manual backup needed. Tap 🌙 <b>Night View</b> above anytime for a dark theme.</p>
+        <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. <b>Compare Seasons</b> lays crops down the left and seasons across the top — scroll it both ways — and leaves a cell blank until that crop's planned date actually arrives. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
+        <p>Your data syncs automatically — no manual backup needed.</p>
         </div>
       </div>
 
@@ -1651,7 +1674,7 @@
   <div class="modal">
     <h3>Year-over-Year</h3>
     <p>First planned date per crop, season by season.</p>
-    <div class="compare-list" id="compareList"></div>
+    <div class="compare-table-wrap" id="compareList"></div>
     <button class="modal-close" id="compareModalClose">Close</button>
   </div>
 </div>
@@ -2142,7 +2165,8 @@ const SEASONS = {
       dates:[[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]],
       note:"Spring round pending 2027 calendar."},
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
-      dates:[[{a:"Start (direct)", m:11, d:1, m2:11, d2:2}]]},
+      dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
+      note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
@@ -2174,7 +2198,8 @@ const SEASONS = {
     {slug:"dill", name:"Dill", shape:"leaf", color:C.greenMed,
       dates:[[{a:"Start (direct)", m:10, d:24, m2:10, d2:25}]]},
     {slug:"cilantro", name:"Cilantro", shape:"leaf", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:11, d:1, m2:11, d2:2}]]},
+      dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
+      note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
   ],
   flowers: [
     {slug:"nasturtium", name:"Nasturtium", shape:"flower", color:C.orange,
@@ -5104,9 +5129,10 @@ function renderSavePdfList(){
 // The Year-over-Year modal only ever looks back at seasons that already
 // happened, so it always uses the past tense (via the shared
 // pastTenseAction helper defined earlier, alongside actionLabelForDate).
-function firstDateLabel(plant){
+function firstDateLabel(seasonKey, plant){
   if(!plant || !plant.dates.length) return "—";
   const first = plant.dates[0][0];
+  if(plannedDateObj(seasonKey, first) > new Date()) return "";
   return `${pastTenseAction(first.a)} ${fmtDate(first)}`;
 }
 function renderCompareList(){
@@ -5126,17 +5152,28 @@ function renderCompareList(){
       seenSlugs.add(slug);
       const perSeason = seasonKeys.map(sk => {
         const plant = (SEASONS[sk].data[sectionKey] || []).find(p => p.slug === slug);
-        return { label: SEASONS[sk].label, text: firstDateLabel(plant) };
+        return firstDateLabel(sk, plant);
       });
       const namedPlant = seasonKeys.map(sk => (SEASONS[sk].data[sectionKey] || []).find(p => p.slug === slug)).find(Boolean);
       if(namedPlant) rows.push({ name: namedPlant.name, perSeason });
     });
   });
-  el.innerHTML = rows.map(r => `
-    <div class="compare-row">
-      <div class="compare-name">${r.name}</div>
-      <div class="compare-dates">${r.perSeason.map(s => `<b>${s.label}:</b> ${s.text}`).join(" &nbsp;→&nbsp; ")}</div>
+  const headerCells = seasonKeys.map(sk => `<div class="compare-th">${SEASONS[sk].label}</div>`).join("");
+  const bodyRows = rows.map(r => `
+    <div class="compare-tr">
+      <div class="compare-td compare-crop-col">${r.name}</div>
+      ${r.perSeason.map(text => `<div class="compare-td">${text}</div>`).join("")}
     </div>`).join("");
+  el.innerHTML = `
+    <div class="compare-table">
+      <div class="compare-thead">
+        <div class="compare-tr">
+          <div class="compare-th compare-crop-col">Crop</div>
+          ${headerCells}
+        </div>
+      </div>
+      <div class="compare-tbody">${bodyRows}</div>
+    </div>`;
 }
 // Only one of the 5 top buttons (Almanac / How this works / Compare /
 // View Full Calendar / Rain Log) should ever look "selected" at a time.
