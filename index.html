@@ -1905,6 +1905,7 @@ const _baseStorage = window.storage;
 
 /* ---------------- data ---------------- */
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 /* Formats a task's date, supporting an optional end date (m2/d2) for
@@ -2839,13 +2840,40 @@ async function wireHarvestSection(kind, ids){
     cancelBtn.style.display = "none";
   }
 
+  const openGroups = new Set();
+
   function draw(){
     const sorted = sortLog(log);
     if(sorted.length === 0){
       el.innerHTML = `<div class="harvest-empty">Nothing logged yet — add the first ${emptyLabel} above.</div>`;
       return;
     }
-    el.innerHTML = sorted.map(entry => {
+    // Group entries by calendar month + year (most recent month first) so
+    // a long harvest history collapses into tappable sections instead of
+    // one very long scrolling list.
+    const groups = [];
+    const groupByKey = {};
+    sorted.forEach(entry => {
+      const d = hchartParseDate(entry.date);
+      const key = d ? `${d.getFullYear()}-${d.getMonth()}` : "unknown";
+      if(!groupByKey[key]){
+        const label = d ? `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}` : "Undated";
+        groupByKey[key] = { key, label, entries: [] };
+        groups.push(groupByKey[key]);
+      }
+      groupByKey[key].entries.push(entry);
+    });
+    groups.sort((a, b) => a.key.localeCompare(b.key));
+
+    // Keep whichever entry is mid-edit visible, even if its month group
+    // was previously collapsed.
+    if(editingIndex !== null){
+      const editingEntry = log[editingIndex];
+      const d = editingEntry && hchartParseDate(editingEntry.date);
+      if(d) openGroups.add(`${d.getFullYear()}-${d.getMonth()}`);
+    }
+
+    function entryRowHTML(entry){
       const i = log.indexOf(entry);
       const locked = isEntryLocked(entry.addedAt);
       return `
@@ -2858,7 +2886,32 @@ async function wireHarvestSection(kind, ids){
             <button type="button" class="h-remove" data-i="${i}" aria-label="Remove">×</button>
           `}
         </div>`;
+    }
+
+    el.innerHTML = groups.map((g, gi) => {
+      const bodyId = `${ids.log}-month-${gi}`;
+      const isOpen = openGroups.has(g.key);
+      return `
+        <div class="legend-card month-card harvest-month-card">
+          <button type="button" class="rain-toggle month-toggle${isOpen ? " open" : ""}" data-body="${bodyId}" data-key="${g.key}">
+            <span class="legend-title" style="margin-bottom:0;">${g.label}</span>
+            <span class="rain-toggle-right"><b>${g.entries.length}</b><span class="rain-chevron">▾</span></span>
+          </button>
+          <div id="${bodyId}" style="display:${isOpen ? "block" : "none"}; margin-top:8px;">
+            ${g.entries.map(entryRowHTML).join("")}
+          </div>
+        </div>`;
     }).join("");
+
+    el.querySelectorAll(".month-toggle").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const body = document.getElementById(btn.dataset.body);
+        const isOpen = body.style.display !== "none";
+        body.style.display = isOpen ? "none" : "block";
+        btn.classList.toggle("open", !isOpen);
+        if(isOpen) openGroups.delete(btn.dataset.key); else openGroups.add(btn.dataset.key);
+      });
+    });
 
     function startEdit(i){
       editingIndex = i;
@@ -2962,7 +3015,8 @@ function buildHarvestByMonth(entries){
     const key = entry.fruit.trim().toLowerCase();
     const bucket = months[d.getMonth()];
     if(!bucket[key]) bucket[key] = { name: entry.fruit.trim(), kind: entry.kind, count: 0 };
-    bucket[key].count++;
+    const qty = parseFloat(entry.qty);
+    bucket[key].count += (entry.qty && !isNaN(qty)) ? qty : 1;
   });
   return months.map((bucket, i) => ({
     month: i,
