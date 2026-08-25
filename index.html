@@ -1087,18 +1087,19 @@
   /* ---------- tab bar ---------- */
   nav.tabbar{
     position:fixed; left:50%; bottom:0;
-    /* translateZ(0) forces this onto its own GPU compositing layer.
-       Without it, position:fixed + backdrop-filter together are a known
-       trigger (mainly WebKit/mobile webviews) for the bar visually
-       "detaching" and floating mid-content during scroll/momentum instead
-       of staying pinned to the true bottom edge. */
+    /* translateZ(0) forces this onto its own GPU compositing layer, as a
+       secondary safeguard against WebKit/mobile-webview fixed-position
+       "detachment" during scroll/momentum. The background is intentionally
+       solid (no backdrop-filter) — fixed + backdrop-filter together is the
+       main known trigger for this bar floating mid-content instead of
+       staying pinned to the true bottom edge. */
     transform:translateX(-50%) translateZ(0);
     -webkit-transform:translateX(-50%) translateZ(0);
     backface-visibility:hidden; -webkit-backface-visibility:hidden;
     will-change:transform;
     width:100%; max-width:480px;
     padding:8px 10px calc(10px + env(safe-area-inset-bottom));
-    background:var(--tabbar-bg); backdrop-filter:blur(12px);
+    background:var(--tabbar-bg);
     border-top:1px solid var(--line);
     display:flex; justify-content:space-around; z-index:30;
     overflow-x:auto;
@@ -3481,7 +3482,7 @@ async function renderGrid(sectionKey, containerId){
     const card = document.createElement("div");
     card.className = "plant-card";
     const wavesHTML = p.dates.map(wave =>
-      `<div class="wave">${wave.map(t => `<span class="lbl">${actionLabelForDate(t.a, plannedDateObj(activeSeason, t))} :</span> ${fmtDate(t)}${activeSeason === "2026-27" ? bcNoteFor(p.slug, t.m, t.d) : ""}`).join("<br>")}</div>`
+      `<div class="wave">${wave.map(t => `<span class="lbl">${actionLabelForDate(t.a, plannedDateObj(activeSeason, t))} :</span> ${fmtDate(t)}${bcNoteFor(p.slug, activeSeason, t.m, t.d)}`).join("<br>")}</div>`
     ).join("");
 
     // Fetch everything up front so the done/not-done branches below can both
@@ -5495,14 +5496,11 @@ function expandTaskDays(t){
 }
 
 /* Which biodynamic type(s) — fruit/leaf/root/flower — are active on a given
-   calendar date. The transcribed BC_DATA only covers Aug-Dec 2026, and
-   bcEntryFor() itself doesn't check year (it's always been called from
-   contexts already anchored to 2026), so we guard on year here to avoid
-   mis-painting the same month/day in a different year. More than one type
-   can be active the same day when one window ends and the next begins. */
+   calendar date. Covers Aug 2026 - Dec 2027. More than one type can be
+   active the same day when one window ends and the next begins. */
 function getDayBioTypes(year, month, day){
-  if(year !== 2026) return [];
-  return ["fruit","leaf","root","flower"].filter(type => bcEntryFor(type, month, day));
+  if(!BC_MONTH_NAMES_BY_YEAR[year]) return [];
+  return ["fruit","leaf","root","flower"].filter(type => bcEntryFor(type, year, month, day));
 }
 
 /* Same fruit/leaf/root/flower colors used by the Biodynamic Calendar tab
@@ -5557,7 +5555,7 @@ function renderCalDayDetail(tasksByDay){
   const bioTypes = getDayBioTypes(calYear, calMonth, calSelectedDay);
   const title = `${MONTHS[calMonth-1]} ${calSelectedDay}`;
   const bioRows = bioTypes.map(type => {
-    const entry = bcEntryFor(type, calMonth, calSelectedDay);
+    const entry = bcEntryFor(type, calYear, calMonth, calSelectedDay);
     const label = type.charAt(0).toUpperCase() + type.slice(1);
     return `
     <div class="cal-task-row">
@@ -5947,6 +5945,140 @@ const BC_DATA = {
       ["29","Tue","until 9am",""],
       ["30","Wed","from 7pm",""],
       ["31","Thu","until 10am, then again from 1pm",""]
+    ],
+    "January 2027": [
+      ["6", "Wed", "from 2am", ""],
+      ["7", "Thu", "until 9pm", ""],
+      ["8", "Fri", "3am – 2pm", ""],
+      ["16", "Sat", "all day", ""],
+      ["17", "Sun", "until 4pm", ""],
+      ["23", "Sat", "from 4pm", ""],
+      ["24", "Sun", "all day", ""],
+      ["25", "Mon", "until 6pm", ""]
+    ],
+    "February 2027": [
+      ["2", "Tue", "from 8am", ""],
+      ["3", "Wed", "all day", ""],
+      ["4", "Thu", "until 8pm", ""],
+      ["7", "Sun", "3pm – 7pm", ""],
+      ["12", "Fri", "from 5am", ""],
+      ["13", "Sat", "until 11pm", ""],
+      ["20", "Sat", "4am – 1pm, then again from 9pm", ""],
+      ["21", "Sun", "all day", ""],
+      ["22", "Mon", "until 5am", ""]
+    ],
+    "March 2027": [
+      ["1", "Mon", "from 3pm", ""],
+      ["2", "Tue", "until 8am", ""],
+      ["2", "Tue", "from 8pm", ""],
+      ["3", "Wed", "all day", ""],
+      ["19", "Fri", "from 2pm", ""],
+      ["20", "Sat", "all day", ""],
+      ["21", "Sun", "until 4pm", ""],
+      ["29", "Mon", "all day", ""],
+      ["30", "Tue", "all day", ""],
+      ["31", "Wed", "until 12pm", ""]
+    ],
+    "April 2027": [
+      ["7", "Wed", "from 7pm", ""],
+      ["8", "Thu", "all day", ""],
+      ["9", "Fri", "until 12pm", ""],
+      ["15", "Thu", "from 5pm", ""],
+      ["16", "Fri", "all day", ""],
+      ["17", "Sat", "until 6pm", ""],
+      ["25", "Sun", "from 8am", ""],
+      ["26", "Mon", "all day", ""],
+      ["27", "Tue", "until 8pm", ""]
+    ],
+    "May 2027": [
+      ["5", "Wed", "from 3am", ""],
+      ["6", "Thu", "until 8pm", ""],
+      ["12", "Wed", "from 9pm", ""],
+      ["13", "Thu", "all day", ""],
+      ["14", "Fri", "all day", "especially good from 1pm to 11pm"],
+      ["15", "Sat", "until 6am", ""],
+      ["22", "Sat", "from 4pm", ""],
+      ["23", "Sun", "all day", ""],
+      ["24", "Mon", "all day", ""]
+    ],
+    "June 2027": [
+      ["1", "Tue", "from 1pm", ""],
+      ["2", "Wed", "all day", ""],
+      ["3", "Thu", "until 5am", ""],
+      ["9", "Wed", "all day", ""],
+      ["10", "Thu", "all day", ""],
+      ["11", "Fri", "until 12pm", ""],
+      ["19", "Sat", "all day", ""],
+      ["20", "Sun", "all day", ""],
+      ["21", "Mon", "until 10am", ""],
+      ["28", "Mon", "from 10pm", ""],
+      ["29", "Tue", "all day", ""],
+      ["30", "Wed", "until 3pm", ""]
+    ],
+    "July 2027": [
+      ["6", "Tue", "from 10am", ""],
+      ["7", "Wed", "all day", ""],
+      ["8", "Thu", "until 7pm", ""],
+      ["16", "Fri", "from 5am", ""],
+      ["17", "Sat", "all day", ""],
+      ["18", "Sun", "until 5pm", ""],
+      ["26", "Mon", "6am – 9am", ""]
+    ],
+    "August 2027": [
+      ["2", "Mon", "from 8pm", ""],
+      ["3", "Tue", "all day", ""],
+      ["4", "Wed", "all day", ""],
+      ["12", "Thu", "from 11am", ""],
+      ["13", "Fri", "all day", ""],
+      ["14", "Sat", "until 11pm", ""],
+      ["22", "Sun", "from 12pm", ""],
+      ["23", "Mon", "all day", ""],
+      ["24", "Tue", "until 7am", ""],
+      ["31", "Tue", "all day", ""]
+    ],
+    "September 2027": [
+      ["1", "Wed", "until 2pm", ""],
+      ["8", "Wed", "from 6pm", ""],
+      ["9", "Thu", "until 6pm", ""],
+      ["10", "Fri", "from 5am", ""],
+      ["11", "Sat", "until 5am", ""],
+      ["18", "Sat", "from 5pm", ""],
+      ["19", "Sun", "all day", ""],
+      ["20", "Mon", "until 1pm", ""],
+      ["26", "Sun", "from 4pm", ""],
+      ["27", "Mon", "5am – 12am", ""]
+    ],
+    "October 2027": [
+      ["6", "Wed", "all day", ""],
+      ["7", "Thu", "all day", ""],
+      ["8", "Fri", "until 12pm", ""],
+      ["16", "Sat", "all day", ""],
+      ["17", "Sun", "until 6pm", ""],
+      ["25", "Mon", "from 2pm", ""],
+      ["26", "Tue", "until 9am", ""]
+    ],
+    "November 2027": [
+      ["2", "Tue", "from 10am", ""],
+      ["3", "Wed", "all day", ""],
+      ["4", "Thu", "until 7am", ""],
+      ["12", "Fri", "from 7am", ""],
+      ["13", "Sat", "all day", ""],
+      ["20", "Sat", "from 3am", ""],
+      ["21", "Sun", "all day", ""],
+      ["22", "Mon", "until 2pm", ""]
+    ],
+    "December 2027": [
+      ["1", "Wed", "4am – 10am", ""],
+      ["1", "Wed", "from 9pm", ""],
+      ["9", "Thu", "from 5pm", ""],
+      ["10", "Fri", "all day", ""],
+      ["11", "Sat", "until 11pm", ""],
+      ["17", "Fri", "from 9am", ""],
+      ["18", "Sat", "all day", ""],
+      ["19", "Sun", "until 7pm", ""],
+      ["27", "Mon", "all day", ""],
+      ["28", "Tue", "until 9am", ""],
+      ["28", "Tue", "from 3pm", ""]
     ]
   },
   leaf: {
@@ -6011,6 +6143,157 @@ const BC_DATA = {
       ["19","Sat","until 2pm",""],
       ["25","Fri","from 1pm",""],
       ["26","Sat","until 10pm",""]
+    ],
+    "January 2027": [
+      ["3", "Sun", "from 11am", ""],
+      ["4", "Mon", "all day", ""],
+      ["5", "Tue", "all day", ""],
+      ["8", "Fri", "from 3pm", ""],
+      ["13", "Wed", "until 10pm", ""],
+      ["14", "Thu", "from 9am", ""],
+      ["15", "Fri", "until 10pm", "especially good 10am–8pm"],
+      ["22", "Fri", "from 6am", ""],
+      ["23", "Sat", "until 7am", ""],
+      ["30", "Sat", "from 6pm", ""],
+      ["31", "Sun", "until 10am", ""]
+    ],
+    "February 2027": [
+      ["2", "Tue", "until 7am", ""],
+      ["9", "Tue", "from 6am", ""],
+      ["10", "Wed", "all day", ""],
+      ["11", "Thu", "all day", ""],
+      ["12", "Fri", "until 4am", ""],
+      ["18", "Thu", "11am – 2pm", ""],
+      ["19", "Fri", "4pm – 7pm", ""],
+      ["27", "Sat", "all day", ""],
+      ["28", "Sun", "all day", ""]
+    ],
+    "March 2027": [
+      ["1", "Mon", "until 2pm", ""],
+      ["8", "Mon", "from 12pm", ""],
+      ["9", "Tue", "all day", ""],
+      ["10", "Wed", "until 4pm", ""],
+      ["17", "Wed", "from 8pm", ""],
+      ["18", "Thu", "until 12pm", ""],
+      ["28", "Sun", "5am – 11pm", ""]
+    ],
+    "April 2027": [
+      ["2", "Fri", "from 9pm", ""],
+      ["3", "Sat", "until 3pm", ""],
+      ["4", "Sun", "from 9pm", ""],
+      ["5", "Mon", "all day", ""],
+      ["6", "Tue", "all day", "especially good from 10am"],
+      ["7", "Wed", "until 6pm", "especially good until 4am"],
+      ["14", "Wed", "from 10am", ""],
+      ["15", "Thu", "until 7am", ""],
+      ["17", "Sat", "from 7pm", ""],
+      ["18", "Sun", "until 1pm", ""],
+      ["22", "Thu", "from 8pm", ""],
+      ["23", "Fri", "all day", ""],
+      ["24", "Sat", "all day", ""],
+      ["25", "Sun", "until 7am", ""]
+    ],
+    "May 2027": [
+      ["2", "Sun", "from 6am", ""],
+      ["3", "Mon", "all day", ""],
+      ["4", "Tue", "all day", "especially good from 2am to 8pm"],
+      ["11", "Tue", "from 7am", ""],
+      ["12", "Wed", "until 8am", ""],
+      ["20", "Thu", "from 4am", ""],
+      ["21", "Fri", "all day", ""],
+      ["22", "Sat", "until 3pm", ""],
+      ["29", "Sat", "from 3pm", ""],
+      ["30", "Sun", "all day", ""],
+      ["31", "Mon", "all day", ""]
+    ],
+    "June 2027": [
+      ["1", "Tue", "until 12pm", ""],
+      ["8", "Tue", "7am – 10am", ""],
+      ["8", "Tue", "7pm – 12am", ""],
+      ["16", "Wed", "from 10am", ""],
+      ["17", "Thu", "all day", ""],
+      ["18", "Fri", "until 10pm", ""],
+      ["25", "Fri", "from 10pm", ""],
+      ["26", "Sat", "all day", ""],
+      ["27", "Sun", "all day", ""],
+      ["28", "Mon", "until 9pm", ""]
+    ],
+    "July 2027": [
+      ["5", "Mon", "6am – 5pm", ""],
+      ["6", "Tue", "2am – 9am", ""],
+      ["13", "Tue", "from 4pm", ""],
+      ["14", "Wed", "all day", ""],
+      ["15", "Thu", "all day", ""],
+      ["16", "Fri", "until 4am", ""],
+      ["23", "Fri", "from 5am", ""],
+      ["24", "Sat", "until 10pm", ""],
+      ["25", "Sun", "from 3pm", ""],
+      ["26", "Mon", "until 5am", ""],
+      ["29", "Thu", "12pm – 9pm", ""]
+    ],
+    "August 2027": [
+      ["2", "Mon", "3pm – 7pm", ""],
+      ["5", "Thu", "5am – 2pm", ""],
+      ["12", "Thu", "until 10am", ""],
+      ["19", "Thu", "from 10am", ""],
+      ["20", "Fri", "all day", ""],
+      ["21", "Sat", "all day", ""],
+      ["22", "Sun", "until 11am", ""],
+      ["28", "Sat", "from 9pm", ""],
+      ["29", "Sun", "until 2pm", ""]
+    ],
+    "September 2027": [
+      ["6", "Mon", "6am – 10am", ""],
+      ["6", "Mon", "from 9pm", ""],
+      ["7", "Tue", "all day", ""],
+      ["8", "Wed", "until 5pm", ""],
+      ["15", "Wed", "from 5pm", ""],
+      ["16", "Thu", "all day", ""],
+      ["17", "Fri", "until 12pm", ""],
+      ["18", "Sat", "until 4pm", ""],
+      ["25", "Sat", "5am – 9pm", ""],
+      ["26", "Sun", "6am – 3pm", ""]
+    ],
+    "October 2027": [
+      ["3", "Sun", "from 3pm", ""],
+      ["4", "Mon", "all day", ""],
+      ["5", "Tue", "all day", ""],
+      ["13", "Wed", "all day", ""],
+      ["14", "Thu", "all day", ""],
+      ["15", "Fri", "until 11pm", ""],
+      ["21", "Thu", "from 6pm", ""],
+      ["22", "Fri", "until 8am", ""],
+      ["31", "Sun", "all day", ""]
+    ],
+    "November 2027": [
+      ["1", "Mon", "all day", ""],
+      ["2", "Tue", "until 9am", ""],
+      ["4", "Thu", "8am – 6pm", ""],
+      ["9", "Tue", "from 7am", ""],
+      ["10", "Wed", "all day", ""],
+      ["11", "Thu", "all day", ""],
+      ["12", "Fri", "until 6am", ""],
+      ["14", "Sun", "from 8pm", ""],
+      ["15", "Mon", "until 11am", ""],
+      ["19", "Fri", "from 8am", ""],
+      ["26", "Fri", "until 9am", ""],
+      ["27", "Sat", "from 8am", ""],
+      ["28", "Sun", "all day", ""],
+      ["29", "Mon", "until 2pm", ""]
+    ],
+    "December 2027": [
+      ["1", "Wed", "11am – 8pm", ""],
+      ["6", "Mon", "from 4pm", ""],
+      ["7", "Tue", "all day", ""],
+      ["8", "Wed", "all day", ""],
+      ["9", "Thu", "until 4pm", ""],
+      ["12", "Sun", "from 10am", ""],
+      ["13", "Mon", "until 7am", ""],
+      ["16", "Thu", "from 11am", ""],
+      ["17", "Fri", "until 8am", ""],
+      ["24", "Fri", "2pm – 9pm", ""],
+      ["25", "Sat", "from 9am", ""],
+      ["26", "Sun", "all day", ""]
     ]
   },
   root: {
@@ -6082,6 +6365,180 @@ const BC_DATA = {
       ["23","Wed","until 3pm",""],
       ["29","Tue","from 10am",""],
       ["30","Wed","until 6pm",""]
+    ],
+    "January 2027": [
+      ["1", "Fri", "until 11pm", ""],
+      ["9", "Sat", "from 2am", ""],
+      ["10", "Sun", "until 6am", ""],
+      ["10", "Sun", "3pm – 10pm", ""],
+      ["14", "Thu", "until 8am", ""],
+      ["17", "Sun", "from 5pm", ""],
+      ["18", "Mon", "all day", ""],
+      ["19", "Tue", "all day", ""],
+      ["25", "Mon", "from 7pm", ""],
+      ["26", "Tue", "all day", ""],
+      ["27", "Wed", "all day", ""],
+      ["28", "Thu", "all day", ""],
+      ["29", "Fri", "until 6am", ""]
+    ],
+    "February 2027": [
+      ["4", "Thu", "from 9pm", ""],
+      ["5", "Fri", "all day", ""],
+      ["6", "Sat", "until 8am, then again from 9pm", ""],
+      ["14", "Sun", "all day", ""],
+      ["15", "Mon", "all day", ""],
+      ["16", "Tue", "until 12pm", ""],
+      ["22", "Mon", "from 6am", ""],
+      ["23", "Tue", "all day", ""],
+      ["24", "Wed", "all day", ""],
+      ["25", "Thu", "until 2pm", ""]
+    ],
+    "March 2027": [
+      ["2", "Tue", "9am – 7pm", ""],
+      ["4", "Thu", "from 4am", ""],
+      ["5", "Fri", "until 7pm", ""],
+      ["6", "Sat", "4am – 11am", ""],
+      ["13", "Sat", "from 8pm", ""],
+      ["14", "Sun", "all day", ""],
+      ["15", "Mon", "until 8pm", ""],
+      ["21", "Sun", "from 5pm", ""],
+      ["22", "Mon", "all day", ""],
+      ["23", "Tue", "all day", ""],
+      ["24", "Wed", "all day", ""],
+      ["31", "Wed", "from 1pm", ""]
+    ],
+    "April 2027": [
+      ["1", "Thu", "all day", ""],
+      ["2", "Fri", "10am – 8pm", ""],
+      ["9", "Fri", "from 1pm", ""],
+      ["10", "Sat", "all day", ""],
+      ["11", "Sun", "all day", ""],
+      ["18", "Sun", "from 2pm", ""],
+      ["19", "Mon", "all day", ""],
+      ["20", "Tue", "all day", ""],
+      ["21", "Wed", "until 10am", ""],
+      ["27", "Tue", "from 9pm", ""],
+      ["28", "Wed", "all day", ""]
+    ],
+    "May 2027": [
+      ["6", "Thu", "from 9pm", ""],
+      ["7", "Fri", "all day", ""],
+      ["8", "Sat", "all day", ""],
+      ["15", "Sat", "from 7am", ""],
+      ["16", "Sun", "all day", ""],
+      ["17", "Mon", "all day", ""],
+      ["18", "Tue", "until 5pm", ""],
+      ["25", "Tue", "from 3pm", ""],
+      ["26", "Wed", "until 6am, then again from 3pm", ""],
+      ["27", "Thu", "until 12pm", ""],
+      ["28", "Fri", "5am – 2pm", ""]
+    ],
+    "June 2027": [
+      ["3", "Thu", "from 6am", ""],
+      ["4", "Fri", "all day", ""],
+      ["5", "Sat", "until 4pm", ""],
+      ["11", "Fri", "from 1pm", ""],
+      ["12", "Sat", "all day", ""],
+      ["13", "Sun", "all day", "especially good from 5pm"],
+      ["14", "Mon", "all day", "especially good until 3am"],
+      ["15", "Tue", "until 7am", ""],
+      ["21", "Mon", "11am – 3pm", ""],
+      ["22", "Tue", "5am – 9am", ""],
+      ["22", "Tue", "from 6pm", ""],
+      ["23", "Wed", "until 7pm", ""],
+      ["30", "Wed", "from 4pm", ""]
+    ],
+    "July 2027": [
+      ["1", "Thu", "all day", ""],
+      ["2", "Fri", "all day", ""],
+      ["8", "Thu", "from 8pm", ""],
+      ["9", "Fri", "all day", ""],
+      ["10", "Sat", "all day", ""],
+      ["11", "Sun", "all day", ""],
+      ["12", "Mon", "until 5am", ""],
+      ["18", "Sun", "6pm – 10pm", ""],
+      ["19", "Mon", "12pm – 3pm", ""],
+      ["20", "Tue", "all day", ""],
+      ["25", "Sun", "until 2pm", ""],
+      ["28", "Wed", "all day", ""],
+      ["29", "Thu", "until 11am", ""],
+      ["30", "Fri", "until 4pm", "especially good 1am to 1pm"]
+    ],
+    "August 2027": [
+      ["5", "Thu", "from 3pm", ""],
+      ["6", "Fri", "all day", ""],
+      ["7", "Sat", "all day", ""],
+      ["8", "Sun", "until 11am", ""],
+      ["15", "Sun", "2pm – 9pm", ""],
+      ["16", "Mon", "6am – 10pm", ""],
+      ["24", "Tue", "from 8am", ""],
+      ["25", "Wed", "all day", ""],
+      ["26", "Thu", "until 10pm", ""]
+    ],
+    "September 2027": [
+      ["1", "Wed", "from 3pm", ""],
+      ["2", "Thu", "until 4pm", ""],
+      ["4", "Sat", "6am – 8pm", ""],
+      ["6", "Mon", "11am – 8pm", ""],
+      ["9", "Thu", "from 7pm", ""],
+      ["10", "Fri", "until 4am", ""],
+      ["11", "Sat", "6am – 10am", ""],
+      ["12", "Sun", "from 11am", ""],
+      ["13", "Mon", "until 2pm", ""],
+      ["17", "Fri", "1pm – 11pm", ""],
+      ["20", "Mon", "from 2pm", ""],
+      ["21", "Tue", "all day", "especially good from 1pm to 11pm"],
+      ["22", "Wed", "all day", ""],
+      ["28", "Tue", "from 1am", ""],
+      ["29", "Wed", "all day", ""],
+      ["30", "Thu", "all day", ""]
+    ],
+    "October 2027": [
+      ["1", "Fri", "all day", ""],
+      ["2", "Sat", "until 5am", ""],
+      ["2", "Sat", "from 8pm", ""],
+      ["3", "Sun", "until 5am", ""],
+      ["8", "Fri", "from 1pm", ""],
+      ["9", "Sat", "from 4pm", ""],
+      ["10", "Sun", "until 9pm", ""],
+      ["17", "Sun", "from 7pm", ""],
+      ["18", "Mon", "all day", ""],
+      ["19", "Tue", "all day", ""],
+      ["20", "Wed", "until 10am", ""],
+      ["26", "Tue", "from 10am", ""],
+      ["27", "Wed", "all day", ""],
+      ["28", "Thu", "all day", ""],
+      ["29", "Fri", "until 3pm", ""]
+    ],
+    "November 2027": [
+      ["4", "Thu", "from 9pm", ""],
+      ["5", "Fri", "until 8am", ""],
+      ["5", "Fri", "5pm – 10pm", ""],
+      ["6", "Sat", "from 12pm", ""],
+      ["14", "Sun", "2am – 7pm", ""],
+      ["15", "Mon", "from 12pm", ""],
+      ["16", "Tue", "until 3pm", ""],
+      ["22", "Mon", "from 3pm", ""],
+      ["23", "Tue", "all day", ""],
+      ["24", "Wed", "all day", ""],
+      ["25", "Thu", "until 10pm", ""]
+    ],
+    "December 2027": [
+      ["2", "Thu", "5am – 10am", ""],
+      ["2", "Thu", "from 7pm", ""],
+      ["3", "Fri", "until 6am", ""],
+      ["4", "Sat", "8am – 12pm", ""],
+      ["12", "Sun", "from 12am", ""],
+      ["12", "Sun", "until 9am", ""],
+      ["13", "Mon", "from 8am", ""],
+      ["19", "Sun", "from 8pm", ""],
+      ["20", "Mon", "all day", ""],
+      ["21", "Tue", "all day", ""],
+      ["22", "Wed", "all day", ""],
+      ["25", "Sat", "until 8am", ""],
+      ["29", "Wed", "12pm – 3pm", ""],
+      ["30", "Thu", "all day", ""],
+      ["31", "Fri", "until 1pm", ""]
     ]
   },
   flower: {
@@ -6134,6 +6591,130 @@ const BC_DATA = {
       ["16","Wed","until 5pm",""],
       ["24","Thu","from 5pm",""],
       ["25","Fri","until 12pm",""]
+    ],
+    "January 2027": [
+      ["2", "Sat", "all day", ""],
+      ["3", "Sun", "until 10am", ""],
+      ["11", "Mon", "all day", ""],
+      ["12", "Tue", "until 11pm", ""],
+      ["20", "Wed", "from 4am", ""],
+      ["21", "Thu", "until 4am", ""],
+      ["29", "Fri", "from 7am", ""],
+      ["30", "Sat", "until 5pm", ""]
+    ],
+    "February 2027": [
+      ["7", "Sun", "5am – 2pm", ""],
+      ["8", "Mon", "all day", ""],
+      ["9", "Tue", "until 5am", ""],
+      ["16", "Tue", "from 1pm", ""],
+      ["17", "Wed", "all day", ""],
+      ["25", "Thu", "from 3pm", ""],
+      ["26", "Fri", "all day", ""]
+    ],
+    "March 2027": [
+      ["6", "Sat", "from 12pm", ""],
+      ["7", "Sun", "all day", ""],
+      ["8", "Mon", "until 11am", ""],
+      ["15", "Mon", "from 9pm", ""],
+      ["16", "Tue", "all day", ""],
+      ["17", "Wed", "until 7pm", ""],
+      ["25", "Thu", "2am – 12am", ""]
+    ],
+    "April 2027": [
+      ["3", "Sat", "from 4pm", ""],
+      ["4", "Sun", "until 8pm", ""],
+      ["12", "Mon", "from 2am", ""],
+      ["13", "Tue", "until 8am", ""],
+      ["21", "Wed", "from 11am", ""],
+      ["22", "Thu", "until 7pm", ""]
+    ],
+    "May 2027": [
+      ["1", "Sat", "all day", ""],
+      ["2", "Sun", "until 5am", ""],
+      ["10", "Mon", "from 5am", ""],
+      ["11", "Tue", "until 6am", ""],
+      ["18", "Tue", "from 6pm", ""],
+      ["19", "Wed", "all day", ""],
+      ["25", "Tue", "4am – 2pm", ""],
+      ["27", "Thu", "from 1pm", ""],
+      ["28", "Fri", "from 3pm", ""],
+      ["29", "Sat", "until 2pm", ""]
+    ],
+    "June 2027": [
+      ["5", "Sat", "5pm – 10pm", ""],
+      ["15", "Tue", "from 8am", ""],
+      ["16", "Wed", "until 9am", ""],
+      ["21", "Mon", "from 4pm", ""],
+      ["22", "Tue", "until 4am", ""],
+      ["23", "Wed", "from 8pm", ""],
+      ["24", "Thu", "all day", ""],
+      ["25", "Fri", "until 9pm", ""]
+    ],
+    "July 2027": [
+      ["12", "Mon", "from 6am", ""],
+      ["13", "Tue", "until 3pm", ""],
+      ["19", "Mon", "until 11am", ""],
+      ["21", "Wed", "from 2am", ""],
+      ["22", "Thu", "all day", ""],
+      ["23", "Fri", "until 4am", ""],
+      ["30", "Fri", "from 5pm", ""],
+      ["31", "Sat", "all day", ""]
+    ],
+    "August 2027": [
+      ["1", "Sun", "until 8am", ""],
+      ["8", "Sun", "from 12pm", ""],
+      ["9", "Mon", "until 9pm", ""],
+      ["15", "Sun", "1am – 1pm", ""],
+      ["17", "Tue", "from 8am", ""],
+      ["18", "Wed", "all day", ""],
+      ["19", "Thu", "until 9am", ""],
+      ["27", "Fri", "all day", ""],
+      ["28", "Sat", "until 8pm", ""]
+    ],
+    "September 2027": [
+      ["4", "Sat", "from 9pm", ""],
+      ["5", "Sun", "all day", ""],
+      ["6", "Mon", "until 5am", ""],
+      ["11", "Sat", "11am – 11pm", ""],
+      ["13", "Mon", "from 3pm", ""],
+      ["14", "Tue", "all day", ""],
+      ["15", "Wed", "until 4pm", ""],
+      ["23", "Thu", "from 5am", ""],
+      ["24", "Fri", "all day", ""]
+    ],
+    "October 2027": [
+      ["2", "Sat", "6am – 7pm", ""],
+      ["3", "Sun", "6am – 2pm", ""],
+      ["9", "Sat", "3am – 6am", ""],
+      ["11", "Mon", "all day", ""],
+      ["12", "Tue", "until 11pm", ""],
+      ["20", "Wed", "from 11am", ""],
+      ["21", "Thu", "until 5pm", ""],
+      ["29", "Fri", "from 4pm", ""],
+      ["30", "Sat", "until 11pm", ""]
+    ],
+    "November 2027": [
+      ["6", "Sat", "until 11am", ""],
+      ["7", "Sun", "from 5am", ""],
+      ["8", "Mon", "all day", ""],
+      ["9", "Tue", "until 6am", ""],
+      ["16", "Tue", "from 4pm", ""],
+      ["17", "Wed", "all day", ""],
+      ["18", "Thu", "until 6am", ""],
+      ["26", "Fri", "from 10am", ""],
+      ["27", "Sat", "until 7am", ""]
+    ],
+    "December 2027": [
+      ["3", "Fri", "from 7pm", ""],
+      ["4", "Sat", "until 7am", ""],
+      ["4", "Sat", "from 1pm", ""],
+      ["5", "Sun", "all day", ""],
+      ["6", "Mon", "until 3pm", ""],
+      ["14", "Tue", "all day", ""],
+      ["15", "Wed", "until 9am", ""],
+      ["23", "Thu", "from 5am", ""],
+      ["24", "Fri", "until 1pm", ""],
+      ["31", "Fri", "from 2pm", ""]
     ]
   }
 };
@@ -6153,11 +6734,15 @@ const CROP_BIO_TYPE = {
   nasturtium:"flower", roselle:"flower",
   sunnhemp:"leaf", puertoricanblackbeans:"fruit"
 };
-const BC_MONTH_NAMES_2026 = { 8:"August 2026", 9:"September 2026", 10:"October 2026", 11:"November 2026", 12:"December 2026" };
+const BC_MONTH_NAMES_BY_YEAR = {
+  2026: { 8:"August 2026", 9:"September 2026", 10:"October 2026", 11:"November 2026", 12:"December 2026" },
+  2027: { 1:"January 2027", 2:"February 2027", 3:"March 2027", 4:"April 2027", 5:"May 2027", 6:"June 2027",
+          7:"July 2027", 8:"August 2027", 9:"September 2027", 10:"October 2027", 11:"November 2027", 12:"December 2027" }
+};
 
 // Looks up a single calendar day's biodynamic entry for a given type.
-function bcEntryFor(type, month, day){
-  const monthName = BC_MONTH_NAMES_2026[month];
+function bcEntryFor(type, year, month, day){
+  const monthName = BC_MONTH_NAMES_BY_YEAR[year] && BC_MONTH_NAMES_BY_YEAR[year][month];
   const monthData = monthName && BC_DATA[type] && BC_DATA[type][monthName];
   if(!monthData) return null;
   const found = monthData.find(e => Number(e[0]) === day);
@@ -6168,16 +6753,16 @@ function bcEntryFor(type, month, day){
 // consecutive per-day rows (e.g. "Aug 5 all day" + "Aug 6 until 3pm" is
 // really one Fruit window spanning both days). This walks outward from a
 // given date in both directions to find the full run it belongs to.
-function bcRunFor(type, month, day){
-  let cur = new Date(2026, month - 1, day);
+function bcRunFor(type, year, month, day){
+  let cur = new Date(year, month - 1, day);
   while(true){
     const prev = new Date(cur); prev.setDate(prev.getDate() - 1);
-    if(prev.getFullYear() !== 2026 || !bcEntryFor(type, prev.getMonth() + 1, prev.getDate())) break;
+    if(!bcEntryFor(type, prev.getFullYear(), prev.getMonth() + 1, prev.getDate())) break;
     cur = prev;
   }
   const run = [];
-  while(cur.getFullYear() === 2026){
-    const e = bcEntryFor(type, cur.getMonth() + 1, cur.getDate());
+  while(true){
+    const e = bcEntryFor(type, cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
     if(!e) break;
     run.push({ m: cur.getMonth() + 1, d: cur.getDate(), time: e.time });
     cur.setDate(cur.getDate() + 1);
@@ -6199,11 +6784,12 @@ const BC_TYPE_ICON = {
   root: () => icon("teardrop", C.orange),
   flower: () => icon("flower", C.magenta)
 };
-function bcNoteFor(slug, m, d){
+function bcNoteFor(slug, seasonKey, m, d){
   const type = CROP_BIO_TYPE[slug];
-  if(!type || m < 8 || m > 12) return "";
-  if(!bcEntryFor(type, m, d)) return "";
-  const run = bcRunFor(type, m, d);
+  if(!type) return "";
+  const year = seasonYearForMonth(seasonKey, m);
+  if(!bcEntryFor(type, year, m, d)) return "";
+  const run = bcRunFor(type, year, m, d);
   if(!run.length) return "";
   const parts = run.map(r => `${MONTHS[r.m - 1]} ${r.d} ${r.time}`);
   return `<div class="bc-task-note">${BC_TYPE_LABEL[type]} day — ${parts.join(", ")}</div>`;
@@ -6246,8 +6832,8 @@ function renderBiodynamic(type){
 // as the season moves past August.
 function currentBcMonthName(){
   const now = new Date();
-  if(now.getFullYear() !== 2026 || now.getMonth() + 1 < 8 || now.getMonth() + 1 > 12) return null;
-  return BC_MONTH_NAMES_2026[now.getMonth() + 1];
+  const yearMap = BC_MONTH_NAMES_BY_YEAR[now.getFullYear()];
+  return yearMap ? (yearMap[now.getMonth() + 1] || null) : null;
 }
 function scrollBcToCurrentMonth(type){
   const monthName = currentBcMonthName();
@@ -6270,12 +6856,13 @@ function bcSearchByDate(){
     return;
   }
   const [y, m, d] = input.value.split("-").map(Number);
-  if(y !== 2026 || m < 8 || m > 12){
-    resultEl.innerHTML = `<div class="bc-search-empty">The transcribed calendar only covers August – December 2026.</div>`;
+  const yearMap = BC_MONTH_NAMES_BY_YEAR[y];
+  if(!yearMap || !yearMap[m]){
+    resultEl.innerHTML = `<div class="bc-search-empty">The transcribed calendar only covers August 2026 – December 2027.</div>`;
     return;
   }
   const hits = BC_TYPE_ORDER
-    .map(type => ({ type, entry: bcEntryFor(type, m, d) }))
+    .map(type => ({ type, entry: bcEntryFor(type, y, m, d) }))
     .filter(h => h.entry);
   if(!hits.length){
     resultEl.innerHTML = `<div class="bc-search-empty">No Fruit/Leaf/Root/Flower window is recorded for ${MONTHS[m - 1]} ${d} — it may fall on one of the missing Sep 1–15 / Nov 1–15 pages, or an unlabeled transitional day.</div>`;
