@@ -637,6 +637,12 @@
   .hchart-month-dot{ flex:none; width:6px; height:6px; border-radius:50%; }
   .hchart-month-dot.fruit{ background:var(--clay); }
   .hchart-month-dot.vegetable{ background:var(--sage); }
+  .hchart-month-count{
+    flex:none; display:inline-flex; align-items:center; justify-content:center;
+    min-width:15px; height:15px; padding:0 3px; border-radius:50%;
+    background:var(--evergreen-2); color:#fff; font-size:9.5px; font-weight:700;
+    line-height:1;
+  }
   .hchart-legend-row{
     display:flex; align-items:center; justify-content:center; gap:14px;
     margin-top:12px; font-size:10.5px; color:var(--ink-soft);
@@ -2955,7 +2961,8 @@ function buildHarvestByMonth(entries){
     if(!d) return;
     const key = entry.fruit.trim().toLowerCase();
     const bucket = months[d.getMonth()];
-    if(!bucket[key]) bucket[key] = { name: entry.fruit.trim(), kind: entry.kind };
+    if(!bucket[key]) bucket[key] = { name: entry.fruit.trim(), kind: entry.kind, count: 0 };
+    bucket[key].count++;
   });
   return months.map((bucket, i) => ({
     month: i,
@@ -2981,7 +2988,7 @@ async function renderHarvestChart(){
       <div class="hchart-month-crop-row">
         ${m.crops.length ? m.crops.map(c => `
           <span class="hchart-month-crop">
-            <span class="hchart-month-dot ${c.kind}"></span>${c.name}
+            <span class="hchart-month-dot ${c.kind}"></span>${c.name}${c.count > 1 ? `<span class="hchart-month-count">${c.count}</span>` : ""}
           </span>
         `).join("") : `<span class="hchart-month-crop hchart-month-none">—</span>`}
       </div>
