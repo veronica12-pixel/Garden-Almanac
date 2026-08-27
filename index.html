@@ -733,7 +733,7 @@
   .season-done-btn{
     display:flex; align-items:center; justify-content:center; gap:7px;
     flex:1; margin-top:0; padding:9px; border-radius:10px;
-    border:1px solid var(--evergreen-2); background:var(--paper-2); color:var(--evergreen);
+    border:none; background:var(--evergreen); color:#fff;
     font-weight:600; font-size:12.5px; font-family:'Inter',sans-serif; cursor:pointer;
   }
   .season-done-btn svg{ flex:none; }
@@ -860,8 +860,8 @@
   .sow-pending-tag:hover{ background:rgba(58,92,58,0.12); }
   .sow-add-btn{
     margin-top:8px; width:100%; text-align:center; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
-    border-radius:8px; padding:7px; cursor:pointer; border:1px solid var(--evergreen-2);
-    background:var(--paper-2); color:var(--evergreen);
+    border-radius:8px; padding:7px; cursor:pointer; border:none;
+    background:var(--evergreen); color:#fff;
   }
   .sow-add-btn:hover{ filter:brightness(0.97); }
   .combo-summary{
@@ -2065,6 +2065,10 @@ function varietyColorCheckboxesHTML(slug){
 // plausible (if unusual) to have sown seed for the same variety sourced
 // from more than one place across a season.
 const SEED_SOURCES = ["Baker Creek", "Johnny's", "Cody Cove", "Urban Harvest"];
+// Full names show on the checkboxes themselves (so picking one is
+// unambiguous), but the variety badge shown after adding is tight on
+// space, so it displays these short abbreviations instead.
+const SEED_SOURCE_ABBR = { "Baker Creek": "BCseeds", "Johnny's": "Jseeds", "Cody Cove": "CCseeds", "Urban Harvest": "UHseeds" };
 function varietySourceCheckboxesHTML(){
   return SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
 }
@@ -2531,7 +2535,7 @@ function varietyMetaText(v, slug){
   if(v.f1) bits.push("F1");
   if(v.op) bits.push("OP");
   if(v.h) bits.push("H");
-  if(v.source && v.source.length) bits.push(v.source.join("/"));
+  if(v.source && v.source.length) bits.push(v.source.map(s => SEED_SOURCE_ABBR[s] || s).join("/"));
   let out = bits.length ? ` (${bits.join(", ")})` : "";
   if(v.colors && v.colors.length){
     const hexMap = CROP_COLOR_HEX[slug] || TOMATO_COLOR_HEX;
