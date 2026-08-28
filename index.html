@@ -3857,6 +3857,7 @@ async function renderGrid(sectionKey, containerId){
           <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">✓</span>
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
+        ${(!isPastSeason && GLOBAL_UNLOCK) ? `<button type="button" class="plant-delete-btn" title="Delete this crop" aria-label="Delete this crop">✕</button>` : ""}
       </div>
       <div id="card-body-${p.slug}" class="card-body" style="display:none;">
       <div class="dose">${wavesHTML}</div>
