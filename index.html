@@ -2970,7 +2970,7 @@ function wireRainFetch(){
       const amounts = data.daily && data.daily.precipitation_sum || [];
       const rangeTotal = amounts.reduce((s, a) => s + (a || 0), 0);
       statusEl.textContent = "";
-      rangeTotalEl.textContent = `Total for ${fmtLogDate(from)}–${fmtLogDate(to)}: ${rangeTotal.toFixed(2)}"`;
+      rangeTotalEl.textContent = `Total for ${from}–${to}: ${rangeTotal.toFixed(2)}"`;
     }catch(e){
       if(e && e.name === "AbortError"){
         statusEl.textContent = "The weather service is taking too long to respond — try again in a bit.";
@@ -3098,7 +3098,7 @@ async function wireHarvestSection(kind, ids){
       const locked = isEntryLocked(entry.addedAt);
       return `
         <div class="harvest-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}" data-i="${i}">
-          <span class="h-date">${fmtLogDate(entry.date)}</span>
+          <span class="h-date">${entry.date}</span>
           <span class="h-fruit">${entry.fruit}</span>
           ${entry.qty ? `<span class="h-qty">${entry.qty}</span>` : ""}
           ${entry.size ? `<span class="h-size">${entry.size}</span>` : ""}
@@ -3381,7 +3381,7 @@ async function renderHarvestPictures(){
     grid.innerHTML = sorted.map(pic => `
       <div class="harvest-pic-item" data-id="${pic.id}">
         <img alt="">
-        <div class="harvest-pic-date">${fmtLogDate(pic.date)}</div>
+        <div class="harvest-pic-date">${pic.date}</div>
       </div>
     `).join("");
     grid.querySelectorAll(".harvest-pic-item").forEach(item => {
@@ -3392,7 +3392,7 @@ async function renderHarvestPictures(){
       img.addEventListener("click", async () => {
         const full = await getHarvestPictureImg(activeSeason, id);
         if(!full) return;
-        openPhotoLightbox(full, fmtLogDate(pic.date), {
+        openPhotoLightbox(full, pic.date, {
           onEdit: async () => {
             editingId = id;
             dateInput.value = pic.date;
@@ -3525,7 +3525,7 @@ async function renderJournal(){
         const isOpen = openMonths.has(key);
         const rows = idxs.map(i => {
           const n = entries[i];
-          const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(n.date) ? fmtLogDate(n.date) : n.date;
+          const dateLabel = n.date;
           const locked = isPastSeason || isEntryLocked(n.addedAt);
           return `
             <div class="note-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
@@ -3570,7 +3570,7 @@ async function renderJournal(){
       btn.addEventListener("click", async (e) => {
         e.stopPropagation();
         const full = await getJournalPhoto(n.id);
-        const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(n.date) ? fmtLogDate(n.date) : n.date;
+        const dateLabel = n.date;
         if(full) openPhotoLightbox(full, dateLabel);
       });
     });
@@ -3864,6 +3864,7 @@ async function renderGrid(sectionKey, containerId){
           <input id="fridge-${p.slug}" type="date">
           <button type="button" class="fridge-add-btn" id="fridge-add-${p.slug}">+ Log fridge date</button>
         </div>
+        <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}" style="${fridgeLog.length ? "display:none;" : ""}">${varietySourceCheckboxesHTML(p.slug)}</div>
         <div class="date-chips" id="fridge-list-${p.slug}"></div>
       </div>
     `;
@@ -3877,7 +3878,7 @@ async function renderGrid(sectionKey, containerId){
           <div class="season-done-banner">
             <span>✓ Season marked done</span>
           </div>
-          ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual sow:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
+          ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${notesFieldHTML}
         `;
@@ -3886,16 +3887,17 @@ async function renderGrid(sectionKey, containerId){
           ${fridgeFieldHTML}
           <div class="actual-row">
             <div class="actual-field">
-              <label for="sow-${p.slug}">Actual sow</label>
+              <label for="sow-${p.slug}">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}</label>
               <div class="actual-input-row">
                 <input id="sow-${p.slug}" type="date">
-                <input id="sow-variety-dtm-${p.slug}" type="text" inputmode="numeric" pattern="[0-9]*" class="sow-variety-dtm-input" placeholder="Days to Maturity" aria-label="Days to Maturity" title="Days to Maturity">
+                ${p.slug === "garlic" ? "" : `<input id="sow-variety-dtm-${p.slug}" type="text" inputmode="numeric" pattern="[0-9]*" class="sow-variety-dtm-input" placeholder="Days to Maturity" aria-label="Days to Maturity" title="Days to Maturity">`}
                 <input id="sow-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature at sow time">
               </div>
+              ${p.slug === "garlic" ? "" : `
               <div class="sow-variety-input-wrap">
                 <input id="sow-variety-${p.slug}" type="text" class="sow-variety-input" placeholder="Variety seeded, press Enter" autocomplete="off">
                 <div class="variety-suggest" id="sow-variety-suggest-${p.slug}"></div>
-              </div>
+              </div>`}
               ${p.slug === "tomatoes" ? `
               <div class="sow-variety-meta-row">
                 <select id="sow-variety-type-${p.slug}" class="sow-variety-type-input" aria-label="Tomato type">
@@ -3917,7 +3919,7 @@ async function renderGrid(sectionKey, containerId){
                 <label class="sow-variety-h-label"><input id="sow-variety-h-${p.slug}" type="checkbox" class="sow-variety-h-input"> H</label>
               </div>`}
               ${CROP_COLOR_OPTIONS[p.slug] ? `<div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML(p.slug)}</div>` : ""}
-              <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML(p.slug)}</div>`}
+              ${p.slug === "garlic" ? "" : `<div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML(p.slug)}</div>`}`}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
@@ -3934,7 +3936,7 @@ async function renderGrid(sectionKey, containerId){
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${notesFieldHTML}
-          ${seedPacketsFieldHTML}
+          ${p.slug === "garlic" ? "" : seedPacketsFieldHTML}
           <div class="season-actions-row">
             <button type="button" class="season-done-btn" data-slug="${p.slug}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.4l2.6 2.6L16 9.4"></path></svg>
@@ -4956,7 +4958,7 @@ async function renderGrid(sectionKey, containerId){
           const locked = isEntryLocked(n.addedAt);
           return `
           <div class="note-entry${i === editingNoteIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
-            <span class="note-date">${n.date}</span>
+            <span class="note-date">${n.dateISO || guessISOFromNoteDate(n.date)}</span>
             <span class="note-text">${n.text}</span>
             ${!locked ? `
               <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
@@ -5019,8 +5021,7 @@ async function renderGrid(sectionKey, containerId){
           }
           notes[editingNoteIndex].text = val;
           if(notesDateInput && notesDateInput.value){
-            const [y, mo, da] = notesDateInput.value.split("-").map(Number);
-            notes[editingNoteIndex].date = `${MONTHS[mo - 1]} ${da}`;
+            notes[editingNoteIndex].date = notesDateInput.value;
             notes[editingNoteIndex].dateISO = notesDateInput.value;
           }
           editingNoteIndex = null;
@@ -5028,7 +5029,7 @@ async function renderGrid(sectionKey, containerId){
         } else {
           const now = new Date();
           const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-          notes.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, text: val, dateISO: iso, addedAt: Date.now() });
+          notes.push({ date: iso, text: val, dateISO: iso, addedAt: Date.now() });
         }
         notesInput.value = "";
         notesInput.style.height = "auto";
@@ -5141,7 +5142,8 @@ async function renderGrid(sectionKey, containerId){
         const val = seedPacketInput.value.trim();
         if(!val) return;
         const now = new Date();
-        finishedSeeds.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, name: val, addedAt: Date.now() });
+        const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        finishedSeeds.push({ date: iso, name: val, addedAt: Date.now() });
         seedPacketInput.value = "";
         renderFinishedSeeds();
         await setFinishedSeeds(p.slug, finishedSeeds);
@@ -5161,12 +5163,16 @@ async function renderGrid(sectionKey, containerId){
         const fridgeAddBtn = card.querySelector(`#fridge-add-${p.slug}`);
         const fridgeListEl = card.querySelector(`#fridge-list-${p.slug}`);
         const fridgeInputRow = card.querySelector(`#fridge-input-row-${p.slug}`);
+        const fridgeSourceRow = card.querySelector(`#sow-variety-source-${p.slug}`);
+        const fridgeSourceInput = fridgeSourceRow ? fridgeSourceRow.querySelector(".variety-source-other-input") : null;
         if(fridgeInput && fridgeListEl){
           const renderFridgeLog = () => {
             if(fridgeInputRow) fridgeInputRow.style.display = fridgeLog.length ? "none" : "flex";
+            if(fridgeSourceRow) fridgeSourceRow.style.display = fridgeLog.length ? "none" : "";
             fridgeListEl.innerHTML = fridgeLog.map((f, i) => {
               const locked = isEntryLocked(f.addedAt);
-              return `<span class="date-chip${locked ? " locked" : ""}" data-i="${i}">In fridge: ${f.date}</span>`;
+              const label = f.source ? `In fridge: ${f.date} cloves from ${f.source}` : `In fridge: ${f.date}`;
+              return `<span class="date-chip${locked ? " locked" : ""}" data-i="${i}">${label}</span>`;
             }).join("");
             fridgeListEl.querySelectorAll(".date-chip:not(.locked)").forEach(chip => {
               chip.addEventListener("click", (e) => {
@@ -5199,18 +5205,19 @@ async function renderGrid(sectionKey, containerId){
           renderFridgeLog();
           async function addFridgeDate(){
             if(fridgeLog.length) return;
-            let dateLabel, dateISO;
+            let dateISO;
             if(fridgeInput.value){
-              const [y, mo, da] = fridgeInput.value.split("-").map(Number);
-              dateLabel = `${MONTHS[mo - 1]} ${da}`;
               dateISO = fridgeInput.value;
             } else {
               const now = new Date();
-              dateLabel = `${MONTHS[now.getMonth()]} ${now.getDate()}`;
               dateISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
             }
-            fridgeLog.push({ date: dateLabel, dateISO, addedAt: Date.now() });
+            const source = fridgeSourceInput ? fridgeSourceInput.value.trim() : "";
+            const entry = { date: dateISO, dateISO, addedAt: Date.now() };
+            if(source) entry.source = source;
+            fridgeLog.push(entry);
             fridgeInput.value = "";
+            if(fridgeSourceInput) fridgeSourceInput.value = "";
             renderFridgeLog();
             await setFridgeLog(p.slug, fridgeLog);
           }
@@ -5536,14 +5543,14 @@ async function generateSeasonPDF(seasonKey){
         const [, mm, dd] = iso.split("-").map(Number);
         const tp = entryTemp(d) || sowTemp;
         const suffix = tp ? ` ${fmtTemp(tp)}` : "";
-        addToMonth(mm, dd, `${p.name} — Actual sow: ${fmtISO(iso)}${suffix}`, true);
+        addToMonth(mm, dd, `${p.name} — ${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}: ${iso}${suffix}`, true);
       });
       transplant.forEach(d => {
         const iso = entryDate(d);
         const [, mm, dd] = iso.split("-").map(Number);
         const tp = entryTemp(d) || transplantTemp;
         const suffix = tp ? ` ${fmtTemp(tp)}` : "";
-        addToMonth(mm, dd, `${p.name} — Actual transplant: ${fmtISO(iso)}${suffix}`, true);
+        addToMonth(mm, dd, `${p.name} — Actual transplant: ${iso}${suffix}`, true);
       });
     }
   }
@@ -5551,7 +5558,7 @@ async function generateSeasonPDF(seasonKey){
   const harvestLog = await getHarvestLogFor(seasonKey);
   harvestLog.forEach(entry => {
     const [, mm, dd] = entry.date.split("-").map(Number);
-    addToMonth(mm, dd, `${entry.fruit} — Harvest: ${fmtISO(entry.date)}`, true);
+    addToMonth(mm, dd, `${entry.fruit} — Harvest: ${entry.date}`, true);
   });
 
   // ---- two-column flow for the body (months + pending list) ----
