@@ -5579,6 +5579,16 @@ async function computeGerminationStats(){
   }
   return stats;
 }
+// Green (good germination) blending to dark fuchsia (poor germination) —
+// interpolated by percentage rather than a fixed palette, so any rate in
+// between gets a proportionally blended color instead of a hard cutoff.
+function germColorForPct(pct){
+  const good = [77, 158, 104];   // green, ~100%
+  const bad  = [122, 20, 96];    // dark fuchsia, ~0%
+  const t = Math.max(0, Math.min(1, pct / 100));
+  const mix = (a, b) => Math.round(b + (a - b) * t);
+  return `rgb(${mix(good[0], bad[0])}, ${mix(good[1], bad[1])}, ${mix(good[2], bad[2])})`;
+}
 async function renderGerminationReport(){
   const el = document.getElementById("germinationBody");
   if(!el) return;
@@ -5598,7 +5608,7 @@ async function renderGerminationReport(){
   const barsHTML = rows.map(r => `
     <div class="germ-row">
       <div class="germ-row-label">${r.company}</div>
-      <div class="germ-row-bar-wrap"><div class="germ-row-bar" style="width:${r.pct}%"></div></div>
+      <div class="germ-row-bar-wrap"><div class="germ-row-bar" style="width:${r.pct}%; background:${germColorForPct(r.pct)};"></div></div>
       <div class="germ-row-pct">${r.pct}% <span class="germ-row-n">(${r.germinated}/${r.total})</span></div>
     </div>
   `).join("");
