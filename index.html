@@ -2132,20 +2132,27 @@ const SEED_SOURCE_ABBR = { "Baker Creek": "BCseeds", "Johnny's": "Jseeds", "Cody
 // stored in the same `source` array as the presets, just not one of the
 // known SEED_SOURCES values, so it's told apart from them by exclusion
 // rather than a separate field.
-function varietySourceCheckboxesHTML(){
+function varietySourceCheckboxesHTML(slug){
+  // Garlic: no presets or "Other" toggle — just a single always-visible
+  // "Cloves from" text field, since seed companies don't really apply.
+  if(slug === "garlic"){
+    return `<input type="text" class="variety-source-other-input" placeholder="Cloves from">`;
+  }
   const presets = SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
   return presets + `<label class="variety-color-check"><input type="checkbox" class="variety-source-other-check"> Other</label><input type="text" class="variety-source-other-input" placeholder="Where from?" style="display:none;">`;
 }
 // Reads the checked preset sources plus, if "Other" is checked and
 // filled in, the typed-in source — from either the innerHTML-built row
 // (initial add form) or one built via DOM elements (edit form), since
-// both use the same class names.
+// both use the same class names. When there's no "Other" checkbox at all
+// (garlic's plain "Cloves from" field), any non-empty text counts on its
+// own — there's nothing to toggle it with.
 function readVarietySourceEl(el){
   if(!el) return [];
   const picked = Array.from(el.querySelectorAll(".variety-source-input:checked")).map(cb => cb.value);
   const otherCheck = el.querySelector(".variety-source-other-check");
   const otherInput = el.querySelector(".variety-source-other-input");
-  if(otherCheck && otherCheck.checked && otherInput && otherInput.value.trim()) picked.push(otherInput.value.trim());
+  if(otherInput && otherInput.value.trim() && (!otherCheck || otherCheck.checked)) picked.push(otherInput.value.trim());
   return picked;
 }
 function clearVarietySourceEl(el){
@@ -2154,27 +2161,29 @@ function clearVarietySourceEl(el){
   const otherCheck = el.querySelector(".variety-source-other-check");
   const otherInput = el.querySelector(".variety-source-other-input");
   if(otherCheck) otherCheck.checked = false;
-  if(otherInput){ otherInput.value = ""; otherInput.style.display = "none"; }
+  if(otherInput){ otherInput.value = ""; if(otherCheck) otherInput.style.display = "none"; }
 }
 // Restores a saved source list (e.g. from autocomplete history) into the
-// checkboxes + Other field — any entry not among SEED_SOURCES is treated
-// as the custom "Other" value.
+// checkboxes + Other field — any entry not among this element's own
+// preset checkboxes is treated as the custom "Other"/"Cloves from" value.
 function applyVarietySourceEl(el, sourceList){
   if(!el) return;
   const list = sourceList || [];
-  el.querySelectorAll(".variety-source-input").forEach(cb => { cb.checked = list.includes(cb.value); });
+  const presetBoxes = Array.from(el.querySelectorAll(".variety-source-input"));
+  presetBoxes.forEach(cb => { cb.checked = list.includes(cb.value); });
   const otherCheck = el.querySelector(".variety-source-other-check");
   const otherInput = el.querySelector(".variety-source-other-input");
-  const extra = list.filter(s => !SEED_SOURCES.includes(s));
-  if(otherCheck && otherInput){
+  const presetValues = presetBoxes.map(cb => cb.value);
+  const extra = list.filter(s => !presetValues.includes(s));
+  if(otherInput){
     if(extra.length){
-      otherCheck.checked = true;
+      if(otherCheck) otherCheck.checked = true;
       otherInput.value = extra.join(", ");
-      otherInput.style.display = "";
+      if(otherCheck) otherInput.style.display = "";
     } else {
-      otherCheck.checked = false;
+      if(otherCheck) otherCheck.checked = false;
       otherInput.value = "";
-      otherInput.style.display = "none";
+      if(otherCheck) otherInput.style.display = "none";
     }
   }
 }
@@ -3517,7 +3526,7 @@ async function renderJournal(){
         const rows = idxs.map(i => {
           const n = entries[i];
           const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(n.date) ? fmtLogDate(n.date) : n.date;
-          const locked = isPastSeason;
+          const locked = isPastSeason || isEntryLocked(n.addedAt);
           return `
             <div class="note-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
               <span class="note-date">${dateLabel}</span>
@@ -3851,7 +3860,7 @@ async function renderGrid(sectionKey, containerId){
       <div class="fridge-field">
         <label for="fridge-${p.slug}">Garlic Cloves in Fridge</label>
         <p class="fridge-hint">Log the date cloves went into the fridge for cold treatment before planting.</p>
-        <div class="fridge-input-row">
+        <div class="fridge-input-row" id="fridge-input-row-${p.slug}" style="${fridgeLog.length ? "display:none;" : ""}">
           <input id="fridge-${p.slug}" type="date">
           <button type="button" class="fridge-add-btn" id="fridge-add-${p.slug}">+ Log fridge date</button>
         </div>
@@ -3874,6 +3883,7 @@ async function renderGrid(sectionKey, containerId){
         `;
       } else {
         editableSectionsHTML = `
+          ${fridgeFieldHTML}
           <div class="actual-row">
             <div class="actual-field">
               <label for="sow-${p.slug}">Actual sow</label>
@@ -3899,18 +3909,20 @@ async function renderGrid(sectionKey, containerId){
                 <label class="sow-variety-h-label"><input id="sow-variety-h-${p.slug}" type="checkbox" class="sow-variety-h-input"> H</label>
               </div>
               <div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML(p.slug)}</div>
-              <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML()}</div>` : `
+              <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML(p.slug)}</div>` : `
+              ${p.slug === "garlic" ? "" : `
               <div class="sow-variety-meta-row sow-variety-meta-row-op-only">
                 <label class="sow-variety-f1-label"><input id="sow-variety-f1-${p.slug}" type="checkbox" class="sow-variety-f1-input"> F1</label>
                 <label class="sow-variety-op-label"><input id="sow-variety-op-${p.slug}" type="checkbox" class="sow-variety-op-input"> OP</label>
                 <label class="sow-variety-h-label"><input id="sow-variety-h-${p.slug}" type="checkbox" class="sow-variety-h-input"> H</label>
-              </div>
+              </div>`}
               ${CROP_COLOR_OPTIONS[p.slug] ? `<div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML(p.slug)}</div>` : ""}
-              <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML()}</div>`}
+              <div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML(p.slug)}</div>`}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
+            ${p.slug === "garlic" ? "" : `
             <div class="actual-field">
               <label for="transplant-${p.slug}">Actual transplant</label>
               <div class="actual-input-row">
@@ -3918,11 +3930,10 @@ async function renderGrid(sectionKey, containerId){
                 <input id="transplant-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature at transplant time">
               </div>
               <div class="date-chips" id="transplant-chips-${p.slug}"></div>
-            </div>
+            </div>`}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${notesFieldHTML}
-          ${fridgeFieldHTML}
           ${seedPacketsFieldHTML}
           <div class="season-actions-row">
             <button type="button" class="season-done-btn" data-slug="${p.slug}">
@@ -4293,6 +4304,16 @@ async function renderGrid(sectionKey, containerId){
             const currentSource = (typeof current === "object" && current && current.source) ? current.source : [];
             const sourceRow = document.createElement("span");
             sourceRow.className = "variety-edit-color-row";
+            if(p.slug === "garlic"){
+              // Garlic: no company presets — just a plain "Cloves from" field.
+              sourceOtherInput = document.createElement("input");
+              sourceOtherInput.type = "text";
+              sourceOtherInput.className = "variety-edit-input variety-source-other-input";
+              sourceOtherInput.placeholder = "Cloves from";
+              sourceOtherInput.value = currentSource.join(", ");
+              sourceRow.appendChild(sourceOtherInput);
+              wrap.appendChild(sourceRow);
+            } else {
             SEED_SOURCES.forEach(s => {
               const label = document.createElement("label");
               label.className = "variety-color-check";
@@ -4330,6 +4351,7 @@ async function renderGrid(sectionKey, containerId){
             });
             sourceRow.appendChild(sourceOtherInput);
             wrap.appendChild(sourceRow);
+            }
           }
           wrap.appendChild(buildNoGermLabel());
           const confirmBtn = document.createElement("button");
@@ -4362,7 +4384,7 @@ async function renderGrid(sectionKey, containerId){
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
             const source = sourceBoxes.filter(b => b.checked).map(b => b.value);
-            if(sourceOtherBox && sourceOtherBox.checked && sourceOtherInput && sourceOtherInput.value.trim()) source.push(sourceOtherInput.value.trim());
+            if(sourceOtherInput && sourceOtherInput.value.trim() && (!sourceOtherBox || sourceOtherBox.checked)) source.push(sourceOtherInput.value.trim());
             onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, hBox ? hBox.checked : false, source) : null);
           };
           const cancel = () => {
@@ -4875,7 +4897,9 @@ async function renderGrid(sectionKey, containerId){
         varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`),
         varietySourceEl: card.querySelector(`#sow-variety-source-${p.slug}`)
       });
-      await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
+      if(p.slug !== "garlic"){
+        await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
+      }
       await renderCombo();
     }
 
@@ -4901,8 +4925,9 @@ async function renderGrid(sectionKey, containerId){
       // Notes journal: type an observation, press Enter to log it with today's date.
       // Unlike sow/transplant entries and harvest logs, notes stay editable
       // (text and date both) even past the normal 48h lock — a note is a
-      // freeform memory aid, not a planning record, so there's little harm
-      // in fixing a typo or backdating one weeks later.
+      // freeform memory aid, not a planning record — but still respects the
+      // standard 48h edit lock (and the global unlock override) just like
+      // every other logged entry in the app.
       const notesInput = card.querySelector(`#notes-${p.slug}`);
       const notesListEl = card.querySelector(`#notes-list-${p.slug}`);
       const notesDateWrap = card.querySelector(`#notes-edit-date-wrap-${p.slug}`);
@@ -4927,14 +4952,18 @@ async function renderGrid(sectionKey, containerId){
       }
 
       const renderNotes = () => {
-        notesListEl.innerHTML = notes.map((n, i) => `
-          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}" data-i="${i}">
+        notesListEl.innerHTML = notes.map((n, i) => {
+          const locked = isEntryLocked(n.addedAt);
+          return `
+          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
             <span class="note-date">${n.date}</span>
             <span class="note-text">${n.text}</span>
-            <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
-            <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
-          </div>`
-        ).join("");
+            ${!locked ? `
+              <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
+              <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
+            ` : ""}
+          </div>`;
+        }).join("");
         function startEditNote(i){
           editingNoteIndex = i;
           notesInput.value = notes[i].text;
@@ -4983,6 +5012,11 @@ async function renderGrid(sectionKey, containerId){
         const val = notesInput.value.trim();
         if(!val) return;
         if(editingNoteIndex !== null){
+          if(isEntryLocked(notes[editingNoteIndex].addedAt)){
+            editingNoteIndex = null; notesInput.value = "";
+            if(notesDateWrap) notesDateWrap.style.display = "none";
+            return;
+          }
           notes[editingNoteIndex].text = val;
           if(notesDateInput && notesDateInput.value){
             const [y, mo, da] = notesDateInput.value.split("-").map(Number);
@@ -5118,15 +5152,18 @@ async function renderGrid(sectionKey, containerId){
       if(seedPacketAddBtn) seedPacketAddBtn.addEventListener("click", addFinishedSeed);
       }
 
-      // Garlic-only: fridge (cold treatment) date log. Simple date chips —
-      // tap one to delete it (with undo), same tap-menu pattern used
-      // elsewhere for date entries.
+      // Garlic-only: fridge (cold treatment) date log. Capped at a single
+      // entry — once one date is logged, the date field and button are
+      // hidden until that entry is deleted, rather than letting a second
+      // date pile up alongside it.
       if(p.slug === "garlic"){
         const fridgeInput = card.querySelector(`#fridge-${p.slug}`);
         const fridgeAddBtn = card.querySelector(`#fridge-add-${p.slug}`);
         const fridgeListEl = card.querySelector(`#fridge-list-${p.slug}`);
+        const fridgeInputRow = card.querySelector(`#fridge-input-row-${p.slug}`);
         if(fridgeInput && fridgeListEl){
           const renderFridgeLog = () => {
+            if(fridgeInputRow) fridgeInputRow.style.display = fridgeLog.length ? "none" : "flex";
             fridgeListEl.innerHTML = fridgeLog.map((f, i) => {
               const locked = isEntryLocked(f.addedAt);
               return `<span class="date-chip${locked ? " locked" : ""}" data-i="${i}">In fridge: ${f.date}</span>`;
@@ -5161,6 +5198,7 @@ async function renderGrid(sectionKey, containerId){
           };
           renderFridgeLog();
           async function addFridgeDate(){
+            if(fridgeLog.length) return;
             let dateLabel, dateISO;
             if(fridgeInput.value){
               const [y, mo, da] = fridgeInput.value.split("-").map(Number);
