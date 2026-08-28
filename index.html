@@ -90,14 +90,14 @@
     display:none; text-align:center; font-size:11.5px; font-weight:700;
     color:#3D7D82; background:#CDEDEA; padding:6px 10px;
   }
-  html,body{margin:0;padding:0;overflow-x:hidden;overflow-y:auto;height:auto;}
+  html,body{margin:0;padding:0;}
   body{
     background:var(--paper);
     color:var(--ink);
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100dvh;
-    overscroll-behavior-y:none;
+    overflow-x:hidden;
   }
   #app{
     max-width:480px;
@@ -1045,6 +1045,13 @@
   .date-chip-menu button.delete{ color:#b3261e; border-color:#e5b8b4; }
   .date-chip-menu button:hover{ filter:brightness(0.97); }
   .notes-field{margin-top:8px;}
+  .note-edit-date-row{
+    display:flex; align-items:center; gap:8px; margin-top:6px; font-size:12px; color:var(--ink-soft);
+  }
+  .note-edit-date-row input[type="date"]{
+    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:5px 7px;
+  }
   .notes-field label{
     display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
     letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
@@ -1132,6 +1139,27 @@
     background:var(--paper-2); color:var(--evergreen); white-space:nowrap;
   }
   .seedpacket-add-btn:hover{ filter:brightness(0.97); }
+  /* Garlic-only: fridge (cold treatment) date log — same visual language
+     as Finished Seed Packets above, just date-only entries. */
+  .fridge-field{ margin-top:10px; }
+  .fridge-field label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
+  }
+  .fridge-hint{ font-size:11.5px; color:var(--ink-soft); margin:0 0 6px; line-height:1.4; }
+  .fridge-input-row{ display:flex; gap:6px; }
+  .fridge-input-row input{
+    flex:1; min-width:0; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--entry-text);
+    background:var(--seedpacket-bg); border:1px solid var(--seedpacket-border); border-radius:8px;
+    padding:6px 8px; outline:none;
+  }
+  .fridge-input-row input:focus{ border-color:var(--sage); }
+  .fridge-add-btn{
+    flex:none; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border-radius:8px; padding:6px 10px; cursor:pointer; border:1px solid var(--evergreen-2);
+    background:var(--paper-2); color:var(--evergreen); white-space:nowrap;
+  }
+  .fridge-add-btn:hover{ filter:brightness(0.97); }
   /* The list itself reuses .sow-card / .sow-card-varieties / .variety-chip
      styling directly — one card per date, with that date's finished
      packets listed inside it, same layout as the Actual Sow variety boxes
@@ -1426,8 +1454,8 @@
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
-          <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
+          <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
@@ -2723,6 +2751,17 @@ async function setFinishedSeeds(slug, arr){
   try{ await window.storage.set(`finishedSeeds:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
 }
 
+/* ---------------- garlic fridge (cold treatment) log ---------------- */
+async function getFridgeLog(slug){
+  try{
+    const r = await window.storage.get(`fridgeLog:${activeSeason}:${slug}`, false);
+    return r ? JSON.parse(r.value) : [];
+  }catch(e){ return []; }
+}
+async function setFridgeLog(slug, arr){
+  try{ await window.storage.set(`fridgeLog:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
+}
+
 /* ---------------- daily journal (Home tab, not tied to any one crop) ---------------- */
 async function getJournal(){
   try{
@@ -3478,7 +3517,7 @@ async function renderJournal(){
         const rows = idxs.map(i => {
           const n = entries[i];
           const dateLabel = /^\d{4}-\d{2}-\d{2}$/.test(n.date) ? fmtLogDate(n.date) : n.date;
-          const locked = isPastSeason || isEntryLocked(n.addedAt);
+          const locked = isPastSeason;
           return `
             <div class="note-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
               <span class="note-date">${dateLabel}</span>
@@ -3732,6 +3771,7 @@ async function renderGrid(sectionKey, containerId){
     const transplantActualCheck = await getActualDates(p.slug, "transplant");
     const notes = await getNotes(p.slug);
     const finishedSeeds = await getFinishedSeeds(p.slug);
+    const fridgeLog = p.slug === "garlic" ? await getFridgeLog(p.slug) : [];
     const seasonDone = isPastSeason ? false : await getSeasonDone(p.slug);
     const sowTemp = isPastSeason ? "" : await getTemp(p.slug, "sow");
     const transplantTemp = isPastSeason ? "" : await getTemp(p.slug, "transplant");
@@ -3783,6 +3823,10 @@ async function renderGrid(sectionKey, containerId){
       <div class="notes-field">
         <label for="notes-${p.slug}">Notes</label>
         <textarea id="notes-${p.slug}" class="notes-textarea" placeholder="Add a note, press Enter (Shift+Enter for a new line)" rows="1"></textarea>
+        <div class="note-edit-date-row" id="notes-edit-date-wrap-${p.slug}" style="display:none;">
+          <label for="notes-edit-date-${p.slug}">Note date</label>
+          <input type="date" id="notes-edit-date-${p.slug}">
+        </div>
         <div class="notes-list" id="notes-list-${p.slug}"></div>
       </div>
     `;
@@ -3798,6 +3842,20 @@ async function renderGrid(sectionKey, containerId){
           <button type="button" class="seedpacket-add-btn" id="seedpacket-add-${p.slug}">+ Mark finished</button>
         </div>
         <div class="seedpacket-list" id="seedpacket-list-${p.slug}"></div>
+      </div>
+    `;
+    // Garlic-only: log when cloves went into the fridge for cold treatment
+    // (vernalization) before planting, and the date, so it's easy to check
+    // back on how long they've been chilling.
+    const fridgeFieldHTML = p.slug !== "garlic" ? "" : `
+      <div class="fridge-field">
+        <label for="fridge-${p.slug}">Garlic Cloves in Fridge</label>
+        <p class="fridge-hint">Log the date cloves went into the fridge for cold treatment before planting.</p>
+        <div class="fridge-input-row">
+          <input id="fridge-${p.slug}" type="date">
+          <button type="button" class="fridge-add-btn" id="fridge-add-${p.slug}">+ Log fridge date</button>
+        </div>
+        <div class="date-chips" id="fridge-list-${p.slug}"></div>
       </div>
     `;
 
@@ -3864,6 +3922,7 @@ async function renderGrid(sectionKey, containerId){
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${notesFieldHTML}
+          ${fridgeFieldHTML}
           ${seedPacketsFieldHTML}
           <div class="season-actions-row">
             <button type="button" class="season-done-btn" data-slug="${p.slug}">
@@ -4839,29 +4898,52 @@ async function renderGrid(sectionKey, containerId){
     }
 
     if(!isPastSeason){
-      // Notes journal: type an observation, press Enter to log it with today's date
+      // Notes journal: type an observation, press Enter to log it with today's date.
+      // Unlike sow/transplant entries and harvest logs, notes stay editable
+      // (text and date both) even past the normal 48h lock — a note is a
+      // freeform memory aid, not a planning record, so there's little harm
+      // in fixing a typo or backdating one weeks later.
       const notesInput = card.querySelector(`#notes-${p.slug}`);
       const notesListEl = card.querySelector(`#notes-list-${p.slug}`);
+      const notesDateWrap = card.querySelector(`#notes-edit-date-wrap-${p.slug}`);
+      const notesDateInput = card.querySelector(`#notes-edit-date-${p.slug}`);
       let editingNoteIndex = null;
 
+      // Notes are stored with just a display string like "Aug 27" (no
+      // year), so guess an ISO date to prefill the date picker on edit —
+      // current year, falling back to today if the text doesn't parse.
+      function guessISOFromNoteDate(dateStr){
+        const m = /^([A-Za-z]{3})\s+(\d{1,2})$/.exec((dateStr || "").trim());
+        if(m){
+          const mi = MONTHS.indexOf(m[1]);
+          if(mi >= 0){
+            const now = new Date();
+            const d = new Date(now.getFullYear(), mi, Number(m[2]));
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+          }
+        }
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      }
+
       const renderNotes = () => {
-        notesListEl.innerHTML = notes.map((n, i) => {
-          const locked = isEntryLocked(n.addedAt);
-          return `
-          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
+        notesListEl.innerHTML = notes.map((n, i) => `
+          <div class="note-entry${i === editingNoteIndex ? " editing" : ""}" data-i="${i}">
             <span class="note-date">${n.date}</span>
             <span class="note-text">${n.text}</span>
-            ${!locked ? `
-              <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
-              <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
-            ` : ""}
-          </div>`;
-        }).join("");
+            <button type="button" class="n-edit" data-i="${i}" aria-label="Edit note">✎</button>
+            <button type="button" class="n-remove" data-i="${i}" aria-label="Remove note">×</button>
+          </div>`
+        ).join("");
         function startEditNote(i){
           editingNoteIndex = i;
           notesInput.value = notes[i].text;
           notesInput.focus();
           autoGrowNotesInput();
+          if(notesDateWrap && notesDateInput){
+            notesDateInput.value = notes[i].dateISO || guessISOFromNoteDate(notes[i].date);
+            notesDateWrap.style.display = "flex";
+          }
           renderNotes();
         }
         notesListEl.querySelectorAll(".n-remove").forEach(btn => {
@@ -4870,7 +4952,10 @@ async function renderGrid(sectionKey, containerId){
             const i = Number(btn.dataset.i);
             const removedNote = notes[i];
             requestGenericDelete("Delete this note?", async () => {
-              if(i === editingNoteIndex){ editingNoteIndex = null; notesInput.value = ""; }
+              if(i === editingNoteIndex){
+                editingNoteIndex = null; notesInput.value = "";
+                if(notesDateWrap) notesDateWrap.style.display = "none";
+              }
               notes.splice(i, 1);
               renderNotes();
               await setNotes(p.slug, notes);
@@ -4898,12 +4983,18 @@ async function renderGrid(sectionKey, containerId){
         const val = notesInput.value.trim();
         if(!val) return;
         if(editingNoteIndex !== null){
-          if(isEntryLocked(notes[editingNoteIndex].addedAt)){ editingNoteIndex = null; notesInput.value = ""; return; }
           notes[editingNoteIndex].text = val;
+          if(notesDateInput && notesDateInput.value){
+            const [y, mo, da] = notesDateInput.value.split("-").map(Number);
+            notes[editingNoteIndex].date = `${MONTHS[mo - 1]} ${da}`;
+            notes[editingNoteIndex].dateISO = notesDateInput.value;
+          }
           editingNoteIndex = null;
+          if(notesDateWrap) notesDateWrap.style.display = "none";
         } else {
           const now = new Date();
-          notes.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, text: val, addedAt: Date.now() });
+          const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+          notes.push({ date: `${MONTHS[now.getMonth()]} ${now.getDate()}`, text: val, dateISO: iso, addedAt: Date.now() });
         }
         notesInput.value = "";
         notesInput.style.height = "auto";
@@ -5025,6 +5116,68 @@ async function renderGrid(sectionKey, containerId){
         if(e.key === "Enter"){ e.preventDefault(); addFinishedSeed(); }
       });
       if(seedPacketAddBtn) seedPacketAddBtn.addEventListener("click", addFinishedSeed);
+      }
+
+      // Garlic-only: fridge (cold treatment) date log. Simple date chips —
+      // tap one to delete it (with undo), same tap-menu pattern used
+      // elsewhere for date entries.
+      if(p.slug === "garlic"){
+        const fridgeInput = card.querySelector(`#fridge-${p.slug}`);
+        const fridgeAddBtn = card.querySelector(`#fridge-add-${p.slug}`);
+        const fridgeListEl = card.querySelector(`#fridge-list-${p.slug}`);
+        if(fridgeInput && fridgeListEl){
+          const renderFridgeLog = () => {
+            fridgeListEl.innerHTML = fridgeLog.map((f, i) => {
+              const locked = isEntryLocked(f.addedAt);
+              return `<span class="date-chip${locked ? " locked" : ""}" data-i="${i}">In fridge: ${f.date}</span>`;
+            }).join("");
+            fridgeListEl.querySelectorAll(".date-chip:not(.locked)").forEach(chip => {
+              chip.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const already = chip.querySelector(".date-chip-menu");
+                document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
+                if(already) return;
+                const i = Number(chip.dataset.i);
+                const menu = document.createElement("div");
+                menu.className = "date-chip-menu";
+                menu.innerHTML = `<button type="button" class="delete">Delete</button>`;
+                chip.appendChild(menu);
+                menu.querySelector(".delete").addEventListener("click", (ev) => {
+                  ev.stopPropagation();
+                  const removed = fridgeLog[i];
+                  requestGenericDelete("Remove this fridge date?", async () => {
+                    fridgeLog.splice(i, 1);
+                    renderFridgeLog();
+                    await setFridgeLog(p.slug, fridgeLog);
+                    showUndoToast("Fridge date restored.", async () => {
+                      fridgeLog.splice(i, 0, removed);
+                      renderFridgeLog();
+                      await setFridgeLog(p.slug, fridgeLog);
+                    });
+                  });
+                });
+              });
+            });
+          };
+          renderFridgeLog();
+          async function addFridgeDate(){
+            let dateLabel, dateISO;
+            if(fridgeInput.value){
+              const [y, mo, da] = fridgeInput.value.split("-").map(Number);
+              dateLabel = `${MONTHS[mo - 1]} ${da}`;
+              dateISO = fridgeInput.value;
+            } else {
+              const now = new Date();
+              dateLabel = `${MONTHS[now.getMonth()]} ${now.getDate()}`;
+              dateISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+            }
+            fridgeLog.push({ date: dateLabel, dateISO, addedAt: Date.now() });
+            fridgeInput.value = "";
+            renderFridgeLog();
+            await setFridgeLog(p.slug, fridgeLog);
+          }
+          if(fridgeAddBtn) fridgeAddBtn.addEventListener("click", addFridgeDate);
+        }
       }
     }
   }
