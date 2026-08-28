@@ -90,7 +90,7 @@
     display:none; text-align:center; font-size:11.5px; font-weight:700;
     color:#3D7D82; background:#CDEDEA; padding:6px 10px;
   }
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
   body{
     background:var(--paper);
     color:var(--ink);
@@ -392,11 +392,11 @@
     font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-soft);
     margin-bottom:4px;
   }
-  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px; min-width:0;}
   .cal-day{
     aspect-ratio:1; border-radius:8px; background:var(--paper-2); border:1px solid transparent;
     display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding:4px 2px 2px; cursor:pointer; position:relative;
+    padding:4px 2px 2px; cursor:pointer; position:relative; min-width:0;
   }
   .cal-day.empty{background:transparent; cursor:default;}
   /* "Today" uses a thin border; "selected" uses a thick border and adds no
@@ -410,6 +410,13 @@
   .cal-daynum{font-size:11.5px; font-weight:600; color:var(--ink);}
   .cal-dots{display:flex; flex-wrap:wrap; gap:3px; justify-content:center; margin-top:3px;}
   .cal-dot{width:15px; height:15px; border-radius:50%;}
+  @media (max-width:380px){
+    .modal{ padding-left:12px; padding-right:12px; }
+    .cal-dot{ width:11px; height:11px; }
+    .cal-dots{ gap:2px; }
+    .cal-day{ padding:3px 1px 1px; }
+    .cal-daynum{ font-size:10.5px; }
+  }
   .cal-day-detail{margin-top:14px; min-height:20px;}
   .cal-day-detail-title{
     font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.05em;
@@ -540,6 +547,19 @@
   .home-tab-btn.tab-rain.active{ background:#5FA3C4; color:#fff; border-color:#5FA3C4; }
   .home-tab-btn.tab-journal{ background:#EFE3D0; color:#8C6A3D; border-color:#E2D0AF; }
   .home-tab-btn.tab-journal.active{ background:#B98F52; color:#fff; border-color:#B98F52; }
+  .home-tab-btn.tab-germination{ background:#DCEEE0; color:#3E8054; border-color:#BEE0C6; }
+  .home-tab-btn.tab-germination.active{ background:#4F9E68; color:#fff; border-color:#4F9E68; }
+  .germ-best{
+    margin:10px 0 14px; font-size:13.5px; font-weight:600; color:var(--evergreen);
+    background:var(--paper-2); border-radius:10px; padding:9px 12px;
+  }
+  .germ-chart{ display:flex; flex-direction:column; gap:9px; }
+  .germ-row{ display:flex; align-items:center; gap:8px; }
+  .germ-row-label{ flex:0 0 108px; font-size:12.5px; color:var(--ink); font-weight:600; overflow-wrap:break-word; }
+  .germ-row-bar-wrap{ flex:1; background:var(--paper-2); border-radius:6px; height:14px; overflow:hidden; }
+  .germ-row-bar{ height:100%; background:var(--evergreen); border-radius:6px; min-width:2px; }
+  .germ-row-pct{ flex:0 0 auto; font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  .germ-row-n{ color:var(--ink-soft); font-weight:400; }
   .home-tab-body{ margin-top:12px; }
   .month-card{margin-bottom:10px;}
   .month-task-row{
@@ -1404,10 +1424,10 @@
       <div class="legend-card home-tabs-card">
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
-          <button type="button" class="home-tab-btn tab-how" data-hometab="how"><span class="home-tab-icon">🌿</span><span>How This Calendar Works</span></button>
-          <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
+          <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
+          <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
@@ -1467,6 +1487,7 @@
         </div>
         <div class="notes-list" id="journalList"></div>
         </div>
+        <div id="germinationBody" class="home-tab-body" style="display:none;"></div>
         <div id="howBody" class="home-tab-body" style="display:none;">
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
@@ -4332,7 +4353,7 @@ async function renderGrid(sectionKey, containerId){
           return { commit, cancel };
         }
         let dates = await getActualDates(p.slug, kind);
-        if(kind === "sow" && p.slug === "tomatoes"){
+        if(kind === "sow"){
           const merged = mergeSameDaySowVarieties(dates);
           if(merged.length !== dates.length){
             dates = merged;
@@ -4745,7 +4766,7 @@ async function renderGrid(sectionKey, containerId){
             renderPendingVarieties();
           }
           dates.push(entry);
-          if(kind === "sow" && p.slug === "tomatoes") dates = mergeSameDaySowVarieties(dates);
+          if(kind === "sow") dates = mergeSameDaySowVarieties(dates);
           dateEl.value = "";
           tempEl.value = "";
           hideEntryDeleteLink();
@@ -5533,6 +5554,60 @@ function homeBtnDeactivateAll(){
   document.querySelectorAll(".home-tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".home-tab-body").forEach(b => { b.style.display = "none"; });
 }
+/* ---------------- germination report (by seed company) ----------------
+   Tallies every logged variety's seed source(s) against whether it was
+   marked "Seeds didn't germinate", for the currently viewed season, so
+   you can see which company's seeds actually came up. A variety with
+   more than one source checked (rare) counts toward each of them. */
+async function computeGerminationStats(){
+  const stats = {};
+  const sections = ["vegetables", "herbs", "flowers", "coverCrops"];
+  for(const sectionKey of sections){
+    for(const p of (DATA_now()[sectionKey] || [])){
+      const dates = await getActualDates(p.slug, "sow");
+      for(const d of dates){
+        entryVarieties(d).forEach(v => {
+          if(typeof v !== "object" || !v.source || !v.source.length) return;
+          const failed = varietyNoGerm(v);
+          v.source.forEach(company => {
+            if(!stats[company]) stats[company] = { germinated: 0, failed: 0 };
+            if(failed) stats[company].failed++; else stats[company].germinated++;
+          });
+        });
+      }
+    }
+  }
+  return stats;
+}
+async function renderGerminationReport(){
+  const el = document.getElementById("germinationBody");
+  if(!el) return;
+  const stats = await computeGerminationStats();
+  const companies = Object.keys(stats);
+  if(!companies.length){
+    el.innerHTML = `<div class="harvest-empty">No seed-source data logged yet for ${SEASONS[activeSeason].label} — check a seed-company box when adding a variety (and mark any that don't come up as "Seeds didn't germinate") to see this fill in.</div>`;
+    return;
+  }
+  const rows = companies.map(company => {
+    const s = stats[company];
+    const total = s.germinated + s.failed;
+    const pct = total ? Math.round((s.germinated / total) * 100) : 0;
+    return { company, pct, total, germinated: s.germinated };
+  }).sort((a, b) => b.pct - a.pct || b.total - a.total);
+  const best = rows[0];
+  const barsHTML = rows.map(r => `
+    <div class="germ-row">
+      <div class="germ-row-label">${r.company}</div>
+      <div class="germ-row-bar-wrap"><div class="germ-row-bar" style="width:${r.pct}%"></div></div>
+      <div class="germ-row-pct">${r.pct}% <span class="germ-row-n">(${r.germinated}/${r.total})</span></div>
+    </div>
+  `).join("");
+  el.innerHTML = `
+    <p class="backup-hint">Germination rate by seed company for ${SEASONS[activeSeason].label}, based on which logged varieties were marked "Seeds didn't germinate".</p>
+    <div class="germ-best">🏆 Best germination this season: <strong>${best.company}</strong> — ${best.pct}%</div>
+    <div class="germ-chart">${barsHTML}</div>
+  `;
+}
 document.getElementById("compareBtn").addEventListener("click", () => {
   const wasActive = document.getElementById("compareBtn").classList.contains("active");
   homeBtnDeactivateAll();
@@ -5992,6 +6067,7 @@ document.querySelectorAll(".home-tab-btn[data-hometab]").forEach(btn => {
     if(!isOpen){
       btn.classList.add("active");
       if(body) body.style.display = "block";
+      if(key === "germination") renderGerminationReport();
     }
   });
 });
