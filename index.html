@@ -90,7 +90,7 @@
     display:none; text-align:center; font-size:11.5px; font-weight:700;
     color:#3D7D82; background:#CDEDEA; padding:6px 10px;
   }
-  html,body{margin:0;padding:0;overflow-x:hidden;}
+  html,body{margin:0;padding:0;overflow-x:hidden;overflow-y:auto;height:auto;}
   body{
     background:var(--paper);
     color:var(--ink);
@@ -2076,11 +2076,17 @@ const TOMATO_COLOR_HEX = { Red:"#C0392B", Orange:"#E07B1E", Yellow:"#E8C93A", Bl
 // list since carrot varieties don't have nearly as much color spread.
 const CARROT_COLORS = ["Orange", "Red", "Purple", "White", "Yellow"];
 const CARROT_COLOR_HEX = { Orange:"#E07B1E", Red:"#C0392B", Purple:"#6B3FA0", White:"#F1EEE4", Yellow:"#E8C93A" };
+const PEPPER_COLORS = ["Red", "Orange", "Yellow", "Green", "Purple"];
+const PEPPER_COLOR_HEX = { Red:"#C0392B", Orange:"#E07B1E", Yellow:"#E8C93A", Green:"#5B8A3C", Purple:"#6B3FA0" };
+const EGGPLANT_COLORS = ["Dark Purple", "Light Purple", "Green", "White"];
+const EGGPLANT_COLOR_HEX = { "Dark Purple":"#3D2350", "Light Purple":"#9B7FC7", Green:"#5B8A3C", White:"#F1EEE4" };
+const RADISH_COLORS = ["White", "Red", "Pink", "Purple"];
+const RADISH_COLOR_HEX = { White:"#F1EEE4", Red:"#C0392B", Pink:"#E07B9E", Purple:"#6B3FA0" };
 // Which crops get a color-tagging checkbox row at all, and which palette
 // each one offers. Add a crop here to give it the same color-checkbox
 // feature tomatoes and carrots have.
-const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS };
-const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX };
+const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS, peppers: PEPPER_COLORS, eggplants: EGGPLANT_COLORS, radishes: RADISH_COLORS };
+const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX, peppers: PEPPER_COLOR_HEX, eggplants: EGGPLANT_COLOR_HEX, radishes: RADISH_COLOR_HEX };
 function varietyColorCheckboxesHTML(slug){
   return (CROP_COLOR_OPTIONS[slug] || []).map(c => `<label class="variety-color-check"><input type="checkbox" class="variety-color-input" value="${c}"> ${c}</label>`).join("");
 }
