@@ -739,15 +739,12 @@
   .season-done-btn svg{ flex:none; }
   .season-actions-row{display:flex; align-items:stretch; gap:8px; margin-top:12px;}
   .plant-delete-btn{
-    flex:none; display:flex; align-items:center; justify-content:center;
-    width:40px; background:var(--paper-2); border:1px solid var(--line); cursor:pointer;
-    border-radius:10px; font-size:16px; line-height:1; color:var(--ink-soft); font-weight:700;
+    display:block; width:100%; margin-top:10px; text-align:center;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600;
+    border-radius:10px; padding:10px; cursor:pointer;
+    border:1px solid #F0B9CE; background:#FBE6EE; color:var(--clay-dark);
   }
-  .plant-delete-btn:hover{ background:#F6DCE8; color:var(--clay-dark); border-color:#F0B9CE; }
-  .plant-delete-btn.on-dark{
-    width:auto; padding:4px 9px; background:rgba(255,255,255,0.2); border:none; color:#fff;
-  }
-  .plant-delete-btn.on-dark:hover{ background:rgba(255,255,255,0.32); color:#fff; }
+  .plant-delete-btn:hover{ background:#F6DCE8; border-color:#E7A3BC; }
   .season-done-banner{
     display:flex; align-items:center; justify-content:space-between; gap:8px;
     margin-top:8px; padding:8px 10px; border-radius:10px; background:var(--evergreen);
@@ -3857,12 +3854,12 @@ async function renderGrid(sectionKey, containerId){
           <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">✓</span>
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
-        ${(!isPastSeason && GLOBAL_UNLOCK) ? `<button type="button" class="plant-delete-btn" title="Delete this crop" aria-label="Delete this crop">✕</button>` : ""}
       </div>
       <div id="card-body-${p.slug}" class="card-body" style="display:none;">
       <div class="dose">${wavesHTML}</div>
       ${p.note ? `<div class="plant-note${p.dates.length===0 ? " pending" : ""}">${p.note}</div>` : ""}
       ${editableSectionsHTML}
+      ${(!isPastSeason && GLOBAL_UNLOCK) ? `<button type="button" class="plant-delete-btn" title="Delete ${p.name}">Delete ${p.name}</button>` : ""}
       </div>
     `;
     el.appendChild(card);
