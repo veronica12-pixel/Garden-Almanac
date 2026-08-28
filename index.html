@@ -815,7 +815,14 @@
      a tomato variety can be tagged with more than one, e.g. red fruit with
      brown stripes. Shown as a wrapped row of small labeled checkboxes. */
   .sow-variety-color-row{ display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:6px; }
-  .sow-variety-source-row{ display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:6px; }
+  .sow-variety-source-row{ display:flex; flex-wrap:wrap; gap:3px 10px; margin-top:6px; align-items:center; }
+  .variety-source-other-input{
+    flex:1 1 100%; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:12.5px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    padding:6px 8px; outline:none; margin-top:4px;
+  }
+  .variety-source-other-input::placeholder{ color:var(--entry-placeholder); }
+  .variety-source-other-input:focus{ border-color:var(--sage); }
   .variety-color-check{
     display:inline-flex; align-items:center; gap:4px;
     font-family:'Inter',sans-serif; font-size:12px; color:var(--ink); white-space:nowrap;
@@ -2069,8 +2076,55 @@ const SEED_SOURCES = ["Baker Creek", "Johnny's", "Cody Cove", "Urban Harvest"];
 // unambiguous), but the variety badge shown after adding is tight on
 // space, so it displays these short abbreviations instead.
 const SEED_SOURCE_ABBR = { "Baker Creek": "BCseeds", "Johnny's": "Jseeds", "Cody Cove": "CCseeds", "Urban Harvest": "UHseeds" };
+// "Other" lets a source outside the four presets be typed in by hand —
+// stored in the same `source` array as the presets, just not one of the
+// known SEED_SOURCES values, so it's told apart from them by exclusion
+// rather than a separate field.
 function varietySourceCheckboxesHTML(){
-  return SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
+  const presets = SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
+  return presets + `<label class="variety-color-check"><input type="checkbox" class="variety-source-other-check"> Other</label><input type="text" class="variety-source-other-input" placeholder="Where from?" style="display:none;">`;
+}
+// Reads the checked preset sources plus, if "Other" is checked and
+// filled in, the typed-in source — from either the innerHTML-built row
+// (initial add form) or one built via DOM elements (edit form), since
+// both use the same class names.
+function readVarietySourceEl(el){
+  if(!el) return [];
+  const picked = Array.from(el.querySelectorAll(".variety-source-input:checked")).map(cb => cb.value);
+  const otherCheck = el.querySelector(".variety-source-other-check");
+  const otherInput = el.querySelector(".variety-source-other-input");
+  if(otherCheck && otherCheck.checked && otherInput && otherInput.value.trim()) picked.push(otherInput.value.trim());
+  return picked;
+}
+function clearVarietySourceEl(el){
+  if(!el) return;
+  el.querySelectorAll(".variety-source-input").forEach(cb => cb.checked = false);
+  const otherCheck = el.querySelector(".variety-source-other-check");
+  const otherInput = el.querySelector(".variety-source-other-input");
+  if(otherCheck) otherCheck.checked = false;
+  if(otherInput){ otherInput.value = ""; otherInput.style.display = "none"; }
+}
+// Restores a saved source list (e.g. from autocomplete history) into the
+// checkboxes + Other field — any entry not among SEED_SOURCES is treated
+// as the custom "Other" value.
+function applyVarietySourceEl(el, sourceList){
+  if(!el) return;
+  const list = sourceList || [];
+  el.querySelectorAll(".variety-source-input").forEach(cb => { cb.checked = list.includes(cb.value); });
+  const otherCheck = el.querySelector(".variety-source-other-check");
+  const otherInput = el.querySelector(".variety-source-other-input");
+  const extra = list.filter(s => !SEED_SOURCES.includes(s));
+  if(otherCheck && otherInput){
+    if(extra.length){
+      otherCheck.checked = true;
+      otherInput.value = extra.join(", ");
+      otherInput.style.display = "";
+    } else {
+      otherCheck.checked = false;
+      otherInput.value = "";
+      otherInput.style.display = "none";
+    }
+  }
 }
 const COMMON_TOMATO_VARIETIES = {
   "black strawberry": { name:"Black Strawberry", type:"Indeterminate", dtm:"60", colors:["Black","Red"], url:"https://www.rareseeds.com/tomato-black-strawberry" },
@@ -3903,6 +3957,19 @@ async function renderGrid(sectionKey, containerId){
         const varietyDtmEl = opts.varietyDtmEl;
         const varietyColorEl = opts.varietyColorEl;
         const varietySourceEl = opts.varietySourceEl;
+        if(varietySourceEl){
+          const sourceOtherCheck = varietySourceEl.querySelector(".variety-source-other-check");
+          const sourceOtherInput = varietySourceEl.querySelector(".variety-source-other-input");
+          if(sourceOtherCheck && sourceOtherInput){
+            sourceOtherCheck.addEventListener("click", (e) => e.stopPropagation());
+            sourceOtherInput.addEventListener("click", (e) => e.stopPropagation());
+            sourceOtherCheck.addEventListener("change", () => {
+              sourceOtherInput.style.display = sourceOtherCheck.checked ? "" : "none";
+              if(sourceOtherCheck.checked) sourceOtherInput.focus();
+              else sourceOtherInput.value = "";
+            });
+          }
+        }
         const varietySuggestEl = opts.varietySuggestEl;
         // "Delete this entry" lives here, as a small link that only shows
         // up once an existing entry is loaded into the form for editing —
@@ -4008,7 +4075,7 @@ async function renderGrid(sectionKey, containerId){
             varietyOpEl ? varietyOpEl.checked : false,
             false,
             varietyHEl ? varietyHEl.checked : false,
-            varietySourceEl ? Array.from(varietySourceEl.querySelectorAll(".variety-source-input:checked")).map(cb => cb.value) : []
+            varietySourceEl ? readVarietySourceEl(varietySourceEl) : []
           );
         }
         function clearVarietyMetaInputs(){
@@ -4018,7 +4085,7 @@ async function renderGrid(sectionKey, containerId){
           if(varietyOpEl) varietyOpEl.checked = false;
           if(varietyHEl) varietyHEl.checked = false;
           if(varietyColorEl) varietyColorEl.querySelectorAll(".variety-color-input").forEach(cb => cb.checked = false);
-          if(varietySourceEl) varietySourceEl.querySelectorAll(".variety-source-input").forEach(cb => cb.checked = false);
+          if(varietySourceEl) clearVarietySourceEl(varietySourceEl);
         }
         // Builds the inline editor shown when a variety chip/tag is tapped
         // to edit — name field plus, for tomatoes, the type/F1/days fields
@@ -4037,7 +4104,7 @@ async function renderGrid(sectionKey, containerId){
           nameInput.className = "variety-edit-input";
           nameInput.value = varietyName(current);
           wrap.appendChild(nameInput);
-          let typeSel = null, f1Box = null, opBox = null, hBox = null, dtmInput = null, colorBoxes = [], sourceBoxes = [], noGermBox = null;
+          let typeSel = null, f1Box = null, opBox = null, hBox = null, dtmInput = null, colorBoxes = [], sourceBoxes = [], sourceOtherBox = null, sourceOtherInput = null, noGermBox = null;
           // F1, OP, and H all apply to every crop, not just tomatoes, so
           // they're built once each and placed depending on whether the
           // full tomato meta group (type/days/colors) is also present.
@@ -4152,6 +4219,30 @@ async function renderGrid(sectionKey, containerId){
               sourceRow.appendChild(label);
               sourceBoxes.push(box);
             });
+            const otherLabel = document.createElement("label");
+            otherLabel.className = "variety-color-check";
+            sourceOtherBox = document.createElement("input");
+            sourceOtherBox.type = "checkbox";
+            otherLabel.appendChild(sourceOtherBox);
+            otherLabel.appendChild(document.createTextNode(" Other"));
+            sourceRow.appendChild(otherLabel);
+            sourceOtherInput = document.createElement("input");
+            sourceOtherInput.type = "text";
+            sourceOtherInput.className = "variety-edit-input variety-source-other-input";
+            sourceOtherInput.placeholder = "Where from?";
+            sourceOtherInput.style.display = "none";
+            const extraSource = currentSource.filter(s => !SEED_SOURCES.includes(s));
+            if(extraSource.length){
+              sourceOtherBox.checked = true;
+              sourceOtherInput.value = extraSource.join(", ");
+              sourceOtherInput.style.display = "";
+            }
+            sourceOtherBox.addEventListener("change", () => {
+              sourceOtherInput.style.display = sourceOtherBox.checked ? "" : "none";
+              if(sourceOtherBox.checked) sourceOtherInput.focus();
+              else sourceOtherInput.value = "";
+            });
+            sourceRow.appendChild(sourceOtherInput);
             wrap.appendChild(sourceRow);
           }
           wrap.appendChild(buildNoGermLabel());
@@ -4185,6 +4276,7 @@ async function renderGrid(sectionKey, containerId){
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
             const source = sourceBoxes.filter(b => b.checked).map(b => b.value);
+            if(sourceOtherBox && sourceOtherBox.checked && sourceOtherInput && sourceOtherInput.value.trim()) source.push(sourceOtherInput.value.trim());
             onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, hBox ? hBox.checked : false, source) : null);
           };
           const cancel = () => {
@@ -4193,7 +4285,7 @@ async function renderGrid(sectionKey, containerId){
             document.removeEventListener("pointerdown", outsideTapHandler, true);
             onCancel();
           };
-          [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, ...colorBoxes, ...sourceBoxes].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, ...colorBoxes, ...sourceBoxes, sourceOtherBox, sourceOtherInput].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
@@ -4419,12 +4511,7 @@ async function renderGrid(sectionKey, containerId){
                   cb.checked = infoColors.includes(cb.value);
                 });
               }
-              if(varietySourceEl){
-                const infoSource = info.source || [];
-                varietySourceEl.querySelectorAll(".variety-source-input").forEach(cb => {
-                  cb.checked = infoSource.includes(cb.value);
-                });
-              }
+              if(varietySourceEl) applyVarietySourceEl(varietySourceEl, info.source || []);
               closeSuggestions();
               varietyInput.focus();
             };
@@ -7153,77 +7240,10 @@ document.querySelectorAll("#tab-biodynamic nav.bc-tabs button").forEach(btn => {
   });
 });
 
-/* ---------------- reminders (browser notifications) ----------------
-   Fires a native notification for anything due today or overdue,
-   whenever this app is open (including a background tab, on most
-   browsers/OSes). This can't reach you once the tab/browser is fully
-   closed — that would need a server watching dates and pushing to your
-   phone, which a static file like this doesn't have. */
-function remindersSupported(){
-  return typeof Notification !== "undefined";
-}
-function updateRemindersUI(){
-  const statusEl = document.getElementById("remindersStatusLine");
-  const btn = document.getElementById("remindersEnableBtn");
-  if(!statusEl || !btn) return;
-  if(!remindersSupported()){
-    statusEl.textContent = "Not supported in this browser";
-    statusEl.style.color = "var(--clay-dark)";
-    btn.style.display = "none";
-    return;
-  }
-  const perm = Notification.permission;
-  if(perm === "granted"){
-    statusEl.textContent = "✓ Enabled";
-    statusEl.style.color = "var(--evergreen)";
-    btn.textContent = "Send a test notification";
-  } else if(perm === "denied"){
-    statusEl.textContent = "Blocked — enable notifications for this site in your browser settings";
-    statusEl.style.color = "var(--clay-dark)";
-    btn.style.display = "none";
-  } else {
-    statusEl.textContent = "Not enabled yet";
-    statusEl.style.color = "var(--ink-soft)";
-    btn.textContent = "Enable reminders";
-  }
-}
-
-// Mirrors the "Overdue" logic already used per-card: a task counts as due
-// once its planned date has passed (or is today) with nothing logged yet
-// in Actual sow/transplant, and the crop hasn't been marked Season DONE.
-async function getDueOrOverdueTasks(){
-  const today = new Date(); today.setHours(0,0,0,0);
-  const results = [];
-  for(const sectionKey of ["vegetables","herbs","flowers","coverCrops"]){
-    for(const p of (DATA_now()[sectionKey] || [])){
-      if(await getSeasonDone(p.slug)) continue;
-      const sowActual = await getActualDates(p.slug, "sow");
-      const transplantActual = await getActualDates(p.slug, "transplant");
-      for(const wave of p.dates){
-        for(const t of wave){
-          const isSow = /^Start/.test(t.a);
-          const isTransplant = /^Transplant/.test(t.a);
-          if(!isSow && !isTransplant) continue;
-          const logged = isSow ? sowActual.length > 0 : transplantActual.length > 0;
-          if(logged) continue;
-          const planned = plannedDateObj(activeSeason, t);
-          if(planned <= today){
-            results.push({ name: p.name, action: t.a, key: `${p.slug}:${t.a}:${t.m}-${t.d}` });
-          }
-        }
-      }
-    }
-  }
-  // Custom, non-crop reminders (e.g. shade cloth) — fires on their exact date.
-  CUSTOM_REMINDERS.forEach(r => {
-    const planned = plannedDateObj(activeSeason, r);
-    planned.setHours(0, 0, 0, 0);
-    if(planned.getTime() === today.getTime()){
-      results.push({ name: "Reminder", action: r.text, key: `custom:${r.key}:${activeSeason}` });
-    }
-  });
-  return results;
-}
+/* ---------------- reminders (in-app popup) ----------------
+   Shows a popup card for anything planned today or tomorrow, right in
+   the app — no browser notification permission needed. Runs
+   automatically once per day per item on page load. */
 
 // Tasks planned for a given offset from today (0 = today, 1 = tomorrow),
 // regardless of whether they're already logged — an advance heads-up, not
@@ -7326,27 +7346,6 @@ async function checkTomorrowReminder(){
   }
 }
 
-async function checkAndNotify(){
-  if(!remindersSupported() || Notification.permission !== "granted") return;
-  const todayISO = new Date().toISOString().slice(0, 10);
-  let notifiedToday = [];
-  try{
-    const r = await window.storage.get(`notifiedToday:${todayISO}`, false);
-    if(r) notifiedToday = JSON.parse(r.value);
-  }catch(e){}
-  const due = await getDueOrOverdueTasks();
-  const fresh = due.filter(item => !notifiedToday.includes(item.key));
-  if(!fresh.length) return;
-  fresh.forEach(item => {
-    try{
-      const body = item.key.startsWith("custom:") ? item.action : `${item.name} — ${item.action} is due`;
-      new Notification("Odessa Garden", { body, tag: item.key });
-    }catch(e){ console.error("Notification failed:", e); }
-  });
-  const updated = notifiedToday.concat(fresh.map(item => item.key));
-  try{ await window.storage.set(`notifiedToday:${todayISO}`, JSON.stringify(updated), false); }catch(e){}
-}
-
 (async () => {
   await seedFromEmbeddedData();
   try{
@@ -7361,8 +7360,6 @@ async function checkAndNotify(){
   appHasRendered = true;
   if(READ_ONLY) applyReadOnlyLocks();
   if(!READ_ONLY){
-    checkAndNotify();
-    setInterval(checkAndNotify, 30 * 60 * 1000);
     checkTomorrowReminder();
   }
 })();
