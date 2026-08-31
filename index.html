@@ -801,6 +801,7 @@
   .sow-variety-input::placeholder{color:var(--entry-placeholder);}
   .sow-variety-input:focus{border-color:var(--sage);}
   .sow-variety-input-wrap{ position:relative; }
+  .variety-source-other-wrap{ position:relative; display:inline-block; }
   /* Autocomplete dropdown for known tomato varieties (see
      COMMON_TOMATO_VARIETIES) — appears under the name field as the person
      types, e.g. typing "gold" surfaces "Gold Nugget". */
@@ -2154,36 +2155,87 @@ const SEED_SOURCES = ["Baker Creek", "Johnny's", "Cody Cove", "Urban Harvest"];
 // unambiguous), but the variety badge shown after adding is tight on
 // space, so it displays these short abbreviations instead.
 const SEED_SOURCE_ABBR = { "Baker Creek": "BCseeds", "Johnny's": "Jseeds", "Cody Cove": "CCseeds", "Urban Harvest": "UHseeds" };
-// Any company typed into the "Other" box gets remembered here (loaded
-// once at startup, persisted to storage) so it shows up as its own
-// checkbox next time instead of having to be retyped. Shared across
-// every crop — seed companies aren't crop-specific.
+// Any company typed into "Other" is remembered here (loaded once at
+// startup, persisted to storage) purely as autocomplete fuel for the
+// "Other" text field — typing "K" surfaces "Kitazawa Seed", etc. Not
+// shown as checkboxes; shared across every crop. Stored under a new key
+// ("V2") — the original key could accumulate partial fragments (e.g.
+// "seed" alongside "WorkingFood.org/seeds") from remembering on blur,
+// which fires too early/unreliably on some devices to trust as "the
+// person is done typing". Starting clean under a new key avoids trying
+// to algorithmically guess which of the old entries were real vs.
+// leftover fragments.
 let CUSTOM_SEED_SOURCES = [];
 async function loadCustomSeedSources(){
   try{
-    const r = await window.storage.get("customSeedSources", false);
+    const r = await window.storage.get("customSeedSourcesV2", false);
     CUSTOM_SEED_SOURCES = r ? JSON.parse(r.value) : [];
   }catch(e){ CUSTOM_SEED_SOURCES = []; }
 }
+// Called only from the two places a source is actually committed —
+// adding a variety (readVarietySourceEl) and confirming an edit to one
+// (openVarietyEditor's commit) — never from a field simply losing
+// focus, since that turned out to fire mid-typing on this device and
+// remember partial names.
 async function rememberCustomSeedSource(name){
   const n = (name || "").trim();
-  if(!n || SEED_SOURCES.includes(n) || CUSTOM_SEED_SOURCES.includes(n)) return;
+  if(!n || SEED_SOURCES.includes(n)) return;
+  const lower = n.toLowerCase();
+  if(CUSTOM_SEED_SOURCES.some(s => s.toLowerCase() === lower)) return;
   CUSTOM_SEED_SOURCES.push(n);
-  try{ await window.storage.set("customSeedSources", JSON.stringify(CUSTOM_SEED_SOURCES), false); }catch(e){}
+  try{ await window.storage.set("customSeedSourcesV2", JSON.stringify(CUSTOM_SEED_SOURCES), false); }catch(e){}
 }
 // "Other" lets a source outside the four presets be typed in by hand —
 // stored in the same `source` array as the presets, just not one of the
 // known SEED_SOURCES values, so it's told apart from them by exclusion
-// rather than a separate field.
+// rather than a separate field. The typed field is wrapped so an
+// autocomplete dropdown (see wireSourceOtherAutocomplete) can anchor
+// under it.
 function varietySourceCheckboxesHTML(slug){
   // Garlic: no presets or "Other" toggle — just a single always-visible
   // "Cloves from" text field, since seed companies don't really apply.
   if(slug === "garlic"){
     return `<input type="text" class="variety-source-other-input" placeholder="Cloves from">`;
   }
-  const allPresets = SEED_SOURCES.concat(CUSTOM_SEED_SOURCES);
-  const presets = allPresets.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
-  return presets + `<label class="variety-color-check"><input type="checkbox" class="variety-source-other-check"> Other</label><input type="text" class="variety-source-other-input" placeholder="Where from?" style="display:none;">`;
+  const presets = SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
+  return presets + `<label class="variety-color-check"><input type="checkbox" class="variety-source-other-check"> Other</label><span class="variety-source-other-wrap"><input type="text" class="variety-source-other-input" placeholder="Where from?" style="display:none;" autocomplete="off"><div class="variety-suggest variety-source-suggest"></div></span>`;
+}
+// Wires typeahead on a plain (non-garlic) "Other" seed-source text field:
+// shows matching remembered companies as the person types, lets a tap
+// fill the field, and remembers new ones on blur. `wrapEl` is the
+// `.variety-source-other-wrap` span holding both the input and the
+// dropdown (present for both the innerHTML-built add-form and the
+// DOM-built edit form, since both use this same wrap class).
+function wireSourceOtherAutocomplete(inputEl){
+  if(!inputEl) return;
+  const wrapEl = inputEl.closest(".variety-source-other-wrap") || inputEl.parentElement;
+  const suggestEl = wrapEl ? wrapEl.querySelector(".variety-source-suggest") : null;
+  if(!suggestEl) return;
+  const close = () => { suggestEl.classList.remove("open"); suggestEl.innerHTML = ""; };
+  const render = () => {
+    const q = inputEl.value.trim().toLowerCase();
+    if(!q){ close(); return; }
+    const matches = CUSTOM_SEED_SOURCES.filter(s => s.toLowerCase().includes(q) && s.toLowerCase() !== q).slice(0, 6);
+    if(!matches.length){ close(); return; }
+    suggestEl.innerHTML = matches.map(s => `<div class="variety-suggest-item"><span class="vs-name">${s}</span></div>`).join("");
+    suggestEl.classList.add("open");
+  };
+  inputEl.addEventListener("input", render);
+  inputEl.addEventListener("focus", render);
+  suggestEl.addEventListener("mousedown", (e) => {
+    // mousedown (not click) so this fires before the input's own blur
+    // would otherwise close the dropdown first.
+    const item = e.target.closest(".variety-suggest-item");
+    if(!item) return;
+    e.preventDefault();
+    inputEl.value = item.querySelector(".vs-name").textContent;
+    close();
+  });
+  // Just closes the dropdown on blur — remembering the value happens
+  // only when it's actually committed (see rememberCustomSeedSource's
+  // callers), not here; blur alone turned out to fire mid-typing on
+  // some devices and remember partial names.
+  inputEl.addEventListener("blur", () => setTimeout(close, 0));
 }
 // Reads the checked preset sources plus, if "Other" is checked and
 // filled in, the typed-in source — from either the innerHTML-built row
@@ -4160,10 +4212,7 @@ async function renderGrid(sectionKey, containerId){
               if(sourceOtherCheck.checked) sourceOtherInput.focus();
               else sourceOtherInput.value = "";
             });
-            // Remembered the moment it's typed, independent of whether a
-            // variety ever gets added alongside it — a seed company is
-            // worth keeping on its own, not just as a variety's metadata.
-            sourceOtherInput.addEventListener("blur", () => rememberCustomSeedSource(sourceOtherInput.value));
+            wireSourceOtherAutocomplete(sourceOtherInput);
           }
         }
         const varietySuggestEl = opts.varietySuggestEl;
@@ -4443,7 +4492,7 @@ async function renderGrid(sectionKey, containerId){
               sourceRow.appendChild(sourceOtherInput);
               wrap.appendChild(sourceRow);
             } else {
-            SEED_SOURCES.concat(CUSTOM_SEED_SOURCES).forEach(s => {
+            SEED_SOURCES.forEach(s => {
               const label = document.createElement("label");
               label.className = "variety-color-check";
               const box = document.createElement("input");
@@ -4478,9 +4527,15 @@ async function renderGrid(sectionKey, containerId){
               if(sourceOtherBox.checked) sourceOtherInput.focus();
               else sourceOtherInput.value = "";
             });
-            sourceOtherInput.addEventListener("blur", () => rememberCustomSeedSource(sourceOtherInput.value));
-            sourceRow.appendChild(sourceOtherInput);
+            const sourceOtherWrap = document.createElement("span");
+            sourceOtherWrap.className = "variety-source-other-wrap";
+            sourceOtherWrap.appendChild(sourceOtherInput);
+            const sourceOtherSuggest = document.createElement("div");
+            sourceOtherSuggest.className = "variety-suggest variety-source-suggest";
+            sourceOtherWrap.appendChild(sourceOtherSuggest);
+            sourceRow.appendChild(sourceOtherWrap);
             wrap.appendChild(sourceRow);
+            wireSourceOtherAutocomplete(sourceOtherInput);
             }
           }
           wrap.appendChild(buildNoGermLabel());
