@@ -2675,6 +2675,10 @@ function varietyMetaText(v, slug){
   if(v.op) bits.push("OP");
   if(v.h) bits.push("H");
   if(v.source && v.source.length) bits.push(v.source.map(s => SEED_SOURCE_ABBR[s] || s).join("/"));
+  if(v.height || v.width){
+    const hw = [v.height ? `${v.height}"H` : "", v.width ? `${v.width}"W` : ""].filter(Boolean).join(" x ");
+    bits.push(hw);
+  }
   let out = bits.length ? ` (${bits.join(", ")})` : "";
   if(v.colors && v.colors.length){
     const hexMap = CROP_COLOR_HEX[slug] || TOMATO_COLOR_HEX;
@@ -3954,6 +3958,11 @@ async function renderGrid(sectionKey, containerId){
                 <label class="sow-variety-op-label"><input id="sow-variety-op-${p.slug}" type="checkbox" class="sow-variety-op-input"> OP</label>
                 <label class="sow-variety-h-label"><input id="sow-variety-h-${p.slug}" type="checkbox" class="sow-variety-h-input"> H</label>
               </div>`}
+              ${p.slug === "leafygreens" ? `
+              <div class="sow-variety-meta-row">
+                <input id="sow-variety-height-${p.slug}" type="text" inputmode="decimal" class="sow-variety-dtm-input" placeholder="Height (in)" aria-label="Mature height in inches" title="Mature height in inches">
+                <input id="sow-variety-width-${p.slug}" type="text" inputmode="decimal" class="sow-variety-dtm-input" placeholder="Width (in)" aria-label="Mature width in inches" title="Mature width in inches">
+              </div>` : ""}
               ${CROP_COLOR_OPTIONS[p.slug] ? `<div class="sow-variety-color-row" id="sow-variety-color-${p.slug}">${varietyColorCheckboxesHTML(p.slug)}</div>` : ""}
               ${p.slug === "garlic" ? "" : `<div class="sow-variety-source-row" id="sow-variety-source-${p.slug}">${varietySourceCheckboxesHTML(p.slug)}</div>`}`}
               <div class="sow-variety-pending" id="sow-variety-pending-${p.slug}" style="display:none"></div>
@@ -4115,6 +4124,10 @@ async function renderGrid(sectionKey, containerId){
         const varietyDtmEl = opts.varietyDtmEl;
         const varietyColorEl = opts.varietyColorEl;
         const varietySourceEl = opts.varietySourceEl;
+        // Leafy-greens-only: mature height/width fields that ride alongside
+        // the variety name, same pattern as the tomato-only fields above.
+        const varietyHeightEl = opts.varietyHeightEl;
+        const varietyWidthEl = opts.varietyWidthEl;
         if(varietySourceEl){
           const sourceOtherCheck = varietySourceEl.querySelector(".variety-source-other-check");
           const sourceOtherInput = varietySourceEl.querySelector(".variety-source-other-input");
@@ -4202,7 +4215,7 @@ async function renderGrid(sectionKey, containerId){
         // shown abbreviated instead.
         const VARIETY_TYPE_ABBR = { "Indeterminate": "IN", "Determinate": "D", "Semi-determinate": "SD" };
         const VARIETY_TYPE_FULL = { "IN": "Indeterminate", "D": "Determinate", "SD": "Semi-determinate" };
-        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw, opRaw, noGermRaw, hRaw, sourceRaw){
+        function composeVariety(name, typeRaw, dtmRaw, f1Raw, colorsRaw, opRaw, noGermRaw, hRaw, sourceRaw, heightRaw, widthRaw){
           const type = VARIETY_TYPE_ABBR[typeRaw] || typeRaw || "";
           const dtm = (dtmRaw || "").trim();
           const f1 = !!f1Raw;
@@ -4211,7 +4224,9 @@ async function renderGrid(sectionKey, containerId){
           const noGerm = !!noGermRaw;
           const colors = Array.isArray(colorsRaw) ? colorsRaw.filter(Boolean) : [];
           const source = Array.isArray(sourceRaw) ? sourceRaw.filter(Boolean) : [];
-          if(!type && !dtm && !f1 && !op && !h && !colors.length && !noGerm && !source.length) return name;
+          const height = (heightRaw || "").trim();
+          const width = (widthRaw || "").trim();
+          if(!type && !dtm && !f1 && !op && !h && !colors.length && !noGerm && !source.length && !height && !width) return name;
           const entry = { name };
           if(type) entry.type = type;
           if(dtm) entry.dtm = dtm;
@@ -4221,6 +4236,8 @@ async function renderGrid(sectionKey, containerId){
           if(colors.length) entry.colors = colors;
           if(source.length) entry.source = source;
           if(noGerm) entry.noGerm = true;
+          if(height) entry.height = height;
+          if(width) entry.width = width;
           return entry;
         }
         function buildVarietyEntry(name){
@@ -4233,7 +4250,9 @@ async function renderGrid(sectionKey, containerId){
             varietyOpEl ? varietyOpEl.checked : false,
             false,
             varietyHEl ? varietyHEl.checked : false,
-            varietySourceEl ? readVarietySourceEl(varietySourceEl) : []
+            varietySourceEl ? readVarietySourceEl(varietySourceEl) : [],
+            varietyHeightEl ? varietyHeightEl.value : "",
+            varietyWidthEl ? varietyWidthEl.value : ""
           );
         }
         function clearVarietyMetaInputs(){
@@ -4244,6 +4263,8 @@ async function renderGrid(sectionKey, containerId){
           if(varietyHEl) varietyHEl.checked = false;
           if(varietyColorEl) varietyColorEl.querySelectorAll(".variety-color-input").forEach(cb => cb.checked = false);
           if(varietySourceEl) clearVarietySourceEl(varietySourceEl);
+          if(varietyHeightEl) varietyHeightEl.value = "";
+          if(varietyWidthEl) varietyWidthEl.value = "";
         }
         // Builds the inline editor shown when a variety chip/tag is tapped
         // to edit — name field plus, for tomatoes, the type/F1/days fields
@@ -4335,6 +4356,28 @@ async function renderGrid(sectionKey, containerId){
             dtmInput.placeholder = "Days";
             dtmInput.value = (typeof current === "object" && current) ? (current.dtm || "") : "";
             wrap.appendChild(dtmInput);
+          }
+          // Mature height/width — currently leafy-greens-only (gated the
+          // same way as the fields above: only present when the caller
+          // passed the corresponding opts element).
+          let heightInput = null, widthInput = null;
+          if(varietyHeightEl){
+            heightInput = document.createElement("input");
+            heightInput.type = "text";
+            heightInput.inputMode = "decimal";
+            heightInput.className = "variety-edit-dtm";
+            heightInput.placeholder = "Height (in)";
+            heightInput.value = (typeof current === "object" && current) ? (current.height || "") : "";
+            wrap.appendChild(heightInput);
+          }
+          if(varietyWidthEl){
+            widthInput = document.createElement("input");
+            widthInput.type = "text";
+            widthInput.inputMode = "decimal";
+            widthInput.className = "variety-edit-dtm";
+            widthInput.placeholder = "Width (in)";
+            widthInput.value = (typeof current === "object" && current) ? (current.width || "") : "";
+            wrap.appendChild(widthInput);
           }
           // Color checkboxes are independent too — any crop with a
           // palette in CROP_COLOR_OPTIONS (tomatoes, carrots, ...) gets
@@ -4446,7 +4489,7 @@ async function renderGrid(sectionKey, containerId){
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
             const source = sourceBoxes.filter(b => b.checked).map(b => b.value);
             if(sourceOtherInput && sourceOtherInput.value.trim() && (!sourceOtherBox || sourceOtherBox.checked)) source.push(sourceOtherInput.value.trim());
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, hBox ? hBox.checked : false, source) : null);
+            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, hBox ? hBox.checked : false, source, heightInput ? heightInput.value : "", widthInput ? widthInput.value : "") : null);
           };
           const cancel = () => {
             if(done) return;
@@ -4454,7 +4497,7 @@ async function renderGrid(sectionKey, containerId){
             document.removeEventListener("pointerdown", outsideTapHandler, true);
             onCancel();
           };
-          [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, ...colorBoxes, ...sourceBoxes, sourceOtherBox, sourceOtherInput].filter(Boolean).forEach(f => {
+          [nameInput, typeSel, f1Box, opBox, dtmInput, noGermBox, heightInput, widthInput, ...colorBoxes, ...sourceBoxes, sourceOtherBox, sourceOtherInput].filter(Boolean).forEach(f => {
             f.addEventListener("keydown", (ke) => {
               if(ke.key === "Enter"){ ke.preventDefault(); commit(); }
               if(ke.key === "Escape"){ ke.preventDefault(); cancel(); }
@@ -4715,6 +4758,7 @@ async function renderGrid(sectionKey, containerId){
                 if(info.op) metaBits.push("OP");
                 if(info.dtm) metaBits.push(`${info.dtm}d`);
                 if(info.colors && info.colors.length) metaBits.push(info.colors.join("/"));
+                if(info.height || info.width) metaBits.push([info.height ? `${info.height}"H` : "", info.width ? `${info.width}"W` : ""].filter(Boolean).join(" x "));
                 return `<div class="variety-suggest-item" data-idx="${idx}"><span class="vs-name">${label}</span><span class="vs-meta">${metaBits.join(", ")}${info.url ? '<span class="vs-link-hint">🌐</span>' : ""}</span></div>`;
               }).join("");
               varietySuggestEl.classList.add("open");
@@ -4956,7 +5000,9 @@ async function renderGrid(sectionKey, containerId){
         varietyDtmEl: card.querySelector(`#sow-variety-dtm-${p.slug}`),
         varietySuggestEl: card.querySelector(`#sow-variety-suggest-${p.slug}`),
         varietyColorEl: card.querySelector(`#sow-variety-color-${p.slug}`),
-        varietySourceEl: card.querySelector(`#sow-variety-source-${p.slug}`)
+        varietySourceEl: card.querySelector(`#sow-variety-source-${p.slug}`),
+        varietyHeightEl: card.querySelector(`#sow-variety-height-${p.slug}`),
+        varietyWidthEl: card.querySelector(`#sow-variety-width-${p.slug}`)
       });
       if(p.slug !== "garlic"){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
