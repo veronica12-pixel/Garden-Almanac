@@ -2154,6 +2154,23 @@ const SEED_SOURCES = ["Baker Creek", "Johnny's", "Cody Cove", "Urban Harvest"];
 // unambiguous), but the variety badge shown after adding is tight on
 // space, so it displays these short abbreviations instead.
 const SEED_SOURCE_ABBR = { "Baker Creek": "BCseeds", "Johnny's": "Jseeds", "Cody Cove": "CCseeds", "Urban Harvest": "UHseeds" };
+// Any company typed into the "Other" box gets remembered here (loaded
+// once at startup, persisted to storage) so it shows up as its own
+// checkbox next time instead of having to be retyped. Shared across
+// every crop — seed companies aren't crop-specific.
+let CUSTOM_SEED_SOURCES = [];
+async function loadCustomSeedSources(){
+  try{
+    const r = await window.storage.get("customSeedSources", false);
+    CUSTOM_SEED_SOURCES = r ? JSON.parse(r.value) : [];
+  }catch(e){ CUSTOM_SEED_SOURCES = []; }
+}
+async function rememberCustomSeedSource(name){
+  const n = (name || "").trim();
+  if(!n || SEED_SOURCES.includes(n) || CUSTOM_SEED_SOURCES.includes(n)) return;
+  CUSTOM_SEED_SOURCES.push(n);
+  try{ await window.storage.set("customSeedSources", JSON.stringify(CUSTOM_SEED_SOURCES), false); }catch(e){}
+}
 // "Other" lets a source outside the four presets be typed in by hand —
 // stored in the same `source` array as the presets, just not one of the
 // known SEED_SOURCES values, so it's told apart from them by exclusion
@@ -2164,7 +2181,8 @@ function varietySourceCheckboxesHTML(slug){
   if(slug === "garlic"){
     return `<input type="text" class="variety-source-other-input" placeholder="Cloves from">`;
   }
-  const presets = SEED_SOURCES.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
+  const allPresets = SEED_SOURCES.concat(CUSTOM_SEED_SOURCES);
+  const presets = allPresets.map(s => `<label class="variety-color-check"><input type="checkbox" class="variety-source-input" value="${s}"> ${s}</label>`).join("");
   return presets + `<label class="variety-color-check"><input type="checkbox" class="variety-source-other-check"> Other</label><input type="text" class="variety-source-other-input" placeholder="Where from?" style="display:none;">`;
 }
 // Reads the checked preset sources plus, if "Other" is checked and
@@ -2178,7 +2196,10 @@ function readVarietySourceEl(el){
   const picked = Array.from(el.querySelectorAll(".variety-source-input:checked")).map(cb => cb.value);
   const otherCheck = el.querySelector(".variety-source-other-check");
   const otherInput = el.querySelector(".variety-source-other-input");
-  if(otherInput && otherInput.value.trim() && (!otherCheck || otherCheck.checked)) picked.push(otherInput.value.trim());
+  if(otherInput && otherInput.value.trim() && (!otherCheck || otherCheck.checked)){
+    picked.push(otherInput.value.trim());
+    rememberCustomSeedSource(otherInput.value.trim());
+  }
   return picked;
 }
 function clearVarietySourceEl(el){
@@ -4418,7 +4439,7 @@ async function renderGrid(sectionKey, containerId){
               sourceRow.appendChild(sourceOtherInput);
               wrap.appendChild(sourceRow);
             } else {
-            SEED_SOURCES.forEach(s => {
+            SEED_SOURCES.concat(CUSTOM_SEED_SOURCES).forEach(s => {
               const label = document.createElement("label");
               label.className = "variety-color-check";
               const box = document.createElement("input");
@@ -4488,7 +4509,10 @@ async function renderGrid(sectionKey, containerId){
             const val = nameInput.value.trim();
             const colors = colorBoxes.filter(b => b.checked).map(b => b.value);
             const source = sourceBoxes.filter(b => b.checked).map(b => b.value);
-            if(sourceOtherInput && sourceOtherInput.value.trim() && (!sourceOtherBox || sourceOtherBox.checked)) source.push(sourceOtherInput.value.trim());
+            if(sourceOtherInput && sourceOtherInput.value.trim() && (!sourceOtherBox || sourceOtherBox.checked)){
+              source.push(sourceOtherInput.value.trim());
+              if(p.slug !== "garlic") rememberCustomSeedSource(sourceOtherInput.value.trim());
+            }
             onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, hBox ? hBox.checked : false, source, heightInput ? heightInput.value : "", widthInput ? widthInput.value : "") : null);
           };
           const cancel = () => {
@@ -6557,6 +6581,7 @@ async function importData(file){
     }
     if(bundle.activeSeason && SEASONS[bundle.activeSeason]) activeSeason = bundle.activeSeason;
     await loadAllCustomCrops();
+    await loadCustomSeedSources();
     renderSeasonUI();
     await renderAll();
     status.textContent = `Restored ${entries.length} item(s) from the backup.`;
@@ -7760,6 +7785,7 @@ async function checkTomorrowReminder(){
     if(saved && SEASONS[saved.value]) activeSeason = saved.value;
   }catch(e){}
   await loadAllCustomCrops();
+  await loadCustomSeedSources();
   renderSeasonUI();
   renderSavePdfList();
   wireRainFetch();
