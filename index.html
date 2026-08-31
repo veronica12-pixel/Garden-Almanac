@@ -738,6 +738,19 @@
     color:var(--ink-soft); background:var(--paper-2); font-style:italic;
     border:1px dashed var(--line);
   }
+  .plant-cross-note{
+    margin-bottom:8px; font-size:12.2px; color:#3F7A57; background:#DFF0E3;
+    border-radius:8px; padding:6px 8px; line-height:1.4;
+    display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;
+  }
+  .plant-cross-note-btn{
+    flex:none; background:#fff; color:#3F7A57; border:1px solid #3F7A57;
+    border-radius:20px; padding:3px 12px 3px 3px; font-size:11.5px; font-weight:600;
+    cursor:pointer; white-space:nowrap;
+    display:flex; align-items:center; gap:6px;
+  }
+  .plant-cross-note-btn .plant-icon{ width:22px; height:22px; border-radius:7px; font-size:13px; }
+  .plant-cross-note-btn:hover{ background:#EEF9F0; }
   .bc-task-note{
     font-size:11px; color:var(--evergreen); font-style:italic; margin-top:2px;
   }
@@ -1948,12 +1961,25 @@ if (typeof window.storage === "undefined") {
   // skip snapshots that were caused by our own writes.
   let sawInitialValue = false;
   let reloadTimer = null;
+  function scheduleReload(){
+    // Don't yank the page out from under someone mid-edit — a reload while
+    // an input/textarea (including a native date picker, which keeps its
+    // field focused while open) is focused would wipe whatever they were
+    // typing. Wait until focus clears, then reload.
+    const active = document.activeElement;
+    const isEditing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
+    if(isEditing){
+      reloadTimer = setTimeout(scheduleReload, 1500);
+    } else {
+      window.location.reload();
+    }
+  }
   rootRef.on("value", (snapshot) => {
     if (!sawInitialValue) { sawInitialValue = true; return; }
     const data = snapshot.val() || {};
     if (data.__lastWriter === CLIENT_ID) return;
     clearTimeout(reloadTimer);
-    reloadTimer = setTimeout(() => { window.location.reload(); }, 700);
+    reloadTimer = setTimeout(scheduleReload, 700);
   });
 
   window.storage = {
@@ -2325,27 +2351,23 @@ const SEASONS = {
       ]],
       note:"Take cuttings end of Dec (small/cherry only) for emergency use after a freeze."},
     {slug:"peppers", name:"Peppers", shape:"teardrop", color:C.greenMed,
-      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}]],
-      note:"Spring round pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}],[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:19, m2:3, d2:21}]]},
     {slug:"eggplants", name:"Eggplants", shape:"teardrop", color:C.purple,
-      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}]],
-      note:"Spring round pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:8, d:5, m2:8, d2:6},{a:"Transplant", m:9, d:29}],[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:19, m2:3, d2:21}]]},
     {slug:"squash", name:"Squash", shape:"oval", color:C.orange,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
     {slug:"cucumbers", name:"Cucumbers", shape:"oval", color:C.greenMed,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Start seeds", m:2, d:12, m2:2, d2:13},{a:"Transplant", m:3, d:19, m2:3, d2:21}]]},
     {slug:"leafygreens", name:"Leafy greens", shape:"leaf", color:C.greenDark,
       dates:[[{a:"Start seeds", m:8, d:30, m2:9, d2:1},{a:"Transplant", m:10, d:15, m2:10, d2:16}]]},
     {slug:"broccoli", name:"Broccoli", shape:"cluster", color:C.greenDark,
       dates:[[{a:"Start seeds", m:8, d:28, m2:8, d2:29},{a:"Transplant", m:10, d:22}]]},
     {slug:"bushbeans", name:"Bush beans", shape:"oval", color:C.greenMed,
-      dates:[[{a:"Start (direct)", m:9, d:29}],[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}]],
-      note:"Spring round pending 2027 calendar."},
+      dates:[[{a:"Start (direct)", m:9, d:29}],[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}],[{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
     {slug:"snappeas", name:"Sugar snap peas", shape:"oval", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}],[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]]},
     {slug:"rattlesnake", name:"Rattlesnake beans", shape:"oval", color:C.greenDark,
-      dates:[[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]],
-      note:"Spring round pending 2027 calendar."},
+      dates:[[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}],[{a:"Start (direct)", m:1, d:23, m2:1, d2:25},{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
       note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
@@ -2362,21 +2384,21 @@ const SEASONS = {
     {slug:"strawberries", name:"Strawberries", shape:"circleTop", color:C.red,
       dates:[[{a:"Transplant", m:10, d:17, m2:10, d2:18}]]},
     {slug:"muskmelon", name:"Muskmelon", shape:"circle", color:C.orangeLight,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
     {slug:"watermelon", name:"Watermelon", shape:"circle", color:C.greenDark,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
     {slug:"longbeans", name:"Red Noodle Long Beans", shape:"oval", color:C.magenta,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
     {slug:"nigerianspinach", name:"Nigerian spinach", shape:"leaf", color:C.greenDark,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:2, d:9, m2:2, d2:12}]]},
     {slug:"sweetpotatoslips", name:"Sweet Potatoes", shape:"bulb", color:C.orangeLight,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start", m:2, d:4, m2:2, d2:6},{a:"Transplant", m:3, d:4, m2:3, d2:6}]]},
     {slug:"pigeonpeas", name:"Pigeon Peas", shape:"oval", color:C.yellowGreen,
       dates:[[{a:"Start seeds (indoor)", m:2, d:13},{a:"Transplant", m:4, d:8}]]},
   ],
   herbs: [
     {slug:"basil", name:"Basil", shape:"leaf", color:C.greenMed,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:2, d:2},{a:"Transplant", m:3, d:8, m2:3, d2:10}]]},
     {slug:"parsley", name:"Parsley", shape:"leaf", color:C.greenMed,
       dates:[[{a:"Start (direct)", m:10, d:24, m2:10, d2:25}]]},
     {slug:"dill", name:"Dill", shape:"leaf", color:C.greenMed,
@@ -2389,7 +2411,7 @@ const SEASONS = {
     {slug:"nasturtium", name:"Nasturtium", shape:"flower", color:C.orange,
       dates:[[{a:"Start (indoor)", m:10, d:12, m2:10, d2:13},{a:"Start (direct)", m:10, d:31},{a:"Transplant", m:10, d:30, m2:10, d2:31}]]},
     {slug:"roselle", name:"Roselle", shape:"flower", color:C.magenta,
-      dates:[], note:"Spring-only crop — pending 2027 calendar."},
+      dates:[[{a:"Start seeds", m:2, d:16, m2:2, d2:17}]]},
   ],
   coverCrops: [
     {slug:"sunnhemp", name:"Sunn Hemp", shape:"leaf", color:C.greenMed,
@@ -3758,6 +3780,16 @@ function reopenCard(containerId, slug){
     toggleBtn.classList.add("open");
   }
 }
+// Opens (if needed) and scrolls to another crop's card — used by
+// cross-reference buttons like the "Lettuce" jump link on Leafy greens.
+function jumpToCrop(slug){
+  const targetCard = document.getElementById(`plant-card-${slug}`);
+  const body = document.getElementById(`card-body-${slug}`);
+  const toggleBtn = targetCard ? targetCard.querySelector(`.plant-head[data-body="card-body-${slug}"]`) : null;
+  if(body) body.style.display = "block";
+  if(toggleBtn) toggleBtn.classList.add("open");
+  if(targetCard) targetCard.scrollIntoView({behavior:"smooth", block:"start"});
+}
 
 async function renderGrid(sectionKey, containerId){
   const el = document.getElementById(containerId);
@@ -3769,6 +3801,7 @@ async function renderGrid(sectionKey, containerId){
   for(const p of plants){
     const card = document.createElement("div");
     card.className = "plant-card";
+    card.id = `plant-card-${p.slug}`;
     const wavesHTML = p.dates.map(wave =>
       `<div class="wave">${wave.map(t => `<span class="lbl">${actionLabelForDate(t.a, plannedDateObj(activeSeason, t))} :</span> ${fmtDate(t)}${bcNoteFor(p.slug, activeSeason, t.m, t.d)}`).join("<br>")}</div>`
     ).join("");
@@ -3784,6 +3817,8 @@ async function renderGrid(sectionKey, containerId){
     const seasonDone = isPastSeason ? false : await getSeasonDone(p.slug);
     const sowTemp = isPastSeason ? "" : await getTemp(p.slug, "sow");
     const transplantTemp = isPastSeason ? "" : await getTemp(p.slug, "transplant");
+    const pottedUpActualCheck = ["tomatoes", "peppers", "eggplants"].includes(p.slug) ? await getActualDates(p.slug, "pottedUp") : [];
+    const pottedUpTemp = (isPastSeason || !["tomatoes", "peppers", "eggplants"].includes(p.slug)) ? "" : await getTemp(p.slug, "pottedUp");
 
     // Overdue flag: planned date already passed with nothing logged in
     // Actual sow/transplant. Pulled into its own function (instead of a
@@ -3879,6 +3914,7 @@ async function renderGrid(sectionKey, containerId){
             <span>✓ Season marked done</span>
           </div>
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
+          ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted up:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${notesFieldHTML}
         `;
@@ -3924,6 +3960,15 @@ async function renderGrid(sectionKey, containerId){
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
+            ${["tomatoes", "peppers", "eggplants"].includes(p.slug) ? `
+            <div class="actual-field">
+              <label for="pottedup-${p.slug}">Potted up</label>
+              <div class="actual-input-row">
+                <input id="pottedup-${p.slug}" type="date">
+                <input id="pottedup-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature at potting up time">
+              </div>
+              <div class="date-chips" id="pottedup-chips-${p.slug}"></div>
+            </div>` : ""}
             ${p.slug === "garlic" ? "" : `
             <div class="actual-field">
               <label for="transplant-${p.slug}">Actual transplant</label>
@@ -3955,6 +4000,10 @@ async function renderGrid(sectionKey, containerId){
         </button>
       </div>
       <div id="card-body-${p.slug}" class="card-body" style="display:none;">
+      ${p.slug === "leafygreens" ? (() => {
+        const lettuceCrop = DATA_now().vegetables.find(c => c.slug === "lettuce");
+        return `<div class="plant-cross-note">Lettuce has its own planting window.<button type="button" class="plant-cross-note-btn" id="jumpToLettuceBtn">${lettuceCrop ? cropIcon(lettuceCrop, "vegetables") : ""}<span>Lettuce</span></button></div>`;
+      })() : ""}
       <div class="dose">${wavesHTML}</div>
       ${p.note ? `<div class="plant-note${p.dates.length===0 ? " pending" : ""}">${p.note}</div>` : ""}
       ${editableSectionsHTML}
@@ -3970,6 +4019,16 @@ async function renderGrid(sectionKey, containerId){
       body.style.display = isOpen ? "none" : "block";
       cardToggleBtn.classList.toggle("open", !isOpen);
     });
+
+    if(p.slug === "leafygreens"){
+      const jumpBtn = card.querySelector("#jumpToLettuceBtn");
+      if(jumpBtn){
+        jumpBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          jumpToCrop("lettuce");
+        });
+      }
+    }
 
     if(!isPastSeason){
       const deleteBtn = card.querySelector(".plant-delete-btn");
@@ -4902,6 +4961,9 @@ async function renderGrid(sectionKey, containerId){
       if(p.slug !== "garlic"){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       }
+      if(["tomatoes", "peppers", "eggplants"].includes(p.slug)){
+        await wireDateChips("pottedUp", card.querySelector(`#pottedup-${p.slug}`), card.querySelector(`#pottedup-temp-${p.slug}`), card.querySelector(`#pottedup-chips-${p.slug}`));
+      }
       await renderCombo();
     }
 
@@ -5183,8 +5245,17 @@ async function renderGrid(sectionKey, containerId){
                 const i = Number(chip.dataset.i);
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
                 chip.appendChild(menu);
+                menu.querySelector(".edit").addEventListener("click", (ev) => {
+                  ev.stopPropagation();
+                  const entry = fridgeLog[i];
+                  fridgeLog.splice(i, 1);
+                  if(fridgeInput) fridgeInput.value = entry.dateISO || entry.date || "";
+                  if(fridgeSourceInput) fridgeSourceInput.value = entry.source || "";
+                  renderFridgeLog();
+                  if(fridgeInput) fridgeInput.focus();
+                });
                 menu.querySelector(".delete").addEventListener("click", (ev) => {
                   ev.stopPropagation();
                   const removed = fridgeLog[i];
