@@ -4160,6 +4160,10 @@ async function renderGrid(sectionKey, containerId){
               if(sourceOtherCheck.checked) sourceOtherInput.focus();
               else sourceOtherInput.value = "";
             });
+            // Remembered the moment it's typed, independent of whether a
+            // variety ever gets added alongside it — a seed company is
+            // worth keeping on its own, not just as a variety's metadata.
+            sourceOtherInput.addEventListener("blur", () => rememberCustomSeedSource(sourceOtherInput.value));
           }
         }
         const varietySuggestEl = opts.varietySuggestEl;
@@ -4474,6 +4478,7 @@ async function renderGrid(sectionKey, containerId){
               if(sourceOtherBox.checked) sourceOtherInput.focus();
               else sourceOtherInput.value = "";
             });
+            sourceOtherInput.addEventListener("blur", () => rememberCustomSeedSource(sourceOtherInput.value));
             sourceRow.appendChild(sourceOtherInput);
             wrap.appendChild(sourceRow);
             }
