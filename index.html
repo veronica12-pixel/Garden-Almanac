@@ -3991,7 +3991,7 @@ async function renderGrid(sectionKey, containerId){
             <span>✓ Season marked done</span>
           </div>
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
-          ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted up:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
+          ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${notesFieldHTML}
         `;
@@ -4044,7 +4044,7 @@ async function renderGrid(sectionKey, containerId){
             </div>
             ${["tomatoes", "peppers", "eggplants"].includes(p.slug) ? `
             <div class="actual-field">
-              <label for="pottedup-${p.slug}">Potted up</label>
+              <label for="pottedup-${p.slug}">Potted in individual pots</label>
               <div class="actual-input-row">
                 <input id="pottedup-${p.slug}" type="date">
                 <input id="pottedup-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature at potting up time">
@@ -4227,6 +4227,16 @@ async function renderGrid(sectionKey, containerId){
         entryDeleteLink.className = "entry-delete-link";
         entryDeleteLink.textContent = "Delete this entry";
         entryDeleteLink.style.display = "none";
+        // Tapping this button would otherwise blur the temp field first
+        // (focus moving away fires blur before this button's own click),
+        // and temp field blur auto-commits whatever's in the form as a
+        // brand-new entry — silently re-adding the very entry being
+        // deleted as a duplicate, and clearing editingRemovedEntry before
+        // the delete click handler below even runs. Blocking the
+        // mousedown's default focus-change keeps focus (and the in-progress
+        // edit) right where it was until the actual click logic decides
+        // what to do with it.
+        entryDeleteLink.addEventListener("mousedown", (e) => e.preventDefault());
         const dateRow = dateEl.closest(".actual-input-row");
         if(dateRow) dateRow.insertAdjacentElement("afterend", entryDeleteLink);
         let editingEntryOriginalIndex = null;
@@ -4247,7 +4257,7 @@ async function renderGrid(sectionKey, containerId){
           const removedEntry = editingRemovedEntry;
           const restoreIndex = editingEntryOriginalIndex;
           const label = fmtActualEntry(removedEntry);
-          requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : "transplant"} entry (${label})?`, async () => {
+          requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : kind === "pottedUp" ? "potting" : "transplant"} entry (${label})?`, async () => {
             // The entry being edited was already spliced out of `dates`
             // when Edit was tapped — so deleting it here just means
             // discarding the in-progress edit and resetting the form,
@@ -4265,7 +4275,7 @@ async function renderGrid(sectionKey, containerId){
             await renderCombo();
             await updateOverdueFlag();
             await updateLoggedCheck();
-            showUndoToast(`${kind === "sow" ? "Seeded" : "Transplanted"} entry deleted.`, async () => {
+            showUndoToast(`${kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : "Transplanted"} entry deleted.`, async () => {
               const insertAt = Math.min(restoreIndex != null ? restoreIndex : dates.length, dates.length);
               dates.splice(insertAt, 0, removedEntry);
               renderDateChips();
@@ -4639,7 +4649,7 @@ async function renderGrid(sectionKey, containerId){
         }
         // Past tense since these are actual logged dates (something that
         // already happened), not the planned/imperative action.
-        const prefix = kind === "sow" ? "Seeded" : "Transplanted";
+        const prefix = kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : "Transplanted";
         let pendingVarieties = [];
         // While editing an existing entry, the same button that normally
         // adds a brand-new entry is reused to save the edit instead — its
@@ -6102,6 +6112,12 @@ function closeGenericDeleteModal(){
   document.getElementById("genericDeleteModalBackdrop").classList.remove("show");
   pendingGenericDelete = null;
 }
+// Same focus-stealing hazard as the "Delete this entry" link itself (see
+// its comment above): without this, tapping Delete/Cancel here would blur
+// whatever field was focused before the modal opened and trigger its
+// auto-commit-on-blur handler a split second before this click runs.
+document.getElementById("genericDeleteConfirmBtn").addEventListener("mousedown", (e) => e.preventDefault());
+document.getElementById("genericDeleteCancelBtn").addEventListener("mousedown", (e) => e.preventDefault());
 document.getElementById("genericDeleteConfirmBtn").addEventListener("click", async () => {
   if(!pendingGenericDelete) return;
   const confirmFn = pendingGenericDelete;
