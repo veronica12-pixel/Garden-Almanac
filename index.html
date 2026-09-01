@@ -6752,17 +6752,19 @@ const BC_DATA = {
       ["24","Mon","all day",""]
     ],
     "September 2026": [
-      ["1","Tue","4am – 8pm",""],
-      ["7","Mon","from 9pm",""],
-      ["8","Tue","until 10am, then again from 7pm",""],
-      ["9","Wed","all day",""],
-      ["10","Thu","until 8am",""],
+      ["1","Tue","from 4am",""],
+      ["2","Wed","until 8pm",""],
+      ["8","Tue","from 9pm",""],
+      ["9","Wed","until 10am, then again from 7pm",""],
+      ["10","Thu","all day",""],
+      ["11","Fri","until 8am",""],
       ["18","Fri","from 10pm",""],
       ["19","Sat","all day",""],
       ["20","Sun","all day",""],
       ["21","Mon","until 10am",""],
       ["28","Mon","from 4pm",""],
-      ["29","Tue","all day",""]
+      ["29","Tue","all day",""],
+      ["30","Wed","until 2am",""]
     ],
     "October 2026": [
       ["6","Tue","9am – 4pm",""],
@@ -6776,6 +6778,7 @@ const BC_DATA = {
       ["27","Tue","until 10am",""]
     ],
     "November 2026": [
+      ["2","Mon","12pm–3pm",""],
       ["3","Tue","from 2am",""],
       ["4","Wed","until 10am",""],
       ["12","Thu","from 1pm",""],
@@ -6958,9 +6961,11 @@ const BC_DATA = {
     "September 2026": [
       ["1","Tue","until 3am",""],
       ["6","Sun","from 9am",""],
-      ["7","Mon","until 12pm",""],
+      ["7","Mon","until 6am, then again from 9am",""],
+      ["8","Tue","until 12pm",""],
       ["17","Thu","from 9am",""],
       ["18","Fri","until 1pm",""],
+      ["25","Fri","4pm–6pm",""],
       ["26","Sat","from 5am",""],
       ["27","Sun","all day",""],
       ["28","Mon","until 5am",""]
@@ -6968,6 +6973,7 @@ const BC_DATA = {
     "October 2026": [
       ["4","Sun","3pm – 11pm",""],
       ["5","Mon","from 5am",""],
+      ["6","Tue","until 2am",""],
       ["13","Tue","from 5pm",""],
       ["14","Wed","all day",""],
       ["15","Thu","all day (especially good from 5pm)",""],
@@ -7168,13 +7174,12 @@ const BC_DATA = {
       ["27","Thu","until 8am",""]
     ],
     "September 2026": [
-      ["1","Tue","from 9pm",""],
-      ["2","Wed","all day",""],
+      ["2","Wed","from 9pm",""],
       ["3","Thu","all day",""],
-      ["4","Fri","until 9am",""],
-      ["10","Thu","from 9am",""],
-      ["11","Fri","all day (especially good 6am–3pm)",""],
-      ["12","Sat","all day",""],
+      ["4","Fri","all day",""],
+      ["5","Sat","until 9am",""],
+      ["11","Fri","from 9am",""],
+      ["12","Sat","all day (especially good 6am–3pm)",""],
       ["13","Sun","all day (especially good from 5pm)",""],
       ["14","Mon","until 5am (especially good until 2am), then again from 11am to 8pm",""],
       ["21","Mon","from 11am",""],
@@ -7197,15 +7202,16 @@ const BC_DATA = {
       ["19","Mon","all day",""],
       ["20","Tue","until midnight",""],
       ["27","Tue","from 11am",""],
-      ["28","Wed","all day",""],
+      ["28","Wed","until 1am",""],
       ["29","Thu","3am – 9pm",""]
     ],
     "November 2026": [
-      ["6","Fri","from 12pm",""],
+      ["6","Fri","all day",""],
       ["7","Sat","until 3am, then again from 9am",""],
       ["8","Sun","until 11am",""],
       ["15","Sun","from 2am",""],
       ["16","Mon","all day",""],
+      ["17","Tue","until 2am",""],
       ["24","Tue","all day",""],
       ["25","Wed","until 3am",""],
       ["29","Sun","12am – 9am",""]
@@ -7410,9 +7416,9 @@ const BC_DATA = {
       ["29","Sat","until 7am",""]
     ],
     "September 2026": [
-      ["4","Fri","from 10am",""],
-      ["5","Sat","all day",""],
+      ["5","Sat","from 10am",""],
       ["6","Sun","until 4am",""],
+      ["7","Mon","6am–8am",""],
       ["14","Mon","from 9pm",""],
       ["15","Tue","until 7pm",""],
       ["18","Fri","2pm – 10pm",""],
@@ -7438,7 +7444,8 @@ const BC_DATA = {
       ["18","Wed","all day",""],
       ["19","Thu","until 9am",""],
       ["26","Thu","from 6am",""],
-      ["27","Fri","all day",""]
+      ["27","Fri","all day",""],
+      ["28","Sat","until 2am",""]
     ],
     "December 2026": [
       ["5","Sat","from 6pm",""],
@@ -7652,12 +7659,29 @@ function bcNoteFor(slug, seasonKey, m, d){
   return `<div class="bc-task-note">${BC_TYPE_LABEL[type]} day — ${parts.join(", ")}</div>`;
 }
 
+// Trims each Fruit/Leaf/Root/Flower month list down to the current month
+// onward, dropping expired months (e.g. August once it's September)
+// entirely rather than moving them to the bottom.
+function currentBcMonthName(){
+  const now = new Date();
+  const yearMap = BC_MONTH_NAMES_BY_YEAR[now.getFullYear()];
+  return yearMap ? (yearMap[now.getMonth() + 1] || null) : null;
+}
+// Trims a Fruit/Leaf/Root/Flower month list down to the current month
+// onward, dropping months that have already passed (e.g. August once
+// it's September) instead of just pushing them to the bottom.
+function orderedBcMonthKeys(months){
+  const keys = Object.keys(months);
+  const currentIdx = keys.indexOf(currentBcMonthName());
+  if(currentIdx < 0) return keys; // current month isn't in the transcribed range — show everything
+  return keys.slice(currentIdx);
+}
 function renderBiodynamic(type){
   const container = document.getElementById("bc-list-" + type);
   if(!container) return;
   container.innerHTML = "";
   const months = BC_DATA[type];
-  Object.keys(months).forEach(monthName => {
+  orderedBcMonthKeys(months).forEach(monthName => {
     const days = months[monthName];
     if(!days.length) return;
     const monthEl = document.createElement("div");
@@ -7683,23 +7707,6 @@ function renderBiodynamic(type){
   });
 }
 ["fruit","leaf","root","flower"].forEach(renderBiodynamic);
-// Whichever Fruit/Leaf/Root/Flower list is showing, jumps straight to the
-// current month's section instead of always starting at August — so the
-// biodynamic tab opens on "now" rather than making you scroll down to it
-// as the season moves past August.
-function currentBcMonthName(){
-  const now = new Date();
-  const yearMap = BC_MONTH_NAMES_BY_YEAR[now.getFullYear()];
-  return yearMap ? (yearMap[now.getMonth() + 1] || null) : null;
-}
-function scrollBcToCurrentMonth(type){
-  const monthName = currentBcMonthName();
-  if(!monthName) return;
-  const container = document.getElementById("bc-list-" + type);
-  if(!container) return;
-  const target = container.querySelector(`.bc-month[data-month="${monthName}"]`);
-  if(target) target.scrollIntoView({ block: "start" });
-}
 
 // Date search: given a single date, checks all four Fruit/Leaf/Root/Flower
 // tables and reports whichever one(s) that date falls under, plus the
