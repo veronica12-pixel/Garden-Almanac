@@ -341,6 +341,12 @@
   .backup-status{
     margin-top:8px; font-size:12px; color:var(--ink-soft); min-height:16px;
   }
+  .backup-status:empty{ margin-top:0; min-height:0; }
+  .rain-chart-card{
+    background:#DCEEF7; border:1px solid #BEDFEF; border-radius:14px;
+    padding:14px 16px; font-size:13.5px; color:var(--ink-soft); line-height:1.55;
+    margin-top:6px; margin-bottom:18px; box-shadow:var(--shadow);
+  }
   /* Column layout: crop names down the left (sticky), one column per
      season across the top (sticky), with both horizontal and vertical
      scrollbars so wide/tall tables stay usable inside the modal. */
@@ -519,6 +525,38 @@
     display:inline-block; color:var(--clay-dark); font-size:42px; line-height:0.6; transition:transform .2s;
   }
   .rain-toggle.open .rain-chevron{transform:rotate(180deg);}
+  .rain-chart{
+    display:flex; align-items:flex-end; gap:6px; height:180px;
+    padding:0 2px 0; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  .rain-chart-col{
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+    flex:1 0 34px; min-width:34px; height:100%;
+  }
+  .rain-chart-val{
+    font-size:10px; font-weight:700; color:var(--ink-soft); margin-bottom:3px;
+    white-space:nowrap;
+  }
+  .rain-chart-bar{
+    width:20px; border-radius:5px 5px 0 0; background:#5FA3C4; min-height:2px;
+    transition:height .3s ease;
+  }
+  .rain-chart-bar.no-data{ background:var(--line); }
+  .rain-chart-label{
+    font-size:10.5px; color:var(--ink-soft); margin-top:6px; white-space:nowrap;
+  }
+  #rainAutoFrom, #rainAutoTo{
+    font-family:'Inter',sans-serif; font-size:13.5px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+    padding:8px 9px; outline:none;
+  }
+  #rainAutoFrom:focus, #rainAutoTo:focus{border-color:var(--sage);}
+  .rain-chart-legend{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    margin-top:12px; font-size:10.5px; color:var(--ink-soft);
+  }
+  .rain-chart-legend span{ display:inline-flex; align-items:center; gap:4px; }
+  .rain-chart-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
   .home-tabs-card{ margin-bottom:18px; }
   .home-tabs-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .home-tab-btn{
@@ -1501,6 +1539,19 @@
         </div>
         <div id="rainAutoStatus" class="backup-status"></div>
         <div id="rainRangeTotal" class="backup-status" style="font-size:16px; font-weight:700; color:var(--evergreen);"></div>
+        <div class="rain-chart-card">
+          <button type="button" id="rainChartToggle" class="rain-toggle">
+            <span class="legend-title" style="margin-bottom:0; color:#3E7FA0;">🌧️ Monthly Rainfall Chart ☀️🌈</span>
+            <span class="rain-toggle-right">
+              <span id="rainChartChevron" class="rain-chevron" style="color:#3E7FA0;">▾</span>
+            </span>
+          </button>
+          <div id="rainChartBodyWrap" style="display:none; margin-top:10px;">
+            <p class="backup-hint" style="margin:0 0 12px;">Total rainfall per month for Odessa, FL, starting January 2026 — needs internet.</p>
+            <div id="rainChartStatus" class="backup-status"></div>
+            <div id="rainChartBody"></div>
+          </div>
+        </div>
         </div>
         <div id="journalBody" class="home-tab-body" style="display:none;">
         <p class="backup-hint">General garden notes, not tied to any one crop — weather, pests, whatever's worth remembering. Logged with today's date.</p>
@@ -3089,6 +3140,121 @@ function wireRainFetch(){
       rangeTotalEl.textContent = "";
     };
   }
+
+  wireRainChart();
+}
+
+// Monthly rainfall bar chart, Jan 2026 onward. Uses Open-Meteo's ERA5
+// archive endpoint (not the Forecast API used above) because it's a
+// single call that can cover many months of past dates at once; the
+// trade-off is it lags a few days behind "now", so the current month's
+// total may be a little short until those last few days roll in.
+// Maps a 0–1 "how much rain relative to the other months shown" value to a
+// bar color: fuchsia (least) through green (middle) up to blue (most) —
+// same three-stop gradient idea as a rain gauge, low-to-high.
+function rainBarColor(t){
+  const FUCHSIA = [214, 73, 158];
+  const GREEN   = [95, 155, 130];
+  const BLUE    = [62, 127, 160];
+  let a, b, localT;
+  if(t <= 0.5){
+    a = FUCHSIA; b = GREEN; localT = t / 0.5;
+  } else {
+    a = GREEN; b = BLUE; localT = (t - 0.5) / 0.5;
+  }
+  const r = Math.round(a[0] + (b[0] - a[0]) * localT);
+  const g = Math.round(a[1] + (b[1] - a[1]) * localT);
+  const bl = Math.round(a[2] + (b[2] - a[2]) * localT);
+  return `rgb(${r}, ${g}, ${bl})`;
+}
+async function fetchAndRenderRainChart(){
+  const statusEl = document.getElementById("rainChartStatus");
+  const bodyEl = document.getElementById("rainChartBody");
+  if(!statusEl || !bodyEl) return;
+  statusEl.textContent = "Fetching...";
+  bodyEl.innerHTML = "";
+  try{
+    const lat = 28.1723, lon = -82.5507;
+    const startDate = "2026-01-01";
+    const today = new Date();
+    const lagBuffer = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000); // archive lags ~5 days behind
+    const endDate = lagBuffer.toISOString().slice(0, 10);
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=precipitation_sum&precipitation_unit=inch&timezone=America%2FNew_York`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    let res;
+    try{
+      res = await fetch(url, { signal: controller.signal });
+    }finally{
+      clearTimeout(timeoutId);
+    }
+    if(!res.ok){
+      let reason = "";
+      try{ reason = (await res.json()).reason || ""; }catch(e2){}
+      throw new Error(reason || `Server returned an error (${res.status}).`);
+    }
+    const data = await res.json();
+    const dates = (data.daily && data.daily.time) || [];
+    const amounts = (data.daily && data.daily.precipitation_sum) || [];
+
+    // Bucket by calendar month (YYYY-MM), Jan 2026 through the current month.
+    const totals = {};
+    dates.forEach((d, i) => {
+      const key = d.slice(0, 7);
+      totals[key] = (totals[key] || 0) + (amounts[i] || 0);
+    });
+    const months = [];
+    let cursor = new Date(2026, 0, 1);
+    const stop = new Date(today.getFullYear(), today.getMonth(), 1);
+    while(cursor <= stop){
+      const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`;
+      months.push({ key, label: cursor.toLocaleString("en-US", { month: "short" }), total: totals[key] });
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    const known = months.filter(m => m.total !== undefined).map(m => m.total);
+    const max = Math.max(1, ...known);
+
+    bodyEl.innerHTML = `<div class="rain-chart">${months.map(m => {
+      const hasData = m.total !== undefined;
+      const t = hasData ? Math.max(0, Math.min(1, m.total / max)) : 0;
+      const pct = hasData ? Math.max(4, Math.round(t * 100)) : 4;
+      const barStyle = hasData ? `height:${pct}%; background:${rainBarColor(t)};` : `height:${pct}%;`;
+      return `
+        <div class="rain-chart-col">
+          <div class="rain-chart-val">${hasData ? m.total.toFixed(1) + '"' : "—"}</div>
+          <div class="rain-chart-bar${hasData ? "" : " no-data"}" style="${barStyle}"></div>
+          <div class="rain-chart-label">${m.label}</div>
+        </div>`;
+    }).join("")}</div>
+    <div class="rain-chart-legend">
+      <span><i style="background:rgb(214,73,158);"></i>Less rain</span>
+      <span><i style="background:rgb(95,155,130);"></i>Moderate</span>
+      <span><i style="background:rgb(62,127,160);"></i>More rain</span>
+    </div>`;
+    statusEl.textContent = `Through ${endDate} (most recent few days aren't in yet).`;
+  }catch(e){
+    if(e && e.name === "AbortError"){
+      statusEl.textContent = "The weather service is taking too long to respond — try again in a bit.";
+    } else {
+      statusEl.textContent = `Couldn't fetch weather data: ${e.message || "check your connection and try again."}`;
+    }
+  }
+}
+function wireRainChart(){
+  const toggle = document.getElementById("rainChartToggle");
+  const wrap = document.getElementById("rainChartBodyWrap");
+  if(!toggle || !wrap) return;
+  let loaded = false;
+  toggle.addEventListener("click", () => {
+    const isOpen = wrap.style.display !== "none";
+    wrap.style.display = isOpen ? "none" : "block";
+    toggle.classList.toggle("open", !isOpen);
+    if(!isOpen && !loaded){
+      loaded = true;
+      fetchAndRenderRainChart();
+    }
+  });
 }
 
 // Crops where logging a size/length alongside the harvest is actually
