@@ -197,6 +197,9 @@
     font-size:14px; color:var(--ink-soft); margin-top:4px;
   }
   .loc-line b{color:var(--ink); font-weight:600;}
+  .header-season-label{
+    font-size:14px; color:var(--ink-soft); margin-top:4px;
+  }
   .season-pill{
     margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:12px;
     font-weight:700; color:#3D7D82; background:#CDEDEA; border:1px solid #A9DEDA;
@@ -1490,6 +1493,7 @@
       <div class="brand-text-center">
         <h1>Odessa Garden</h1>
         <div class="loc-line">Zone 9B</div>
+        <div class="header-season-label" id="headerSeasonLabel"></div>
       </div>
       <div class="header-date-box">
         <div class="header-date-num" id="todayDayLabel">21</div>
@@ -1937,6 +1941,11 @@
     </div>
     <input id="importJsonInput" type="file" accept="application/json,.json" style="display:none;">
     <div id="importStatus" class="backup-status"></div>
+    <p class="backup-hint" style="margin-top:14px;">Every upcoming sow &amp; transplant date for this season, as calendar reminders — download and import into Google, Apple, or Outlook Calendar. Crops already marked "Season DONE" are left out.</p>
+    <div class="backup-row">
+      <button type="button" id="calendarExportBtn">📅 Add to Calendar</button>
+    </div>
+    <div id="calendarExportStatus" class="backup-status"></div>
     <p class="backup-hint" style="margin-top:14px;">Print-friendly, black &amp; white PDF of everything you planted, by season.</p>
     <div id="savePdfList"></div>
     <div class="unlock-row">
@@ -6072,6 +6081,8 @@ async function switchSeason(key){
 }
 function renderSeasonUI(){
   const keys = Object.keys(SEASONS);
+  const headerLabel = document.getElementById("headerSeasonLabel");
+  if(headerLabel) headerLabel.textContent = `Almanac ${fullSeasonLabel(activeSeason)}`;
   const seasonButtonsEl = document.getElementById("seasonButtons");
   if(seasonButtonsEl){
     seasonButtonsEl.innerHTML = keys.map(key => {
@@ -6518,6 +6529,96 @@ document.getElementById("importJsonInput").addEventListener("change", async (e) 
   btn.textContent = "Restoring…";
   btn.disabled = true;
   await importData(file);
+  btn.textContent = original;
+  btn.disabled = false;
+});
+
+function icsPad2(n){ return String(n).padStart(2, "0"); }
+function icsDateValue(y, m, d){ return `${y}${icsPad2(m)}${icsPad2(d)}`; }
+// ICalendar text fields need commas, semicolons, and backslashes escaped,
+// and CRLF line breaks kept under ~75 octets per line — the multi-byte
+// safe way is just to fold on plain-ASCII length, which is close enough
+// here since our summaries are short.
+function icsEscape(text){
+  return String(text).replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;");
+}
+
+// Builds one all-day (or multi-day) VEVENT per planned sow/transplant task
+// for the active season, each with a same-day reminder alarm, and packages
+// them into a single .ics file any calendar app can import. Crops marked
+// "Season DONE" are skipped since there's nothing left to be reminded of.
+async function buildPlantingICS(){
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Odessa Garden//Planting Reminders//EN", "CALSCALE:GREGORIAN"];
+  const now = new Date();
+  const dtstamp = `${now.getUTCFullYear()}${icsPad2(now.getUTCMonth() + 1)}${icsPad2(now.getUTCDate())}T${icsPad2(now.getUTCHours())}${icsPad2(now.getUTCMinutes())}${icsPad2(now.getUTCSeconds())}Z`;
+  let count = 0;
+  for(const sectionKey of ["vegetables", "herbs", "flowers", "coverCrops"]){
+    for(const p of (DATA_now()[sectionKey] || [])){
+      if(await getSeasonDone(p.slug)) continue;
+      for(const wave of p.dates){
+        for(const t of wave){
+          const isSow = /^Start/.test(t.a);
+          const isTransplant = /^Transplant/.test(t.a);
+          if(!isSow && !isTransplant) continue;
+          const days = expandTaskDays(t);
+          if(!days.length) continue;
+          const first = days[0];
+          const last = days[days.length - 1];
+          // DTEND for an all-day event is exclusive (the day *after* it
+          // ends), per the iCalendar spec — otherwise multi-day windows
+          // like "Jan 23-25" would show as ending a day early.
+          const endExclusive = new Date(last.y, last.m - 1, last.d + 1);
+          const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
+          const action = isTransplant ? "Transplant" : "Start seeds";
+          const uid = `${p.slug}-${t.a}-${t.m}-${t.d}-${activeSeason}@odessagarden`.replace(/[^A-Za-z0-9@._-]/g, "_");
+          lines.push(
+            "BEGIN:VEVENT",
+            `UID:${uid}`,
+            `DTSTAMP:${dtstamp}`,
+            `DTSTART;VALUE=DATE:${icsDateValue(first.y, first.m, first.d)}`,
+            `DTEND;VALUE=DATE:${icsDateValue(endExclusive.getFullYear(), endExclusive.getMonth() + 1, endExclusive.getDate())}`,
+            `SUMMARY:${icsEscape(`${emoji} ${action}: ${p.name}`)}`,
+            "BEGIN:VALARM",
+            "ACTION:DISPLAY",
+            `DESCRIPTION:${icsEscape(`${action}: ${p.name}`)}`,
+            "TRIGGER:-PT0M",
+            "END:VALARM",
+            "END:VEVENT"
+          );
+          count++;
+        }
+      }
+    }
+  }
+  lines.push("END:VCALENDAR");
+  return { ics: lines.join("\r\n"), count };
+}
+document.getElementById("calendarExportBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("calendarExportBtn");
+  const status = document.getElementById("calendarExportStatus");
+  const original = btn.textContent;
+  btn.textContent = "Building…";
+  btn.disabled = true;
+  try{
+    const { ics, count } = await buildPlantingICS();
+    if(!count){
+      status.textContent = "Nothing to add — every crop this season is either marked done or has no sow/transplant dates left.";
+    } else {
+      const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Odessa Garden Reminders ${fullSeasonLabel(activeSeason)}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      status.textContent = `Downloaded ${count} reminder${count === 1 ? "" : "s"} — open the file to import into your calendar app.`;
+    }
+  }catch(e){
+    console.error("Calendar export failed:", e);
+    status.textContent = "Couldn't build the calendar file — try again.";
+  }
   btn.textContent = original;
   btn.disabled = false;
 });
