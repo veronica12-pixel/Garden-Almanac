@@ -3590,24 +3590,43 @@ async function getAllHarvestEntries(){
   return all.filter(e => hchartParseDate(e.date));
 }
 
-// Groups all-time harvest entries by calendar month (Jan-Dec, regardless of
-// year) — every crop harvested in a given month lands together in that
-// month's box, fruits and vegetables alike.
+// Groups harvest entries into one box per actual calendar month across
+// every season defined in SEASONS, walked in chronological order
+// (August through July within each season, oldest season first) — so
+// December is immediately followed by the *next* January's box instead
+// of merging same-named months from different years together or
+// wrapping back to a fixed Jan-Dec grid. This also means the chart
+// automatically keeps rolling forward on its own as future seasons get
+// added to the app later, with no further changes needed here.
 function buildHarvestByMonth(entries){
-  const months = Array.from({ length: 12 }, () => ({}));
+  const buckets = {};
   entries.forEach(entry => {
     const d = hchartParseDate(entry.date);
     if(!d) return;
-    const key = entry.fruit.trim().toLowerCase();
-    const bucket = months[d.getMonth()];
-    if(!bucket[key]) bucket[key] = { name: entry.fruit.trim(), kind: entry.kind, count: 0 };
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    if(!buckets[key]) buckets[key] = {};
+    const cropKey = entry.fruit.trim().toLowerCase();
+    if(!buckets[key][cropKey]) buckets[key][cropKey] = { name: entry.fruit.trim(), kind: entry.kind, count: 0 };
     const qty = parseFloat(entry.qty);
-    bucket[key].count += (entry.qty && !isNaN(qty)) ? qty : 1;
+    buckets[key][cropKey].count += (entry.qty && !isNaN(qty)) ? qty : 1;
   });
-  return months.map((bucket, i) => ({
-    month: i,
-    crops: Object.values(bucket).sort((a, b) => a.name.localeCompare(b.name))
-  }));
+
+  const seasonKeys = Object.keys(SEASONS).sort();
+  const monthOrder = [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7];
+  const result = [];
+  seasonKeys.forEach(sk => {
+    monthOrder.forEach(m => {
+      const year = seasonYearForMonth(sk, m);
+      const key = `${year}-${String(m).padStart(2, "0")}`;
+      const bucket = buckets[key] || {};
+      result.push({
+        month: m - 1, // 0-indexed, for MONTHS[] lookup
+        year,
+        crops: Object.values(bucket).sort((a, b) => a.name.localeCompare(b.name))
+      });
+    });
+  });
+  return result;
 }
 
 async function renderHarvestChart(){
@@ -3620,11 +3639,12 @@ async function renderHarvestChart(){
     return;
   }
 
-  const monthGroups = buildHarvestByMonth(entries);
+  const monthGroups = buildHarvestByMonth(entries)
+    .filter(m => m.year > 2026 || (m.year === 2026 && m.month >= 2)); // month is 0-indexed, so 2 = March
 
   const boxesHTML = monthGroups.map(m => `
     <div class="hchart-month-box hm-${m.month}${m.crops.length === 0 ? " empty" : ""}">
-      <div class="hchart-month-title">${MONTHS[m.month]}</div>
+      <div class="hchart-month-title">${MONTHS[m.month]} ${m.year}</div>
       <div class="hchart-month-crop-row">
         ${m.crops.length ? m.crops.map(c => `
           <span class="hchart-month-crop">
