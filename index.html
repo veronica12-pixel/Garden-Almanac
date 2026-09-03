@@ -350,6 +350,23 @@
     padding:14px 16px; font-size:13.5px; color:var(--ink-soft); line-height:1.55;
     margin-top:6px; margin-bottom:18px; box-shadow:var(--shadow);
   }
+  .reorder-toggle-card{
+    background:#FDE6D8; border:1px solid #F5CBAE; border-radius:14px;
+    padding:14px 16px; font-size:13.5px; color:var(--ink-soft); line-height:1.55;
+    margin-top:22px; margin-bottom:8px; box-shadow:var(--shadow);
+  }
+  /* Overrides .rain-toggle's space-between so the title can center in
+     whatever room is left between the flanking icon groups, instead of
+     spreading three items edge-to-edge-to-edge. */
+  .reorder-toggle-btn{ justify-content:flex-start; gap:3px; }
+  .reorder-toggle-title{ flex:1; text-align:center; }
+  .reorder-toggle-icons{ flex:none; display:flex; gap:2px; }
+  .reorder-toggle-icons span{
+    width:27px; height:27px; border-radius:8px;
+    background:rgba(255,255,255,0.55); display:flex; align-items:center; justify-content:center;
+    font-size:17px; line-height:1;
+  }
+  .reorder-toggle-btn .rain-toggle-right{ gap:3px; }
   /* Column layout: crop names down the left (sticky), one column per
      season across the top (sticky), with both horizontal and vertical
      scrollbars so wide/tall tables stay usable inside the modal. */
@@ -617,6 +634,25 @@
   }
   .legend-card p{margin:0 0 8px;}
   .legend-card p:last-child{margin-bottom:0;}
+  .reorder-row{
+    display:flex; align-items:center; gap:8px; padding:8px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .reorder-row:last-child{border-bottom:none;}
+  .reorder-check-wrap{
+    display:flex; align-items:center; gap:9px; flex:1; min-width:0; cursor:pointer;
+  }
+  .reorder-checkbox{ width:18px; height:18px; flex:none; accent-color:var(--evergreen); }
+  .reorder-text{ font-size:14px; color:var(--ink); word-break:break-word; }
+  .reorder-checked{ color:var(--ink-soft); text-decoration:line-through; }
+  .reorder-delete{
+    flex:none; border:none; background:none; color:var(--ink-soft);
+    font-size:19px; line-height:1; padding:4px 6px; cursor:pointer;
+  }
+  .reorder-delete:hover{ color:#B84C4C; }
+  .reorder-lock{
+    flex:none; font-size:14px; padding:4px 6px; opacity:.6;
+  }
   .legend-card b{color:var(--ink);}
 
   /* ---------- harvest log (Fruits tab) ---------- */
@@ -1035,6 +1071,13 @@
     background:transparent; color:var(--clay-dark);
   }
   .variety-edit-delete-btn:hover, .variety-edit-delete-btn:active{ background:rgba(199,116,155,0.12); }
+  .variety-edit-reorder-btn{
+    flex:0 0 auto; text-align:center;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    border-radius:8px; padding:6px 12px; cursor:pointer; border:1px solid #F5CBAE;
+    background:transparent; color:#C1673A;
+  }
+  .variety-edit-reorder-btn:hover, .variety-edit-reorder-btn:active{ background:rgba(193,103,58,0.1); }
   .date-missing-flash{
     animation: dateMissingFlash 0.9s ease;
     border-color:#D9534F !important;
@@ -1600,6 +1643,24 @@
       <h2 class="section-title" style="margin-top:22px;">By Month</h2>
       <div class="sub">Every planned task, month by month</div>
       <div id="monthDropdowns"></div>
+
+      <div class="reorder-toggle-card">
+        <button type="button" id="reorderToggle" class="rain-toggle reorder-toggle-btn">
+          <span class="reorder-toggle-icons" aria-hidden="true"><span>🥕</span><span>🍅</span><span>🍆</span></span>
+          <span class="legend-title reorder-toggle-title" style="margin-bottom:0; color:#C1673A;">Seeds to Reorder</span>
+          <span class="rain-toggle-right">
+            <span class="reorder-toggle-icons" aria-hidden="true"><span>🌽</span><span>🥒</span><span>🍄</span></span>
+            <span id="reorderChevron" class="rain-chevron" style="color:#C1673A;">▾</span>
+          </span>
+        </button>
+        <div id="reorderBodyWrap" style="display:none; margin-top:10px;">
+          <p class="backup-hint" style="margin:0 0 12px;">Add a variety here when you're running low — check it off once it's ordered.</p>
+          <div class="harvest-add-row" style="margin-bottom:0;">
+            <input type="text" id="reorderInput" placeholder="Variety name, press Enter" autocomplete="off">
+          </div>
+          <div id="reorderList" style="margin-top:10px;"></div>
+        </div>
+      </div>
     </section>
 
     <section class="tab-panel" id="tab-vegetables">
@@ -4755,9 +4816,18 @@ async function renderGrid(sectionKey, containerId){
           deleteBtn.type = "button";
           deleteBtn.className = "variety-edit-delete-btn";
           deleteBtn.textContent = "Delete";
+          // A separate, clearly-labeled action rather than anything on the
+          // chip's own tap-menu — sits here in the edit form instead, next
+          // to Delete, since this is where someone's already looking at
+          // this variety's details rather than just glancing at a chip.
+          const reorderBtn = document.createElement("button");
+          reorderBtn.type = "button";
+          reorderBtn.className = "variety-edit-reorder-btn";
+          reorderBtn.textContent = "Add to reorder";
           const btnRow = document.createElement("span");
           btnRow.className = "variety-edit-btn-row";
           btnRow.appendChild(confirmBtn);
+          btnRow.appendChild(reorderBtn);
           btnRow.appendChild(deleteBtn);
           wrap.appendChild(btnRow);
           hostEl.textContent = "";
@@ -4803,6 +4873,19 @@ async function renderGrid(sectionKey, containerId){
           deleteBtn.addEventListener("click", (ce) => {
             ce.stopPropagation();
             onDelete();
+          });
+          // Doesn't close or commit the editor — adding to the reorder
+          // list is a side-action, not a save, so whatever's still being
+          // edited here stays open and untouched either way.
+          reorderBtn.addEventListener("click", async (ce) => {
+            ce.stopPropagation();
+            const name = nameInput.value.trim();
+            if(!name) return;
+            const reorderListNow = await getReorderList();
+            reorderListNow.push({ id: Date.now() + Math.random(), text: name, checked: false, addedAt: Date.now() });
+            await setReorderList(reorderListNow);
+            renderReorderList();
+            showUndoToast(`"${name}" added to reorder list.`, null, "OK");
           });
           // Auto-commit when the person taps anywhere outside this editor —
           // deliberately NOT wrap's own "focusout" + relatedTarget (what
@@ -5477,18 +5560,23 @@ async function renderGrid(sectionKey, containerId){
             }).join("")}</div>
           </div>`;
         }).join("")}</div>`;
-        seedPacketListEl.querySelectorAll(".variety-chip:not(.locked)").forEach(chip => {
+        seedPacketListEl.querySelectorAll(".variety-chip").forEach(chip => {
           chip.addEventListener("click", (e) => {
             e.stopPropagation();
             const already = chip.querySelector(".date-chip-menu");
             document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
             if(already) return;
             const i = Number(chip.dataset.i);
+            const locked = chip.classList.contains("locked");
             const menu = document.createElement("div");
             menu.className = "date-chip-menu";
-            menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+            // Reorder is safe on a locked (already-final) entry since it
+            // only adds to a separate list — it doesn't touch the
+            // finished-seed record itself the way Edit/Delete would.
+            menu.innerHTML = `${locked ? "" : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`}<button type="button" class="reorder">Add to reorder</button>`;
             chip.appendChild(menu);
-            menu.querySelector(".edit").addEventListener("click", (ev) => {
+            const editBtn = menu.querySelector(".edit");
+            if(editBtn) editBtn.addEventListener("click", (ev) => {
               ev.stopPropagation();
               menu.remove();
               const input = document.createElement("input");
@@ -5515,7 +5603,8 @@ async function renderGrid(sectionKey, containerId){
               input.addEventListener("blur", commitRename);
               input.addEventListener("click", (ce) => ce.stopPropagation());
             });
-            menu.querySelector(".delete").addEventListener("click", (ev) => {
+            const deleteBtn = menu.querySelector(".delete");
+            if(deleteBtn) deleteBtn.addEventListener("click", (ev) => {
               ev.stopPropagation();
               const removed = finishedSeeds[i];
               requestGenericDelete(`Remove "${removed.name}" from finished packets?`, async () => {
@@ -5528,6 +5617,16 @@ async function renderGrid(sectionKey, containerId){
                   await setFinishedSeeds(p.slug, finishedSeeds);
                 });
               });
+            });
+            menu.querySelector(".reorder").addEventListener("click", async (ev) => {
+              ev.stopPropagation();
+              menu.remove();
+              const name = finishedSeeds[i].name;
+              const reorderListNow = await getReorderList();
+              reorderListNow.push({ id: Date.now() + Math.random(), text: name, checked: false, addedAt: Date.now() });
+              await setReorderList(reorderListNow);
+              renderReorderList();
+              showUndoToast(`"${name}" added to reorder list.`, null, "OK");
             });
           });
         });
@@ -5542,6 +5641,12 @@ async function renderGrid(sectionKey, containerId){
         seedPacketInput.value = "";
         renderFinishedSeeds();
         await setFinishedSeeds(p.slug, finishedSeeds);
+        showUndoToast(`"${val}" marked finished.`, async () => {
+          const reorderListNow = await getReorderList();
+          reorderListNow.push({ id: Date.now() + Math.random(), text: val, checked: false, addedAt: Date.now() });
+          await setReorderList(reorderListNow);
+          renderReorderList();
+        }, "Add to reorder");
       }
       seedPacketInput.addEventListener("keydown", (e) => {
         if(e.key === "Enter"){ e.preventDefault(); addFinishedSeed(); }
@@ -6335,13 +6440,14 @@ document.getElementById("genericDeleteModalBackdrop").addEventListener("click", 
 });
 
 let undoToastTimer = null;
-function showUndoToast(message, onUndo){
+function showUndoToast(message, onUndo, actionLabel){
   const toast = document.getElementById("undoToast");
   document.getElementById("undoToastText").textContent = message;
   // Swap in a fresh button so old undo callbacks from a previous toast
   // never linger and fire twice.
   const oldBtn = document.getElementById("undoToastBtn");
   const btn = oldBtn.cloneNode(true);
+  btn.textContent = actionLabel || "Undo";
   oldBtn.parentNode.replaceChild(btn, oldBtn);
   toast.classList.add("show");
   clearTimeout(undoToastTimer);
@@ -6623,6 +6729,78 @@ document.getElementById("calendarExportBtn").addEventListener("click", async () 
   btn.disabled = false;
 });
 
+// Seeds to Reorder — a simple persistent checklist (not tied to any one
+// crop, season, or calendar), stored under a single shared key. Unchecked
+// items sort above checked ones so the still-to-do items stay on top,
+// but checked items stay visible (with a strikethrough) until you
+// actually delete them, in case you want a record of what you've
+// reordered recently.
+async function getReorderList(){
+  try{
+    const r = await window.storage.get("seedReorderList", false);
+    if(!r) return [];
+    try{ return JSON.parse(r.value); }
+    catch(e){ return []; }
+  }catch(e){ return []; }
+}
+async function setReorderList(list){
+  try{ await window.storage.set("seedReorderList", JSON.stringify(list), false); }
+  catch(e){}
+}
+async function renderReorderList(){
+  const container = document.getElementById("reorderList");
+  if(!container) return;
+  const list = await getReorderList();
+  const sorted = [...list].sort((a, b) => (a.checked === b.checked) ? 0 : (a.checked ? 1 : -1));
+  if(!sorted.length){
+    container.innerHTML = `<p class="backup-hint" style="margin:2px 0 0;">Nothing on the list yet.</p>`;
+    return;
+  }
+  container.innerHTML = sorted.map(item => `
+    <div class="reorder-row" data-id="${item.id}">
+      <label class="reorder-check-wrap">
+        <input type="checkbox" class="reorder-checkbox" ${item.checked ? "checked" : ""}>
+        <span class="reorder-text${item.checked ? " reorder-checked" : ""}">${item.text}</span>
+      </label>
+      ${isEntryLocked(item.addedAt) ? `<span class="reorder-lock" title="Locked — unlock in Save a copy to delete">🔒</span>` : `<button type="button" class="reorder-delete" aria-label="Remove">×</button>`}
+    </div>
+  `).join("");
+  container.querySelectorAll(".reorder-checkbox").forEach(cb => {
+    cb.addEventListener("change", async (e) => {
+      const id = e.target.closest(".reorder-row").dataset.id;
+      const list2 = await getReorderList();
+      const item = list2.find(x => String(x.id) === id);
+      if(item) item.checked = e.target.checked;
+      await setReorderList(list2);
+      renderReorderList();
+    });
+  });
+  container.querySelectorAll(".reorder-delete").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.closest(".reorder-row").dataset.id;
+      const list2 = await getReorderList();
+      await setReorderList(list2.filter(x => String(x.id) !== id));
+      renderReorderList();
+    });
+  });
+}
+const reorderInput = document.getElementById("reorderInput");
+if(reorderInput){
+  reorderInput.addEventListener("keydown", async (e) => {
+    if(e.key !== "Enter") return;
+    e.preventDefault();
+    const text = reorderInput.value.trim();
+    if(!text) return;
+    const list = await getReorderList();
+    list.push({ id: Date.now() + Math.random(), text, checked: false, addedAt: Date.now() });
+    await setReorderList(list);
+    reorderInput.value = "";
+    renderReorderList();
+  });
+}
+renderReorderList();
+wireSimpleToggle("reorderToggle", "reorderBodyWrap");
+
 /* ---------------- month-grid calendar ---------------- */
 let calYear, calMonth, calSelectedDay = null;
 
@@ -6868,6 +7046,7 @@ async function renderAll(){
   await renderHarvestLog();
   await renderHarvestPictures();
   await renderJournal();
+  await renderReorderList();
 }
 
 /* ---------------- backup: export / import all stored data ---------------- */
