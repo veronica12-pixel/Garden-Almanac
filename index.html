@@ -635,10 +635,11 @@
   .legend-card p{margin:0 0 8px;}
   .legend-card p:last-child{margin-bottom:0;}
   .reorder-row{
-    display:flex; align-items:center; gap:8px; padding:8px 0;
+    display:flex; flex-direction:column; gap:6px; padding:8px 0;
     border-bottom:1px solid var(--line);
   }
   .reorder-row:last-child{border-bottom:none;}
+  .reorder-row-top{ display:flex; align-items:center; gap:8px; }
   .reorder-check-wrap{
     display:flex; align-items:center; gap:9px; flex:1; min-width:0; cursor:pointer;
   }
@@ -653,6 +654,12 @@
   .reorder-lock{
     flex:none; font-size:14px; padding:4px 6px; opacity:.6;
   }
+  .reorder-source-input{
+    margin-left:27px; font-size:12.5px; padding:6px 8px;
+    border:1px solid var(--line); border-radius:7px;
+    background:var(--paper-2); color:var(--ink); font-family:'Inter',sans-serif;
+  }
+  .reorder-source-input::placeholder{ color:var(--ink-soft); }
   .legend-card b{color:var(--ink);}
 
   /* ---------- harvest log (Fruits tab) ---------- */
@@ -2002,11 +2009,6 @@
     </div>
     <input id="importJsonInput" type="file" accept="application/json,.json" style="display:none;">
     <div id="importStatus" class="backup-status"></div>
-    <p class="backup-hint" style="margin-top:14px;">Every upcoming sow &amp; transplant date for this season, as calendar reminders — download and import into Google, Apple, or Outlook Calendar. Crops already marked "Season DONE" are left out.</p>
-    <div class="backup-row">
-      <button type="button" id="calendarExportBtn">📅 Add to Calendar</button>
-    </div>
-    <div id="calendarExportStatus" class="backup-status"></div>
     <p class="backup-hint" style="margin-top:14px;">Print-friendly, black &amp; white PDF of everything you planted, by season.</p>
     <div id="savePdfList"></div>
     <div class="unlock-row">
@@ -2018,6 +2020,11 @@
         <span class="night-toggle-icon">🔒</span>
       </button>
     </div>
+    <p class="backup-hint" style="margin-top:14px;">Every upcoming sow &amp; transplant date for this season, as calendar reminders — download and import into Google, Apple, or Outlook Calendar. Crops already marked "Season DONE" are left out.</p>
+    <div class="backup-row">
+      <button type="button" id="calendarExportBtn">📅 Add to Calendar</button>
+    </div>
+    <div id="calendarExportStatus" class="backup-status"></div>
     <button class="modal-close" id="saveModalClose" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Close</button>
   </div>
 </div>
@@ -6758,13 +6765,32 @@ async function renderReorderList(){
   }
   container.innerHTML = sorted.map(item => `
     <div class="reorder-row" data-id="${item.id}">
-      <label class="reorder-check-wrap">
-        <input type="checkbox" class="reorder-checkbox" ${item.checked ? "checked" : ""}>
-        <span class="reorder-text${item.checked ? " reorder-checked" : ""}">${item.text}</span>
-      </label>
-      ${isEntryLocked(item.addedAt) ? `<span class="reorder-lock" title="Locked — unlock in Save a copy to delete">🔒</span>` : `<button type="button" class="reorder-delete" aria-label="Remove">×</button>`}
+      <div class="reorder-row-top">
+        <label class="reorder-check-wrap">
+          <input type="checkbox" class="reorder-checkbox" ${item.checked ? "checked" : ""}>
+          <span class="reorder-text${item.checked ? " reorder-checked" : ""}">${item.text}</span>
+        </label>
+        ${isEntryLocked(item.addedAt) ? `<span class="reorder-lock" title="Locked — unlock in Save a copy to delete">🔒</span>` : `<button type="button" class="reorder-delete" aria-label="Remove">×</button>`}
+      </div>
+      ${item.checked ? `<input type="text" class="reorder-source-input" placeholder="Ordered from (optional)" value="${(item.source || "").replace(/"/g, "&quot;")}">` : ""}
     </div>
   `).join("");
+  container.querySelectorAll(".reorder-source-input").forEach(input => {
+    let saved = false;
+    const commitSource = async () => {
+      if(saved) return;
+      saved = true;
+      const id = input.closest(".reorder-row").dataset.id;
+      const list2 = await getReorderList();
+      const item = list2.find(x => String(x.id) === id);
+      if(item) item.source = input.value.trim();
+      await setReorderList(list2);
+    };
+    input.addEventListener("blur", commitSource);
+    input.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){ e.preventDefault(); input.blur(); }
+    });
+  });
   container.querySelectorAll(".reorder-checkbox").forEach(cb => {
     cb.addEventListener("change", async (e) => {
       const id = e.target.closest(".reorder-row").dataset.id;
