@@ -4175,8 +4175,8 @@ async function renderGrid(sectionKey, containerId){
     const seasonDone = isPastSeason ? false : await getSeasonDone(p.slug);
     const sowTemp = isPastSeason ? "" : await getTemp(p.slug, "sow");
     const transplantTemp = isPastSeason ? "" : await getTemp(p.slug, "transplant");
-    const pottedUpActualCheck = ["tomatoes", "peppers", "eggplants"].includes(p.slug) ? await getActualDates(p.slug, "pottedUp") : [];
-    const pottedUpTemp = (isPastSeason || !["tomatoes", "peppers", "eggplants"].includes(p.slug)) ? "" : await getTemp(p.slug, "pottedUp");
+    const pottedUpActualCheck = ["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug) ? await getActualDates(p.slug, "pottedUp") : [];
+    const pottedUpTemp = (isPastSeason || !["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug)) ? "" : await getTemp(p.slug, "pottedUp");
 
     // Overdue flag: planned date already passed with nothing logged in
     // Actual sow/transplant. Pulled into its own function (instead of a
@@ -4323,7 +4323,7 @@ async function renderGrid(sectionKey, containerId){
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
-            ${["tomatoes", "peppers", "eggplants"].includes(p.slug) ? `
+            ${["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug) ? `
             <div class="actual-field">
               <label for="pottedup-${p.slug}">Potted in individual pots</label>
               <div class="actual-input-row">
@@ -5404,7 +5404,7 @@ async function renderGrid(sectionKey, containerId){
       if(p.slug !== "garlic"){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       }
-      if(["tomatoes", "peppers", "eggplants"].includes(p.slug)){
+      if(["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug)){
         await wireDateChips("pottedUp", card.querySelector(`#pottedup-${p.slug}`), card.querySelector(`#pottedup-temp-${p.slug}`), card.querySelector(`#pottedup-chips-${p.slug}`));
       }
       await renderCombo();
@@ -8401,3 +8401,5 @@ async function checkTomorrowReminder(){
 })();
 </script>
 </body></html>
+
+     
