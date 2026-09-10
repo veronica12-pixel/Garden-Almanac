@@ -605,8 +605,24 @@
   .home-tab-btn.tab-rain.active{ background:#5FA3C4; color:#fff; border-color:#5FA3C4; }
   .home-tab-btn.tab-journal{ background:#EFE3D0; color:#8C6A3D; border-color:#E2D0AF; }
   .home-tab-btn.tab-journal.active{ background:#B98F52; color:#fff; border-color:#B98F52; }
+  .home-tab-btn.tab-reorder{ background:#F7E2D6; color:#C1673A; border-color:#EDC9B4; }
+  .home-tab-btn.tab-reorder.active{ background:#C1673A; color:#fff; border-color:#C1673A; }
   .home-tab-btn.tab-germination{ background:#DCEEE0; color:#3E8054; border-color:#BEE0C6; }
   .home-tab-btn.tab-germination.active{ background:#4F9E68; color:#fff; border-color:#4F9E68; }
+  .home-tab-btn.tab-germtemp{ background:#FBE9DD; color:#B0602E; border-color:#F2CFB5; }
+  .home-tab-btn.tab-germtemp.active{ background:#D97F42; color:#fff; border-color:#D97F42; }
+  .gtemp-section-title{ font-size:12px; font-weight:700; color:var(--evergreen); margin:16px 0 8px; text-transform:uppercase; letter-spacing:.03em; }
+  .gtemp-section-title:first-child{ margin-top:0; }
+  .gtemp-chart{ display:flex; flex-direction:column; }
+  .gtemp-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--paper-2); }
+  .gtemp-row:last-child{ border-bottom:none; }
+  .gtemp-row-icon{ flex:0 0 auto; font-size:18px; line-height:1; }
+  .gtemp-row-label{ flex:1; font-size:13px; font-weight:700; color:var(--ink); overflow-wrap:break-word; }
+  .gtemp-row-val{ flex:0 0 auto; font-size:13px; font-weight:700; color:var(--evergreen); white-space:nowrap; }
+  .gtemp-note-row{ font-size:12px; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:8px 10px; margin:9px 0; }
+  .gtemp-note-row b{ color:var(--ink); }
+  .gtemp-legend{ font-size:11px; color:var(--ink-soft); margin-top:12px; line-height:1.5; }
+  .gtemp-approx{ font-style:italic; }
   .germ-best{
     margin:10px 0 14px; font-size:13.5px; font-weight:600; color:var(--evergreen);
     background:var(--paper-2); border-radius:10px; padding:9px 12px;
@@ -1562,7 +1578,9 @@
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
+          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Temperature</span></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
+          <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
           <div id="seasonButtons">
@@ -1634,6 +1652,14 @@
         <div class="notes-list" id="journalList"></div>
         </div>
         <div id="germinationBody" class="home-tab-body" style="display:none;"></div>
+        <div id="germtempBody" class="home-tab-body" style="display:none;"></div>
+        <div id="reorderBody" class="home-tab-body" style="display:none;">
+        <p class="backup-hint" style="margin:0 0 12px;">Add a variety here when you're running low — check it off once it's ordered.</p>
+        <div class="harvest-add-row" style="margin-bottom:0;">
+          <input type="text" id="reorderInput" placeholder="Variety name, press Enter" autocomplete="off">
+        </div>
+        <div id="reorderList" style="margin-top:10px;"></div>
+        </div>
         <div id="howBody" class="home-tab-body" style="display:none;">
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
@@ -1650,24 +1676,6 @@
       <h2 class="section-title" style="margin-top:22px;">By Month</h2>
       <div class="sub">Every planned task, month by month</div>
       <div id="monthDropdowns"></div>
-
-      <div class="reorder-toggle-card">
-        <button type="button" id="reorderToggle" class="rain-toggle reorder-toggle-btn">
-          <span class="reorder-toggle-icons" aria-hidden="true"><span>🥕</span><span>🍅</span><span>🍆</span></span>
-          <span class="legend-title reorder-toggle-title" style="margin-bottom:0; color:#C1673A;">Seeds to Reorder</span>
-          <span class="rain-toggle-right">
-            <span class="reorder-toggle-icons" aria-hidden="true"><span>🌽</span><span>🥒</span><span>🍄</span></span>
-            <span id="reorderChevron" class="rain-chevron" style="color:#C1673A;">▾</span>
-          </span>
-        </button>
-        <div id="reorderBodyWrap" style="display:none; margin-top:10px;">
-          <p class="backup-hint" style="margin:0 0 12px;">Add a variety here when you're running low — check it off once it's ordered.</p>
-          <div class="harvest-add-row" style="margin-bottom:0;">
-            <input type="text" id="reorderInput" placeholder="Variety name, press Enter" autocomplete="off">
-          </div>
-          <div id="reorderList" style="margin-top:10px;"></div>
-        </div>
-      </div>
     </section>
 
     <section class="tab-panel" id="tab-vegetables">
@@ -2491,11 +2499,11 @@ const SEASONS = {
       dates:[[{a:"Start seeds", m:8, d:30},{a:"Transplant", m:10, d:15}]]},
     {slug:"broccoli", name:"Broccoli", shape:"cluster", color:C.greenDark,
       dates:[[{a:"Start seeds", m:8, d:30},{a:"Transplant", m:10, d:22}]]},
-    {slug:"bushbeans", name:"Bush beans", shape:"oval", color:C.greenMed,
+    {slug:"bushbeans", name:"Beans Bush", shape:"oval", color:C.greenMed,
       dates:[[{a:"Start (direct)", m:9, d:30}],[{a:"Start (direct)", m:10, d:9}],[{a:"Start (direct)", m:2, d:12}]]},
-    {slug:"snappeas", name:"Sugar snap peas", shape:"oval", color:C.yellowGreen,
+    {slug:"snappeas", name:"Peas Sugar Snap", shape:"oval", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:9}],[{a:"Start (direct)", m:10, d:26}]]},
-    {slug:"rattlesnake", name:"Rattlesnake beans", shape:"oval", color:C.greenDark,
+    {slug:"rattlesnake", name:"Beans Rattlesnake", shape:"oval", color:C.greenDark,
       dates:[[{a:"Start (direct)", m:10, d:26}],[{a:"Start (direct)", m:1, d:26},{a:"Start (direct)", m:2, d:10}]]},
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
@@ -2515,7 +2523,7 @@ const SEASONS = {
       dates:[[{a:"Start seeds", m:1, d:26},{a:"Transplant", m:3, d:1}]]},
     {slug:"watermelon", name:"Watermelon", shape:"circle", color:C.greenDark,
       dates:[[{a:"Start seeds", m:1, d:26},{a:"Transplant", m:3, d:1}]]},
-    {slug:"longbeans", name:"Red Noodle Long Beans", shape:"oval", color:C.magenta,
+    {slug:"longbeans", name:"Beans Red Noodle Long", shape:"oval", color:C.magenta,
       dates:[[{a:"Start (direct)", m:2, d:12}]]},
     {slug:"nigerianspinach", name:"Nigerian spinach", shape:"leaf", color:C.greenDark,
       dates:[[{a:"Start seeds", m:2, d:13}]]},
@@ -2566,11 +2574,11 @@ const SEASONS = {
       dates:[[{a:"Start seeds", m:8, d:30, m2:9, d2:1},{a:"Transplant", m:10, d:15, m2:10, d2:16}]]},
     {slug:"broccoli", name:"Broccoli", shape:"cluster", color:C.greenDark,
       dates:[[{a:"Start seeds", m:8, d:28, m2:8, d2:29},{a:"Transplant", m:10, d:22}]]},
-    {slug:"bushbeans", name:"Bush beans", shape:"oval", color:C.greenMed,
+    {slug:"bushbeans", name:"Beans Bush", shape:"oval", color:C.greenMed,
       dates:[[{a:"Start (direct)", m:9, d:29}],[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}],[{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
-    {slug:"snappeas", name:"Sugar snap peas", shape:"oval", color:C.yellowGreen,
+    {slug:"snappeas", name:"Peas Sugar Snap", shape:"oval", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:7, m2:10, d2:8}],[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}]]},
-    {slug:"rattlesnake", name:"Rattlesnake beans", shape:"oval", color:C.greenDark,
+    {slug:"rattlesnake", name:"Beans Rattlesnake", shape:"oval", color:C.greenDark,
       dates:[[{a:"Start (direct)", m:10, d:26, m2:10, d2:27}],[{a:"Start (direct)", m:1, d:23, m2:1, d2:25},{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
@@ -2591,7 +2599,7 @@ const SEASONS = {
       dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
     {slug:"watermelon", name:"Watermelon", shape:"circle", color:C.greenDark,
       dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
-    {slug:"longbeans", name:"Red Noodle Long Beans", shape:"oval", color:C.magenta,
+    {slug:"longbeans", name:"Beans Red Noodle Long", shape:"oval", color:C.magenta,
       dates:[[{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
     {slug:"nigerianspinach", name:"Nigerian spinach", shape:"leaf", color:C.greenDark,
       dates:[[{a:"Start seeds", m:2, d:9, m2:2, d2:12}]]},
@@ -2620,7 +2628,7 @@ const SEASONS = {
   coverCrops: [
     {slug:"sunnhemp", name:"Sunn Hemp", shape:"leaf", color:C.greenMed,
       dates:[]},
-    {slug:"puertoricanblackbeans", name:"Puerto Rican Black Beans", shape:"oval", color:C.greenDark,
+    {slug:"puertoricanblackbeans", name:"Beans Puerto Rican Black", shape:"oval", color:C.greenDark,
       dates:[]},
   ]
   } }
@@ -6370,6 +6378,122 @@ async function renderGerminationReport(){
     <div class="germ-chart">${barsHTML}</div>
   `;
 }
+/* ---------------- germination temperature chart (Zone 9B / Odessa, FL) ----------------
+   Recommended soil temperature for seed germination, per crop: min = the
+   lowest soil temp seeds will germinate at all, opt = the range that gives
+   the fastest/most reliable germination, max = the ceiling above which
+   germination drops off or stops. Sourced from UC/Almanac.com extension
+   charts for standard vegetables; entries marked "approx" use the closest
+   published guidance available for less-common warm-climate/tropical crops.
+   A few crops here (garlic, onion slips, sweet potato slips, strawberries)
+   aren't started from seed in this garden, so they get a note instead of
+   a temperature range. */
+const GTEMP_SCALE = { min: 30, max: 110 };
+const GERM_TEMP_DATA = {
+  tomatoes:{min:50,optMin:70,optMax:95,max:95},
+  peppers:{min:60,optMin:65,optMax:95,max:95},
+  eggplants:{min:60,optMin:75,optMax:90,max:95},
+  squash:{min:60,optMin:65,optMax:95,max:100},
+  cucumbers:{min:60,optMin:60,optMax:95,max:105},
+  luffa:{min:60,optMin:70,optMax:90,max:95},
+  leafygreens:{min:40,optMin:45,optMax:85,max:95},
+  broccoli:{min:40,optMin:45,optMax:85,max:95},
+  bushbeans:{min:60,optMin:60,optMax:85,max:95},
+  snappeas:{min:40,optMin:40,optMax:75,max:85},
+  rattlesnake:{min:60,optMin:60,optMax:85,max:95},
+  lettuce:{min:35,optMin:40,optMax:75,max:80},
+  radishes:{min:40,optMin:55,optMax:75,max:95},
+  carrots:{min:40,optMin:45,optMax:85,max:95},
+  fennel:{min:40,optMin:60,optMax:85,max:85},
+  garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate."},
+  onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)"},
+  strawberries:{special:"Grown from bare-root plants here, not seed — no germination temperature applies."},
+  muskmelon:{min:60,optMin:70,optMax:95,max:100},
+  watermelon:{min:60,optMin:70,optMax:95,max:100},
+  longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true},
+  nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true},
+  sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer."},
+  pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true},
+  basil:{min:60,optMin:70,optMax:85,max:95},
+  parsley:{min:40,optMin:50,optMax:85,max:90},
+  dill:{min:40,optMin:60,optMax:70,max:85},
+  cilantro:{min:40,optMin:50,optMax:75,max:85},
+  nasturtium:{min:55,optMin:65,optMax:70,max:85},
+  roselle:{min:65,optMin:70,optMax:85,max:95,approx:true},
+  sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true},
+  puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95},
+};
+const GTEMP_SECTIONS = [
+  {key:"vegetables", label:"Vegetables"},
+  {key:"herbs", label:"Herbs"},
+  {key:"flowers", label:"Flowers"},
+  {key:"coverCrops", label:"Cover Crops"},
+];
+function gtempPct(f){
+  const { min, max } = GTEMP_SCALE;
+  return Math.max(0, Math.min(100, ((f - min) / (max - min)) * 100));
+}
+// Thermometer-style color scale: blue (cool) -> green -> yellow -> orange ->
+// red (hot), interpolated by the crop's optimal-midpoint temperature.
+const GTEMP_COLOR_STOPS = [
+  { t:45,  c:[79,143,209] },
+  { t:60,  c:[124,184,107] },
+  { t:70,  c:[240,196,61] },
+  { t:80,  c:[240,146,61] },
+  { t:95,  c:[232,87,79] },
+  { t:110, c:[178,53,53] },
+];
+function gtempColor(val){
+  const stops = GTEMP_COLOR_STOPS;
+  if(val <= stops[0].t) return `rgb(${stops[0].c.join(",")})`;
+  for(let i = 0; i < stops.length - 1; i++){
+    if(val <= stops[i+1].t){
+      const a = stops[i], b = stops[i+1];
+      const frac = (val - a.t) / (b.t - a.t);
+      const mix = (x, y) => Math.round(x + (y - x) * frac);
+      return `rgb(${mix(a.c[0],b.c[0])}, ${mix(a.c[1],b.c[1])}, ${mix(a.c[2],b.c[2])})`;
+    }
+  }
+  return `rgb(${stops[stops.length-1].c.join(",")})`;
+}
+function renderGerminationTempChart(){
+  const el = document.getElementById("germtempBody");
+  if(!el) return;
+  const data = DATA_now();
+  let hasAny = false;
+  let anyApprox = false;
+  let html = `<p class="backup-hint">Recommended soil temperature for seeds to germinate, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
+  GTEMP_SECTIONS.forEach(section => {
+    const plants = (data[section.key] || []).filter(p => GERM_TEMP_DATA[p.slug])
+      .slice().sort((a, b) => a.name.localeCompare(b.name));
+    if(!plants.length) return;
+    hasAny = true;
+    html += `<div class="gtemp-section-title">${section.label}</div><div class="gtemp-chart">`;
+    plants.forEach(p => {
+      const g = GERM_TEMP_DATA[p.slug];
+      const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
+      if(g.special){
+        html += `<div class="gtemp-note-row"><b>${emoji} ${p.name}:</b> ${g.special}</div>`;
+        return;
+      }
+      if(g.approx) anyApprox = true;
+      const label = g.approx ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
+      html += `
+        <div class="gtemp-row">
+          <div class="gtemp-row-icon">${emoji}</div>
+          <div class="gtemp-row-label">${label}</div>
+          <div class="gtemp-row-val">${g.optMin}–${g.optMax}°F</div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  if(!hasAny){
+    el.innerHTML = `<div class="harvest-empty">No crops entered for ${SEASONS[activeSeason].label} yet.</div>`;
+    return;
+  }
+  html += `<div class="gtemp-legend">Temperatures shown are each crop's optimal soil-temperature range for germination. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
+  el.innerHTML = html;
+}
 document.getElementById("compareBtn").addEventListener("click", () => {
   const wasActive = document.getElementById("compareBtn").classList.contains("active");
   homeBtnDeactivateAll();
@@ -6845,7 +6969,6 @@ if(reorderInput){
   });
 }
 renderReorderList();
-wireSimpleToggle("reorderToggle", "reorderBodyWrap");
 
 /* ---------------- month-grid calendar ---------------- */
 let calYear, calMonth, calSelectedDay = null;
@@ -7018,6 +7141,7 @@ document.querySelectorAll(".home-tab-btn[data-hometab]").forEach(btn => {
       btn.classList.add("active");
       if(body) body.style.display = "block";
       if(key === "germination") renderGerminationReport();
+      if(key === "germtemp") renderGerminationTempChart();
     }
   });
 });
@@ -8401,5 +8525,3 @@ async function checkTomorrowReminder(){
 })();
 </script>
 </body></html>
-
-     
