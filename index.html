@@ -616,9 +616,14 @@
   .gtemp-chart{ display:flex; flex-direction:column; }
   .gtemp-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--paper-2); }
   .gtemp-row:last-child{ border-bottom:none; }
-  .gtemp-row-icon{ flex:0 0 auto; font-size:24px; line-height:1; }
+  .gtemp-row-icon{ flex:0 0 26px; font-size:20px; line-height:1; text-align:center; }
   .gtemp-row-label{ flex:1; font-size:16px; font-weight:700; color:var(--ink); overflow-wrap:break-word; }
-  .gtemp-row-val{ flex:0 0 auto; font-size:16px; font-weight:700; color:var(--evergreen); white-space:nowrap; }
+  .gtemp-row-val{ flex:0 0 68px; font-size:15px; font-weight:700; color:var(--evergreen); white-space:nowrap; text-align:right; }
+  .gtemp-row-days{ flex:0 0 58px; font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap; text-align:right; }
+  .gtemp-col-header{ display:flex; align-items:center; gap:10px; padding:0 0 4px; }
+  .gtemp-col-header-spacer{ flex:1 0 auto; margin-left:36px; }
+  .gtemp-col-header-temp{ flex:0 0 68px; text-align:right; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.02em; }
+  .gtemp-col-header-days{ flex:0 0 58px; text-align:right; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.02em; }
   .gtemp-note-row{ font-size:15px; line-height:1.45; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:9px 11px; margin:9px 0; }
   .gtemp-note-row b{ color:var(--ink); font-size:16px; }
   .gtemp-legend{ font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.5; }
@@ -6428,38 +6433,38 @@ async function renderGerminationReport(){
    a temperature range. */
 const GTEMP_SCALE = { min: 30, max: 110 };
 const GERM_TEMP_DATA = {
-  tomatoes:{min:50,optMin:70,optMax:95,max:95},
-  peppers:{min:60,optMin:65,optMax:95,max:95},
-  eggplants:{min:60,optMin:75,optMax:90,max:95},
-  squash:{min:60,optMin:65,optMax:95,max:100},
-  cucumbers:{min:60,optMin:60,optMax:95,max:105},
-  luffa:{min:60,optMin:70,optMax:90,max:95},
-  leafygreens:{min:40,optMin:45,optMax:85,max:95},
-  broccoli:{min:40,optMin:45,optMax:85,max:95},
-  bushbeans:{min:60,optMin:60,optMax:85,max:95},
-  snappeas:{min:40,optMin:40,optMax:75,max:85},
-  rattlesnake:{min:60,optMin:60,optMax:85,max:95},
-  lettuce:{min:35,optMin:40,optMax:75,max:80},
-  radishes:{min:40,optMin:55,optMax:75,max:95},
-  carrots:{min:40,optMin:45,optMax:85,max:95},
-  fennel:{min:40,optMin:60,optMax:85,max:85},
-  garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate."},
-  onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)"},
+  tomatoes:{min:50,optMin:70,optMax:95,max:95,days:[5,10]},
+  peppers:{min:60,optMin:65,optMax:95,max:95,days:[7,14]},
+  eggplants:{min:60,optMin:75,optMax:90,max:95,days:[7,14]},
+  squash:{min:60,optMin:65,optMax:95,max:100,days:[5,10]},
+  cucumbers:{min:60,optMin:60,optMax:95,max:105,days:[3,10]},
+  luffa:{min:60,optMin:70,optMax:90,max:95,days:[7,14],daysApprox:true},
+  leafygreens:{min:40,optMin:45,optMax:85,max:95,days:[5,10]},
+  broccoli:{min:40,optMin:45,optMax:85,max:95,days:[4,7]},
+  bushbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
+  snappeas:{min:40,optMin:40,optMax:75,max:85,days:[7,14]},
+  rattlesnake:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
+  lettuce:{min:35,optMin:40,optMax:75,max:80,days:[2,8]},
+  radishes:{min:40,optMin:55,optMax:75,max:95,days:[3,7]},
+  carrots:{min:40,optMin:45,optMax:85,max:95,days:[14,21]},
+  fennel:{min:40,optMin:60,optMax:85,max:85,days:[7,14]},
+  garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate.", days:[14,21]},
+  onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)", days:[7,14]},
   strawberries:{special:"Grown from bare-root plants here, not seed — no germination temperature applies."},
-  muskmelon:{min:60,optMin:70,optMax:95,max:100},
-  watermelon:{min:60,optMin:70,optMax:95,max:100},
-  longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true},
-  nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true},
-  sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer."},
-  pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true},
-  basil:{min:60,optMin:70,optMax:85,max:95},
-  parsley:{min:40,optMin:50,optMax:85,max:90},
-  dill:{min:40,optMin:60,optMax:70,max:85},
-  cilantro:{min:40,optMin:50,optMax:75,max:85},
-  nasturtium:{min:55,optMin:65,optMax:70,max:85},
-  roselle:{min:65,optMin:70,optMax:85,max:95,approx:true},
-  sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true},
-  puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95},
+  muskmelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10]},
+  watermelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10]},
+  longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[6,10],daysApprox:true},
+  nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true},
+  sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer.", days:[10,14]},
+  pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[7,14],daysApprox:true},
+  basil:{min:60,optMin:70,optMax:85,max:95,days:[5,10]},
+  parsley:{min:40,optMin:50,optMax:85,max:90,days:[14,28]},
+  dill:{min:40,optMin:60,optMax:70,max:85,days:[7,14]},
+  cilantro:{min:40,optMin:50,optMax:75,max:85,days:[7,14]},
+  nasturtium:{min:55,optMin:65,optMax:70,max:85,days:[7,14]},
+  roselle:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true},
+  sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true,days:[5,10],daysApprox:true},
+  puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
 };
 const GTEMP_SECTIONS = [
   {key:"vegetables", label:"Vegetables"},
@@ -6500,7 +6505,8 @@ function renderGerminationTempChart(){
   const data = DATA_now();
   let hasAny = false;
   let anyApprox = false;
-  let html = `<p class="backup-hint">Recommended soil temperature for seeds to germinate, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
+  let html = `<p class="backup-hint">Recommended soil temperature and typical time to sprout, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
+  html += `<div class="gtemp-col-header"><span class="gtemp-col-header-spacer"></span><span class="gtemp-col-header-temp">Temp</span><span class="gtemp-col-header-days">Days</span></div>`;
   GTEMP_SECTIONS.forEach(section => {
     const plants = (data[section.key] || []).filter(p => GERM_TEMP_DATA[p.slug])
       .slice().sort((a, b) => a.name.localeCompare(b.name));
@@ -6510,17 +6516,20 @@ function renderGerminationTempChart(){
     plants.forEach(p => {
       const g = GERM_TEMP_DATA[p.slug];
       const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
+      if(g.approx || g.daysApprox) anyApprox = true;
+      const label = (g.approx || g.daysApprox) ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
       if(g.special){
-        html += `<div class="gtemp-note-row"><b>${emoji} ${p.name}:</b> ${g.special}</div>`;
+        const daysNote = g.days ? ` Typically takes about ${g.days[0]}–${g.days[1]} days.` : "";
+        html += `<div class="gtemp-note-row"><b>${emoji} ${p.name}:</b> ${g.special}${daysNote}</div>`;
         return;
       }
-      if(g.approx) anyApprox = true;
-      const label = g.approx ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
+      const daysText = g.days ? `${g.days[0]}–${g.days[1]}d` : "—";
       html += `
         <div class="gtemp-row">
           <div class="gtemp-row-icon">${emoji}</div>
           <div class="gtemp-row-label">${label}</div>
           <div class="gtemp-row-val">${g.optMin}–${g.optMax}°F</div>
+          <div class="gtemp-row-days">${daysText}</div>
         </div>`;
     });
     html += `</div>`;
