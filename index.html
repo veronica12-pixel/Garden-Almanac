@@ -611,19 +611,21 @@
   .home-tab-btn.tab-germination.active{ background:#4F9E68; color:#fff; border-color:#4F9E68; }
   .home-tab-btn.tab-germtemp{ background:#FBF3D0; color:#A98A2E; border-color:#F0E3A8; }
   .home-tab-btn.tab-germtemp.active{ background:#C9A93A; color:#fff; border-color:#C9A93A; }
-  .gtemp-section-title{ font-size:14px; font-weight:700; color:var(--evergreen); margin:16px 0 8px; text-transform:uppercase; letter-spacing:.03em; }
-  .gtemp-section-title:first-child{ margin-top:0; }
+  .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
+  .gtemp-section-header-row:first-child{ margin-top:0; }
+  .gtemp-section-title{ flex:1 0 auto; font-size:14px; font-weight:700; color:var(--evergreen); text-transform:uppercase; letter-spacing:.03em; margin-left:30px; }
   .gtemp-chart{ display:flex; flex-direction:column; }
-  .gtemp-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--paper-2); }
+  .gtemp-row{ display:flex; align-items:center; gap:8px; padding:9px 0; border-bottom:1px dashed var(--paper-2); }
   .gtemp-row:last-child{ border-bottom:none; }
-  .gtemp-row-icon{ flex:0 0 26px; font-size:20px; line-height:1; text-align:center; }
-  .gtemp-row-label{ flex:1; font-size:16px; font-weight:700; color:var(--ink); overflow-wrap:break-word; }
-  .gtemp-row-val{ flex:0 0 68px; font-size:15px; font-weight:700; color:var(--evergreen); white-space:nowrap; text-align:right; }
-  .gtemp-row-days{ flex:0 0 58px; font-size:13px; font-weight:600; color:var(--ink-soft); white-space:nowrap; text-align:right; }
-  .gtemp-col-header{ display:flex; align-items:center; gap:10px; padding:0 0 4px; }
-  .gtemp-col-header-spacer{ flex:1 0 auto; margin-left:36px; }
-  .gtemp-col-header-temp{ flex:0 0 68px; text-align:right; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.02em; }
-  .gtemp-col-header-days{ flex:0 0 58px; text-align:right; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.02em; }
+  .gtemp-row-icon{ flex:0 0 22px; font-size:18px; line-height:1; text-align:center; }
+  .gtemp-row-label{ flex:1; font-size:15px; font-weight:700; color:var(--ink); overflow-wrap:break-word; }
+  .gtemp-row-val{ flex:0 0 66px; font-size:13px; font-weight:700; color:var(--evergreen); white-space:nowrap; text-align:center; }
+  .gtemp-row-days{ flex:0 0 62px; font-size:13px; font-weight:700; color:var(--ink-soft); white-space:nowrap; text-align:center; }
+  .gtemp-row-dtm{ flex:0 0 56px; font-size:13px; font-weight:700; color:#8154B8; white-space:nowrap; text-align:center; }
+  .gtemp-col-header-temp{ flex:0 0 66px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
+  .gtemp-col-header-days{ flex:0 0 62px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
+  .gtemp-col-header-dtm{ flex:0 0 56px; display:flex; align-items:center; justify-content:center; color:#8154B8; }
+  .gtemp-col-header-rotate{ display:inline-block; white-space:nowrap; font-size:8px; font-weight:700; color:inherit; text-transform:uppercase; letter-spacing:.02em; }
   .gtemp-note-row{ font-size:15px; line-height:1.45; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:9px 11px; margin:9px 0; }
   .gtemp-note-row b{ color:var(--ink); font-size:16px; }
   .gtemp-legend{ font-size:13px; color:var(--ink-soft); margin-top:12px; line-height:1.5; }
@@ -2483,7 +2485,7 @@ const CROP_EMOJI = {
   radishes:"🔴", carrots:"🥕", fennel:"🌿", garlic:"🧄",
   onionslips:"🧅", strawberries:"🍓", muskmelon:"🍈", watermelon:"🍉",
   longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
-  puertoricanblackbeans:"🫘", sunnhemp:"🌱",
+  puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
   basil:"🌿", parsley:"🌿", dill:"🌿", cilantro:"🌿",
   nasturtium:"🌼", roselle:"🌺"
 };
@@ -2645,6 +2647,8 @@ const SEASONS = {
       dates:[]},
     {slug:"puertoricanblackbeans", name:"Beans Puerto Rican Black", shape:"oval", color:C.greenDark,
       dates:[]},
+    {slug:"peanuts", name:"Peanuts", shape:"oval", color:C.orangeLight,
+      dates:[[{a:"Start (direct)", m:5, d:7}]]},
   ]
   } }
 };
@@ -6433,38 +6437,39 @@ async function renderGerminationReport(){
    a temperature range. */
 const GTEMP_SCALE = { min: 30, max: 110 };
 const GERM_TEMP_DATA = {
-  tomatoes:{min:50,optMin:70,optMax:95,max:95,days:[5,10]},
-  peppers:{min:60,optMin:65,optMax:95,max:95,days:[7,14]},
-  eggplants:{min:60,optMin:75,optMax:90,max:95,days:[7,14]},
-  squash:{min:60,optMin:65,optMax:95,max:100,days:[5,10]},
-  cucumbers:{min:60,optMin:60,optMax:95,max:105,days:[3,10]},
-  luffa:{min:60,optMin:70,optMax:90,max:95,days:[7,14],daysApprox:true},
-  leafygreens:{min:40,optMin:45,optMax:85,max:95,days:[5,10]},
-  broccoli:{min:40,optMin:45,optMax:85,max:95,days:[4,7]},
-  bushbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
-  snappeas:{min:40,optMin:40,optMax:75,max:85,days:[7,14]},
-  rattlesnake:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
-  lettuce:{min:35,optMin:40,optMax:75,max:80,days:[2,8]},
-  radishes:{min:40,optMin:55,optMax:75,max:95,days:[3,7]},
-  carrots:{min:40,optMin:45,optMax:85,max:95,days:[14,21]},
-  fennel:{min:40,optMin:60,optMax:85,max:85,days:[7,14]},
-  garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate.", days:[14,21]},
-  onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)", days:[7,14]},
-  strawberries:{special:"Grown from bare-root plants here, not seed — no germination temperature applies."},
-  muskmelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10]},
-  watermelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10]},
-  longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[6,10],daysApprox:true},
-  nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true},
-  sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer.", days:[10,14]},
-  pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[7,14],daysApprox:true},
-  basil:{min:60,optMin:70,optMax:85,max:95,days:[5,10]},
-  parsley:{min:40,optMin:50,optMax:85,max:90,days:[14,28]},
-  dill:{min:40,optMin:60,optMax:70,max:85,days:[7,14]},
-  cilantro:{min:40,optMin:50,optMax:75,max:85,days:[7,14]},
-  nasturtium:{min:55,optMin:65,optMax:70,max:85,days:[7,14]},
-  roselle:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true},
-  sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true,days:[5,10],daysApprox:true},
-  puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10]},
+  tomatoes:{min:50,optMin:70,optMax:95,max:95,days:[5,10],dtm:[60,85]},
+  peppers:{min:60,optMin:65,optMax:95,max:95,days:[7,14],dtm:[60,90]},
+  eggplants:{min:60,optMin:75,optMax:90,max:95,days:[7,14],dtm:[60,80]},
+  squash:{min:60,optMin:65,optMax:95,max:100,days:[5,10],dtm:[45,65]},
+  cucumbers:{min:60,optMin:60,optMax:95,max:105,days:[3,10],dtm:[50,70]},
+  luffa:{min:60,optMin:70,optMax:90,max:95,days:[7,14],daysApprox:true,dtm:[55,130],dtmApprox:true},
+  leafygreens:{min:40,optMin:45,optMax:85,max:95,days:[5,10],dtm:[30,60]},
+  broccoli:{min:40,optMin:45,optMax:85,max:95,days:[4,7],dtm:[55,80]},
+  bushbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[50,60]},
+  snappeas:{min:40,optMin:40,optMax:75,max:85,days:[7,14],dtm:[60,70]},
+  rattlesnake:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[60,75]},
+  lettuce:{min:35,optMin:40,optMax:75,max:80,days:[2,8],dtm:[45,65]},
+  radishes:{min:40,optMin:55,optMax:75,max:95,days:[3,7],dtm:[21,35]},
+  carrots:{min:40,optMin:45,optMax:85,max:95,days:[14,21],dtm:[60,80]},
+  fennel:{min:40,optMin:60,optMax:85,max:85,days:[7,14],dtm:[65,90]},
+  garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate.", days:[14,21], dtm:[150,270], dtmApprox:true},
+  onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)", days:[7,14], dtm:[90,120]},
+  strawberries:{special:"Grown from bare-root plants here, not seed — no germination temperature applies.", dtm:[60,90]},
+  muskmelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10],dtm:[70,90]},
+  watermelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10],dtm:[70,90]},
+  longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[6,10],daysApprox:true,dtm:[60,80],dtmApprox:true},
+  nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[30,50],dtmApprox:true},
+  sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer.", days:[10,14], dtm:[90,120]},
+  pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
+  basil:{min:60,optMin:70,optMax:85,max:95,days:[5,10],dtm:[50,75]},
+  parsley:{min:40,optMin:50,optMax:85,max:90,days:[14,28],dtm:[70,90]},
+  dill:{min:40,optMin:60,optMax:70,max:85,days:[7,14],dtm:[40,65]},
+  cilantro:{min:40,optMin:50,optMax:75,max:85,days:[7,14],dtm:[40,55]},
+  nasturtium:{min:55,optMin:65,optMax:70,max:85,days:[7,14],dtm:[35,65]},
+  roselle:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
+  sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true,days:[5,10],daysApprox:true,dtm:[60,90],dtmApprox:true},
+  puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[90,120],dtmApprox:true},
+  peanuts:{min:60,optMin:70,optMax:95,max:100,days:[7,14],dtm:[100,140]},
 };
 const GTEMP_SECTIONS = [
   {key:"vegetables", label:"Vegetables"},
@@ -6505,31 +6510,33 @@ function renderGerminationTempChart(){
   const data = DATA_now();
   let hasAny = false;
   let anyApprox = false;
-  let html = `<p class="backup-hint">Recommended soil temperature and typical time to sprout, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
-  html += `<div class="gtemp-col-header"><span class="gtemp-col-header-spacer"></span><span class="gtemp-col-header-temp">Temp</span><span class="gtemp-col-header-days">Days</span></div>`;
+  let html = `<p class="backup-hint">Recommended soil temperature, typical time to sprout, and days to maturity, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
   GTEMP_SECTIONS.forEach(section => {
     const plants = (data[section.key] || []).filter(p => GERM_TEMP_DATA[p.slug])
       .slice().sort((a, b) => a.name.localeCompare(b.name));
     if(!plants.length) return;
     hasAny = true;
-    html += `<div class="gtemp-section-title">${section.label}</div><div class="gtemp-chart">`;
+    html += `<div class="gtemp-section-header-row"><span class="gtemp-section-title">${section.label}</span><span class="gtemp-col-header-temp"><span class="gtemp-col-header-rotate">Temperature</span></span><span class="gtemp-col-header-days"><span class="gtemp-col-header-rotate">Germination</span></span><span class="gtemp-col-header-dtm"><span class="gtemp-col-header-rotate">Maturity</span></span></div><div class="gtemp-chart">`;
     plants.forEach(p => {
       const g = GERM_TEMP_DATA[p.slug];
       const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
-      if(g.approx || g.daysApprox) anyApprox = true;
-      const label = (g.approx || g.daysApprox) ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
+      if(g.approx || g.daysApprox || g.dtmApprox) anyApprox = true;
+      const label = (g.approx || g.daysApprox || g.dtmApprox) ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
       if(g.special){
         const daysNote = g.days ? ` Typically takes about ${g.days[0]}–${g.days[1]} days.` : "";
-        html += `<div class="gtemp-note-row"><b>${emoji} ${p.name}:</b> ${g.special}${daysNote}</div>`;
+        const dtmNote = g.dtm ? ` Days to maturity from planting: about ${g.dtm[0]}–${g.dtm[1]} days.` : "";
+        html += `<div class="gtemp-note-row"><b>${emoji} ${p.name}:</b> ${g.special}${daysNote}${dtmNote}</div>`;
         return;
       }
       const daysText = g.days ? `${g.days[0]}–${g.days[1]}d` : "—";
+      const dtmText = g.dtm ? `${g.dtm[0]}–${g.dtm[1]}d` : "—";
       html += `
         <div class="gtemp-row">
           <div class="gtemp-row-icon">${emoji}</div>
           <div class="gtemp-row-label">${label}</div>
           <div class="gtemp-row-val">${g.optMin}–${g.optMax}°F</div>
           <div class="gtemp-row-days">${daysText}</div>
+          <div class="gtemp-row-dtm">${dtmText}</div>
         </div>`;
     });
     html += `</div>`;
@@ -6538,7 +6545,7 @@ function renderGerminationTempChart(){
     el.innerHTML = `<div class="harvest-empty">No crops entered for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  html += `<div class="gtemp-legend">Temperatures shown are each crop's optimal soil-temperature range for germination. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
+  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
   el.innerHTML = html;
 }
 document.getElementById("compareBtn").addEventListener("click", () => {
@@ -8278,7 +8285,8 @@ const BC_DATA = {
 // to, so its own planned dates can be cross-referenced against the calendar
 // above. Broccoli is classed as Flower (the edible part is the flower bud);
 // beans/peas/melons/nightshades as Fruit (grown for fruit/seed); roots and
-// bulbs as Root; everything grown for foliage as Leaf.
+// bulbs as Root (peanuts too, since the pods develop underground); everything
+// grown for foliage as Leaf.
 const CROP_BIO_TYPE = {
   tomatoes:"fruit", peppers:"fruit", eggplants:"fruit", squash:"fruit", cucumbers:"fruit", luffa:"fruit",
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
@@ -8287,7 +8295,7 @@ const CROP_BIO_TYPE = {
   nigerianspinach:"leaf", fennel:"root", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
   nasturtium:"flower", roselle:"flower",
-  sunnhemp:"leaf", puertoricanblackbeans:"fruit"
+  sunnhemp:"leaf", puertoricanblackbeans:"fruit", peanuts:"root"
 };
 const BC_MONTH_NAMES_BY_YEAR = {
   2026: { 8:"August 2026", 9:"September 2026", 10:"October 2026", 11:"November 2026", 12:"December 2026" },
