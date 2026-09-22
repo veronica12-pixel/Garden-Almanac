@@ -693,6 +693,8 @@
   .harvest-add-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
   .harvest-add-row input[type="text"]{flex:1.4; min-width:0;}
   .harvest-add-row input[type="date"]{flex:1; min-width:0;}
+  .harvest-input-wrap{ position:relative; flex:1.4; min-width:0; }
+  .harvest-input-wrap input[type="text"]{ flex:none; width:100%; }
   .harvest-add-card input{
     font-family:'Inter',sans-serif; font-size:13.5px; color:var(--entry-text);
     background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
@@ -1761,7 +1763,10 @@
         <div id="harvestFruitBody" style="display:none; margin-top:10px;">
           <div class="harvest-add-card">
             <div class="harvest-add-row">
-              <input id="harvest-fruit-input" type="text" placeholder="Fruit (e.g. Fig — Fignomenal)" autocomplete="off">
+              <div class="harvest-input-wrap">
+                <input id="harvest-fruit-input" type="text" placeholder="Fruit (e.g. Fig — Fignomenal)" autocomplete="off">
+                <div class="variety-suggest" id="harvest-fruit-suggest"></div>
+              </div>
             </div>
             <div class="harvest-add-row">
               <div class="date-input-wrap">
@@ -1789,7 +1794,10 @@
         <div id="harvestVegBody" style="display:none; margin-top:10px;">
           <div class="harvest-add-card">
             <div class="harvest-add-row">
-              <input id="harvest-veg-input" type="text" placeholder="Vegetable (e.g. Tomato — Cherokee Purple)" autocomplete="off">
+              <div class="harvest-input-wrap">
+                <input id="harvest-veg-input" type="text" placeholder="Vegetable (e.g. Tomato — Cherokee Purple)" autocomplete="off">
+                <div class="variety-suggest" id="harvest-veg-suggest"></div>
+              </div>
             </div>
             <div class="harvest-add-row">
               <div class="date-input-wrap">
@@ -3213,39 +3221,61 @@ function wireRainFetch(){
     try{
       const lat = 28.1723, lon = -82.5507;
       // The Monthly Rainfall Chart below always uses the ERA5 archive
-      // endpoint, which is the authoritative historical record but lags
-      // about 5 days behind today. This range-total fetch used to always
-      // use the Forecast API instead (needed for very recent dates the
-      // archive doesn't have yet) — but that's a *different* underlying
-      // weather model, so a completed past range like "all of July" could
-      // come back with a noticeably different total here than in the
-      // chart below, even though both are labeled the same way. Picking
-      // the archive endpoint whenever the whole requested range is older
-      // than that lag window keeps the two features in agreement.
-      const lagCutoff = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      const useArchive = to <= lagCutoff;
-      const base = useArchive
-        ? "https://archive-api.open-meteo.com/v1/archive"
-        : "https://api.open-meteo.com/v1/forecast";
-      const url = `${base}?latitude=${lat}&longitude=${lon}&start_date=${from}&end_date=${to}&daily=precipitation_sum&precipitation_unit=inch&timezone=America%2FNew_York`;
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
-      let res;
-      try{
-        res = await fetch(url, { signal: controller.signal });
-      }finally{
-        clearTimeout(timeoutId);
+      // endpoint (the authoritative historical record), but it lags about
+      // 5 days behind today, so it simply has no data yet for the last
+      // few days of an in-progress month. This range-total fetch used to
+      // fall back entirely to the live Forecast API — a *different*
+      // underlying weather model — the moment the range touched even one
+      // day newer than that lag window, which could make a mostly-past
+      // range like "Sep 1–22" come back wildly different from what the
+      // chart shows for the same days, even though the archive actually
+      // has good data for nearly all of that range. Fixed by splitting
+      // the request at the lag cutoff: archive for every day old enough
+      // to be archived, forecast only for the handful of trailing days
+      // that aren't yet — so the two features agree on every day they
+      // both cover, and only the last few undocumented days can differ.
+      async function fetchTotal(base, start, end){
+        const url = `${base}?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=precipitation_sum&precipitation_unit=inch&timezone=America%2FNew_York`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        let res;
+        try{
+          res = await fetch(url, { signal: controller.signal });
+        }finally{
+          clearTimeout(timeoutId);
+        }
+        if(!res.ok){
+          let reason = "";
+          try{ reason = (await res.json()).reason || ""; }catch(e2){}
+          throw new Error(reason || `Server returned an error (${res.status}).`);
+        }
+        const data = await res.json();
+        const amounts = data.daily && data.daily.precipitation_sum || [];
+        return amounts.reduce((s, a) => s + (a || 0), 0);
       }
-      if(!res.ok){
-        let reason = "";
-        try{ reason = (await res.json()).reason || ""; }catch(e2){}
-        throw new Error(reason || `Server returned an error (${res.status}).`);
+      const ARCHIVE = "https://archive-api.open-meteo.com/v1/archive";
+      const FORECAST = "https://api.open-meteo.com/v1/forecast";
+      const lagCutoffDate = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000);
+      const lagCutoff = lagCutoffDate.toISOString().slice(0, 10);
+      let rangeTotal;
+      let usedForecastTail = false;
+      if(to <= lagCutoff){
+        rangeTotal = await fetchTotal(ARCHIVE, from, to);
+      } else if(from > lagCutoff){
+        rangeTotal = await fetchTotal(FORECAST, from, to);
+        usedForecastTail = true;
+      } else {
+        const forecastStart = new Date(lagCutoffDate);
+        forecastStart.setDate(forecastStart.getDate() + 1);
+        const [archiveTotal, forecastTotal] = await Promise.all([
+          fetchTotal(ARCHIVE, from, lagCutoff),
+          fetchTotal(FORECAST, forecastStart.toISOString().slice(0, 10), to)
+        ]);
+        rangeTotal = archiveTotal + forecastTotal;
+        usedForecastTail = true;
       }
-      const data = await res.json();
-      const amounts = data.daily && data.daily.precipitation_sum || [];
-      const rangeTotal = amounts.reduce((s, a) => s + (a || 0), 0);
       statusEl.textContent = "";
-      rangeTotalEl.textContent = `Total for ${from}–${to}: ${rangeTotal.toFixed(2)}"`;
+      rangeTotalEl.textContent = `Total for ${from}–${to}: ${rangeTotal.toFixed(2)}"${usedForecastTail ? " (last few days are forecast-model estimates, not yet confirmed)" : ""}`;
     }catch(e){
       if(e && e.name === "AbortError"){
         statusEl.textContent = "The weather service is taking too long to respond — try again in a bit.";
@@ -3421,6 +3451,80 @@ async function wireHarvestSection(kind, ids){
   if(nameInput && sizeWrap){
     nameInput.addEventListener("input", updateSizeVisibility);
     updateSizeVisibility();
+  }
+
+  // Autocomplete dropdown: as the person types a name, suggest from two
+  // sources — (1) every name previously logged in this same harvest
+  // section (fruit or vegetable), most recent first, and (2) "Crop —
+  // Variety" combos pulled from every crop's own Actual sow/transplant
+  // entries this season, so a variety typed once in a crop's window
+  // (e.g. "Fignomenal" under Figs) shows up here too without retyping.
+  // Built once per page load and filtered client-side on every keystroke.
+  const suggestEl = ids.suggest ? document.getElementById(ids.suggest) : null;
+  let suggestionPool = [];
+  async function buildSuggestionPool(){
+    const seen = new Set();
+    const pool = [];
+    const addName = (name) => {
+      const trimmed = (name || "").trim();
+      if(!trimmed) return;
+      const key = trimmed.toLowerCase();
+      if(seen.has(key)) return;
+      seen.add(key);
+      pool.push(trimmed);
+    };
+    try{
+      const allEntries = await getAllHarvestEntries();
+      allEntries
+        .filter(e => e.kind === kind)
+        .sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0))
+        .forEach(e => addName(e.fruit));
+    }catch(e){}
+    try{
+      const data = DATA_now();
+      for(const sectionKey of SECTION_KEYS){
+        for(const p of (data[sectionKey] || [])){
+          const sow = await getActualDates(p.slug, "sow");
+          const transplant = await getActualDates(p.slug, "transplant");
+          [...sow, ...transplant].forEach(d => {
+            entryVarieties(d).forEach(v => addName(`${p.name} — ${varietyName(v)}`));
+          });
+        }
+      }
+    }catch(e){}
+    suggestionPool = pool;
+  }
+  if(suggestEl) buildSuggestionPool();
+  if(suggestEl){
+    const closeHSuggestions = () => {
+      suggestEl.classList.remove("open");
+      suggestEl.innerHTML = "";
+    };
+    const renderHSuggestions = () => {
+      const q = nameInput.value.trim().toLowerCase();
+      if(!q){ closeHSuggestions(); return; }
+      const matches = suggestionPool.filter(s => s.toLowerCase().includes(q)).slice(0, 8);
+      if(!matches.length){ closeHSuggestions(); return; }
+      suggestEl.innerHTML = matches.map((s, idx) => `<div class="variety-suggest-item" data-idx="${idx}"><span class="vs-name">${s}</span></div>`).join("");
+      suggestEl.classList.add("open");
+      suggestEl.querySelectorAll(".variety-suggest-item").forEach(item => {
+        // mousedown+preventDefault (not click) so this fires before the
+        // input would otherwise blur, keeping focus in place.
+        item.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          nameInput.value = matches[Number(item.dataset.idx)];
+          closeHSuggestions();
+          if(sizeWrap) updateSizeVisibility();
+          nameInput.focus();
+        });
+      });
+    };
+    nameInput.addEventListener("input", renderHSuggestions);
+    nameInput.addEventListener("focus", renderHSuggestions);
+    nameInput.addEventListener("blur", closeHSuggestions);
+    nameInput.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeHSuggestions();
+    });
   }
 
   // Native date inputs show nothing at all until a value is picked, so the
@@ -4143,13 +4247,14 @@ async function renderHarvestLog(){
   await wireHarvestSection("fruit", {
     log: "harvest-log", input: "harvest-fruit-input", date: "harvest-date-input",
     addBtn: "harvest-add-btn", cancelBtn: "harvest-cancel-btn",
-    qtyInput: "harvest-qty-input"
+    qtyInput: "harvest-qty-input", suggest: "harvest-fruit-suggest"
   });
   await wireHarvestSection("vegetable", {
     log: "harvest-log-veg", input: "harvest-veg-input", date: "harvest-veg-date-input",
     addBtn: "harvest-veg-add-btn", cancelBtn: "harvest-veg-cancel-btn",
     qtyInput: "harvest-veg-qty-input",
-    sizeInput: "harvest-veg-size-input", sizeWrap: "harvest-veg-size-wrap"
+    sizeInput: "harvest-veg-size-input", sizeWrap: "harvest-veg-size-wrap",
+    suggest: "harvest-veg-suggest"
   });
   await renderHarvestChart();
 }
