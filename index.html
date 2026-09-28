@@ -1316,6 +1316,25 @@
   .seedpacket-list .sow-card{ cursor:default; }
   .seedpacket-list .sow-card:hover{ background:none; }
 
+  /* Plants in the garden: per-season plant count. Tomatoes, peppers and
+     eggplants split it into existing (overwintered) and new plants. */
+  .plantcount-field{ margin-top:10px; }
+  .plantcount-field > label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
+  }
+  .plantcount-row{ display:flex; gap:6px; flex-wrap:wrap; }
+  .plantcount-cell{ flex:1 1 90px; min-width:0; display:flex; flex-direction:column; gap:2px; }
+  .plantcount-cell span{ font-size:11px; color:var(--ink-soft); }
+  .plantcount-cell input, .plantcount-total{
+    box-sizing:border-box; width:100%; font-family:'Inter',sans-serif; font-size:13px; color:var(--entry-text);
+    background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:6px 8px; outline:none; text-align:center;
+  }
+  .plantcount-cell input:focus{ border-color:var(--sage); }
+  .plantcount-cell input::placeholder{ color:var(--entry-placeholder); }
+  .plantcount-total{ font-weight:600; color:var(--evergreen); background:var(--card); }
+  .plantcount-last{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; }
+
   /* ---------- tab bar ---------- */
   nav.tabbar{
     position:fixed; left:50%; bottom:0;
@@ -2768,6 +2787,7 @@ async function deleteCrop(sectionKey, slug){
   const keysToClear = [
     `variety:${activeSeason}:${slug}`,
     `notes:${activeSeason}:${slug}`,
+    `plants:${activeSeason}:${slug}`,
     `seasonDone:${activeSeason}:${slug}`,
     `actual:sow:${activeSeason}:${slug}`,
     `actual:transplant:${activeSeason}:${slug}`
@@ -2976,6 +2996,35 @@ async function getTemp(slug, kind){
 }
 async function setTemp(slug, kind, val){
   try{ await window.storage.set(`temp:${kind}:${activeSeason}:${slug}`, val, false); }catch(e){}
+}
+// Plants in the garden, per season. Stored as {existing, new} for the
+// split crops (tomatoes/peppers/eggplants) and {count} for everything else.
+const PLANT_COUNT_SPLIT = ["tomatoes", "peppers", "eggplants"];
+// Crops that don't get the plant count box at all.
+const PLANT_COUNT_SKIP = ["lettuce", "radishes", "carrots"];
+async function getPlantCountFor(season, slug){
+  try{
+    const r = await window.storage.get(`plants:${season}:${slug}`, false);
+    return r ? (JSON.parse(r.value) || {}) : {};
+  }catch(e){ return {}; }
+}
+async function setPlantCount(slug, obj){
+  try{ await window.storage.set(`plants:${activeSeason}:${slug}`, JSON.stringify(obj), false); }catch(e){}
+}
+function previousSeasonKey(){
+  const keys = Object.keys(SEASONS).sort();
+  const i = keys.indexOf(activeSeason);
+  return i > 0 ? keys[i - 1] : null;
+}
+function plantCountSummary(slug, pc){
+  const n = v => (v === undefined || v === null || v === "") ? null : Number(v);
+  if(PLANT_COUNT_SPLIT.includes(slug)){
+    const ex = n(pc.existing), nw = n(pc.new);
+    if(ex === null && nw === null) return "";
+    return `${ex || 0} existing + ${nw || 0} new = ${(ex || 0) + (nw || 0)}`;
+  }
+  const c = n(pc.count);
+  return c === null ? "" : String(c);
 }
 async function getNotesFor(season, slug){
   try{
@@ -4309,6 +4358,9 @@ async function renderGrid(sectionKey, containerId){
     const sowActualCheck = await getActualDates(p.slug, "sow");
     const transplantActualCheck = await getActualDates(p.slug, "transplant");
     const notes = await getNotes(p.slug);
+    const plantCount = isPastSeason ? {} : await getPlantCountFor(activeSeason, p.slug);
+    const prevSeason = previousSeasonKey();
+    const prevPlantSummary = (isPastSeason || !prevSeason) ? "" : plantCountSummary(p.slug, await getPlantCountFor(prevSeason, p.slug));
     const finishedSeeds = await getFinishedSeeds(p.slug);
     const fridgeLog = p.slug === "garlic" ? await getFridgeLog(p.slug) : [];
     const seasonDone = isPastSeason ? false : await getSeasonDone(p.slug);
@@ -4360,6 +4412,20 @@ async function renderGrid(sectionKey, containerId){
       badge.style.display = (sowDates.length || transplantDates.length) ? "" : "none";
     }
 
+    const pcVal = v => (v === undefined || v === null) ? "" : v;
+    const plantCountFieldHTML = PLANT_COUNT_SKIP.includes(p.slug) ? "" : `
+      <div class="plantcount-field">
+        <label>Plants in the garden</label>
+        <div class="plantcount-row">
+          ${PLANT_COUNT_SPLIT.includes(p.slug) ? `
+          <label class="plantcount-cell"><span>Existing plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-existing-${p.slug}" value="${pcVal(plantCount.existing)}" placeholder="0"></label>
+          <label class="plantcount-cell"><span>New plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-new-${p.slug}" value="${pcVal(plantCount.new)}" placeholder="0"></label>
+          <div class="plantcount-cell"><span>Total</span><div class="plantcount-total" id="plants-total-${p.slug}">${(Number(plantCount.existing) || 0) + (Number(plantCount.new) || 0)}</div></div>` : `
+          <label class="plantcount-cell"><span>Number of plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-count-${p.slug}" value="${pcVal(plantCount.count)}" placeholder="0"></label>`}
+        </div>
+        ${prevPlantSummary ? `<div class="plantcount-last">Last season: ${prevPlantSummary}</div>` : ""}
+      </div>
+    `;
     const notesFieldHTML = `
       <div class="notes-field">
         <label for="notes-${p.slug}">Notes</label>
@@ -4413,6 +4479,7 @@ async function renderGrid(sectionKey, containerId){
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
+          ${plantCountFieldHTML}
           ${notesFieldHTML}
         `;
       } else {
@@ -4482,6 +4549,7 @@ async function renderGrid(sectionKey, containerId){
             </div>`}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
+          ${plantCountFieldHTML}
           ${notesFieldHTML}
           ${p.slug === "garlic" ? "" : seedPacketsFieldHTML}
           <div class="season-actions-row">
@@ -4514,6 +4582,32 @@ async function renderGrid(sectionKey, containerId){
       </div>
     `;
     el.appendChild(card);
+
+    if(!isPastSeason){
+      const pcInputs = [...card.querySelectorAll(`#plants-existing-${p.slug}, #plants-new-${p.slug}, #plants-count-${p.slug}`)];
+      const readNum = inp => {
+        if(!inp || inp.value === "") return undefined;
+        const v = Math.max(0, Math.round(Number(inp.value)));
+        return Number.isFinite(v) ? v : undefined;
+      };
+      const savePlantCount = async () => {
+        let obj;
+        if(PLANT_COUNT_SPLIT.includes(p.slug)){
+          const ex = readNum(card.querySelector(`#plants-existing-${p.slug}`));
+          const nw = readNum(card.querySelector(`#plants-new-${p.slug}`));
+          obj = { existing: ex, new: nw };
+          const tot = card.querySelector(`#plants-total-${p.slug}`);
+          if(tot) tot.textContent = (ex || 0) + (nw || 0);
+        } else {
+          obj = { count: readNum(card.querySelector(`#plants-count-${p.slug}`)) };
+        }
+        await setPlantCount(p.slug, obj);
+      };
+      pcInputs.forEach(inp => {
+        inp.addEventListener("input", savePlantCount);
+        inp.addEventListener("click", e => e.stopPropagation());
+      });
+    }
 
     const cardToggleBtn = card.querySelector(".plant-head");
     cardToggleBtn.addEventListener("click", () => {
