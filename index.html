@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
@@ -609,6 +608,46 @@
   .home-tab-btn.tab-reorder.active{ background:#4F7FD9; color:#fff; border-color:#4F7FD9; }
   .home-tab-btn.tab-germination{ background:#DFF0E0; color:#3E8054; border-color:#BEE0C2; }
   .home-tab-btn.tab-germination.active{ background:#4F9E68; color:#fff; border-color:#4F9E68; }
+  /* Last home row: three buttons side by side, icon stacked over label so
+     the narrower buttons still fit on a phone. */
+  .home-tabs-row.home-tabs-row-3{ grid-template-columns:1fr 1fr 1fr; margin-top:8px; }
+  .home-tabs-row-3 .home-tab-btn{ flex-direction:column; justify-content:center; text-align:center; gap:6px; padding:10px 6px; font-size:14px; }
+  .home-tab-btn.tab-fert{ background:#F1E6D6; color:#8A5A2B; border-color:#E3CFB2; }
+  .home-tab-btn.tab-fert.active{ background:#A8713A; color:#fff; border-color:#A8713A; }
+  /* ---------- fertilizer log ---------- */
+  .fert-form{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .fert-form .fert-wide{ grid-column:1 / -1; }
+  .fert-form label{ display:flex; flex-direction:column; gap:3px; font-size:11px; color:var(--ink-soft); font-weight:600; min-width:0; }
+  .fert-form input, .fert-form select{
+    box-sizing:border-box; width:100%; font-family:'Inter',sans-serif; font-size:13.5px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:8px 9px; outline:none;
+  }
+  .fert-form input:focus, .fert-form select:focus{ border-color:var(--sage); }
+  .fert-form input::placeholder{ color:var(--entry-placeholder); }
+  .fert-due{ background:var(--paper-2); border-radius:10px; padding:10px 12px; margin:4px 0 12px; font-size:13px; line-height:1.55; color:var(--ink); }
+  .fert-due b{ color:#8A5A2B; }
+  .fert-due .fert-over{ color:#C1554A; font-weight:700; }
+  .fert-list{ display:flex; flex-direction:column; gap:8px; }
+  .fert-entry{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; box-shadow:var(--shadow); }
+  .fert-entry.editing{ border-color:#A8713A; background:var(--paper-2); }
+  .fert-entry-top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .fert-entry-crop{ font-weight:700; font-size:14.5px; color:var(--ink); }
+  .fert-entry-date{ font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  .fert-entry-detail{ font-size:13px; color:var(--ink-soft); margin-top:3px; line-height:1.45; }
+  .fert-entry-actions{ display:flex; gap:6px; margin-top:8px; }
+  .fert-entry-actions button{ font-family:'Inter',sans-serif; font-size:12px; font-weight:600; padding:5px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; }
+  .fert-entry-actions .fert-del{ color:#C1554A; }
+  /* Feedings shown on a crop's card — read-only copy of the Fertilizer Log. */
+  .cropfert-field{ margin-top:10px; }
+  .cropfert-field > label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
+    letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
+  }
+  .cropfert-next{ font-size:12.5px; color:#8A5A2B; font-weight:600; margin-bottom:4px; }
+  .cropfert-next .fert-over{ color:#C1554A; }
+  .cropfert-row{ font-size:12.5px; color:var(--ink); line-height:1.45; padding:5px 0; border-bottom:1px dashed var(--paper-2); }
+  .cropfert-row:last-child{ border-bottom:none; }
+  .cropfert-row span{ color:var(--ink-soft); }
   .home-tab-btn.tab-germtemp{ background:#FBF3D0; color:#A98A2E; border-color:#F0E3A8; }
   .home-tab-btn.tab-germtemp.active{ background:#C9A93A; color:#fff; border-color:#C9A93A; }
   .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
@@ -1628,8 +1667,11 @@
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
+        </div>
+        <div class="home-tabs-row home-tabs-row-3">
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
+          <button type="button" class="home-tab-btn tab-fert" data-hometab="fert"><span class="home-tab-icon">🧪</span><span>Fertilizer Log</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
           <div id="seasonButtons">
@@ -1699,6 +1741,33 @@
           </div>
         </div>
         <div class="notes-list" id="journalList"></div>
+        </div>
+        <div id="fertBody" class="home-tab-body" style="display:none;">
+        <p class="backup-hint">Log each feeding — granular, liquid, foliar, compost or worm castings. Set "Feed again in" and the list at the top shows what's due next. Entries lock 48 hours after you add them.</p>
+        <div id="fertDue"></div>
+        <div id="fertFormWrap">
+          <div class="fert-form">
+            <label>Date<input type="date" id="fertDate"></label>
+            <label>Crop or bed<input type="text" id="fertCrop" list="fertCropList" placeholder="e.g. Tomatoes" autocomplete="off"></label>
+            <datalist id="fertCropList"></datalist>
+            <label class="fert-wide">Product<input type="text" id="fertProduct" placeholder="e.g. Espoma Tomato-tone" autocomplete="off"></label>
+            <label>N-P-K<input type="text" id="fertNpk" placeholder="e.g. 3-4-6" autocomplete="off"></label>
+            <label>Amount<input type="text" id="fertAmount" placeholder="e.g. 2 tbsp/plant" autocomplete="off"></label>
+            <label>Type<select id="fertType">
+              <option value="Granular">Granular</option>
+              <option value="Liquid">Liquid</option>
+              <option value="Foliar">Foliar</option>
+              <option value="Compost / castings">Compost / castings</option>
+              <option value="Other">Other</option>
+            </select></label>
+            <label>Feed again in (weeks)<input type="number" id="fertEvery" min="0" step="1" inputmode="numeric" placeholder="e.g. 3"></label>
+          </div>
+          <div class="harvest-add-actions">
+            <button id="fertAddBtn" type="button" class="h-add-btn">Add feeding</button>
+            <button id="fertCancelBtn" type="button" class="h-cancel-btn" style="display:none;">Cancel</button>
+          </div>
+        </div>
+        <div id="fertList" class="fert-list" style="margin-top:12px;"></div>
         </div>
         <div id="germinationBody" class="home-tab-body" style="display:none;"></div>
         <div id="germtempBody" class="home-tab-body" style="display:none;"></div>
@@ -4017,6 +4086,165 @@ function journalMonthLabel(key){
   return `${FULL_MONTHS[m-1]} ${y}`;
 }
 
+/* ---------------- fertilizer log (Home page) ----------------
+   One list per season: { id, date, crop, product, npk, amount, type,
+   every (weeks), addedAt }. Each entry locks 48h after it's added (same
+   EDIT_LOCK_MS / global unlock as everything else). "Due next" takes the
+   latest feeding per crop that has a repeat interval. */
+async function getFertLog(){
+  try{
+    const r = await window.storage.get(`fertilizer:${activeSeason}`, false);
+    return r ? (JSON.parse(r.value) || []) : [];
+  }catch(e){ return []; }
+}
+async function setFertLog(arr){
+  try{ await window.storage.set(`fertilizer:${activeSeason}`, JSON.stringify(arr), false); }catch(e){}
+}
+let fertEditingId = null;
+// A feeding belongs to a crop when its "Crop or bed" matches the crop's
+// name or slug (case/spacing ignored).
+function fertMatchesCrop(e, p){
+  const norm = v => String(v || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const c = norm(e.crop);
+  return !!c && (c === norm(p.name) || c === norm(p.slug));
+}
+function cropFertFieldHTML(p, allFeedings){
+  const mine = (allFeedings || []).filter(e => fertMatchesCrop(e, p))
+    .sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.addedAt || 0) - (a.addedAt || 0));
+  if(!mine.length) return "";
+  let nextHTML = "";
+  const last = mine[0];
+  if(Number(last.every) > 0 && last.date){
+    const next = new Date(`${last.date}T00:00:00`); next.setDate(next.getDate() + Number(last.every) * 7);
+    const days = Math.round((next.getTime() - new Date(`${fertTodayISO()}T00:00:00`).getTime()) / 86400000);
+    nextHTML = `<div class="cropfert-next">Next feeding: ${days < 0 ? `<span class="fert-over">overdue by ${-days} day${days === -1 ? "" : "s"}</span>` : days === 0 ? `<span class="fert-over">today</span>` : `${next.toLocaleDateString(undefined, { month:"short", day:"numeric" })} (in ${days} day${days === 1 ? "" : "s"})`}</div>`;
+  }
+  const rows = mine.map(e => {
+    const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
+    return `<div class="cropfert-row">${fertFmtDate(e.date)}${bits ? ` — <span>${bits}</span>` : ""}</div>`;
+  }).join("");
+  return `<div class="cropfert-field"><label>🧪 Fertilizer</label>${nextHTML}${rows}</div>`;
+}
+function fertEsc(v){ return String(v == null ? "" : v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function fertFmtDate(iso){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return iso || "";
+  return new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
+}
+function fertTodayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+async function refreshCropCardsForFert(){
+  await renderGrid("vegetables", "grid-vegetables");
+  await renderGrid("herbs", "grid-herbs");
+  await renderGrid("flowers", "grid-flowers");
+  await renderGrid("coverCrops", "grid-coverCrops");
+}
+function fertResetForm(){
+  fertEditingId = null;
+  ["fertCrop","fertProduct","fertNpk","fertAmount","fertEvery"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+  const d = document.getElementById("fertDate"); if(d) d.value = fertTodayISO();
+  const t = document.getElementById("fertType"); if(t) t.value = "Granular";
+  document.getElementById("fertAddBtn").textContent = "Add feeding";
+  document.getElementById("fertCancelBtn").style.display = "none";
+}
+async function renderFertilizerLog(){
+  const listEl = document.getElementById("fertList");
+  const dueEl = document.getElementById("fertDue");
+  if(!listEl) return;
+  const isPastSeason = activeSeason === "2025-26" || READ_ONLY;
+  document.getElementById("fertFormWrap").style.display = isPastSeason ? "none" : "";
+  // Crop suggestions: every crop entered for this season.
+  const dl = document.getElementById("fertCropList");
+  if(dl){
+    const names = new Set();
+    const data = DATA_now();
+    Object.keys(data || {}).forEach(k => (Array.isArray(data[k]) ? data[k] : []).forEach(p => p && p.name && names.add(p.name)));
+    dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">`;
+  }
+  const d = document.getElementById("fertDate");
+  if(d && !d.value) d.value = fertTodayISO();
+
+  const entries = (await getFertLog()).slice().sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.addedAt || 0) - (a.addedAt || 0));
+
+  // Due next: latest feeding per crop, if it has a repeat interval.
+  const latest = {};
+  entries.forEach(e => { const k = (e.crop || "").trim().toLowerCase(); if(k && !latest[k]) latest[k] = e; });
+  const today = new Date(`${fertTodayISO()}T00:00:00`).getTime();
+  const due = Object.values(latest).filter(e => Number(e.every) > 0 && e.date).map(e => {
+    const next = new Date(`${e.date}T00:00:00`); next.setDate(next.getDate() + Number(e.every) * 7);
+    return { e, next, days: Math.round((next.getTime() - today) / 86400000) };
+  }).sort((a, b) => a.next - b.next);
+  dueEl.innerHTML = (!isPastSeason && due.length) ? `<div class="fert-due"><b>Due next</b><br>${due.map(x => {
+    const when = x.days < 0 ? `<span class="fert-over">overdue by ${-x.days} day${x.days === -1 ? "" : "s"}</span>`
+      : x.days === 0 ? `<span class="fert-over">today</span>`
+      : `${x.next.toLocaleDateString(undefined, { month:"short", day:"numeric" })} (in ${x.days} day${x.days === 1 ? "" : "s"})`;
+    return `${fertEsc(x.e.crop)} — ${when}`;
+  }).join("<br>")}</div>` : "";
+
+  if(!entries.length){
+    listEl.innerHTML = `<div class="harvest-empty">No feedings logged for ${SEASONS[activeSeason].label} yet.</div>`;
+    return;
+  }
+  listEl.innerHTML = entries.map(e => {
+    const locked = isPastSeason || isEntryLocked(e.addedAt);
+    const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
+    const every = Number(e.every) > 0 ? `Feed again every ${Number(e.every)} week${Number(e.every) === 1 ? "" : "s"}` : "";
+    return `<div class="fert-entry${fertEditingId === e.id ? " editing" : ""}">
+      <div class="fert-entry-top"><span class="fert-entry-crop">${fertEsc(e.crop || "—")}${locked && !isPastSeason ? ' <span aria-label="Locked" style="font-size:11px;">🔒</span>' : ""}</span><span class="fert-entry-date">${fertFmtDate(e.date)}</span></div>
+      ${bits ? `<div class="fert-entry-detail">${bits}</div>` : ""}
+      ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
+      ${locked ? "" : `<div class="fert-entry-actions"><button type="button" data-fert-edit="${e.id}">Edit</button><button type="button" class="fert-del" data-fert-del="${e.id}">Delete</button></div>`}
+    </div>`;
+  }).join("");
+  listEl.querySelectorAll("[data-fert-edit]").forEach(b => b.addEventListener("click", () => {
+    const e = entries.find(x => x.id === b.dataset.fertEdit); if(!e) return;
+    fertEditingId = e.id;
+    document.getElementById("fertDate").value = e.date || "";
+    document.getElementById("fertCrop").value = e.crop || "";
+    document.getElementById("fertProduct").value = e.product || "";
+    document.getElementById("fertNpk").value = e.npk || "";
+    document.getElementById("fertAmount").value = e.amount || "";
+    document.getElementById("fertType").value = e.type || "Granular";
+    document.getElementById("fertEvery").value = e.every || "";
+    document.getElementById("fertAddBtn").textContent = "Save changes";
+    document.getElementById("fertCancelBtn").style.display = "";
+    renderFertilizerLog();
+    document.getElementById("fertFormWrap").scrollIntoView({ behavior:"smooth", block:"center" });
+  }));
+  listEl.querySelectorAll("[data-fert-del]").forEach(b => b.addEventListener("click", async () => {
+    if(!confirm("Delete this feeding?")) return;
+    const arr = (await getFertLog()).filter(x => x.id !== b.dataset.fertDel);
+    await setFertLog(arr);
+    if(fertEditingId === b.dataset.fertDel) fertResetForm();
+    renderFertilizerLog();
+    refreshCropCardsForFert();
+  }));
+}
+document.getElementById("fertAddBtn").addEventListener("click", async () => {
+  const val = id => document.getElementById(id).value.trim();
+  const crop = val("fertCrop"), product = val("fertProduct");
+  if(!crop && !product){ document.getElementById("fertCrop").focus(); return; }
+  const every = val("fertEvery");
+  const fields = {
+    date: val("fertDate") || fertTodayISO(), crop, product,
+    npk: val("fertNpk"), amount: val("fertAmount"), type: document.getElementById("fertType").value,
+    every: every === "" ? "" : Math.max(0, Math.round(Number(every)) || 0)
+  };
+  const arr = await getFertLog();
+  if(fertEditingId){
+    const i = arr.findIndex(x => x.id === fertEditingId);
+    if(i >= 0 && !isEntryLocked(arr[i].addedAt)) arr[i] = { ...arr[i], ...fields };
+  } else {
+    arr.push({ id: `f${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), ...fields });
+  }
+  await setFertLog(arr);
+  fertResetForm();
+  renderFertilizerLog();
+  refreshCropCardsForFert();
+});
+document.getElementById("fertCancelBtn").addEventListener("click", () => { fertResetForm(); renderFertilizerLog(); });
+
 async function renderJournal(){
   const input = document.getElementById("journalInput");
   const listEl = document.getElementById("journalList");
@@ -4351,6 +4579,7 @@ async function renderGrid(sectionKey, containerId){
   const addBtn = document.querySelector(`.add-crop-btn[data-section="${sectionKey}"]`);
   if(addBtn) addBtn.style.display = isPastSeason ? "none" : "";
   const plants = [...DATA_now()[sectionKey]].sort((a, b) => nextDateOffset(a) - nextDateOffset(b));
+  const seasonFeedings = await getFertLog();
   for(const p of plants){
     const card = document.createElement("div");
     card.className = "plant-card";
@@ -4442,6 +4671,7 @@ async function renderGrid(sectionKey, containerId){
         ${prevPlantSummary ? `<div class="plantcount-last">Last season: ${prevPlantSummary}</div>` : ""}
       </div>
     `;
+    const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings);
     const notesFieldHTML = `
       <div class="notes-field">
         <label for="notes-${p.slug}">Notes</label>
@@ -4496,6 +4726,7 @@ async function renderGrid(sectionKey, containerId){
           ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${plantCountFieldHTML}
+          ${fertFieldHTML}
           ${notesFieldHTML}
         `;
       } else {
@@ -4566,6 +4797,7 @@ async function renderGrid(sectionKey, containerId){
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${plantCountFieldHTML}
+          ${fertFieldHTML}
           ${notesFieldHTML}
           ${p.slug === "garlic" ? "" : seedPacketsFieldHTML}
           <div class="season-actions-row">
@@ -7446,6 +7678,7 @@ document.querySelectorAll(".home-tab-btn[data-hometab]").forEach(btn => {
       if(body) body.style.display = "block";
       if(key === "germination") renderGerminationReport();
       if(key === "germtemp") renderGerminationTempChart();
+      if(key === "fert") renderFertilizerLog();
     }
   });
 });
@@ -7521,6 +7754,7 @@ async function renderAll(){
   await renderHarvestPictures();
   await renderJournal();
   await renderReorderList();
+  await renderFertilizerLog();
 }
 
 /* ---------------- backup: export / import all stored data ---------------- */
