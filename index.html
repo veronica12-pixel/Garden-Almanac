@@ -625,6 +625,15 @@
   .gtemp-col-header-temp{ flex:0 0 66px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .gtemp-col-header-days{ flex:0 0 62px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .gtemp-col-header-dtm{ flex:0 0 56px; display:flex; align-items:center; justify-content:center; color:#8154B8; }
+  .gtemp-row-tw{ flex:0 0 48px; display:flex; justify-content:center; }
+  .gtemp-row-tw input{
+    box-sizing:border-box; width:46px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#2F7D6B;
+    background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:4px 2px; text-align:center; outline:none;
+  }
+  .gtemp-row-tw input:focus{ border-color:var(--sage); }
+  .gtemp-row-tw input::placeholder{ color:var(--entry-placeholder); font-weight:400; }
+  .gtemp-row-tw-locked{ font-size:13px; font-weight:700; color:#2F7D6B; white-space:nowrap; }
+  .gtemp-col-header-tw{ flex:0 0 48px; display:flex; align-items:center; justify-content:center; color:#2F7D6B; }
   .gtemp-col-header-rotate{ display:inline-block; white-space:nowrap; font-size:8px; font-weight:700; color:inherit; text-transform:uppercase; letter-spacing:.02em; }
   .gtemp-note-row{ font-size:15px; line-height:1.45; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:9px 11px; margin:9px 0; }
   .gtemp-note-row b{ color:var(--ink); font-size:16px; }
@@ -1331,6 +1340,8 @@
     background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:6px 8px; outline:none; text-align:center;
   }
   .plantcount-cell input:focus{ border-color:var(--sage); }
+  .plantcount-cell input:disabled{ background:var(--card); color:var(--ink-soft); cursor:not-allowed; opacity:1; -webkit-text-fill-color:var(--ink-soft); }
+  .plantcount-lock{ font-size:10px; margin-left:3px; }
   .plantcount-cell input::placeholder{ color:var(--entry-placeholder); }
   .plantcount-total{ font-weight:600; color:var(--evergreen); background:var(--card); }
   .plantcount-last{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; }
@@ -1613,7 +1624,7 @@
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
-          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Temperature</span></button>
+          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Temperature / Time / Maturity</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
@@ -4413,15 +4424,20 @@ async function renderGrid(sectionKey, containerId){
     }
 
     const pcVal = v => (v === undefined || v === null) ? "" : v;
+    // Each number locks 48h after it was first entered (same rule as every
+    // other logged entry); the header's global unlock overrides it.
+    const pcLocked = f => pcVal(plantCount[f]) !== "" && isEntryLocked(plantCount[f + "At"]);
+    const pcLockAttr = f => pcLocked(f) ? ` disabled title="Locked — use the unlock in Save a copy to change"` : "";
+    const pcLockIcon = f => pcLocked(f) ? `<span class="plantcount-lock" aria-label="Locked">🔒</span>` : "";
     const plantCountFieldHTML = PLANT_COUNT_SKIP.includes(p.slug) ? "" : `
       <div class="plantcount-field">
         <label>Plants in the garden</label>
         <div class="plantcount-row">
           ${PLANT_COUNT_SPLIT.includes(p.slug) ? `
-          <label class="plantcount-cell"><span>Existing plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-existing-${p.slug}" value="${pcVal(plantCount.existing)}" placeholder="0"></label>
-          <label class="plantcount-cell"><span>New plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-new-${p.slug}" value="${pcVal(plantCount.new)}" placeholder="0"></label>
+          <label class="plantcount-cell"><span>Existing plants${pcLockIcon("existing")}</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-existing-${p.slug}" value="${pcVal(plantCount.existing)}" placeholder="0"${pcLockAttr("existing")}></label>
+          <label class="plantcount-cell"><span>New plants${pcLockIcon("new")}</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-new-${p.slug}" value="${pcVal(plantCount.new)}" placeholder="0"${pcLockAttr("new")}></label>
           <div class="plantcount-cell"><span>Total</span><div class="plantcount-total" id="plants-total-${p.slug}">${(Number(plantCount.existing) || 0) + (Number(plantCount.new) || 0)}</div></div>` : `
-          <label class="plantcount-cell"><span>Number of plants</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-count-${p.slug}" value="${pcVal(plantCount.count)}" placeholder="0"></label>`}
+          <label class="plantcount-cell"><span>Number of plants${pcLockIcon("count")}</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-count-${p.slug}" value="${pcVal(plantCount.count)}" placeholder="0"${pcLockAttr("count")}></label>`}
         </div>
         ${prevPlantSummary ? `<div class="plantcount-last">Last season: ${prevPlantSummary}</div>` : ""}
       </div>
@@ -4591,17 +4607,22 @@ async function renderGrid(sectionKey, containerId){
         return Number.isFinite(v) ? v : undefined;
       };
       const savePlantCount = async () => {
-        let obj;
+        // Stamp each number the first time it's entered; that stamp starts
+        // its 48h lock. Clearing a number clears its stamp.
+        const stamp = (f, v) => {
+          if(v === undefined){ delete plantCount[f]; delete plantCount[f + "At"]; }
+          else { plantCount[f] = v; if(!plantCount[f + "At"]) plantCount[f + "At"] = Date.now(); }
+        };
         if(PLANT_COUNT_SPLIT.includes(p.slug)){
           const ex = readNum(card.querySelector(`#plants-existing-${p.slug}`));
           const nw = readNum(card.querySelector(`#plants-new-${p.slug}`));
-          obj = { existing: ex, new: nw };
+          stamp("existing", ex); stamp("new", nw);
           const tot = card.querySelector(`#plants-total-${p.slug}`);
           if(tot) tot.textContent = (ex || 0) + (nw || 0);
         } else {
-          obj = { count: readNum(card.querySelector(`#plants-count-${p.slug}`)) };
+          stamp("count", readNum(card.querySelector(`#plants-count-${p.slug}`)));
         }
-        await setPlantCount(p.slug, obj);
+        await setPlantCount(p.slug, plantCount);
       };
       pcInputs.forEach(inp => {
         inp.addEventListener("input", savePlantCount);
@@ -6703,9 +6724,24 @@ function gtempColor(val){
   }
   return `rgb(${stops[stops.length-1].c.join(",")})`;
 }
-function renderGerminationTempChart(){
+// Weeks from starting seeds indoors to transplanting outside — typed in
+// once per crop, not per season, since it doesn't change year to year.
+// Stored as one map { slug: { w, at } }; each value locks 48h after it's
+// first entered (same rule and global unlock as every other entry).
+async function getTransplantWeeks(){
+  try{
+    const r = await window.storage.get("transplantWeeks", false);
+    return r ? (JSON.parse(r.value) || {}) : {};
+  }catch(e){ return {}; }
+}
+async function setTransplantWeeks(map){
+  try{ await window.storage.set("transplantWeeks", JSON.stringify(map), false); }catch(e){}
+}
+async function renderGerminationTempChart(){
   const el = document.getElementById("germtempBody");
   if(!el) return;
+  const twMap = await getTransplantWeeks();
+  const escAttr = v => String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   const data = DATA_now();
   let hasAny = false;
   let anyApprox = false;
@@ -6715,7 +6751,7 @@ function renderGerminationTempChart(){
       .slice().sort((a, b) => a.name.localeCompare(b.name));
     if(!plants.length) return;
     hasAny = true;
-    html += `<div class="gtemp-section-header-row"><span class="gtemp-section-title">${section.label}</span><span class="gtemp-col-header-temp"><span class="gtemp-col-header-rotate">Temperature</span></span><span class="gtemp-col-header-days"><span class="gtemp-col-header-rotate">Germination</span></span><span class="gtemp-col-header-dtm"><span class="gtemp-col-header-rotate">Maturity</span></span></div><div class="gtemp-chart">`;
+    html += `<div class="gtemp-section-header-row"><span class="gtemp-section-title">${section.label}</span><span class="gtemp-col-header-temp"><span class="gtemp-col-header-rotate">Temperature</span></span><span class="gtemp-col-header-days"><span class="gtemp-col-header-rotate">Germination</span></span><span class="gtemp-col-header-dtm"><span class="gtemp-col-header-rotate">Maturity</span></span><span class="gtemp-col-header-tw"><span class="gtemp-col-header-rotate">Transplant</span></span></div><div class="gtemp-chart">`;
     plants.forEach(p => {
       const g = GERM_TEMP_DATA[p.slug];
       const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
@@ -6736,6 +6772,11 @@ function renderGerminationTempChart(){
           <div class="gtemp-row-val">${g.optMin}–${g.optMax}°F</div>
           <div class="gtemp-row-days">${daysText}</div>
           <div class="gtemp-row-dtm">${dtmText}</div>
+          <div class="gtemp-row-tw">${(() => {
+            const tw = twMap[p.slug];
+            if(tw && tw.w && isEntryLocked(tw.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(tw.w)}w</span>`;
+            return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="wks" aria-label="Weeks from seed start to transplant for ${escAttr(p.name)}">`;
+          })()}</div>
         </div>`;
     });
     html += `</div>`;
@@ -6744,8 +6785,18 @@ function renderGerminationTempChart(){
     el.innerHTML = `<div class="harvest-empty">No crops entered for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
+  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest; "Transplant" is your own weeks from starting seeds to moving them outside (e.g. 6 or 6-8) — it stays the same every season and locks 48h after you enter it. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
   el.innerHTML = html;
+  el.querySelectorAll("input[data-tw-slug]").forEach(inp => {
+    inp.addEventListener("change", async () => {
+      const slug = inp.dataset.twSlug;
+      const w = inp.value.trim();
+      const map = await getTransplantWeeks();
+      if(!w){ delete map[slug]; }
+      else { map[slug] = { w, at: (map[slug] && map[slug].at) || Date.now() }; }
+      await setTransplantWeeks(map);
+    });
+  });
 }
 document.getElementById("compareBtn").addEventListener("click", () => {
   const wasActive = document.getElementById("compareBtn").classList.contains("active");
