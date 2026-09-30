@@ -642,6 +642,13 @@
   .fert-entry-actions{ display:flex; gap:6px; margin-top:8px; }
   .fert-entry-actions button{ font-family:'Inter',sans-serif; font-size:12px; font-weight:600; padding:5px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; }
   .fert-entry-actions .fert-del{ color:#C1554A; }
+  .fert-group-head{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .fert-group-head .fert-entry-crop{ font-size:16px; }
+  .fert-item{ padding:8px 0 6px; border-top:1px dashed var(--line); }
+  .fert-group-head + .fert-item{ border-top:none; padding-top:4px; }
+  .fert-item.editing{ background:var(--paper-2); border-radius:8px; padding-left:8px; padding-right:8px; }
+  .fert-bed-tag{ display:inline-block; font-size:12px; font-weight:700; color:#8A5A2B; background:#F1E6D6; border:1px solid #E3CFB2; border-radius:999px; padding:1px 9px; margin-right:7px; }
+  .fert-item .fert-entry-date{ font-weight:600; color:var(--ink); font-size:12.5px; }
   /* Feedings shown on a crop's card — read-only copy of the Fertilizer Log. */
   .cropfert-field{ margin-top:10px; }
   .cropfert-field > label{
@@ -4189,7 +4196,7 @@ async function renderFertilizerLog(){
     const names = new Set();
     const data = DATA_now();
     Object.keys(data || {}).forEach(k => (Array.isArray(data[k]) ? data[k] : []).forEach(p => p && p.name && names.add(p.name)));
-    dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">`;
+    dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">` + [1,2,3,4].map(n => `<option value="Bed ${n}">`).join("");
   }
   const d = document.getElementById("fertDate");
   if(d && !d.value) d.value = fertTodayISO();
@@ -4215,17 +4222,49 @@ async function renderFertilizerLog(){
     listEl.innerHTML = `<div class="harvest-empty">No feedings logged for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  listEl.innerHTML = entries.map(e => {
-    const locked = isPastSeason || isEntryLocked(e.addedAt);
-    const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
-    const every = Number(e.every) > 0 ? `Feed again every ${Number(e.every)} week${Number(e.every) === 1 ? "" : "s"}` : "";
-    return `<div class="fert-entry${fertEditingId === e.id ? " editing" : ""}">
-      <div class="fert-entry-top"><span class="fert-entry-crop">${fertEsc(e.crop || "—")}${locked && !isPastSeason ? ' <span aria-label="Locked" style="font-size:11px;">🔒</span>' : ""}</span><span class="fert-entry-date">${fertFmtDate(e.date)}</span></div>
-      ${bits ? `<div class="fert-entry-detail">${bits}</div>` : ""}
-      ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
-      ${locked ? "" : `<div class="fert-entry-actions"><button type="button" data-fert-edit="${e.id}">Edit</button><button type="button" class="fert-del" data-fert-del="${e.id}">Delete</button></div>`}
-    </div>`;
-  }).join("");
+  // One card per crop, with every feeding for that crop inside it
+  // (newest first). Cards are ordered by each crop's latest feeding.
+  const groups = [];
+  const byKey = {};
+  // Every bed ("Bed 1", "bed #2", "Bed three"…) shares one "Garden beds"
+  // card, with each feeding labeled by its bed.
+  const isBed = name => /\bbeds?\b/i.test(String(name || ""));
+  const bedNum = name => {
+    const words = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10 };
+    const m = String(name || "").toLowerCase().match(/(\d+)|\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/);
+    return m ? (m[1] ? Number(m[1]) : words[m[2]]) : 999;
+  };
+  entries.forEach(e => {
+    const bed = isBed(e.crop);
+    const k = bed ? "__beds" : (String(e.crop || "").toLowerCase().replace(/[^a-z0-9]/g, "") || "__none");
+    if(!byKey[k]){ byKey[k] = { name: bed ? "Garden beds" : (e.crop || "—"), beds: bed, items: [] }; groups.push(byKey[k]); }
+    byKey[k].items.push(e);
+  });
+  groups.forEach(g => { if(g.beds) g.items.sort((a, b) => (b.date || "").localeCompare(a.date || "") || bedNum(a.crop) - bedNum(b.crop)); });
+  const data = DATA_now();
+  const iconFor = name => {
+    for(const sk of Object.keys(data || {})){
+      const p = (Array.isArray(data[sk]) ? data[sk] : []).find(p => p && fertMatchesCrop({ crop: name }, p));
+      if(p) return cropIcon(p, sk);
+    }
+    const generic = /garden|bed|all/i.test(name) ? "🏡" : "🌱";
+    return `<span class="plant-icon" style="background:#E8F1E4">${generic}</span>`;
+  };
+  listEl.innerHTML = groups.map(g => `
+    <div class="fert-entry">
+      <div class="fert-group-head">${iconFor(g.name)}<span class="fert-entry-crop">${fertEsc(g.name)}</span></div>
+      ${g.items.map(e => {
+        const locked = isPastSeason || isEntryLocked(e.addedAt);
+        const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
+        const every = Number(e.every) > 0 ? `Feed again every ${Number(e.every)} week${Number(e.every) === 1 ? "" : "s"}` : "";
+        return `<div class="fert-item${fertEditingId === e.id ? " editing" : ""}">
+          <div class="fert-entry-date">${g.beds ? `<span class="fert-bed-tag">${bedNum(e.crop) !== 999 ? `Bed ${bedNum(e.crop)}` : fertEsc(e.crop)}</span>` : ""}${fertFmtDate(e.date)}${locked && !isPastSeason ? ' <span aria-label="Locked">🔒</span>' : ""}</div>
+          ${bits ? `<div class="fert-entry-detail">${bits}</div>` : ""}
+          ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
+          ${locked ? "" : `<div class="fert-entry-actions"><button type="button" data-fert-edit="${e.id}">Edit</button><button type="button" class="fert-del" data-fert-del="${e.id}">Delete</button></div>`}
+        </div>`;
+      }).join("")}
+    </div>`).join("");
   listEl.querySelectorAll("[data-fert-edit]").forEach(b => b.addEventListener("click", () => {
     const e = entries.find(x => x.id === b.dataset.fertEdit); if(!e) return;
     fertEditingId = e.id;
