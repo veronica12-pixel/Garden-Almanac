@@ -592,28 +592,28 @@
   }
   .home-tab-btn.active .home-tab-icon{ background:rgba(255,255,255,0.25); }
   .home-tab-btn.active{ background:var(--evergreen); color:#fff; border-color:var(--evergreen); }
-  .home-tab-btn.tab-almanac{ background:#FBE0DE; color:#C1554A; border-color:#F3C6C2; }
-  .home-tab-btn.tab-almanac.active{ background:#E0645A; color:#fff; border-color:#E0645A; }
+  .home-tab-btn.tab-almanac{ background:linear-gradient(160deg, #FDE8EE 0%, #F8D0DE 100%); color:#B04A72; border-color:#F2C2D3; }
+  .home-tab-btn.tab-almanac.active{ background:#D9739A; color:#fff; border-color:#D9739A; }
   .home-tab-btn.tab-how{ background:#E3F0E6; color:#4F8863; border-color:#C9E4D0; }
   .home-tab-btn.tab-how.active{ background:#6FA883; color:#fff; border-color:#6FA883; }
-  .home-tab-btn.tab-compare{ background:#D9F0EC; color:#2E8C7E; border-color:#B7E0D8; }
-  .home-tab-btn.tab-compare.active{ background:#3FA595; color:#fff; border-color:#3FA595; }
-  .home-tab-btn.tab-calendar{ background:#FCE8D6; color:#C1793A; border-color:#F3D3AE; }
-  .home-tab-btn.tab-calendar.active{ background:#E0973A; color:#fff; border-color:#E0973A; }
-  .home-tab-btn.tab-rain{ background:#EEDFF7; color:#8154B8; border-color:#DEC2F0; }
-  .home-tab-btn.tab-rain.active{ background:#A15AD9; color:#fff; border-color:#A15AD9; }
-  .home-tab-btn.tab-journal{ background:#E3E0FA; color:#5A54C1; border-color:#C7C2F0; }
-  .home-tab-btn.tab-journal.active{ background:#7A6FE0; color:#fff; border-color:#7A6FE0; }
-  .home-tab-btn.tab-reorder{ background:#DCE9FA; color:#3A6EC1; border-color:#B9D3F2; }
-  .home-tab-btn.tab-reorder.active{ background:#4F7FD9; color:#fff; border-color:#4F7FD9; }
-  .home-tab-btn.tab-germination{ background:#DFF0E0; color:#3E8054; border-color:#BEE0C2; }
-  .home-tab-btn.tab-germination.active{ background:#4F9E68; color:#fff; border-color:#4F9E68; }
+  .home-tab-btn.tab-compare{ background:linear-gradient(160deg, #E5F7F3 0%, #C8ECE3 100%); color:#2D7E6E; border-color:#B3E0D5; }
+  .home-tab-btn.tab-compare.active{ background:#4FAE99; color:#fff; border-color:#4FAE99; }
+  .home-tab-btn.tab-calendar{ background:linear-gradient(160deg, #FFF0E3 0%, #FCDAC0 100%); color:#B9692E; border-color:#F4CFAE; }
+  .home-tab-btn.tab-calendar.active{ background:#E0955A; color:#fff; border-color:#E0955A; }
+  .home-tab-btn.tab-rain{ background:linear-gradient(160deg, #F3ECFD 0%, #E2D3F8 100%); color:#6C4AB0; border-color:#D4C2F0; }
+  .home-tab-btn.tab-rain.active{ background:#9170D1; color:#fff; border-color:#9170D1; }
+  .home-tab-btn.tab-journal{ background:linear-gradient(160deg, #FFF9DF 0%, #FBEDB5 100%); color:#957517; border-color:#EFE0A0; }
+  .home-tab-btn.tab-journal.active{ background:#CFAE3E; color:#fff; border-color:#CFAE3E; }
+  .home-tab-btn.tab-reorder{ background:linear-gradient(160deg, #E6F2FC 0%, #CBE2F7 100%); color:#2F6A9E; border-color:#B6D6EF; }
+  .home-tab-btn.tab-reorder.active{ background:#5C95CB; color:#fff; border-color:#5C95CB; }
+  .home-tab-btn.tab-germination{ background:linear-gradient(160deg, #F1F8E3 0%, #DDEFC0 100%); color:#5E7F24; border-color:#CFE3AC; }
+  .home-tab-btn.tab-germination.active{ background:#8DB34E; color:#fff; border-color:#8DB34E; }
   /* Last home row: three buttons side by side, icon stacked over label so
      the narrower buttons still fit on a phone. */
   .home-tabs-row.home-tabs-row-3{ grid-template-columns:1fr 1fr 1fr; margin-top:8px; }
   .home-tabs-row-3 .home-tab-btn{ flex-direction:column; justify-content:center; text-align:center; gap:6px; padding:10px 6px; font-size:14px; }
-  .home-tab-btn.tab-fert{ background:#F1E6D6; color:#8A5A2B; border-color:#E3CFB2; }
-  .home-tab-btn.tab-fert.active{ background:#A8713A; color:#fff; border-color:#A8713A; }
+  .home-tab-btn.tab-fert{ background:linear-gradient(160deg, #FBEBF8 0%, #F2D3EE 100%); color:#96468A; border-color:#E8C2E2; }
+  .home-tab-btn.tab-fert.active{ background:#C06FB3; color:#fff; border-color:#C06FB3; }
   /* ---------- fertilizer log ---------- */
   .fert-form{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
   .fert-form .fert-wide{ grid-column:1 / -1; }
@@ -624,6 +624,11 @@
   }
   .fert-form input:focus, .fert-form select:focus{ border-color:var(--sage); }
   .fert-form input::placeholder{ color:var(--entry-placeholder); }
+  .fert-crops{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .fert-crops:empty{ display:none; }
+  .fert-chip{ display:inline-flex; align-items:center; gap:4px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#8A5A2B; background:#F1E6D6; border:1px solid #E3CFB2; border-radius:999px; padding:4px 6px 4px 11px; }
+  .fert-chip button{ border:none; background:none; color:#8A5A2B; font-size:16px; line-height:1; padding:0 3px; cursor:pointer; }
+  .fert-crop-hint{ font-size:11px; color:var(--ink-soft); font-weight:400; }
   .fert-due{ background:var(--paper-2); border-radius:10px; padding:10px 12px; margin:4px 0 12px; font-size:13px; line-height:1.55; color:var(--ink); }
   .fert-due b{ color:#8A5A2B; }
   .fert-due .fert-over{ color:#C1554A; font-weight:700; }
@@ -648,8 +653,8 @@
   .cropfert-row{ font-size:12.5px; color:var(--ink); line-height:1.45; padding:5px 0; border-bottom:1px dashed var(--paper-2); }
   .cropfert-row:last-child{ border-bottom:none; }
   .cropfert-row span{ color:var(--ink-soft); }
-  .home-tab-btn.tab-germtemp{ background:#FBF3D0; color:#A98A2E; border-color:#F0E3A8; }
-  .home-tab-btn.tab-germtemp.active{ background:#C9A93A; color:#fff; border-color:#C9A93A; }
+  .home-tab-btn.tab-germtemp{ background:linear-gradient(160deg, #ECEEFD 0%, #D5DAF8 100%); color:#4B55A8; border-color:#C6CCF1; }
+  .home-tab-btn.tab-germtemp.active{ background:#7580D4; color:#fff; border-color:#7580D4; }
   .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
   .gtemp-section-header-row:first-child{ margin-top:0; }
   .gtemp-section-title{ flex:1 0 auto; font-size:14px; font-weight:700; color:var(--evergreen); text-transform:uppercase; letter-spacing:.03em; margin-left:30px; }
@@ -1663,14 +1668,14 @@
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
-          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Temperature / Time / Maturity</span></button>
+          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
         </div>
         <div class="home-tabs-row home-tabs-row-3">
-          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
-          <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">🫐</span><span>Rain Log</span></button>
+          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Log</span></button>
+          <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">💧</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-fert" data-hometab="fert"><span class="home-tab-icon">🧪</span><span>Fertilizer Log</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
@@ -1748,8 +1753,9 @@
         <div id="fertFormWrap">
           <div class="fert-form">
             <label>Date<input type="date" id="fertDate"></label>
-            <label>Crop or bed<input type="text" id="fertCrop" list="fertCropList" placeholder="e.g. Tomatoes" autocomplete="off"></label>
+            <label>Crops or beds<input type="text" id="fertCrop" list="fertCropList" placeholder="Add a crop" autocomplete="off"></label>
             <datalist id="fertCropList"></datalist>
+            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you fed — pick from the list or type one and press Enter. Each gets its own entry.</div><div id="fertCrops" class="fert-crops"></div></div>
             <label class="fert-wide">Product<input type="text" id="fertProduct" placeholder="e.g. Espoma Tomato-tone" autocomplete="off"></label>
             <label>N-P-K<input type="text" id="fertNpk" placeholder="e.g. 3-4-6" autocomplete="off"></label>
             <label>Amount<input type="text" id="fertAmount" placeholder="e.g. 2 tbsp/plant" autocomplete="off"></label>
@@ -4008,7 +4014,7 @@ async function renderHarvestPictures(){
       const item = pictures.find(p => p.id === id);
       if(item) item.date = date;
     } else {
-      pictures.push({ id, date });
+      pictures.push({ id, date, addedAt: Date.now() });
     }
     await setHarvestPictures(activeSeason, pictures);
     resetForm();
@@ -4035,6 +4041,10 @@ async function renderHarvestPictures(){
       img.addEventListener("click", async () => {
         const full = await getHarvestPictureImg(activeSeason, id);
         if(!full) return;
+        // Same 48h edit window as every other entry. Pictures saved before
+        // this had no timestamp, so they count from their harvest date.
+        const picAddedAt = pic.addedAt || (/^\d{4}-\d{2}-\d{2}$/.test(pic.date || "") ? new Date(`${pic.date}T00:00:00`).getTime() : 1);
+        if(isEntryLocked(picAddedAt)){ openPhotoLightbox(full, `${pic.date} 🔒`, null); return; }
         openPhotoLightbox(full, pic.date, {
           onEdit: async () => {
             editingId = id;
@@ -4101,6 +4111,23 @@ async function setFertLog(arr){
   try{ await window.storage.set(`fertilizer:${activeSeason}`, JSON.stringify(arr), false); }catch(e){}
 }
 let fertEditingId = null;
+let fertCrops = [];
+function renderFertChips(){
+  const wrap = document.getElementById("fertCrops");
+  if(!wrap) return;
+  wrap.innerHTML = fertCrops.map((c, i) => `<span class="fert-chip">${fertEsc(c)}<button type="button" data-fert-chip="${i}" aria-label="Remove ${fertEsc(c)}">×</button></span>`).join("");
+  wrap.querySelectorAll("[data-fert-chip]").forEach(b => b.addEventListener("click", () => {
+    fertCrops.splice(Number(b.dataset.fertChip), 1);
+    renderFertChips();
+  }));
+}
+function addFertCrop(name){
+  const v = String(name || "").trim();
+  if(!v) return false;
+  if(!fertCrops.some(c => c.toLowerCase() === v.toLowerCase())) fertCrops.push(v);
+  renderFertChips();
+  return true;
+}
 // A feeding belongs to a crop when its "Crop or bed" matches the crop's
 // name or slug (case/spacing ignored).
 function fertMatchesCrop(e, p){
@@ -4143,6 +4170,8 @@ async function refreshCropCardsForFert(){
 function fertResetForm(){
   fertEditingId = null;
   ["fertCrop","fertProduct","fertNpk","fertAmount","fertEvery"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+  fertCrops = [];
+  renderFertChips();
   const d = document.getElementById("fertDate"); if(d) d.value = fertTodayISO();
   const t = document.getElementById("fertType"); if(t) t.value = "Granular";
   document.getElementById("fertAddBtn").textContent = "Add feeding";
@@ -4201,7 +4230,9 @@ async function renderFertilizerLog(){
     const e = entries.find(x => x.id === b.dataset.fertEdit); if(!e) return;
     fertEditingId = e.id;
     document.getElementById("fertDate").value = e.date || "";
-    document.getElementById("fertCrop").value = e.crop || "";
+    document.getElementById("fertCrop").value = "";
+    fertCrops = e.crop ? [e.crop] : [];
+    renderFertChips();
     document.getElementById("fertProduct").value = e.product || "";
     document.getElementById("fertNpk").value = e.npk || "";
     document.getElementById("fertAmount").value = e.amount || "";
@@ -4223,20 +4254,28 @@ async function renderFertilizerLog(){
 }
 document.getElementById("fertAddBtn").addEventListener("click", async () => {
   const val = id => document.getElementById(id).value.trim();
-  const crop = val("fertCrop"), product = val("fertProduct");
-  if(!crop && !product){ document.getElementById("fertCrop").focus(); return; }
+  // Anything still typed in the box counts as one more crop.
+  if(val("fertCrop")){ addFertCrop(val("fertCrop")); document.getElementById("fertCrop").value = ""; }
+  const product = val("fertProduct");
+  if(!fertCrops.length && !product){ document.getElementById("fertCrop").focus(); return; }
   const every = val("fertEvery");
-  const fields = {
-    date: val("fertDate") || fertTodayISO(), crop, product,
+  const shared = {
+    date: val("fertDate") || fertTodayISO(), product,
     npk: val("fertNpk"), amount: val("fertAmount"), type: document.getElementById("fertType").value,
     every: every === "" ? "" : Math.max(0, Math.round(Number(every)) || 0)
   };
+  const crops = fertCrops.length ? fertCrops.slice() : [""];
   const arr = await getFertLog();
+  const now = Date.now();
+  const newEntry = (crop, k) => ({ id: `f${now}${k}${Math.random().toString(36).slice(2,6)}`, addedAt: now, ...shared, crop });
   if(fertEditingId){
+    // Editing one feeding: the first crop updates it, any extra crops
+    // become new feedings with the same details.
     const i = arr.findIndex(x => x.id === fertEditingId);
-    if(i >= 0 && !isEntryLocked(arr[i].addedAt)) arr[i] = { ...arr[i], ...fields };
+    if(i >= 0 && !isEntryLocked(arr[i].addedAt)) arr[i] = { ...arr[i], ...shared, crop: crops[0] };
+    crops.slice(1).forEach((c, k) => arr.push(newEntry(c, k)));
   } else {
-    arr.push({ id: `f${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), ...fields });
+    crops.forEach((c, k) => arr.push(newEntry(c, k)));
   }
   await setFertLog(arr);
   fertResetForm();
@@ -4244,6 +4283,19 @@ document.getElementById("fertAddBtn").addEventListener("click", async () => {
   refreshCropCardsForFert();
 });
 document.getElementById("fertCancelBtn").addEventListener("click", () => { fertResetForm(); renderFertilizerLog(); });
+(function(){
+  const inp = document.getElementById("fertCrop");
+  inp.addEventListener("keydown", e => {
+    if(e.key === "Enter"){ e.preventDefault(); if(addFertCrop(inp.value)) inp.value = ""; }
+  });
+  // Picking from the suggestion list adds it straight away.
+  inp.addEventListener("input", () => {
+    const v = inp.value.trim().toLowerCase();
+    if(!v) return;
+    const match = [...document.querySelectorAll("#fertCropList option")].map(o => o.value).find(o => o.toLowerCase() === v);
+    if(match){ addFertCrop(match); inp.value = ""; }
+  });
+})();
 
 async function renderJournal(){
   const input = document.getElementById("journalInput");
