@@ -6621,178 +6621,310 @@ document.getElementById("globalUnlockToggle").addEventListener("click", async ()
 async function generateSeasonPDF(seasonKey){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "pt", format: "letter" });
-  const pageW = 612, pageH = 792, margin = 48;
+  const pageW = 612, pageH = 792, margin = 44;
+  const season = SEASONS[seasonKey];
   let y = margin;
 
-  function checkPageBreak(need){
-    if(y + need > pageH - margin){
-      doc.addPage();
-      y = margin;
-    }
-  }
-
-  const season = SEASONS[seasonKey];
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("Vegetable Garden", margin, y); y += 26;
+  /* ---------- header ---------- */
+  doc.setTextColor(0);
+  doc.setFont("helvetica", "bold"); doc.setFontSize(20);
+  doc.text("Vegetable Garden", margin, y); y += 24;
   doc.setFontSize(13);
-  doc.text(`Month-by-Month Planting Calendar — ${season.label}`, margin, y); y += 20;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10.5);
-  doc.text("Odessa, FL 33556 — Zone 9B", margin, y); y += 14;
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(9);
-  doc.text("Dates may vary year to year based on the Biodynamic Calendar", margin, y); y += 14;
-  doc.setDrawColor(0);
-  doc.line(margin, y, pageW - margin, y); y += 20;
+  doc.text(`Season Recap — ${season.label}`, margin, y); y += 18;
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  doc.text("Odessa, FL 33556 — Zone 9B", margin, y); y += 13;
+  doc.setFont("helvetica", "italic"); doc.setFontSize(8.5); doc.setTextColor(90);
+  doc.text("Each month: what happened in the garden (sowing, transplanting, notes, feedings) on the left — harvests on the right.", margin, y); y += 12;
+  doc.text("Gray lines are planned tasks not logged yet. Dates may vary year to year based on the Biodynamic Calendar.", margin, y); y += 10;
+  doc.setTextColor(0); doc.setDrawColor(0);
+  doc.line(margin, y, pageW - margin, y); y += 18;
 
-  const MONTH_SIZE = 14, ENTRY_SIZE = 9.5, LINE_H = 13.5;
+  /* ---------- helpers ---------- */
+  const seasonMonthOrder = [8,9,10,11,12,1,2,3,4,5,6,7];
+  const parseISO = iso => {
+    const p = String(iso || "").split("-").map(Number);
+    return (p.length === 3 && !p.some(isNaN)) ? { y:p[0], m:p[1], d:p[2] } : null;
+  };
+  const shortISO = iso => { const p = parseISO(iso); return p ? `${MONTHS[p.m-1]} ${p.d}` : String(iso || ""); };
+  const isoToTime = iso => { const p = parseISO(iso); return p ? new Date(p.y, p.m-1, p.d).getTime() : NaN; };
+  const noteMonthDay = n => {
+    if(n.dateISO){ const p = parseISO(n.dateISO); if(p) return { m:p.m, d:p.d }; }
+    const m = /^([A-Za-z]{3})\s+(\d{1,2})/.exec(String(n.date || "").trim());
+    if(m){ const mi = MONTHS.indexOf(m[1]); if(mi >= 0) return { m: mi + 1, d: Number(m[2]) }; }
+    const p = parseISO(n.date); return p ? { m:p.m, d:p.d } : null;
+  };
+  const kindOfPlanned = a => /^Transplant/.test(a) ? "transplant" : /direct/i.test(a) ? "direct" : "sow";
+  const labelFor = (kind, slug) => kind === "transplant" ? "Transplanted"
+    : kind === "pottedUp" ? "Potted up"
+    : kind === "direct" ? "Sown (direct)"
+    : slug === "garlic" ? "Planted" : "Seeds started";
+  const plannedLabelFor = (kind, slug) => kind === "transplant" ? "Transplant"
+    : kind === "direct" ? "Sow (direct)"
+    : slug === "garlic" ? "Plant" : "Start seeds";
 
-  function fmtISO(iso){
-    const parts = iso.split("-").map(Number);
-    if(parts.length !== 3 || parts.some(isNaN)) return iso;
-    return `${MONTHS[parts[1]-1]} ${parts[2]}`;
-  }
-
-  // Bucket every dated item (planned tasks, actual logs, harvest log) by
-  // calendar month, so the PDF reads as "what to do this month" rather
-  // than grouped by crop.
-  const monthBuckets = {}; // 1-12 -> [{day, text, bold}]
-  function addToMonth(m, d, text, bold){
-    if(!monthBuckets[m]) monthBuckets[m] = [];
-    monthBuckets[m].push({ day: d, text, bold: !!bold });
-  }
-
+  /* ---------- collect: garden (per month -> per crop) ---------- */
+  const garden = {};   // m -> { cropName -> {order, events:[], notes:[], feeds:[]} }
+  const cropSlot = (m, name, day) => {
+    if(!garden[m]) garden[m] = {};
+    if(!garden[m][name]) garden[m][name] = { first: day, events: [], notes: [], feeds: [] };
+    garden[m][name].first = Math.min(garden[m][name].first, day);
+    return garden[m][name];
+  };
   const pendingCrops = [];
+  let fertLog = [];
+  try{ const r = await window.storage.get(`fertilizer:${seasonKey}`, false); fertLog = r ? (JSON.parse(r.value) || []) : []; }catch(e){}
 
   for(const sectionKey of Object.keys(season.data)){
     for(const p of season.data[sectionKey]){
-      if(p.dates.length === 0){
+      if(p.dates.length === 0 && p.slug !== "garlic"){
         pendingCrops.push({ name: p.name, note: p.note || "Pending" });
-        continue;
       }
-      p.dates.forEach(wave => {
-        wave.forEach(t => {
-          addToMonth(t.m, t.d, `${p.name} — ${actionLabelForDate(t.a, plannedDateObj(seasonKey, t))}: ${fmtDate(t)}`);
-        });
-      });
-
-      const sow = await getActualDatesFor(seasonKey, p.slug, "sow");
-      const transplant = await getActualDatesFor(seasonKey, p.slug, "transplant");
+      // planned tasks
+      const planned = [];
+      p.dates.forEach(wave => wave.forEach(t => planned.push({ t, kind: kindOfPlanned(t.a), when: plannedDateObj(seasonKey, t).getTime(), used: false })));
+      // actual entries
+      const actuals = [];
       const sowTemp = await getTempFor(seasonKey, p.slug, "sow");
-      const transplantTemp = await getTempFor(seasonKey, p.slug, "transplant");
-      await delay(35);
-      sow.forEach(d => {
-        const iso = entryDate(d);
-        const [, mm, dd] = iso.split("-").map(Number);
-        const tp = entryTemp(d) || sowTemp;
-        const suffix = tp ? ` ${fmtTemp(tp)}` : "";
-        addToMonth(mm, dd, `${p.name} — ${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}: ${iso}${suffix}`, true);
+      const trTemp = await getTempFor(seasonKey, p.slug, "transplant");
+      const puTemp = await getTempFor(seasonKey, p.slug, "pottedUp");
+      // Same-day sow entries are one seeding session: merge them so every
+      // variety seeded that day is listed together on one line.
+      mergeSameDaySowVarieties(await getActualDatesFor(seasonKey, p.slug, "sow")).forEach(d => actuals.push({ d, kind: "sow", temp: entryTemp(d) || sowTemp }));
+      (await getActualDatesFor(seasonKey, p.slug, "pottedUp")).forEach(d => actuals.push({ d, kind: "pottedUp", temp: entryTemp(d) || puTemp }));
+      (await getActualDatesFor(seasonKey, p.slug, "transplant")).forEach(d => actuals.push({ d, kind: "transplant", temp: entryTemp(d) || trTemp }));
+      await delay(20);
+      actuals.sort((a, b) => String(entryDate(a.d)).localeCompare(String(entryDate(b.d))));
+      // Variety name plus its days to maturity, kind (type / H / F1 / OP) and
+      // where the seed came from — spelled out, no color-swatch code.
+      const cleanVar = v => String(varietyName(v) || "").replace(/<[^>]*>/g, "").trim();
+      const varDetail = v => {
+        const name = cleanVar(v);
+        if(!name || typeof v !== "object") return name;
+        const bits = [];
+        if(v.dtm) bits.push(`${v.dtm} days`);
+        const kinds = [v.type, v.h ? "H" : "", v.f1 ? "F1" : "", v.op ? "OP" : ""].filter(Boolean);
+        if(kinds.length) bits.push(kinds.join(" "));
+        if(v.source && v.source.length) bits.push((Array.isArray(v.source) ? v.source : [v.source]).join(" / "));
+        return bits.length ? `${name} — ${bits.join(" · ")}` : name;
+      };
+      const loggedVars = new Set();
+      let firstSowEvent = null, firstEvent = null;
+      // pair each actual with the nearest unused planned task of the same kind (within ~6 weeks)
+      actuals.forEach(a => {
+        const iso = entryDate(a.d); const pd = parseISO(iso); if(!pd) return;
+        const when = isoToTime(iso);
+        const wantKinds = a.kind === "transplant" ? ["transplant"] : a.kind === "sow" ? ["sow", "direct"] : [];
+        let best = null;
+        planned.forEach(pl => {
+          if(pl.used || !wantKinds.includes(pl.kind)) return;
+          const gap = Math.abs(pl.when - when) / 86400000;
+          if(gap <= 42 && (!best || gap < best.gap)) best = { pl, gap };
+        });
+        if(best) best.pl.used = true;
+        const kind = best ? best.pl.kind : a.kind;
+        const tp = a.temp ? ` ${fmtTemp(a.temp)}` : "";
+        // Just the variety name in the recap — no days-to-maturity, F1/OP, source or color codes.
+        const seen = new Set(), vs = [];
+        entryVarieties(a.d).forEach(v => { const k = cleanVar(v).toLowerCase().replace(/[^a-z0-9]/g, ""); if(k && !seen.has(k)){ seen.add(k); vs.push(varDetail(v)); loggedVars.add(k); } });
+        cropSlot(pd.m, p.name, pd.d).events.push({
+          day: pd.d, done: true,
+          text: `${labelFor(kind, p.slug)}: ${shortISO(iso)}${tp}`,
+          varieties: vs
+        });
+        const evRef = cropSlot(pd.m, p.name, pd.d).events[cropSlot(pd.m, p.name, pd.d).events.length - 1];
+        if(!firstEvent) firstEvent = evRef;
+        if(a.kind === "sow" && !firstSowEvent) firstSowEvent = evRef;
       });
-      transplant.forEach(d => {
-        const iso = entryDate(d);
-        const [, mm, dd] = iso.split("-").map(Number);
-        const tp = entryTemp(d) || transplantTemp;
-        const suffix = tp ? ` ${fmtTemp(tp)}` : "";
-        addToMonth(mm, dd, `${p.name} — Actual transplant: ${iso}${suffix}`, true);
-      });
-    }
-  }
-
-  const harvestLog = await getHarvestLogFor(seasonKey);
-  harvestLog.forEach(entry => {
-    const [, mm, dd] = entry.date.split("-").map(Number);
-    addToMonth(mm, dd, `${entry.fruit} — Harvest: ${entry.date}`, true);
-  });
-
-  // ---- two-column flow for the body (months + pending list) ----
-  const colGap = 22;
-  const colWidth = (pageW - margin * 2 - colGap) / 2;
-  let col = 0; // 0 = left, 1 = right
-  let colFinalY = [margin, margin]; // tallest y reached in each column so far
-  const bodyTop = y;
-  let colY = [bodyTop, bodyTop];
-
-  function colX(){ return margin + col * (colWidth + colGap); }
-  function colBreak(need){
-    if(colY[col] + need > pageH - margin){
-      colFinalY[col] = colY[col];
-      if(col === 0){
-        col = 1;
-        colY[1] = bodyTop;
-      } else {
-        doc.addPage();
-        col = 0;
-        colY = [margin, margin];
-        colFinalY = [margin, margin];
+      // Varieties saved on the crop but not attached to any dated entry
+      // still get listed, so every variety planted this season appears.
+      let cropVars = [];
+      try{
+        const r = await window.storage.get(`variety:${seasonKey}:${p.slug}`, false);
+        const arr = r ? JSON.parse(r.value) : [];
+        cropVars = (Array.isArray(arr) ? arr : [arr]);
+      }catch(e){}
+      const extraVars = [];
+      cropVars.forEach(v => { const k = cleanVar(v).toLowerCase().replace(/[^a-z0-9]/g, ""); if(k && !loggedVars.has(k)){ loggedVars.add(k); extraVars.push(varDetail(v)); } });
+      if(extraVars.length){
+        const target = firstSowEvent || firstEvent;
+        if(target) target.varieties = (target.varieties || []).concat(extraVars);
+        else if(p.dates.length){
+          const t0 = p.dates[0][0];
+          cropSlot(t0.m, p.name, t0.d).events.push({ day: t0.d, done: true, text: "Varieties", varieties: extraVars });
+        }
       }
+      // planned tasks with no matching actual
+      planned.filter(pl => !pl.used).forEach(pl => {
+        cropSlot(pl.t.m, p.name, pl.t.d).events.push({ day: pl.t.d, done: false, text: `${plannedLabelFor(pl.kind, p.slug)}: planned ${fmtDate(pl.t)}`, short: `${plannedLabelFor(pl.kind, p.slug)} ${fmtDate(pl.t)}` });
+      });
+      // notes, in the month they were written
+      (await getNotesFor(seasonKey, p.slug)).forEach(n => {
+        const md = noteMonthDay(n); if(!md || !n.text) return;
+        cropSlot(md.m, p.name, md.d).notes.push({ day: md.d, text: `${MONTHS[md.m-1]} ${md.d}: ${String(n.text).replace(/\s+/g, " ").trim()}` });
+      });
+      // fertilizer feedings for this crop
+      fertLog.filter(e => fertMatchesCrop(e, p)).forEach(e => {
+        const pd = parseISO(e.date); if(!pd) return;
+        const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount].filter(Boolean).join(" · ");
+        cropSlot(pd.m, p.name, pd.d).feeds.push({ day: pd.d, text: `Fed ${shortISO(e.date)}: ${bits || e.type || "fertilizer"}` });
+      });
     }
   }
-
-  const bodyWidth = colWidth - 12;
-  const monthOrder = [8,9,10,11,12,1,2,3,4,5,6,7];
-  for(const m of monthOrder){
-    const entries = monthBuckets[m];
-    if(!entries || entries.length === 0) continue;
-    entries.sort((a, b) => a.day - b.day);
-
-    colBreak(26);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(MONTH_SIZE);
-    doc.text(MONTHS[m-1], colX(), colY[col]); colY[col] += 7;
-    doc.setDrawColor(200);
-    doc.line(colX(), colY[col], colX() + colWidth, colY[col]); colY[col] += 13;
-
-    entries.forEach(e => {
-      doc.setFont("helvetica", e.bold ? "bold" : "normal");
-      doc.setFontSize(ENTRY_SIZE);
-      const wrapped = doc.splitTextToSize(e.text, bodyWidth - 12);
-      colBreak(wrapped.length * LINE_H + 2);
-      wrapped.forEach(line => {
-        doc.text(line, colX() + 12, colY[col]);
-        colY[col] += LINE_H;
-      });
-    });
-    colY[col] += 8;
-  }
-
-  if(pendingCrops.length){
-    colBreak(26);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(MONTH_SIZE);
-    doc.text("Pending", colX(), colY[col]); colY[col] += 7;
-    doc.setDrawColor(200);
-    doc.line(colX(), colY[col], colX() + colWidth, colY[col]); colY[col] += 13;
-    pendingCrops.forEach(c => {
-      doc.setFont("helvetica", "normal"); doc.setFontSize(ENTRY_SIZE);
-      const wrapped = doc.splitTextToSize(`${c.name} — ${c.note}`, bodyWidth - 12);
-      colBreak(wrapped.length * LINE_H + 2);
-      wrapped.forEach(line => { doc.text(line, colX() + 12, colY[col]); colY[col] += LINE_H; });
-    });
-    colY[col] += 8;
-  }
-
-  colFinalY[col] = colY[col];
-  y = Math.max(colFinalY[0], colFinalY[1]);
-
-  checkPageBreak(60);
-  doc.setDrawColor(0);
-  doc.line(margin, y, pageW - margin, y); y += 16;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  const notes = [
-    "Leafy Greens = Kale, Swiss Chard, Tokyo Bekana, Collards, Bok Choi",
-    "Tomatoes — take cuttings end of Dec (small/cherry varieties only), for emergency use after a freeze",
-  ];
-  notes.forEach(n => {
-    const lines = doc.splitTextToSize(n, pageW - margin*2);
-    lines.forEach(line => { checkPageBreak(13); doc.text(line, margin, y); y += 13; });
+  // feedings logged for beds / whole garden (not tied to one crop)
+  const allCrops = Object.values(season.data).flat();
+  fertLog.filter(e => !allCrops.some(p => fertMatchesCrop(e, p))).forEach(e => {
+    const pd = parseISO(e.date); if(!pd) return;
+    const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount].filter(Boolean).join(" · ");
+    cropSlot(pd.m, e.crop || "Garden", pd.d).feeds.push({ day: pd.d, text: `Fed ${shortISO(e.date)}: ${bits || e.type || "fertilizer"}` });
   });
 
-  checkPageBreak(20);
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(8);
-  doc.text("© 2026 Thor", margin, y); y += 12;
+  /* ---------- collect: harvests (per month -> fruits / vegetables -> item -> dates) ---------- */
+  const harvest = {}; // m -> { fruit: {name -> [..]}, veg: {...} }
+  const addHarvest = (kind, entry) => {
+    const pd = parseISO(entry.date); if(!pd || !entry.fruit) return;
+    if(!harvest[pd.m]) harvest[pd.m] = { fruit: {}, veg: {} };
+    const bucket = harvest[pd.m][kind];
+    (bucket[entry.fruit] = bucket[entry.fruit] || []).push({ d: pd.d, qty: entry.qty || "" });
+  };
+  (await getHarvestLogFor(seasonKey, "fruit")).forEach(e => addHarvest("fruit", e));
+  (await getHarvestLogFor(seasonKey, "vegetable")).forEach(e => addHarvest("veg", e));
+
+  /* ---------- layout: each month is a band, garden left / harvests right ---------- */
+  const gap = 20;
+  const innerW = pageW - margin * 2;
+  const leftW = Math.round(innerW * 0.58);
+  const rightW = innerW - leftW - gap;
+  const leftX = margin, rightX = margin + leftW + gap;
+  let page = 1;
+
+  // A "block" is a list of styled lines already wrapped to its column.
+  function styleOf(kind){
+    switch(kind){
+      case "sub":   return { font:"bold",   size:8,   color:90,  lh:12, indent:0,  before:2 };
+      case "crop":  return { font:"bold",   size:10,  color:0,   lh:13, indent:0,  before:5 };
+      case "done":  return { font:"normal", size:9,   color:0,   lh:12, indent:10, before:0 };
+      case "plan":  return { font:"normal", size:9,   color:130, lh:12, indent:10, before:0 };
+      case "var":   return { font:"italic", size:8, color:90, lh:10.5, indent:20, before:0 };
+      case "note":  return { font:"italic", size:8.5, color:40,  lh:11, indent:10, before:1 };
+      case "feed":  return { font:"normal", size:8.5, color:40,  lh:11, indent:10, before:0 };
+      case "hname": return { font:"bold",   size:9,   color:0,   lh:12, indent:0,  before:3 };
+      case "hdays": return { font:"normal", size:8.5, color:40,  lh:11, indent:10, before:0 };
+      case "planrow": return { font:"normal", size:9, color:130, lh:12, indent:0, before:3 };
+      case "empty": return { font:"italic", size:8.5, color:140, lh:11, indent:0,  before:0 };
+    }
+  }
+  // The built-in PDF font only covers basic Latin characters, so emoji
+  // (e.g. the ❤️ on favorite varieties) are dropped rather than printed as junk.
+  const pdfSafe = t => String(t).replace(/[\u2764\uFE0F\u200D]/g, "").replace(/[^\x20-\x7E\u00A0-\u00FF\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026\u00B7\u00D7]/g, "").replace(/\s{2,}/g, " ").trim();
+  function wrapLines(items, width){
+    const out = [];
+    items.forEach(it => {
+      const st = styleOf(it.kind);
+      doc.setFont("helvetica", st.font); doc.setFontSize(st.size);
+      const lines = doc.splitTextToSize(pdfSafe(it.text), width - st.indent);
+      const heading = ["sub", "crop", "hname"].includes(it.kind);
+      lines.forEach((ln, i) => out.push({ st, text: ln, first: i === 0, heading }));
+    });
+    return out;
+  }
+  function drawColumn(lines, x, startPage, startY){
+    let pg = startPage, yy = startY;
+    lines.forEach((l, i) => {
+      // headings never sit alone at the bottom of a page
+      let need = (l.first ? l.st.before : 0) + l.st.lh;
+      if(l.heading && lines[i + 1]) need += lines[i + 1].st.lh + (lines[i + 1].first ? lines[i + 1].st.before : 0) + (lines[i + 1].heading && lines[i + 2] ? lines[i + 2].st.lh : 0);
+      if(yy + need > pageH - margin){
+        pg++;
+        if(pg > doc.getNumberOfPages()) doc.addPage();
+        doc.setPage(pg);
+        yy = margin + 4;
+      }
+      if(l.first) yy += l.st.before;
+      doc.setFont("helvetica", l.st.font); doc.setFontSize(l.st.size); doc.setTextColor(l.st.color);
+      doc.text(l.text, x + l.st.indent, yy + l.st.size);
+      yy += l.st.lh;
+    });
+    return { pg, yy };
+  }
+
+  for(const m of seasonMonthOrder){
+    const g = garden[m] || {};
+    const h = harvest[m];
+    const cropNames = Object.keys(g).sort((a, b) => g[a].first - g[b].first || a.localeCompare(b));
+    if(!cropNames.length && !h) continue;
+
+    // left column items
+    const left = [{ kind:"sub", text:"IN THE GARDEN" }];
+    if(!cropNames.length) left.push({ kind:"empty", text:"Nothing logged this month." });
+    cropNames.forEach(name => {
+      const c = g[name];
+      // Crops with only planned (not yet done) tasks this month and nothing
+      // else logged collapse to one gray line to keep the page compact.
+      if(c.events.length && c.events.every(ev => !ev.done) && !c.notes.length && !c.feeds.length){
+        left.push({ kind:"planrow", text: `${name} — ${c.events.sort((a, b) => a.day - b.day).map(ev => ev.short).join(" · ")}` });
+        return;
+      }
+      left.push({ kind:"crop", text:name });
+      c.events.sort((a, b) => a.day - b.day).forEach(ev => {
+        left.push({ kind: ev.done ? "done" : "plan", text: ev.text });
+        (ev.varieties || []).forEach(v => left.push({ kind:"var", text: `\u2022 ${v}` }));
+      });
+      c.feeds.sort((a, b) => a.day - b.day).forEach(f => left.push({ kind:"feed", text: f.text }));
+      c.notes.sort((a, b) => a.day - b.day).forEach(n => left.push({ kind:"note", text: `Note ${n.text}` }));
+    });
+    // right column items
+    const right = [{ kind:"sub", text:"HARVESTS" }];
+    const addHarvestGroup = (label, bucket) => {
+      const names = Object.keys(bucket || {}).sort((a, b) => Math.min(...bucket[a].map(x => x.d)) - Math.min(...bucket[b].map(x => x.d)));
+      if(!names.length) return;
+      right.push({ kind:"sub", text: label });
+      names.forEach(n => {
+        const days = bucket[n].sort((a, b) => a.d - b.d).map(x => `${x.d}${x.qty ? ` (${x.qty})` : ""}`);
+        right.push({ kind:"hname", text: `${n}  ×${days.length}` });
+        right.push({ kind:"hdays", text: `${MONTHS[m-1]} ${days.join(", ")}` });
+      });
+    };
+    if(h){ addHarvestGroup("Fruits", h.fruit); addHarvestGroup("Vegetables", h.veg); }
+    if(right.length === 1) right.push({ kind:"empty", text:"No harvests logged." });
+
+    const leftLines = wrapLines(left, leftW);
+    const rightLines = wrapLines(right, rightW);
+
+    // month header (keep it with at least a few lines of content)
+    if(y + 60 > pageH - margin){ page++; if(page > doc.getNumberOfPages()) doc.addPage(); doc.setPage(page); y = margin; }
+    doc.setTextColor(0); doc.setFont("helvetica", "bold"); doc.setFontSize(14);
+    doc.text(MONTHS[m-1], margin, y + 12);
+    doc.setDrawColor(0); doc.line(margin, y + 17, pageW - margin, y + 17);
+    const top = y + 22;
+    const L = drawColumn(leftLines, leftX, page, top);
+    doc.setPage(page);
+    const R = drawColumn(rightLines, rightX, page, top);
+    // light divider between the two columns on the month's first page
+    doc.setPage(page); doc.setDrawColor(200);
+    const divEnd = (L.pg === page && R.pg === page) ? Math.max(L.yy, R.yy) : pageH - margin;
+    doc.line(rightX - gap / 2, top + 2, rightX - gap / 2, divEnd - 4);
+    if(L.pg > R.pg || (L.pg === R.pg && L.yy >= R.yy)){ page = L.pg; y = L.yy; } else { page = R.pg; y = R.yy; }
+    doc.setPage(page);
+    y += 14;
+  }
+
+  /* ---------- pending crops + general notes ---------- */
+  const tail = [];
+  if(pendingCrops.length){
+    tail.push({ kind:"sub", text:"PENDING — NO DATES YET" });
+    pendingCrops.forEach(c => tail.push({ kind:"done", text:`${c.name} — ${c.note}` }));
+  }
+  tail.push({ kind:"sub", text:"REMINDERS" });
+  tail.push({ kind:"done", text:"Leafy Greens = Kale, Swiss Chard, Tokyo Bekana, Collards, Bok Choi" });
+  tail.push({ kind:"done", text:"Tomatoes — take cuttings end of Dec (small/cherry varieties only), for emergency use after a freeze" });
+  if(y + 40 > pageH - margin){ page++; if(page > doc.getNumberOfPages()) doc.addPage(); doc.setPage(page); y = margin; }
+  doc.setDrawColor(0); doc.line(margin, y, pageW - margin, y); y += 6;
+  const T = drawColumn(wrapLines(tail, innerW), margin, page, y);
+  page = T.pg; y = T.yy + 10;
+  doc.setPage(page);
+  if(y + 14 > pageH - margin){ doc.addPage(); page++; y = margin; }
+  doc.setFont("helvetica", "italic"); doc.setFontSize(8); doc.setTextColor(0);
+  doc.text("© 2026 Thor", margin, y);
 
   doc.save(`Odessa Garden ${season.label}.pdf`);
 }
