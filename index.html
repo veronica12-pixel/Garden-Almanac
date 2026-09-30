@@ -660,11 +660,23 @@
   .cropfert-row{ font-size:12.5px; color:var(--ink); line-height:1.45; padding:5px 0; border-bottom:1px dashed var(--paper-2); }
   .cropfert-row:last-child{ border-bottom:none; }
   .cropfert-row span{ color:var(--ink-soft); }
-  .n-move{ flex:none; font-size:12px; line-height:1; padding:4px 6px; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
-  .journal-kind-row{ display:grid; grid-template-columns:1fr 1fr; gap:6px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:4px; margin:0 0 12px; }
-  .journal-kind-btn{ font-family:'Inter',sans-serif; font-size:14px; font-weight:600; border:none; border-radius:9px; padding:9px 6px; background:transparent; color:var(--ink-soft); cursor:pointer; }
-  .journal-kind-btn[data-jkind="fruit"].active{ background:#FFF0E3; color:#B9692E; box-shadow:0 1px 3px rgba(90,70,110,0.12); }
-  .journal-kind-btn[data-jkind="veg"].active{ background:#EAF8EC; color:#3E8054; box-shadow:0 1px 3px rgba(90,70,110,0.12); }
+  .journal-pick-label{ font-family:'IBM Plex Mono', monospace; font-size:10.8px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 5px; }
+  .journal-kind-row{ display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin:0 0 10px; }
+  .journal-kind-btn{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; border:1px solid var(--line); border-radius:10px; padding:9px 4px; background:var(--card); color:var(--ink-soft); cursor:pointer; }
+  .journal-kind-btn[data-jkind="fruit"].active{ background:#FFF0E3; border-color:#F0C9A4; color:#B9692E; }
+  .journal-kind-btn[data-jkind="veg"].active{ background:#EEF7EA; border-color:#C3E0B6; color:#3E7A3A; }
+  .journal-kind-btn[data-jkind="flower"].active{ background:#FBEAF4; border-color:#EDBEDC; color:#A0457E; }
+  .journal-filter-row{ display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 8px; }
+  .journal-filter-btn{ font-family:'Inter',sans-serif; font-size:12px; font-weight:600; border-radius:999px; padding:4px 11px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; }
+  .journal-filter-btn.active{ background:var(--ink); color:var(--card); border-color:var(--ink); }
+  /* each journal entry is tinted by its log */
+  #journalList .note-entry.jk-fruit{ background:#FFF3E8; border-color:#F4D3B3; }
+  #journalList .note-entry.jk-fruit .note-date{ color:#B9692E; }
+  #journalList .note-entry.jk-veg{ background:#EFF8EB; border-color:#C9E4BE; }
+  #journalList .note-entry.jk-veg .note-date{ color:#3E7A3A; }
+  #journalList .note-entry.jk-flower{ background:#FCEEF6; border-color:#EFC9E1; }
+  #journalList .note-entry.jk-flower .note-date{ color:#A0457E; }
+  .note-entry .jk-badge{ flex:none; width:28px; height:28px; border-radius:8px; border:none; background:rgba(255,255,255,0.75); font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; }
   .home-tab-btn.tab-germtemp{ background:linear-gradient(160deg, #ECEEFD 0%, #D5DAF8 100%); color:#4B55A8; border-color:#C6CCF1; }
   .home-tab-btn.tab-germtemp.active{ background:#7580D4; color:#fff; border-color:#7580D4; }
   .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
@@ -1680,7 +1692,7 @@
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
-          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">📓</span><span>Daily Journal</span></button>
+          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">📖</span><span>Daily Journal</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
@@ -1733,13 +1745,14 @@
         </div>
         </div>
         <div id="journalBody" class="home-tab-body" style="display:none;">
-        <p class="backup-hint">Garden notes not tied to any one crop — weather, pests, whatever's worth remembering. Keep fruit trees and the vegetable garden in their own logs.</p>
-        <div class="journal-kind-row" role="tablist">
-          <button type="button" class="journal-kind-btn" data-jkind="fruit" role="tab">🥭 Fruit log</button>
-          <button type="button" class="journal-kind-btn active" data-jkind="veg" role="tab">🍅 Vegetable log</button>
-        </div>
+        <p class="backup-hint">Garden notes not tied to one crop. Pick which log a note belongs to — they all show together below, colored by log.</p>
         <div id="journalAddWrap" class="notes-field" style="margin-top:0;">
-          <label for="journalInput">New entry</label>
+          <label for="journalInput">New entry for</label>
+          <div class="journal-kind-row">
+            <button type="button" class="journal-kind-btn" data-jkind="fruit">🥭 Fruits</button>
+            <button type="button" class="journal-kind-btn active" data-jkind="veg">🍅 Vegetables</button>
+            <button type="button" class="journal-kind-btn" data-jkind="flower">🌸 Garden</button>
+          </div>
           <textarea id="journalInput" placeholder="Add a note" rows="1"></textarea>
           <div class="harvest-add-row" style="margin-top:8px;">
             <div class="date-input-wrap">
@@ -1760,6 +1773,12 @@
             <button id="journalAddBtn" type="button" class="h-add-btn">Add entry</button>
             <button id="journalCancelBtn" type="button" class="h-cancel-btn" style="display:none;">Cancel</button>
           </div>
+        </div>
+        <div class="journal-filter-row">
+          <button type="button" class="journal-filter-btn active" data-jfilter="all">All</button>
+          <button type="button" class="journal-filter-btn" data-jfilter="fruit">🥭 Fruits</button>
+          <button type="button" class="journal-filter-btn" data-jfilter="veg">🍅 Vegetables</button>
+          <button type="button" class="journal-filter-btn" data-jfilter="flower">🌸 Garden</button>
         </div>
         <div class="notes-list" id="journalList"></div>
         </div>
@@ -3191,15 +3210,37 @@ async function setFridgeLog(slug, arr){
 }
 
 /* ---------------- daily journal (Home tab, not tied to any one crop) ---------------- */
-// Daily Journal keeps two separate logs per season: fruit trees and the
-// vegetable garden. The vegetable log uses the original key, so every
-// journal entry written before the split stays in the Vegetable log.
+// Daily Journal: one list per season, each entry tagged with the log it
+// belongs to (fruit / veg / flower). Entries from before logs existed have
+// no tag and count as Vegetable. journalKind = the log picked for the next
+// new entry; journalFilter = which log(s) the list is showing.
 let journalKind = "veg";
-function journalKey(){ return journalKind === "fruit" ? `journalFruit:${activeSeason}` : `journal:${activeSeason}`; }
+let journalFilter = "all";
+const JOURNAL_KINDS = { fruit:{ icon:"🥭", label:"Fruits", one:"fruit" }, veg:{ icon:"🍅", label:"Vegetables", one:"vegetable" }, flower:{ icon:"🌸", label:"Garden", one:"garden" } };
+function journalEntryKind(n){ return (n && JOURNAL_KINDS[n.kind]) ? n.kind : "veg"; }
+function journalKey(){ return `journal:${activeSeason}`; }
+// One-time 24h window (until Oct 1, 2026, 6:14 PM Eastern) to sort older,
+// already-locked notes into the right log. After that, switching a note's
+// log works like any other edit: only while it's unlocked (its first 48h,
+// or with the unlock in Save a copy).
+const JOURNAL_SORT_GRACE_UNTIL = Date.UTC(2026, 9, 1, 22, 14);
+function canSwitchJournalLog(n){ return !isEntryLocked(n && n.addedAt) || Date.now() < JOURNAL_SORT_GRACE_UNTIL; }
 async function getJournal(){
   try{
     const r = await window.storage.get(journalKey(), false);
-    const arr = r ? JSON.parse(r.value) : [];
+    let arr = r ? JSON.parse(r.value) : [];
+    // Fold in the short-lived separate Fruit log, if one was saved.
+    try{
+      const fk = `journalFruit:${activeSeason}`;
+      const fr = await window.storage.get(fk, false);
+      const fruitArr = fr ? (JSON.parse(fr.value) || []) : [];
+      if(fruitArr.length){
+        arr = (arr || []).concat(fruitArr.map(n => ({ ...n, kind: "fruit" })));
+        arr.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+        await window.storage.set(journalKey(), JSON.stringify(arr), false);
+      }
+      if(fr) await window.storage.delete(fk, false);
+    }catch(e){}
     let migrated = false;
     // Entries logged before the 1-day edit lock existed have no addedAt, so
     // isEntryLocked() (which short-circuits on a falsy addedAt) never locks
@@ -4350,12 +4391,16 @@ document.getElementById("fertCancelBtn").addEventListener("click", () => { fertR
   });
 })();
 
-document.querySelectorAll(".journal-kind-btn").forEach(btn => btn.addEventListener("click", () => {
-  if(journalKind === btn.dataset.jkind) return;
-  journalKind = btn.dataset.jkind;
-  document.querySelectorAll(".journal-kind-btn").forEach(b => b.classList.toggle("active", b === btn));
+function setJournalPicker(kind){
+  journalKind = JOURNAL_KINDS[kind] ? kind : "veg";
+  document.querySelectorAll(".journal-kind-btn").forEach(b => b.classList.toggle("active", b.dataset.jkind === journalKind));
   const inp = document.getElementById("journalInput");
-  if(inp){ inp.value = ""; inp.placeholder = journalKind === "fruit" ? "Add a fruit note" : "Add a vegetable note"; }
+  if(inp) inp.placeholder = `Add a ${JOURNAL_KINDS[journalKind].one} note`;
+}
+document.querySelectorAll(".journal-kind-btn").forEach(btn => btn.addEventListener("click", () => setJournalPicker(btn.dataset.jkind)));
+document.querySelectorAll(".journal-filter-btn").forEach(btn => btn.addEventListener("click", () => {
+  journalFilter = btn.dataset.jfilter;
+  document.querySelectorAll(".journal-filter-btn").forEach(b => b.classList.toggle("active", b === btn));
   renderJournal();
 }));
 async function renderJournal(){
@@ -4416,11 +4461,12 @@ async function renderJournal(){
   }
 
   const renderEntries = () => {
-    if(entries.length === 0){
-      listEl.innerHTML = `<div class="harvest-empty" style="padding:14px 4px;">No entries yet — today's the first page.</div>`;
+    const shown = entries.map((n, i) => i).filter(i => journalFilter === "all" || journalEntryKind(entries[i]) === journalFilter);
+    if(shown.length === 0){
+      listEl.innerHTML = `<div class="harvest-empty" style="padding:14px 4px;">${entries.length ? `No ${JOURNAL_KINDS[journalFilter].one} notes yet.` : "No entries yet — today's the first page."}</div>`;
     } else {
       // Newest entry on top within each month; months themselves newest first.
-      const order = entries.map((n, i) => i).reverse();
+      const order = shown.slice().reverse();
       const groups = new Map();
       order.forEach(i => {
         const key = journalMonthKey(entries[i].date);
@@ -4443,11 +4489,11 @@ async function renderJournal(){
           const dateLabel = n.date;
           const locked = isPastSeason || isEntryLocked(n.addedAt);
           return `
-            <div class="note-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
+            <div class="note-entry jk-${journalEntryKind(n)}${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
+              ${(!isPastSeason && canSwitchJournalLog(n)) ? `<button type="button" class="jk-badge" data-i="${i}" title="${JOURNAL_KINDS[journalEntryKind(n)].label} — tap to change log" aria-label="${JOURNAL_KINDS[journalEntryKind(n)].label} log — tap to change">${JOURNAL_KINDS[journalEntryKind(n)].icon}</button>` : `<span class="jk-badge">${JOURNAL_KINDS[journalEntryKind(n)].icon}</span>`}
               <span class="note-date">${dateLabel}</span>
               <span class="note-text">${n.text}</span>
               ${n.photo ? `<button type="button" class="note-photo-badge" data-i="${i}" aria-label="View photo"><img alt=""></button>` : ""}
-              ${!isPastSeason ? `<button type="button" class="n-move" data-i="${i}" title="Move to the ${journalKind === "fruit" ? "Vegetable" : "Fruit"} log" aria-label="Move to the ${journalKind === "fruit" ? "Vegetable" : "Fruit"} log">→${journalKind === "fruit" ? "🍅" : "🥭"}</button>` : ""}
               ${!locked ? `
                 <button type="button" class="n-edit" data-i="${i}" aria-label="Edit entry">✎</button>
                 <button type="button" class="n-remove" data-i="${i}" aria-label="Remove entry">×</button>
@@ -4494,6 +4540,7 @@ async function renderJournal(){
 
     async function startEdit(i){
       editingIndex = i;
+      setJournalPicker(journalEntryKind(entries[i]));
       openMonths.add(journalMonthKey(entries[i].date));
       input.value = entries[i].text;
       dateInput.value = /^\d{4}-\d{2}-\d{2}$/.test(entries[i].date) ? entries[i].date : "";
@@ -4540,39 +4587,18 @@ async function renderJournal(){
         });
       });
     });
-    // Move an entry to the other log (fruit <-> vegetable). Allowed even
-    // after the 48h lock, since it only files the note in the right log —
-    // the note's text, date and photo don't change.
-    listEl.querySelectorAll(".n-move").forEach(btn => {
+    // Tap an entry's icon to switch its log (Fruits -> Vegetables -> Garden).
+    // Only while the note is unlocked (or during the one-time sorting window).
+    listEl.querySelectorAll(".jk-badge[data-i]").forEach(btn => {
       btn.addEventListener("click", async (e) => {
         e.stopPropagation();
         const i = Number(btn.dataset.i);
-        const moved = entries[i];
-        if(!moved) return;
-        const fromKey = journalKey();
-        const toKind = journalKind === "fruit" ? "veg" : "fruit";
-        const toKey = toKind === "fruit" ? `journalFruit:${activeSeason}` : `journal:${activeSeason}`;
-        let other = [];
-        try{ const r = await window.storage.get(toKey, false); other = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
-        other.push(moved);
-        other.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
-        if(i === editingIndex) exitEditMode();
-        entries.splice(i, 1);
-        try{ await window.storage.set(toKey, JSON.stringify(other), false); }catch(err){}
-        try{ await window.storage.set(fromKey, JSON.stringify(entries), false); }catch(err){}
+        if(!entries[i] || !canSwitchJournalLog(entries[i])) return;
+        const order = ["fruit", "veg", "flower"];
+        const next = order[(order.indexOf(journalEntryKind(entries[i])) + 1) % order.length];
+        entries[i] = { ...entries[i], kind: next };
         renderEntries();
-        showUndoToast(`Moved to the ${toKind === "fruit" ? "Fruit" : "Vegetable"} log.`, async () => {
-          let o2 = [];
-          try{ const r = await window.storage.get(toKey, false); o2 = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
-          o2 = o2.filter(x => !(x === moved || (x.id && x.id === moved.id) || (x.addedAt === moved.addedAt && x.text === moved.text)));
-          try{ await window.storage.set(toKey, JSON.stringify(o2), false); }catch(err){}
-          let back = [];
-          try{ const r = await window.storage.get(fromKey, false); back = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
-          back.push(moved);
-          back.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
-          try{ await window.storage.set(fromKey, JSON.stringify(back), false); }catch(err){}
-          renderJournal();
-        });
+        await setJournal(entries);
       });
     });
     listEl.querySelectorAll(".n-edit").forEach(btn => {
@@ -4661,7 +4687,7 @@ async function renderJournal(){
       photoFlag = true;
     }
 
-    const entry = { id, date, text: val };
+    const entry = { id, date, text: val, kind: journalKind };
     if(photoFlag) entry.photo = true;
     entry.addedAt = (prevEntry && prevEntry.addedAt) || Date.now();
 
@@ -9345,4 +9371,3 @@ async function checkTomorrowReminder(){
 })();
 </script>
 </body></html>
-
