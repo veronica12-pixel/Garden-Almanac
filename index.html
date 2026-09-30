@@ -660,6 +660,11 @@
   .cropfert-row{ font-size:12.5px; color:var(--ink); line-height:1.45; padding:5px 0; border-bottom:1px dashed var(--paper-2); }
   .cropfert-row:last-child{ border-bottom:none; }
   .cropfert-row span{ color:var(--ink-soft); }
+  .n-move{ flex:none; font-size:12px; line-height:1; padding:4px 6px; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; white-space:nowrap; }
+  .journal-kind-row{ display:grid; grid-template-columns:1fr 1fr; gap:6px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:4px; margin:0 0 12px; }
+  .journal-kind-btn{ font-family:'Inter',sans-serif; font-size:14px; font-weight:600; border:none; border-radius:9px; padding:9px 6px; background:transparent; color:var(--ink-soft); cursor:pointer; }
+  .journal-kind-btn[data-jkind="fruit"].active{ background:#FFF0E3; color:#B9692E; box-shadow:0 1px 3px rgba(90,70,110,0.12); }
+  .journal-kind-btn[data-jkind="veg"].active{ background:#EAF8EC; color:#3E8054; box-shadow:0 1px 3px rgba(90,70,110,0.12); }
   .home-tab-btn.tab-germtemp{ background:linear-gradient(160deg, #ECEEFD 0%, #D5DAF8 100%); color:#4B55A8; border-color:#C6CCF1; }
   .home-tab-btn.tab-germtemp.active{ background:#7580D4; color:#fff; border-color:#7580D4; }
   .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
@@ -1675,7 +1680,7 @@
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
-          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">🥕</span><span>Daily Journal</span></button>
+          <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">📓</span><span>Daily Journal</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
@@ -1728,7 +1733,11 @@
         </div>
         </div>
         <div id="journalBody" class="home-tab-body" style="display:none;">
-        <p class="backup-hint">General garden notes, not tied to any one crop — weather, pests, whatever's worth remembering. Logged with today's date.</p>
+        <p class="backup-hint">Garden notes not tied to any one crop — weather, pests, whatever's worth remembering. Keep fruit trees and the vegetable garden in their own logs.</p>
+        <div class="journal-kind-row" role="tablist">
+          <button type="button" class="journal-kind-btn" data-jkind="fruit" role="tab">🥭 Fruit log</button>
+          <button type="button" class="journal-kind-btn active" data-jkind="veg" role="tab">🍅 Vegetable log</button>
+        </div>
         <div id="journalAddWrap" class="notes-field" style="margin-top:0;">
           <label for="journalInput">New entry</label>
           <textarea id="journalInput" placeholder="Add a note" rows="1"></textarea>
@@ -3182,9 +3191,14 @@ async function setFridgeLog(slug, arr){
 }
 
 /* ---------------- daily journal (Home tab, not tied to any one crop) ---------------- */
+// Daily Journal keeps two separate logs per season: fruit trees and the
+// vegetable garden. The vegetable log uses the original key, so every
+// journal entry written before the split stays in the Vegetable log.
+let journalKind = "veg";
+function journalKey(){ return journalKind === "fruit" ? `journalFruit:${activeSeason}` : `journal:${activeSeason}`; }
 async function getJournal(){
   try{
-    const r = await window.storage.get(`journal:${activeSeason}`, false);
+    const r = await window.storage.get(journalKey(), false);
     const arr = r ? JSON.parse(r.value) : [];
     let migrated = false;
     // Entries logged before the 1-day edit lock existed have no addedAt, so
@@ -3205,7 +3219,7 @@ async function getJournal(){
   }catch(e){ return []; }
 }
 async function setJournal(arr){
-  try{ await window.storage.set(`journal:${activeSeason}`, JSON.stringify(arr), false); }catch(e){}
+  try{ await window.storage.set(journalKey(), JSON.stringify(arr), false); }catch(e){}
 }
 async function getJournalPhoto(id){
   try{
@@ -4336,6 +4350,14 @@ document.getElementById("fertCancelBtn").addEventListener("click", () => { fertR
   });
 })();
 
+document.querySelectorAll(".journal-kind-btn").forEach(btn => btn.addEventListener("click", () => {
+  if(journalKind === btn.dataset.jkind) return;
+  journalKind = btn.dataset.jkind;
+  document.querySelectorAll(".journal-kind-btn").forEach(b => b.classList.toggle("active", b === btn));
+  const inp = document.getElementById("journalInput");
+  if(inp){ inp.value = ""; inp.placeholder = journalKind === "fruit" ? "Add a fruit note" : "Add a vegetable note"; }
+  renderJournal();
+}));
 async function renderJournal(){
   const input = document.getElementById("journalInput");
   const listEl = document.getElementById("journalList");
@@ -4425,6 +4447,7 @@ async function renderJournal(){
               <span class="note-date">${dateLabel}</span>
               <span class="note-text">${n.text}</span>
               ${n.photo ? `<button type="button" class="note-photo-badge" data-i="${i}" aria-label="View photo"><img alt=""></button>` : ""}
+              ${!isPastSeason ? `<button type="button" class="n-move" data-i="${i}" title="Move to the ${journalKind === "fruit" ? "Vegetable" : "Fruit"} log" aria-label="Move to the ${journalKind === "fruit" ? "Vegetable" : "Fruit"} log">→${journalKind === "fruit" ? "🍅" : "🥭"}</button>` : ""}
               ${!locked ? `
                 <button type="button" class="n-edit" data-i="${i}" aria-label="Edit entry">✎</button>
                 <button type="button" class="n-remove" data-i="${i}" aria-label="Remove entry">×</button>
@@ -4514,6 +4537,41 @@ async function renderJournal(){
             renderEntries();
             await setJournal(entries);
           });
+        });
+      });
+    });
+    // Move an entry to the other log (fruit <-> vegetable). Allowed even
+    // after the 48h lock, since it only files the note in the right log —
+    // the note's text, date and photo don't change.
+    listEl.querySelectorAll(".n-move").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const i = Number(btn.dataset.i);
+        const moved = entries[i];
+        if(!moved) return;
+        const fromKey = journalKey();
+        const toKind = journalKind === "fruit" ? "veg" : "fruit";
+        const toKey = toKind === "fruit" ? `journalFruit:${activeSeason}` : `journal:${activeSeason}`;
+        let other = [];
+        try{ const r = await window.storage.get(toKey, false); other = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
+        other.push(moved);
+        other.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+        if(i === editingIndex) exitEditMode();
+        entries.splice(i, 1);
+        try{ await window.storage.set(toKey, JSON.stringify(other), false); }catch(err){}
+        try{ await window.storage.set(fromKey, JSON.stringify(entries), false); }catch(err){}
+        renderEntries();
+        showUndoToast(`Moved to the ${toKind === "fruit" ? "Fruit" : "Vegetable"} log.`, async () => {
+          let o2 = [];
+          try{ const r = await window.storage.get(toKey, false); o2 = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
+          o2 = o2.filter(x => !(x === moved || (x.id && x.id === moved.id) || (x.addedAt === moved.addedAt && x.text === moved.text)));
+          try{ await window.storage.set(toKey, JSON.stringify(o2), false); }catch(err){}
+          let back = [];
+          try{ const r = await window.storage.get(fromKey, false); back = r ? (JSON.parse(r.value) || []) : []; }catch(err){}
+          back.push(moved);
+          back.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+          try{ await window.storage.set(fromKey, JSON.stringify(back), false); }catch(err){}
+          renderJournal();
         });
       });
     });
@@ -9287,3 +9345,4 @@ async function checkTomorrowReminder(){
 })();
 </script>
 </body></html>
+
