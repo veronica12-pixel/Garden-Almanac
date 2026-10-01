@@ -90,6 +90,7 @@
     color:#3D7D82; background:#CDEDEA; padding:6px 10px;
   }
   html,body{margin:0;padding:0;}
+  html, body{ overflow-x:clip; }
   body{
     background:var(--paper);
     color:var(--ink);
@@ -702,6 +703,22 @@
   .gtemp-row-tw input::placeholder{ color:var(--entry-placeholder); font-weight:400; }
   .gtemp-row-tw-locked{ font-size:13px; font-weight:700; color:#2F7D6B; white-space:nowrap; }
   .gtemp-col-header-tw{ flex:0 0 48px; display:flex; align-items:center; justify-content:center; color:#2F7D6B; }
+  /* Phone layout for the Germination Log: the four numbers no longer fit
+     beside the crop name, so each crop becomes a small card — name on top,
+     then Temp / Sprouts / Maturity / Transplant in four labeled cells. */
+  @media (max-width:560px){
+    .gtemp-section-header-row > span:not(.gtemp-section-title){ display:none; }
+    .gtemp-section-title{ margin-left:0; }
+    .gtemp-row{ display:grid; grid-template-columns:22px repeat(4, minmax(0, 1fr)); column-gap:6px; row-gap:6px; align-items:start; padding:10px 0; }
+    .gtemp-row-icon{ grid-column:1; grid-row:1; }
+    .gtemp-row-label{ grid-column:2 / -1; grid-row:1; align-self:center; }
+    .gtemp-row-val, .gtemp-row-days, .gtemp-row-dtm, .gtemp-row-tw{ grid-row:2; flex:none; width:auto; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:13px; white-space:nowrap; }
+    .gtemp-row-val{ grid-column:2; } .gtemp-row-days{ grid-column:3; } .gtemp-row-dtm{ grid-column:4; } .gtemp-row-tw{ grid-column:5; }
+    .gtemp-row-val::before, .gtemp-row-days::before, .gtemp-row-dtm::before, .gtemp-row-tw::before{
+      content:attr(data-label); font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);
+    }
+    .gtemp-row-tw input{ width:100%; max-width:64px; padding:1px 2px; font-size:13px; }
+  }
   .gtemp-col-header-rotate{ display:inline-block; white-space:nowrap; font-size:8px; font-weight:700; color:inherit; text-transform:uppercase; letter-spacing:.02em; }
   .gtemp-note-row{ font-size:15px; line-height:1.45; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:9px 11px; margin:9px 0; }
   .gtemp-note-row b{ color:var(--ink); font-size:16px; }
@@ -7119,7 +7136,23 @@ function renderCompareList(){
 function homeBtnDeactivateAll(){
   document.querySelectorAll(".home-tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".home-tab-body").forEach(b => { b.style.display = "none"; });
+  updateHomeButtonsVisibility();
 }
+// While a Home panel is open, hide every Home button on the rows below the
+// one that was tapped, so the panel sits right under it. Tapping the open
+// button again closes the panel and brings all the buttons back.
+function updateHomeButtonsVisibility(){
+  const btns = [...document.querySelectorAll(".home-tabs-card .home-tab-btn")];
+  const rows = [...document.querySelectorAll(".home-tabs-card .home-tabs-row")];
+  btns.forEach(b => { b.style.display = ""; });
+  rows.forEach(r => { r.style.display = ""; });
+  const active = btns.find(b => b.classList.contains("active") && b.dataset.hometab);
+  if(!active) return;
+  const top = active.getBoundingClientRect().top;
+  btns.forEach(b => { if(b.getBoundingClientRect().top > top + 4) b.style.display = "none"; });
+  rows.forEach(r => { if(![...r.querySelectorAll(".home-tab-btn")].some(b => b.style.display !== "none")) r.style.display = "none"; });
+}
+window.addEventListener("resize", () => updateHomeButtonsVisibility());
 /* ---------------- germination report (by seed company) ----------------
    Tallies every logged variety's seed source(s) against whether it was
    marked "Seeds didn't germinate", for the currently viewed season, so
@@ -7308,10 +7341,10 @@ async function renderGerminationTempChart(){
         <div class="gtemp-row">
           <div class="gtemp-row-icon">${emoji}</div>
           <div class="gtemp-row-label">${label}</div>
-          <div class="gtemp-row-val">${g.optMin}–${g.optMax}°F</div>
-          <div class="gtemp-row-days">${daysText}</div>
-          <div class="gtemp-row-dtm">${dtmText}</div>
-          <div class="gtemp-row-tw">${(() => {
+          <div class="gtemp-row-val" data-label="Temp">${g.optMin}–${g.optMax}°F</div>
+          <div class="gtemp-row-days" data-label="Sprouts">${daysText}</div>
+          <div class="gtemp-row-dtm" data-label="Maturity">${dtmText}</div>
+          <div class="gtemp-row-tw" data-label="Transplant">${(() => {
             const tw = twMap[p.slug];
             if(tw && tw.w && isEntryLocked(tw.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(tw.w)}w</span>`;
             return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="wks" aria-label="Weeks from seed start to transplant for ${escAttr(p.name)}">`;
@@ -7987,6 +8020,7 @@ document.querySelectorAll(".home-tab-btn[data-hometab]").forEach(btn => {
       if(key === "germtemp") renderGerminationTempChart();
       if(key === "fert") renderFertilizerLog();
     }
+    updateHomeButtonsVisibility();
   });
 });
 function wireSimpleToggle(toggleId, bodyId){
