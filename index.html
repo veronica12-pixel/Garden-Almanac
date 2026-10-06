@@ -97,7 +97,7 @@
     font-family:'Inter',sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100dvh;
-    overflow-x:hidden;
+    overflow-x:clip;
   }
   #app{
     max-width:480px;
@@ -911,7 +911,13 @@
     background:var(--card); border:1px solid var(--line); border-radius:16px;
     padding:16px 16px 17px; box-shadow:var(--shadow); position:relative; min-width:0;
   }
-  .plant-head-row{display:flex; align-items:center; gap:4px;}
+  .plant-head-row{
+    display:flex; align-items:center; gap:4px;
+    position:sticky; top:var(--topbar-h, 112px); z-index:4;
+    background:var(--card); border-radius:16px 16px 0 0;
+    margin:-16px -16px -8px; padding:16px 16px 8px;
+  }
+  .plant-card{ scroll-margin-top:calc(var(--topbar-h, 112px) + 8px); }
   .plant-head{
     display:flex; align-items:center; gap:9px; margin-bottom:0; min-width:0; width:100%;
     background:none; border:none; padding:0; cursor:pointer; text-align:left; font:inherit;
@@ -2058,7 +2064,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.06-2</div>
   </main>
 
   <nav class="tabbar">
@@ -2220,6 +2226,15 @@
 </div>
 
 <script>
+(function(){
+  function setTopbarH(){
+    var h = document.querySelector("header.topbar");
+    if(h) document.documentElement.style.setProperty("--topbar-h", h.offsetHeight + "px");
+  }
+  setTopbarH();
+  window.addEventListener("resize", setTopbarH);
+  window.addEventListener("load", setTopbarH);
+})();
 const READ_ONLY = (function(){
   const el = document.getElementById("read-only-flag");
   return !!(el && el.textContent.trim() === "true");
@@ -3140,6 +3155,8 @@ async function setTemp(slug, kind, val){
 const PLANT_COUNT_SPLIT = ["tomatoes", "peppers", "eggplants"];
 // Crops that don't get the plant count box at all.
 const PLANT_COUNT_SKIP = ["lettuce", "radishes", "carrots"];
+// Sown straight into the garden — no transplant step, so no "Actual transplant" field.
+const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "carrots", "fennel", "longbeans"];
 async function getPlantCountFor(season, slug){
   try{
     const r = await window.storage.get(`plants:${season}:${slug}`, false);
@@ -4977,7 +4994,7 @@ async function renderGrid(sectionKey, containerId){
               </div>
               <div class="date-chips" id="pottedup-chips-${p.slug}"></div>
             </div>` : ""}
-            ${p.slug === "garlic" ? "" : `
+            ${(p.slug === "garlic" || DIRECT_SOW_CROPS.includes(p.slug)) ? "" : `
             <div class="actual-field">
               <label for="transplant-${p.slug}">Actual transplant</label>
               <div class="actual-input-row">
@@ -6100,7 +6117,7 @@ async function renderGrid(sectionKey, containerId){
         varietyHeightEl: card.querySelector(`#sow-variety-height-${p.slug}`),
         varietyWidthEl: card.querySelector(`#sow-variety-width-${p.slug}`)
       });
-      if(p.slug !== "garlic"){
+      if(p.slug !== "garlic" && !DIRECT_SOW_CROPS.includes(p.slug)){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       }
       if(["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug)){
