@@ -958,6 +958,16 @@
   .dose{font-size:13.5px; color:var(--ink-soft); line-height:1.65;}
   .dose .wave + .wave{margin-top:5px; padding-top:5px; border-top:1px dotted var(--line);}
   .dose .lbl{color:var(--ink); font-weight:500;}
+  .wave-line + .wave-line{ margin-top:4px; }
+  .wave-done-tag{
+    display:inline-block; margin-left:4px; font-size:11.5px; font-weight:700;
+    background:#DDEFC0; color:#4C6B1C; border-radius:6px; padding:1px 7px; vertical-align:1px;
+  }
+  .wave-passed{ opacity:.5; }
+  .wave-passed-tag{
+    display:inline-block; margin-left:4px; font-size:10.5px; font-weight:600; letter-spacing:.03em;
+    border:1px solid var(--line); color:var(--ink-soft); border-radius:6px; padding:0 6px; vertical-align:1px;
+  }
   .plant-germtemp{
     margin:0 0 8px; font-size:12.2px; color:var(--ink-soft); background:var(--paper-2);
     border-radius:8px; padding:6px 8px; line-height:1.4;
@@ -2095,7 +2105,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.07-2</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.07-3</div>
   </main>
 
   <nav class="tabbar">
@@ -2479,8 +2489,11 @@ function isDatePast(dateObj){
   const today = new Date(); today.setHours(0,0,0,0);
   return dateObj.getTime() < today.getTime();
 }
+// Planned dates are suggestions, so they keep the plain "Start (direct)"
+// wording even once the day has passed — only a logged Actual entry means
+// it really happened (the crop card marks matched waves with ✓).
 function actionLabelForDate(a, dateObj){
-  return isDatePast(dateObj) ? pastTenseAction(a) : a;
+  return a;
 }
 
 function icon(shape, color){
@@ -4872,8 +4885,30 @@ async function renderGrid(sectionKey, containerId){
     const card = document.createElement("div");
     card.className = "plant-card";
     card.id = `plant-card-${p.slug}`;
+    // Which planned windows did you actually use? An Actual sow (or
+    // transplant, for Transplant lines) logged within 2 days of a planned
+    // window marks that line ✓ with the real date; a window that has
+    // passed with nothing logged near it is greyed out as "passed".
+    const plannedSows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean);
+    const plannedTransplants = (await getActualDates(p.slug, "transplant")).map(entryDate).filter(Boolean);
+    const isoToLocal = iso => { const q = String(iso).split("-").map(Number); return new Date(q[0], q[1]-1, q[2]); };
+    const waveLine = t => {
+      const start = plannedDateObj(activeSeason, t);
+      const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
+      const pool = /^Transplant/.test(t.a) ? plannedTransplants : plannedSows;
+      const lo = start.getTime() - 2 * 86400000, hi = end.getTime() + 2 * 86400000;
+      const hit = pool.map(isoToLocal).filter(d => d.getTime() >= lo && d.getTime() <= hi).sort((a, b) => a - b)[0];
+      const passed = !hit && isDatePast(end) && p.slug && !isPastSeason;
+      const note = bcNoteFor(p.slug, activeSeason, t.m, t.d);
+      if(hit){
+        const verb = /^Transplant/.test(t.a) ? "transplanted" : (DIRECT_SOW_CROPS.includes(p.slug) || /direct/i.test(t.a)) ? "sown" : "started";
+        return `<div class="wave-line wave-done"><span class="lbl">${pastTenseAction(t.a)} :</span> ${fmtDate(t)} <span class="wave-done-tag">✓ ${verb} ${MONTHS[hit.getMonth()]} ${hit.getDate()}</span>${note}</div>`;
+      }
+      if(passed) return `<div class="wave-line wave-passed"><span class="lbl">${t.a} :</span> ${fmtDate(t)} <span class="wave-passed-tag">passed</span>${note}</div>`;
+      return `<div class="wave-line"><span class="lbl">${t.a} :</span> ${fmtDate(t)}${note}</div>`;
+    };
     const wavesHTML = p.dates.map(wave =>
-      `<div class="wave">${wave.map(t => `<span class="lbl">${actionLabelForDate(t.a, plannedDateObj(activeSeason, t))} :</span> ${fmtDate(t)}${bcNoteFor(p.slug, activeSeason, t.m, t.d)}`).join("<br>")}</div>`
+      `<div class="wave">${wave.map(waveLine).join("")}</div>`
     ).join("");
     const gt = GERM_TEMP_DATA[p.slug];
     const germTempHTML = !gt ? "" : gt.special
@@ -9314,6 +9349,63 @@ function bcRunFor(type, year, month, day){
   return run;
 }
 
+// Rough number of usable hours in one almanac time string, e.g.
+// "all day" = 24, "until 2am" = 2, "9am – 4pm" = 7, "from 4pm" = 8.
+function bcHours(time){
+  const t = String(time || "").replace(/\(.*?\)/g, "").trim().toLowerCase();
+  if(!t) return 0;
+  if(/^all day|^continuing/.test(t)) return 24;
+  const h = x => {
+    if(!x) return null;
+    if(/midnight/.test(x)) return 24;
+    const m = /(\d{1,2})(?::(\d\d))?\s*(am|pm)/.exec(x);
+    if(!m) return null;
+    let v = Number(m[1]) % 12 + (m[2] ? Number(m[2]) / 60 : 0);
+    if(m[3] === "pm") v += 12;
+    return v;
+  };
+  return t.split(/,\s*then again\s*/).reduce((sum, seg) => {
+    let m;
+    if((m = /^until (.+)$/.exec(seg))) return sum + (h(m[1]) || 0);
+    if((m = /^from (.+?)(?: to (.+))?$/.exec(seg))) return sum + ((m[2] ? h(m[2]) : 24) - (h(m[1]) || 0));
+    if((m = /^(.+?)\s*(?:–|-|until)\s*(.+)$/.exec(seg))){
+      const a = h(m[1]), b = h(m[2]);
+      if(a == null || b == null) return sum;
+      return sum + (b > a ? b - a : 24 - a);
+    }
+    return sum;
+  }, 0);
+}
+// The planned dates were typed in by hand and sometimes cover only part of
+// the Fruit/Leaf/Root/Flower window printed under them (e.g. "Oct 7-8"
+// while the note starts "Oct 6 9am – 4pm"). This stretches each planned
+// date to the full window, counting any day with at least 4 usable hours,
+// so the heading and the green note always agree. Only touches dates the
+// transcribed calendar actually covers.
+function alignPlannedDatesToBiodynamic(){
+  Object.keys(SEASONS).forEach(seasonKey => {
+    const data = SEASONS[seasonKey].data || {};
+    Object.keys(data).forEach(sectionKey => {
+      (data[sectionKey] || []).forEach(p => {
+        const type = CROP_BIO_TYPE[p.slug];
+        if(!type || !p.dates) return;
+        p.dates.forEach(wave => wave.forEach(t => {
+          if(t._bcAligned) return;
+          t._orig = fmtDate(t);
+          const year = seasonYearForMonth(seasonKey, t.m);
+          if(!bcEntryFor(type, year, t.m, t.d)) return;
+          const run = bcRunFor(type, year, t.m, t.d).filter(r => bcHours(r.time) >= 4);
+          if(!run.length) return;
+          const first = run[0], last = run[run.length - 1];
+          t.m = first.m; t.d = first.d;
+          if(last.m === first.m && last.d === first.d){ delete t.m2; delete t.d2; }
+          else { t.m2 = last.m; t.d2 = last.d; }
+          t._bcAligned = true;
+        }));
+      });
+    });
+  });
+}
 // Builds the little "Fruit day — Aug 5 all day, Aug 6 until 3pm" note for
 // one of a crop's planned dates, or "" if that crop/date isn't covered by
 // the calendar (only Aug–Dec 2026 was transcribed).
@@ -9549,6 +9641,7 @@ async function checkTomorrowReminder(){
   }catch(e){}
   await loadAllCustomCrops();
   await loadCustomSeedSources();
+  try{ alignPlannedDatesToBiodynamic(); }catch(e){}
   renderSeasonUI();
   renderSavePdfList();
   wireRainFetch();
