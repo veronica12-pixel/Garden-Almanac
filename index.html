@@ -1271,6 +1271,17 @@
     flex:0 0 var(--dtm-field-w); width:var(--dtm-field-w); min-width:var(--dtm-field-w); max-width:var(--dtm-field-w);
     text-align:left; padding-left:8px;
   }
+  .germ-field > label{ color:#5E7F24; }
+  .germ-days{ margin-top:7px; display:flex; flex-direction:column; gap:5px; }
+  .germ-days-empty{ font-size:12px; font-style:italic; color:var(--ink-soft); }
+  .germ-days-line{
+    display:flex; align-items:baseline; flex-wrap:wrap; gap:6px;
+    background:linear-gradient(160deg, #F1F8E3 0%, #DDEFC0 100%);
+    border:1px solid #CFE3AC; border-radius:12px; padding:7px 11px;
+    font-size:13.5px; color:#3F5A14; font-weight:600;
+  }
+  .germ-days-num{ font-size:22px; line-height:1; color:#5E7F24; font-weight:700; }
+  .germ-days-range{ font-weight:400; font-size:12px; color:#5E7F24; margin-left:auto; }
   .date-chips{display:flex; flex-wrap:wrap; gap:4px; margin-top:5px;}
   .date-chip{
     display:flex; align-items:center; gap:3px; position:relative;
@@ -2076,7 +2087,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.06-3</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.07-1</div>
   </main>
 
   <nav class="tabbar">
@@ -3208,6 +3219,14 @@ const PLANT_COUNT_SPLIT = ["tomatoes", "peppers", "eggplants"];
 // Crops that don't get the plant count box at all.
 const PLANT_COUNT_SKIP = ["lettuce", "radishes", "carrots"];
 // Sown straight into the garden — no transplant step, so no "Actual transplant" field.
+function daysBetweenISO(a, b){
+  const pa = String(a).split("-").map(Number), pb = String(b).split("-").map(Number);
+  return Math.round((Date.UTC(pb[0], pb[1]-1, pb[2]) - Date.UTC(pa[0], pa[1]-1, pa[2])) / 86400000);
+}
+function fmtGermDay(iso){
+  const q = String(iso).split("-").map(Number);
+  return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][q[1]-1] + " " + q[2];
+}
 const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "carrots", "fennel", "longbeans"];
 async function getPlantCountFor(season, slug){
   try{
@@ -5055,6 +5074,16 @@ async function renderGrid(sectionKey, containerId){
               </div>
               <div class="date-chips" id="transplant-chips-${p.slug}"></div>
             </div>`}
+            ${DIRECT_SOW_CROPS.includes(p.slug) ? `
+            <div class="actual-field germ-field">
+              <label for="sprouted-${p.slug}">🌱 Germinated — days after direct sow</label>
+              <div class="actual-input-row">
+                <input id="sprouted-${p.slug}" type="date" aria-label="Date the seedlings came up">
+                <input id="sprouted-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature when the seedlings came up">
+              </div>
+              <div class="date-chips" id="sprouted-chips-${p.slug}"></div>
+              <div class="germ-days" id="germdays-${p.slug}"><span class="germ-days-empty">Pick the day the first seedlings came up — the days since direct sow are counted for you.</span></div>
+            </div>` : ""}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${plantCountFieldHTML}
@@ -5286,7 +5315,7 @@ async function renderGrid(sectionKey, containerId){
           const removedEntry = editingRemovedEntry;
           const restoreIndex = editingEntryOriginalIndex;
           const label = fmtActualEntry(removedEntry);
-          requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : kind === "pottedUp" ? "potting" : "transplant"} entry (${label})?`, async () => {
+          requestGenericDelete(`Delete this ${kind === "sow" ? "sow" : kind === "pottedUp" ? "potting" : kind === "sprouted" ? "germination" : "transplant"} entry (${label})?`, async () => {
             // The entry being edited was already spliced out of `dates`
             // when Edit was tapped — so deleting it here just means
             // discarding the in-progress edit and resetting the form,
@@ -5304,7 +5333,7 @@ async function renderGrid(sectionKey, containerId){
             await renderCombo();
             await updateOverdueFlag();
             await updateLoggedCheck();
-            showUndoToast(`${kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : "Transplanted"} entry deleted.`, async () => {
+            showUndoToast(`${kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : kind === "sprouted" ? "Germinated" : "Transplanted"} entry deleted.`, async () => {
               const insertAt = Math.min(restoreIndex != null ? restoreIndex : dates.length, dates.length);
               dates.splice(insertAt, 0, removedEntry);
               renderDateChips();
@@ -5720,7 +5749,7 @@ async function renderGrid(sectionKey, containerId){
         }
         // Past tense since these are actual logged dates (something that
         // already happened), not the planned/imperative action.
-        const prefix = kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : "Transplanted";
+        const prefix = kind === "sow" ? "Seeded" : kind === "pottedUp" ? "Potted in individual pots" : kind === "sprouted" ? "Germinated" : "Transplanted";
         let pendingVarieties = [];
         // While editing an existing entry, the same button that normally
         // adds a brand-new entry is reused to save the edit instead — its
@@ -6171,6 +6200,30 @@ async function renderGrid(sectionKey, containerId){
       });
       if(p.slug !== "garlic" && !DIRECT_SOW_CROPS.includes(p.slug)){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
+      }
+      if(DIRECT_SOW_CROPS.includes(p.slug)){
+        await wireDateChips("sprouted", card.querySelector(`#sprouted-${p.slug}`), card.querySelector(`#sprouted-temp-${p.slug}`), card.querySelector(`#sprouted-chips-${p.slug}`));
+        const germOut = card.querySelector(`#germdays-${p.slug}`);
+        const updateGermDays = async () => {
+          const sows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean).sort();
+          const ups = (await getActualDates(p.slug, "sprouted")).map(entryDate).filter(Boolean).sort();
+          if(!ups.length){
+            germOut.innerHTML = `<span class="germ-days-empty">Pick the day the first seedlings came up — the days since direct sow are counted for you.</span>`;
+            return;
+          }
+          germOut.innerHTML = ups.map(up => {
+            const sow = sows.filter(d => d <= up).pop();
+            if(!sow) return `<div class="germ-days-line">🌱 Came up ${fmtGermDay(up)} — <i>add the direct sow date above to count the days</i></div>`;
+            const n = daysBetweenISO(sow, up);
+            return `<div class="germ-days-line"><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to germinate <span class="germ-days-range">sown ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></div>`;
+          }).join("");
+        };
+        await updateGermDays();
+        const germObs = new MutationObserver(() => updateGermDays());
+        [`#sow-chips-${p.slug}`, `#sprouted-chips-${p.slug}`].forEach(sel => {
+          const el = card.querySelector(sel);
+          if(el) germObs.observe(el, { childList:true, subtree:true, characterData:true });
+        });
       }
       if(["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug)){
         await wireDateChips("pottedUp", card.querySelector(`#pottedup-${p.slug}`), card.querySelector(`#pottedup-temp-${p.slug}`), card.querySelector(`#pottedup-chips-${p.slug}`));
@@ -7580,7 +7633,8 @@ document.getElementById("deleteCropConfirmBtn").addEventListener("click", async 
     notes: await getNotes(slug),
     seasonDone: await getSeasonDone(slug),
     actualSow: await getActualDates(slug, "sow"),
-    actualTransplant: await getActualDates(slug, "transplant")
+    actualTransplant: await getActualDates(slug, "transplant"),
+    actualSprouted: await getActualDates(slug, "sprouted")
   };
 
   await deleteCrop(sectionKey, slug);
@@ -7604,6 +7658,7 @@ document.getElementById("deleteCropConfirmBtn").addEventListener("click", async 
     if(snapshot.seasonDone) await setSeasonDone(slug, true);
     if(snapshot.actualSow.length) await setActualDates(slug, "sow", snapshot.actualSow);
     if(snapshot.actualTransplant.length) await setActualDates(slug, "transplant", snapshot.actualTransplant);
+    if(snapshot.actualSprouted.length) await setActualDates(slug, "sprouted", snapshot.actualSprouted);
     await renderGrid(sectionKey, containerId);
     reopenCard(containerId, slug);
     renderMonthDropdowns();
