@@ -369,35 +369,43 @@
     font-size:17px; line-height:1;
   }
   .reorder-toggle-btn .rain-toggle-right{ gap:3px; }
-  /* Column layout: crop names down the left (sticky), one column per
-     season across the top (sticky), with both horizontal and vertical
-     scrollbars so wide/tall tables stay usable inside the modal. */
-  .compare-table-wrap{
-    max-height:50vh; overflow:auto; margin:6px 0 4px;
-    border:1px solid var(--line); border-radius:10px;
+  /* Year-over-Year: one compact row per crop, every season side by side,
+     no sideways scrolling. Action on a small line, date bold beneath, and
+     a "+3 days / 2 days earlier" badge against the season before it. */
+  .compare-table-wrap{ margin:6px 0 4px; }
+  .yoy-head, .yoy-row{
+    display:grid; grid-template-columns:minmax(78px, 0.9fr) repeat(var(--yoy-n, 2), minmax(0, 1fr));
+    gap:6px; align-items:center;
   }
-  .compare-table{display:table; border-collapse:collapse; width:100%;}
-  .compare-thead{display:table-header-group;}
-  .compare-tbody{display:table-row-group;}
-  .compare-tr{display:table-row;}
-  .compare-th, .compare-td{
-    display:table-cell; padding:9px 12px; white-space:nowrap;
-    border-bottom:1px solid var(--line); font-size:12.5px; vertical-align:middle;
+  .yoy-head{
+    position:sticky; top:-22px; z-index:2; background:var(--card);
+    padding:8px 0 7px; border-bottom:2px solid var(--evergreen-2); margin-bottom:2px;
   }
-  .compare-th{
-    font-family:'Fraunces', serif; font-weight:600; color:var(--evergreen);
-    background:var(--paper-2); position:sticky; top:0; z-index:1;
-    border-bottom:1px solid var(--evergreen-2);
+  .yoy-head div{ font-family:'Fraunces', serif; font-weight:600; color:var(--evergreen); font-size:14px; }
+  .yoy-head .yoy-now{ color:#fff; background:var(--evergreen); border-radius:8px; padding:2px 8px; justify-self:start; }
+  .yoy-section{
+    margin:12px 0 4px; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:700;
   }
-  .compare-td{color:var(--ink-soft);}
-  .compare-crop-col{
-    position:sticky; left:0; z-index:2; background:var(--card);
-    font-weight:600; color:var(--ink); text-align:left;
-    box-shadow:2px 0 4px rgba(90,70,110,0.08);
-    width:92px; max-width:92px; white-space:normal; line-height:1.25;
+  .yoy-row{ padding:7px 0; border-bottom:1px solid var(--line); }
+  .yoy-row:last-child{ border-bottom:none; }
+  .yoy-crop{ font-weight:600; color:var(--ink); font-size:13.5px; line-height:1.2; }
+  .yoy-cell{
+    background:var(--paper-2); border-radius:9px; padding:5px 8px; min-height:38px;
+    display:flex; flex-direction:column; justify-content:center;
   }
-  .compare-th.compare-crop-col{ z-index:3; background:var(--paper-2); }
-  .compare-tr:last-child .compare-td, .compare-tr:last-child .compare-crop-col{border-bottom:none;}
+  .yoy-act{ font-size:10.5px; color:var(--ink-soft); line-height:1.2; }
+  .yoy-date{ font-size:14px; font-weight:700; color:var(--evergreen); line-height:1.25; }
+  .yoy-cell.planned{ background:transparent; border:1px dashed var(--line); }
+  .yoy-cell.planned .yoy-date{ color:var(--ink-soft); font-weight:600; }
+  .yoy-cell.none{ background:transparent; align-items:flex-start; color:var(--ink-soft); }
+  .yoy-shift{
+    align-self:flex-start; margin-top:3px; font-size:10.5px; font-weight:700;
+    border-radius:6px; padding:1px 6px; line-height:1.4;
+  }
+  .yoy-shift.later{ background:#FBE3D2; color:#A4572A; }
+  .yoy-shift.earlier{ background:#DDEFC0; color:#4C6B1C; }
+  .yoy-shift.same{ background:#ECE6F5; color:#6B5A86; }
 
   /* ---------- calendar modal ---------- */
   .modal-wide{max-width:480px;}
@@ -2087,7 +2095,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.07-1</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.07-2</div>
   </main>
 
   <nav class="tabbar">
@@ -2125,7 +2133,7 @@
 <div class="modal-backdrop" id="compareModalBackdrop">
   <div class="modal">
     <h3>Year-over-Year</h3>
-    <p>First planned date per crop, season by season.</p>
+    <p>When each crop first went in, season by season. Dashed boxes are still to come.</p>
     <div class="compare-table-wrap" id="compareList"></div>
     <button class="modal-close" id="compareModalClose">Close</button>
   </div>
@@ -7207,11 +7215,25 @@ function renderSavePdfList(){
 // The Year-over-Year modal only ever looks back at seasons that already
 // happened, so it always uses the past tense (via the shared
 // pastTenseAction helper defined earlier, alongside actionLabelForDate).
-function firstDateLabel(seasonKey, plant){
-  if(!plant || !plant.dates.length) return "—";
+function shortActionLabel(a, past){
+  if(/direct/i.test(a)) return past ? "Direct sown" : "Direct sow";
+  if(/indoor/i.test(a)) return past ? "Seeds started indoors" : "Start seeds indoors";
+  if(/^Transplant/.test(a)) return past ? "Transplanted" : "Transplant";
+  if(/seeds/i.test(a)) return past ? "Seeds started" : "Start seeds";
+  return past ? pastTenseAction(a) : a;
+}
+function firstDateInfo(seasonKey, plant){
+  if(!plant || !plant.dates.length || !plant.dates[0].length) return null;
   const first = plant.dates[0][0];
-  if(plannedDateObj(seasonKey, first) > new Date()) return "";
-  return `${pastTenseAction(first.a)} ${fmtDate(first)}`;
+  const when = plannedDateObj(seasonKey, first);
+  const past = when <= new Date();
+  return { first, when, past, act: shortActionLabel(first.a, past), date: fmtDate(first) };
+}
+// Kept for anything else that still calls it.
+function firstDateLabel(seasonKey, plant){
+  const i = firstDateInfo(seasonKey, plant);
+  if(!i) return "—";
+  return i.past ? `${pastTenseAction(i.first.a)} ${i.date}` : "";
 }
 function renderCompareList(){
   const el = document.getElementById("compareList");
@@ -7220,38 +7242,48 @@ function renderCompareList(){
     el.innerHTML = `<div class="harvest-empty">Add another season to compare against.</div>`;
     return;
   }
-  const rows = [];
+  const sectionNames = { vegetables:"Vegetables", herbs:"Herbs", flowers:"Flowers", coverCrops:"Cover crops" };
   const seenSlugs = new Set();
+  let body = "";
   ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
-    const allSlugs = new Set();
-    seasonKeys.forEach(sk => (SEASONS[sk].data[sectionKey] || []).forEach(p => allSlugs.add(p.slug)));
+    const allSlugs = [];
+    seasonKeys.forEach(sk => (SEASONS[sk].data[sectionKey] || []).forEach(p => { if(!allSlugs.includes(p.slug)) allSlugs.push(p.slug); }));
+    let rowsHTML = "";
     allSlugs.forEach(slug => {
       if(seenSlugs.has(slug)) return;
       seenSlugs.add(slug);
-      const perSeason = seasonKeys.map(sk => {
-        const plant = (SEASONS[sk].data[sectionKey] || []).find(p => p.slug === slug);
-        return firstDateLabel(sk, plant);
-      });
-      const namedPlant = seasonKeys.map(sk => (SEASONS[sk].data[sectionKey] || []).find(p => p.slug === slug)).find(Boolean);
-      if(namedPlant) rows.push({ name: namedPlant.name, perSeason });
+      const plants = seasonKeys.map(sk => (SEASONS[sk].data[sectionKey] || []).find(p => p.slug === slug));
+      const named = plants.find(Boolean);
+      if(!named) return;
+      const infos = seasonKeys.map((sk, i) => firstDateInfo(sk, plants[i]));
+      const cells = infos.map((info, i) => {
+        if(!info) return `<div class="yoy-cell none">—</div>`;
+        let shift = "";
+        const prev = infos[i - 1];
+        if(prev){
+          // Same calendar day one season apart = 0; anything else is how
+          // many days earlier or later than the season before.
+          const shifted = new Date(prev.when); shifted.setFullYear(shifted.getFullYear() + 1);
+          const diff = Math.round((info.when - shifted) / 86400000);
+          shift = diff === 0 ? `<span class="yoy-shift same">same day</span>`
+            : diff > 0 ? `<span class="yoy-shift later">${diff} day${diff === 1 ? "" : "s"} later</span>`
+            : `<span class="yoy-shift earlier">${-diff} day${diff === -1 ? "" : "s"} earlier</span>`;
+        }
+        return `<div class="yoy-cell${info.past ? "" : " planned"}" title="${info.past ? "" : "Planned — not here yet"}">
+          <span class="yoy-act">${info.act}</span><span class="yoy-date">${info.date}</span>${shift}</div>`;
+      }).join("");
+      rowsHTML += `<div class="yoy-row"><div class="yoy-crop">${named.name}</div>${cells}</div>`;
     });
+    if(rowsHTML) body += `<div class="yoy-section">${sectionNames[sectionKey]}</div>${rowsHTML}`;
   });
-  const headerCells = seasonKeys.map(sk => `<div class="compare-th">${SEASONS[sk].label}</div>`).join("");
-  const bodyRows = rows.map(r => `
-    <div class="compare-tr">
-      <div class="compare-td compare-crop-col">${r.name}</div>
-      ${r.perSeason.map(text => `<div class="compare-td">${text}</div>`).join("")}
-    </div>`).join("");
+  const nowKey = (typeof activeSeason !== "undefined") ? activeSeason : null;
+  el.style.setProperty("--yoy-n", seasonKeys.length);
   el.innerHTML = `
-    <div class="compare-table">
-      <div class="compare-thead">
-        <div class="compare-tr">
-          <div class="compare-th compare-crop-col">Crop</div>
-          ${headerCells}
-        </div>
-      </div>
-      <div class="compare-tbody">${bodyRows}</div>
-    </div>`;
+    <div class="yoy-head">
+      <div>Crop</div>
+      ${seasonKeys.map(sk => `<div class="${sk === nowKey ? "yoy-now" : ""}">${SEASONS[sk].label}</div>`).join("")}
+    </div>
+    ${body}`;
 }
 // Only one of the 5 top buttons (Almanac / How this works / Compare /
 // View Full Calendar / Rain Log) should ever look "selected" at a time.
