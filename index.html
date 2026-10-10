@@ -651,7 +651,7 @@
   .fert-entry-date{ font-size:12px; color:var(--ink-soft); white-space:nowrap; }
   .fert-entry-detail{ font-size:13px; color:var(--ink-soft); margin-top:3px; line-height:1.45; }
   .fert-entry-actions{ display:flex; gap:6px; margin-top:8px; }
-  .fert-entry-actions button{ font-family:'Inter',sans-serif; font-size:12px; font-weight:600; padding:5px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; }
+  .fert-entry-actions button{ font-family:'Inter',sans-serif; font-size:15px; font-weight:700; padding:10px 18px; min-height:44px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer; }
   .fert-entry-actions .fert-del{ color:#C1554A; }
   .fert-group-head{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
   .fert-group-head .fert-entry-crop{ font-size:16px; }
@@ -704,7 +704,15 @@
   .gtemp-col-header-temp{ flex:0 0 66px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .gtemp-col-header-days{ flex:0 0 62px; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); }
   .gtemp-col-header-dtm{ flex:0 0 56px; display:flex; align-items:center; justify-content:center; color:#8154B8; }
-  .gtemp-row-tw{ flex:0 0 48px; display:flex; justify-content:center; }
+  .gtemp-row-tw{ flex:0 0 48px; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .gtemp-tw-unit{
+    display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:var(--paper);
+  }
+  .gtemp-tw-unit button{
+    border:none; background:transparent; color:var(--ink-soft); font-family:'Inter',sans-serif;
+    font-size:10px; font-weight:700; padding:2px 4px; cursor:pointer; line-height:1.2;
+  }
+  .gtemp-tw-unit button.on{ background:#2F7D6B; color:#fff; }
   .gtemp-row-tw input{
     box-sizing:border-box; width:46px; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#2F7D6B;
     background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:4px 2px; text-align:center; outline:none;
@@ -728,6 +736,7 @@
       content:attr(data-label); font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft);
     }
     .gtemp-row-tw input{ width:100%; max-width:64px; padding:1px 2px; font-size:13px; }
+    .gtemp-tw-unit button{ padding:3px 7px; font-size:11px; }
   }
   .gtemp-col-header-rotate{ display:inline-block; white-space:nowrap; font-size:8px; font-weight:700; color:inherit; text-transform:uppercase; letter-spacing:.02em; }
   .gtemp-note-row{ font-size:15px; line-height:1.45; color:var(--ink-soft); background:var(--paper-2); border-radius:8px; padding:9px 11px; margin:9px 0; }
@@ -774,8 +783,8 @@
   .reorder-text{ font-size:14px; color:var(--ink); word-break:break-word; }
   .reorder-checked{ color:var(--ink-soft); text-decoration:line-through; }
   .reorder-delete{
-    flex:none; border:none; background:none; color:var(--ink-soft);
-    font-size:19px; line-height:1; padding:4px 6px; cursor:pointer;
+    flex:none; border:none; background:#FBE9E7; color:#b3261e; border-radius:10px;
+    font-size:22px; line-height:1; width:40px; height:40px; cursor:pointer;
   }
   .reorder-delete:hover{ color:#B84C4C; }
   .reorder-lock{
@@ -835,8 +844,13 @@
     background:none; border:none; color:var(--ink-soft); font-size:15px; line-height:1;
     cursor:pointer; flex:none; padding:4px;
   }
+  .harvest-entry .h-remove{
+    font-size:22px; width:40px; height:40px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:#FBE9E7; color:#b3261e;
+  }
   .harvest-entry .h-edit{
-    font-size:17px; width:32px; height:32px; border-radius:8px;
+    font-size:19px; width:40px; height:40px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
     background:var(--paper-2); color:var(--evergreen);
   }
@@ -1197,7 +1211,7 @@
     display:flex; white-space:normal; color:#B0752E; margin-top:4px; line-height:1.3;
   }
   .variety-edit-input{
-    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--entry-text); background:#fff;
+    font-family:'Inter',sans-serif; font-size:15px; color:var(--entry-text); background:#fff;
     border:1px solid var(--evergreen-2); border-radius:8px; padding:5px 9px; outline:none;
   }
   /* The chip being edited expands to the full width of its box (instead of
@@ -1225,11 +1239,11 @@
   /* Confirm/Delete live at the bottom of the edit box itself, right under
      the fields, so committing an edit doesn't mean hunting for the
      "+ Add sow entry" button further down the card. */
-  .variety-edit-btn-row{ display:flex; gap:6px; width:100%; flex:1 1 100%; margin-top:2px; }
+  .variety-edit-btn-row{ display:flex; flex-wrap:wrap; gap:8px; width:100%; flex:1 1 100%; margin-top:2px; }
   .variety-edit-confirm-btn{
     flex:1; text-align:center;
-    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
-    border-radius:8px; padding:6px; cursor:pointer; border:1px solid var(--evergreen-2);
+    font-family:'Inter',sans-serif; font-size:15px; min-height:46px; font-weight:600;
+    border-radius:8px; padding:10px 14px; cursor:pointer; border:1px solid var(--evergreen-2);
     background:var(--evergreen); color:#fff;
   }
   .variety-edit-confirm-btn:hover, .variety-edit-confirm-btn:active{ filter:brightness(1.08); }
@@ -1237,18 +1251,120 @@
      next to Confirm, so it doesn't compete with it for the eye/thumb. */
   .variety-edit-delete-btn{
     flex:0 0 auto; text-align:center;
-    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
-    border-radius:8px; padding:6px 12px; cursor:pointer; border:1px solid var(--line);
+    font-family:'Inter',sans-serif; font-size:15px; min-height:46px; font-weight:600;
+    border-radius:8px; padding:10px 14px; cursor:pointer; border:1px solid var(--line);
     background:transparent; color:var(--clay-dark);
   }
   .variety-edit-delete-btn:hover, .variety-edit-delete-btn:active{ background:rgba(199,116,155,0.12); }
   .variety-edit-reorder-btn{
     flex:0 0 auto; text-align:center;
-    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
-    border-radius:8px; padding:6px 12px; cursor:pointer; border:1px solid #F5CBAE;
+    font-family:'Inter',sans-serif; font-size:15px; min-height:46px; font-weight:600;
+    border-radius:8px; padding:10px 14px; cursor:pointer; border:1px solid #F5CBAE;
     background:transparent; color:#C1673A;
   }
   .variety-edit-reorder-btn:hover, .variety-edit-reorder-btn:active{ background:rgba(193,103,58,0.1); }
+  .variety-edit-btn-row .variety-edit-confirm-btn{ flex:1 1 100%; }
+  .variety-edit-btn-row .variety-edit-reorder-btn,
+  .variety-edit-btn-row .variety-edit-delete-btn{ flex:1 1 0; min-width:0; }
+  .variety-edit-delete-btn{ background:#FBE9E7 !important; color:#b3261e !important; border-color:#e5b8b4 !important; }
+  .variety-edit-nogerm-reason-label{ flex:1 1 100%; min-width:0; white-space:normal !important; }
+  /* Edit sheet: tapping Edit on a logged sow/potting/transplant/germination
+     entry opens its fields in this pop-up panel, right on screen, instead
+     of sending you scrolling back up to the top of the crop card. */
+  #entryEditSheet{ z-index:36; }
+  #entryEditSheet .modal{ max-height:88vh; padding-bottom:calc(18px + env(safe-area-inset-bottom)); }
+  #entryEditSheet h3{ font-size:20px; margin-bottom:12px; }
+  #entryEditBody .actual-input-row{ flex-wrap:wrap; }
+  #entryEditBody .actual-input-row input{
+    font-size:16px; min-height:44px; box-sizing:border-box; font-family:'Inter',sans-serif;
+    color:var(--entry-text); background:var(--paper-2); border:1px solid var(--line);
+    border-radius:10px; padding:8px 10px; outline:none;
+  }
+  #entryEditBody .actual-input-row input:focus{ border-color:var(--sage); }
+  #entryEditBody .actual-input-row .sow-variety-dtm-input,
+  #entryEditBody .actual-input-row input.temp-select{ flex:1 1 0; width:auto; min-width:0; max-width:none; }
+  #entryEditBody .actual-input-row input[type="date"]{ flex:1 1 100%; }
+  #entryEditBody .sow-variety-input{ font-size:16px; min-height:44px; }
+  #entryEditBody .sow-add-btn{ font-size:16px; min-height:50px; border-radius:12px; margin-top:12px; }
+  .entry-sheet-actions{ display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+  .entry-sheet-actions .modal-close{ margin-top:0; min-height:50px; }
+  #entryEditCancel{ background:var(--paper-2); color:var(--ink-soft); border:1px solid var(--line); }
+  /* ---------- Bug Alert ---------- */
+  .plant-head-row .plant-head{ flex:1; min-width:0; }
+  .plant-head-row + .overdue-flag{ margin:8px 0 0 41px; }
+  .bug-btn{
+    position:relative; flex:none; width:42px; height:42px; border-radius:12px; cursor:pointer;
+    border:1px solid #CFE3AC; background:linear-gradient(160deg, #F1F8E3 0%, #DDEFC0 100%);
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .bug-btn:active{ transform:scale(.94); }
+  .bug-btn svg{ width:32px; height:32px; }
+  .bug-btn-count{
+    position:absolute; top:-6px; right:-6px; min-width:19px; height:19px; padding:0 5px; box-sizing:border-box;
+    border-radius:10px; background:#C1554A; color:#fff; font-family:'Inter',sans-serif;
+    font-size:11px; font-weight:700; line-height:19px; text-align:center; border:2px solid var(--card);
+  }
+  .bug-field{ margin-top:10px; }
+  .bug-field > label{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
+    letter-spacing:.05em; text-transform:uppercase; color:#5E7F24; margin-bottom:4px;
+  }
+  .bug-add-inline{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:8px; min-height:46px;
+    border-radius:12px; border:1px dashed #A9C97A; background:#F4FAEA; color:#4C6B1C;
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer; margin-bottom:6px;
+  }
+  .bug-add-inline svg{ width:30px; height:30px; transition:transform .2s; }
+  .bug-add-inline:active svg{ transform:rotate(-12deg) scale(1.15); }
+  .bug-list{ display:flex; flex-direction:column; gap:6px; }
+  .bug-row{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 11px; border-radius:12px;
+    background:#F4FAEA; border:1px solid #D6E8BC; cursor:pointer;
+  }
+  .bug-row.locked{ cursor:default; }
+  .bug-row.editing{ border-color:#5E7F24; box-shadow:0 0 0 2px rgba(94,127,36,.2); }
+  .bug-row-date{
+    flex:none; font-family:'IBM Plex Mono', monospace; font-size:11.5px; font-weight:600;
+    color:#5E7F24; background:#fff; border-radius:8px; padding:4px 7px; white-space:nowrap;
+  }
+  .bug-row-main{ flex:1; min-width:0; }
+  .bug-row-name{ font-size:15px; font-weight:700; color:var(--ink); }
+  .bug-row-note{ font-size:13px; color:var(--ink-soft); margin-top:2px; line-height:1.4; word-break:break-word; }
+  .bug-row-lock{ flex:none; font-size:13px; opacity:.6; }
+  #bugSheet{ z-index:36; }
+  #bugSheet .modal{ max-height:88vh; }
+  #bugSheet h3{ display:flex; align-items:center; gap:8px; font-size:20px; }
+  #bugSheet h3 svg{ width:34px; height:34px; flex:none; }
+  .bug-form{ display:flex; flex-direction:column; gap:10px; }
+  .bug-form label{ display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .bug-form input{
+    font-family:'Inter',sans-serif; font-size:16px; min-height:46px; box-sizing:border-box; width:100%;
+    color:var(--entry-text); background:var(--paper-2); border:1px solid var(--line);
+    border-radius:10px; padding:8px 11px; outline:none;
+  }
+  .bug-form input:focus{ border-color:var(--sage); }
+  .bug-form input::placeholder{ color:var(--entry-placeholder); }
+  .bug-quick{ display:flex; flex-wrap:wrap; gap:6px; }
+  .bug-quick button{
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; min-height:36px;
+    border-radius:999px; padding:6px 12px; cursor:pointer;
+    border:1px solid #D6E8BC; background:#F4FAEA; color:#4C6B1C;
+  }
+  .bug-quick button.on{ background:#5E7F24; color:#fff; border-color:#5E7F24; }
+  #bugSheet .modal-close{ min-height:50px; }
+  #bugSaveBtn{ background:#5E7F24; }
+  #bugDeleteBtn{ background:#FBE9E7; color:#b3261e; border:1px solid #e5b8b4; margin-top:8px; }
+  #bugCancelBtn{ background:var(--paper-2); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px; }
+  .bug-history-title{
+    margin:18px 0 8px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--ink-soft);
+  }
+  .entry-delete-link{
+    display:block; width:100%; margin:10px 0 2px; min-height:46px;
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+    border-radius:12px; padding:10px; cursor:pointer;
+    border:1px solid #e5b8b4; background:#FBE9E7; color:#b3261e;
+  }
   .date-missing-flash{
     animation: dateMissingFlash 0.9s ease;
     border-color:#D9534F !important;
@@ -1312,17 +1428,25 @@
   .date-chip.locked{padding:4px 10px; cursor:default;}
   .date-chip:not(.locked){cursor:pointer;}
   .date-chip:not(.locked):hover{background:var(--paper-2);}
+  /* Tapping an entry opens a big action bar pinned near the bottom of the
+     screen (above the tab bar) instead of a tiny pop-up next to the chip —
+     large, thumb-sized buttons that are easy to read and hit. */
   .date-chip-menu{
-    position:absolute; top:calc(100% + 4px); left:0; z-index:20;
-    display:flex; gap:4px; background:#fff; border:1px solid var(--evergreen-2);
-    border-radius:8px; padding:4px; box-shadow:0 2px 8px rgba(0,0,0,.12);
+    position:fixed; left:12px; top:-9999px; z-index:85;
+    width:min(340px, calc(100vw - 24px)); box-sizing:border-box;
+    display:flex; flex-wrap:wrap; gap:8px; background:var(--card); border:1px solid var(--evergreen-2);
+    border-radius:16px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);
+    text-decoration:none; text-transform:none; letter-spacing:0;
   }
   .date-chip-menu button{
-    font-family:'Inter',sans-serif; font-size:11px; font-weight:600;
-    border-radius:6px; padding:5px 10px; cursor:pointer; border:1px solid var(--evergreen-2);
-    background:var(--paper-2); color:var(--evergreen); white-space:nowrap;
+    flex:1 1 120px; min-height:48px;
+    font-family:'Inter',sans-serif; font-size:16px; font-weight:700;
+    border-radius:12px; padding:10px 14px; cursor:pointer; border:1px solid var(--evergreen-2);
+    background:var(--evergreen); color:#fff; white-space:nowrap; text-decoration:none;
   }
-  .date-chip-menu button.delete{ color:#b3261e; border-color:#e5b8b4; }
+  .date-chip-menu button.delete{ background:#FBE9E7; color:#b3261e; border-color:#e5b8b4; }
+  .date-chip-menu button.reorder{ background:#FDE6D8; color:#A4572A; border-color:#F5CBAE; }
+  .date-chip-menu button.cancel{ flex-basis:100%; background:var(--paper-2); color:var(--ink-soft); border-color:var(--line); }
   .date-chip-menu button:hover{ filter:brightness(0.97); }
   .notes-field{margin-top:8px;}
   .note-edit-date-row{
@@ -1393,8 +1517,13 @@
     background:none; border:none; color:var(--ink-soft); font-size:13px; line-height:1;
     cursor:pointer; flex:none; padding:0 0 0 2px;
   }
+  .note-entry .n-remove{
+    font-size:20px; width:38px; height:38px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:#FBE9E7; color:#b3261e; padding:0;
+  }
   .note-entry .n-edit{
-    font-size:15px; width:26px; height:26px; border-radius:7px;
+    font-size:18px; width:38px; height:38px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
     background:var(--card); color:var(--evergreen); padding:0;
   }
@@ -2105,7 +2234,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.07-3</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.10-7</div>
   </main>
 
   <nav class="tabbar">
@@ -2210,6 +2339,37 @@
     <p id="genericDeleteModalText">Are you sure you want to delete this?</p>
     <button class="modal-close" id="genericDeleteConfirmBtn" style="background:var(--clay-dark);">Delete</button>
     <button class="modal-close" id="genericDeleteCancelBtn" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="entryEditSheet">
+  <div class="modal">
+    <h3 id="entryEditTitle">Edit entry</h3>
+    <div id="entryEditBody"></div>
+    <div class="entry-sheet-actions">
+      <button type="button" class="modal-close" id="entryEditSave">Save changes</button>
+      <button type="button" class="modal-close" id="entryEditCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="bugSheet">
+  <div class="modal">
+    <h3 id="bugSheetTitle">Bug Alert</h3>
+    <div class="bug-form">
+      <label>Date found<input type="date" id="bugDate"></label>
+      <label>Bug<input type="text" id="bugName" list="bugNameList" placeholder="e.g. Tomato hornworm" autocomplete="off"></label>
+      <datalist id="bugNameList"></datalist>
+      <div class="bug-quick" id="bugQuick"></div>
+      <label>What it was doing (optional)<input type="text" id="bugNote" placeholder="e.g. ate the top leaves on 2 plants" autocomplete="off"></label>
+    </div>
+    <button type="button" class="modal-close" id="bugSaveBtn">🐛 Log bug alert</button>
+    <button type="button" class="modal-close" id="bugDeleteBtn" style="display:none;">🗑️ Delete this alert</button>
+    <button type="button" class="modal-close" id="bugCancelBtn">Close</button>
+    <div id="bugHistoryWrap">
+      <div class="bug-history-title">Bug alerts for this crop</div>
+      <div class="bug-list" id="bugSheetList"></div>
+    </div>
   </div>
 </div>
 
@@ -4881,7 +5041,9 @@ async function renderGrid(sectionKey, containerId){
   if(addBtn) addBtn.style.display = isPastSeason ? "none" : "";
   const plants = [...DATA_now()[sectionKey]].sort((a, b) => nextDateOffset(a) - nextDateOffset(b));
   const seasonFeedings = await getFertLog();
+  let bugIconIdx = 0;
   for(const p of plants){
+    const bugIcon = BUG_ICONS[bugIconIdx++ % BUG_ICONS.length];
     const card = document.createElement("div");
     card.className = "plant-card";
     card.id = `plant-card-${p.slug}`;
@@ -4961,7 +5123,7 @@ async function renderGrid(sectionKey, containerId){
         flag.className = "overdue-flag";
         flag.id = `overdue-flag-${p.slug}`;
         flag.textContent = `Overdue — ${overdueBits.join(" & ")} not logged yet`;
-        card.querySelector(".plant-head").insertAdjacentElement("afterend", flag);
+        card.querySelector(".plant-head-row").insertAdjacentElement("afterend", flag);
       }
     }
     // Small checkmark badge on the collapsed crop row itself, so you can
@@ -4995,6 +5157,14 @@ async function renderGrid(sectionKey, containerId){
       </div>
     `;
     const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings);
+    const cropBugs = isPastSeason ? [] : await getBugs(p.slug);
+    const bugFieldHTML = `
+      <div class="bug-field">
+        <label>🐛 Bug alerts</label>
+        <button type="button" class="bug-add-inline" data-bug-add="${p.slug}">${bugIcon}<span>Log a bug I found</span></button>
+        <div class="bug-list" id="bug-list-${p.slug}">${bugRowsHTML(cropBugs)}</div>
+      </div>
+    `;
     const notesFieldHTML = `
       <div class="notes-field">
         <label for="notes-${p.slug}">Notes</label>
@@ -5050,6 +5220,7 @@ async function renderGrid(sectionKey, containerId){
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
           ${plantCountFieldHTML}
           ${fertFieldHTML}
+          ${bugFieldHTML}
           ${notesFieldHTML}
         `;
       } else {
@@ -5131,6 +5302,7 @@ async function renderGrid(sectionKey, containerId){
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${plantCountFieldHTML}
           ${fertFieldHTML}
+          ${bugFieldHTML}
           ${notesFieldHTML}
           ${p.slug === "garlic" ? "" : seedPacketsFieldHTML}
           <div class="season-actions-row">
@@ -5163,6 +5335,29 @@ async function renderGrid(sectionKey, containerId){
       </div>
     `;
     el.appendChild(card);
+
+    if(!isPastSeason){
+      const refreshBugs = async () => {
+        const list = await getBugs(p.slug);
+        const listEl = card.querySelector(`#bug-list-${p.slug}`);
+        if(listEl){ listEl.innerHTML = bugRowsHTML(list); wireBugRows(); }
+        const btn = card.querySelector(`#bug-btn-${p.slug}`);
+        if(btn){
+          const old = btn.querySelector(".bug-btn-count"); if(old) old.remove();
+          if(list.length) btn.insertAdjacentHTML("beforeend", `<span class="bug-btn-count">${list.length}</span>`);
+        }
+      };
+      const wireBugRows = () => {
+        card.querySelectorAll(`#bug-list-${p.slug} .bug-row:not(.locked)`).forEach(row => {
+          row.addEventListener("click", () => openBugSheet(p, refreshBugs, row.dataset.bugId, bugIcon));
+        });
+      };
+      wireBugRows();
+      const headBugBtn = card.querySelector(`#bug-btn-${p.slug}`);
+      if(headBugBtn) headBugBtn.addEventListener("click", e => { e.stopPropagation(); openBugSheet(p, refreshBugs, null, bugIcon); });
+      const inlineBugBtn = card.querySelector(`[data-bug-add="${p.slug}"]`);
+      if(inlineBugBtn) inlineBugBtn.addEventListener("click", () => openBugSheet(p, refreshBugs, null, bugIcon));
+    }
 
     if(!isPastSeason){
       const pcInputs = [...card.querySelectorAll(`#plants-existing-${p.slug}, #plants-new-${p.slug}, #plants-count-${p.slug}`)];
@@ -5326,7 +5521,7 @@ async function renderGrid(sectionKey, containerId){
         const entryDeleteLink = document.createElement("button");
         entryDeleteLink.type = "button";
         entryDeleteLink.className = "entry-delete-link";
-        entryDeleteLink.textContent = "Delete this entry";
+        entryDeleteLink.textContent = "🗑️ Delete this whole entry";
         entryDeleteLink.style.display = "none";
         // Tapping this button would otherwise blur the temp field first
         // (focus moving away fires blur before this button's own click),
@@ -5371,6 +5566,7 @@ async function renderGrid(sectionKey, containerId){
             }
             hideEntryDeleteLink();
             if(addBtn) addBtn.textContent = ADD_LABEL;
+            closeEditSheet();
             renderDateChips();
             await setActualDates(p.slug, kind, dates);
             await renderCombo();
@@ -5832,7 +6028,7 @@ async function renderGrid(sectionKey, containerId){
               menu.className = "date-chip-menu";
               // Delete now lives inside the edit form itself (see
               // openVarietyEditor) rather than as its own button here.
-              menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
+              menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="cancel">Cancel</button>`;
               tag.appendChild(menu);
               menu.querySelector(".edit").addEventListener("click", (ev) => {
                 ev.stopPropagation();
@@ -6069,7 +6265,7 @@ async function renderGrid(sectionKey, containerId){
                 // Delete now lives on the "Delete this entry" link that
                 // appears below the date/temp fields once Edit is open —
                 // not as its own button here.
-                menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
+                menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="cancel">Cancel</button>`;
                 item.appendChild(menu);
                 menu.querySelector(".edit").addEventListener("click", async (ev) => {
                   ev.stopPropagation();
@@ -6093,7 +6289,7 @@ async function renderGrid(sectionKey, containerId){
                   showEntryDeleteLink(i, entry);
                   renderDateChips();
                   if(addBtn) addBtn.textContent = CONFIRM_LABEL;
-                  if(kind === "sow" && varietyInput) varietyInput.focus(); else tempEl.focus();
+                  openEditSheet();
                 });
               });
             });
@@ -6118,7 +6314,7 @@ async function renderGrid(sectionKey, containerId){
                 const vi = Number(chip.dataset.vi);
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">Edit</button>`;
+                menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="cancel">Cancel</button>`;
                 chip.appendChild(menu);
                 menu.querySelector(".edit").addEventListener("click", (ev) => {
                   ev.stopPropagation();
@@ -6172,6 +6368,58 @@ async function renderGrid(sectionKey, containerId){
           });
         }
 
+        // Edit sheet: while an existing entry is being edited, its form
+        // fields are moved into the pop-up panel (and moved back when done),
+        // so everything needed is on screen right where you tapped.
+        const fieldEl = dateEl.closest(".actual-field");
+        let inSheet = false, sheetMarker = null, sheetNodes = [];
+        function openEditSheet(){
+          if(inSheet || !fieldEl) return;
+          sheetNodes = [];
+          let n = fieldEl.firstElementChild ? fieldEl.firstElementChild.nextElementSibling : null;
+          while(n && n !== chipsContainer){ sheetNodes.push(n); n = n.nextElementSibling; }
+          if(!sheetNodes.length) return;
+          sheetMarker = document.createComment("edit-form");
+          fieldEl.insertBefore(sheetMarker, sheetNodes[0]);
+          const body = document.getElementById("entryEditBody");
+          body.innerHTML = "";
+          sheetNodes.forEach(node => body.appendChild(node));
+          document.getElementById("entryEditTitle").textContent = `Edit ${p.name} — ${prefix}`;
+          document.getElementById("entryEditSave").style.display = addBtn ? "none" : "";
+          inSheet = true;
+          window.__entrySheetCtx = { save: () => commitEntry(), cancel: cancelEditSheet };
+          const sheet = document.getElementById("entryEditSheet");
+          sheet.classList.add("show");
+          sheet.querySelector(".modal").scrollTop = 0;
+        }
+        function closeEditSheet(){
+          if(!inSheet) return;
+          inSheet = false;
+          sheetNodes.forEach(node => fieldEl.insertBefore(node, sheetMarker));
+          if(sheetMarker) sheetMarker.remove();
+          sheetMarker = null; sheetNodes = [];
+          window.__entrySheetCtx = null;
+          document.getElementById("entryEditSheet").classList.remove("show");
+        }
+        function cancelEditSheet(){
+          if(editingRemovedEntry !== null){
+            const at = Math.min(editingEntryOriginalIndex != null ? editingEntryOriginalIndex : dates.length, dates.length);
+            dates.splice(at, 0, editingRemovedEntry);
+          }
+          dateEl.value = "";
+          tempEl.value = "";
+          if(kind === "sow" && varietyInput){
+            pendingVarieties = [];
+            renderPendingVarieties();
+            varietyInput.value = "";
+            clearVarietyMetaInputs();
+          }
+          activeVarietyCommit = null;
+          hideEntryDeleteLink();
+          if(addBtn) addBtn.textContent = ADD_LABEL;
+          closeEditSheet();
+          renderDateChips();
+        }
         async function commitEntry(){
           if(!dateEl.value){
             // Previously this just silently did nothing, which looked like
@@ -6199,6 +6447,7 @@ async function renderGrid(sectionKey, containerId){
           dateEl.value = "";
           tempEl.value = "";
           hideEntryDeleteLink();
+          closeEditSheet();
           renderDateChips();
           if(addBtn) addBtn.textContent = ADD_LABEL;
           await setActualDates(p.slug, kind, dates);
@@ -6215,13 +6464,14 @@ async function renderGrid(sectionKey, containerId){
             commitEntry();
           });
         } else {
-          tempEl.addEventListener("blur", commitEntry);
-          tempEl.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); commitEntry(); tempEl.blur(); } });
+          tempEl.addEventListener("blur", () => { if(!inSheet) commitEntry(); });
+          tempEl.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); const wasInSheet = inSheet; commitEntry(); if(!wasInSheet) tempEl.blur(); } });
           // Only move into the temp field once the date field is actually
           // done (blurred) — the 'change' event fires the instant any wheel
           // segment moves on mobile, which was stealing focus mid-pick and
           // slamming the calendar shut before a date was even chosen.
           dateEl.addEventListener("blur", () => {
+            if(inSheet) return;
             if(dateEl.value && document.activeElement !== tempEl) tempEl.focus();
           });
         }
@@ -6286,7 +6536,7 @@ async function renderGrid(sectionKey, containerId){
         const recap = document.createElement("div");
         recap.className = "recap-flag";
         recap.innerHTML = lines.map(l => `<div>${l}</div>`).join("");
-        card.querySelector(".plant-head").insertAdjacentElement("afterend", recap);
+        card.querySelector(".plant-head-row").insertAdjacentElement("afterend", recap);
       }
     } else if(!seasonDone){
       await updateOverdueFlag();
@@ -6464,7 +6714,7 @@ async function renderGrid(sectionKey, containerId){
             // Reorder is safe on a locked (already-final) entry since it
             // only adds to a separate list — it doesn't touch the
             // finished-seed record itself the way Edit/Delete would.
-            menu.innerHTML = `${locked ? "" : `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`}<button type="button" class="reorder">Add to reorder</button>`;
+            menu.innerHTML = `${locked ? "" : `<button type="button" class="edit">✏️ Edit</button><button type="button" class="delete">🗑️ Delete</button>`}<button type="button" class="reorder">🛒 Add to reorder</button><button type="button" class="cancel">Cancel</button>`;
             chip.appendChild(menu);
             const editBtn = menu.querySelector(".edit");
             if(editBtn) editBtn.addEventListener("click", (ev) => {
@@ -6574,7 +6824,7 @@ async function renderGrid(sectionKey, containerId){
                 const i = Number(chip.dataset.i);
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">Edit</button><button type="button" class="delete">Delete</button>`;
+                menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="delete">🗑️ Delete</button><button type="button" class="cancel">Cancel</button>`;
                 chip.appendChild(menu);
                 menu.querySelector(".edit").addEventListener("click", (ev) => {
                   ev.stopPropagation();
@@ -6932,7 +7182,7 @@ async function generateSeasonPDF(seasonKey){
   const garden = {};   // m -> { cropName -> {order, events:[], notes:[], feeds:[]} }
   const cropSlot = (m, name, day) => {
     if(!garden[m]) garden[m] = {};
-    if(!garden[m][name]) garden[m][name] = { first: day, events: [], notes: [], feeds: [] };
+    if(!garden[m][name]) garden[m][name] = { first: day, events: [], notes: [], feeds: [], bugs: [] };
     garden[m][name].first = Math.min(garden[m][name].first, day);
     return garden[m][name];
   };
@@ -7027,6 +7277,11 @@ async function generateSeasonPDF(seasonKey){
       (await getNotesFor(seasonKey, p.slug)).forEach(n => {
         const md = noteMonthDay(n); if(!md || !n.text) return;
         cropSlot(md.m, p.name, md.d).notes.push({ day: md.d, text: `${MONTHS[md.m-1]} ${md.d}: ${String(n.text).replace(/\s+/g, " ").trim()}` });
+      });
+      // bug alerts for this crop
+      (await getBugsFor(seasonKey, p.slug)).forEach(b => {
+        const pd = parseISO(b.date); if(!pd || !b.bug) return;
+        cropSlot(pd.m, p.name, pd.d).bugs.push({ day: pd.d, text: `Bug alert ${shortISO(b.date)}: ${b.bug}${b.note ? ` — ${String(b.note).replace(/\s+/g, " ").trim()}` : ""}` });
       });
       // fertilizer feedings for this crop
       fertLog.filter(e => fertMatchesCrop(e, p)).forEach(e => {
@@ -7126,7 +7381,7 @@ async function generateSeasonPDF(seasonKey){
       const c = g[name];
       // Crops with only planned (not yet done) tasks this month and nothing
       // else logged collapse to one gray line to keep the page compact.
-      if(c.events.length && c.events.every(ev => !ev.done) && !c.notes.length && !c.feeds.length){
+      if(c.events.length && c.events.every(ev => !ev.done) && !c.notes.length && !c.feeds.length && !c.bugs.length){
         left.push({ kind:"planrow", text: `${name} — ${c.events.sort((a, b) => a.day - b.day).map(ev => ev.short).join(" · ")}` });
         return;
       }
@@ -7136,6 +7391,7 @@ async function generateSeasonPDF(seasonKey){
         (ev.varieties || []).forEach(v => left.push({ kind:"var", text: `\u2022 ${v}` }));
       });
       c.feeds.sort((a, b) => a.day - b.day).forEach(f => left.push({ kind:"feed", text: f.text }));
+      c.bugs.sort((a, b) => a.day - b.day).forEach(b => left.push({ kind:"note", text: b.text }));
       c.notes.sort((a, b) => a.day - b.day).forEach(n => left.push({ kind:"note", text: `Note ${n.text}` }));
     });
     // right column items
@@ -7535,8 +7791,10 @@ async function renderGerminationTempChart(){
           <div class="gtemp-row-dtm" data-label="Maturity">${dtmText}</div>
           <div class="gtemp-row-tw" data-label="Transplant">${(() => {
             const tw = twMap[p.slug];
-            if(tw && tw.w && isEntryLocked(tw.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(tw.w)}w</span>`;
-            return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="wks" aria-label="Weeks from seed start to transplant for ${escAttr(p.name)}">`;
+            const unit = (tw && tw.u === "d") ? "d" : "w";
+            if(tw && tw.w && isEntryLocked(tw.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(tw.w)}${unit === "d" ? " days" : "w"}</span>`;
+            return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="${unit === "d" ? "days" : "wks"}" aria-label="Time from seed start to transplant for ${escAttr(p.name)}">`
+              + `<div class="gtemp-tw-unit" role="group" aria-label="Weeks or days"><button type="button" data-tw-unit="w" data-tw-for="${p.slug}" class="${unit === "w" ? "on" : ""}">wk</button><button type="button" data-tw-unit="d" data-tw-for="${p.slug}" class="${unit === "d" ? "on" : ""}">day</button></div>`;
           })()}</div>
         </div>`;
     });
@@ -7546,16 +7804,34 @@ async function renderGerminationTempChart(){
     el.innerHTML = `<div class="harvest-empty">No crops entered for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest; "Transplant" is your own weeks from starting seeds to moving them outside (e.g. 6 or 6-8) — it stays the same every season and locks 48h after you enter it. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
+  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest; "Transplant" is your own time from starting seeds to moving them outside — tap wk or day to pick weeks (e.g. 6 or 6-8) or days (e.g. 42) — it stays the same every season and locks 48h after you enter it. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
   el.innerHTML = html;
   el.querySelectorAll("input[data-tw-slug]").forEach(inp => {
     inp.addEventListener("change", async () => {
       const slug = inp.dataset.twSlug;
       const w = inp.value.trim();
       const map = await getTransplantWeeks();
-      if(!w){ delete map[slug]; }
-      else { map[slug] = { w, at: (map[slug] && map[slug].at) || Date.now() }; }
+      const u = (map[slug] && map[slug].u) || "w";
+      if(!w){ if(u === "d") map[slug] = { u }; else delete map[slug]; }
+      else { map[slug] = { w, u, at: (map[slug] && map[slug].at) || Date.now() }; }
       await setTransplantWeeks(map);
+    });
+  });
+  el.querySelectorAll("button[data-tw-unit]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const slug = btn.dataset.twFor;
+      const u = btn.dataset.twUnit;
+      const map = await getTransplantWeeks();
+      const cur = map[slug] || {};
+      if(cur.w && isEntryLocked(cur.at)) return;
+      const inp = el.querySelector(`input[data-tw-slug="${slug}"]`);
+      const w = inp ? inp.value.trim() : (cur.w || "");
+      if(w) map[slug] = { w, u, at: cur.at || Date.now() };
+      else if(u === "d") map[slug] = { u };
+      else delete map[slug];
+      await setTransplantWeeks(map);
+      btn.parentElement.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === btn));
+      if(inp) inp.placeholder = u === "d" ? "days" : "wks";
     });
   });
 }
@@ -7655,6 +7931,217 @@ document.getElementById("genericDeleteModalBackdrop").addEventListener("click", 
   if(e.target.id === "genericDeleteModalBackdrop") closeGenericDeleteModal();
 });
 
+(function(){
+  const sheet = document.getElementById("entryEditSheet");
+  const save = document.getElementById("entryEditSave");
+  const cancel = document.getElementById("entryEditCancel");
+  [save, cancel].forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
+  save.addEventListener("click", () => { if(window.__entrySheetCtx) window.__entrySheetCtx.save(); });
+  cancel.addEventListener("click", () => { if(window.__entrySheetCtx) window.__entrySheetCtx.cancel(); });
+  sheet.addEventListener("click", e => { if(e.target === sheet && window.__entrySheetCtx) window.__entrySheetCtx.cancel(); });
+})();
+// Action menus (Edit / Delete / Cancel) open right next to the spot you
+// tapped — just below your finger, or just above it if there's no room
+// below — instead of at a fixed spot on the screen.
+(function(){
+  let tapX = window.innerWidth / 2, tapY = window.innerHeight / 2;
+  document.addEventListener("pointerdown", e => { tapX = e.clientX; tapY = e.clientY; }, true);
+  function placeMenu(menu){
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const w = menu.offsetWidth, h = menu.offsetHeight;
+    const left = Math.min(Math.max(12, tapX - w / 2), vw - w - 12);
+    const bottomLimit = vh - 84;
+    let top = tapY + 14;
+    if(top + h > bottomLimit) top = tapY - h - 14;
+    top = Math.max(8, Math.min(top, bottomLimit - h));
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+  }
+  new MutationObserver(muts => {
+    muts.forEach(m => m.addedNodes.forEach(n => {
+      if(n.nodeType === 1 && n.classList.contains("date-chip-menu")) placeMenu(n);
+    }));
+  }).observe(document.body, { childList: true, subtree: true });
+  window.addEventListener("scroll", () => {
+    document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
+  }, { passive: true });
+})();
+/* ---------------- Bug Alert (per crop, per season) ---------------- */
+// Six bug drawings (hornworm, ladybug, aphid, grasshopper, stink bug,
+// cartoon caterpillar), mixed across the crop cards for fun.
+const BUG_ICONS = [
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M27 17 C 28.5 13, 28.8 10.5, 30 8.5 C 30.4 11, 29.6 14.5, 28.4 17.6 Z" fill="#D2463C"/>
+  <circle cx="25" cy="19.2" r="4" fill="#8CC84B"/><circle cx="20.5" cy="17.6" r="4.6" fill="#7BBE3E"/>
+  <circle cx="15.6" cy="17.2" r="4.8" fill="#8CC84B"/><circle cx="10.7" cy="18.2" r="4.6" fill="#7BBE3E"/>
+  <circle cx="6.4" cy="20.2" r="4" fill="#6AAA33"/>
+  <path d="M23.3 16.8 l2.6 3.4 M18.8 15 l2.8 3.8 M13.9 14.6 l2.8 3.9 M9.1 15.8 l2.7 3.7" stroke="#F4FBE8" stroke-width="1.2" stroke-linecap="round"/>
+  <circle cx="4.6" cy="19.2" r=".9" fill="#1E2A12"/>
+  <path d="M8 24.2 v1.6 M12 23.6 v1.6 M16 23 v1.6 M20.6 23 v1.6 M24.6 23.2 v1.5" stroke="#4E8A26" stroke-width="1.3" stroke-linecap="round"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M10 9 l-3 -4 M22 9 l3 -4" stroke="#222" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M7 15 l-4 -1 M6.5 20 l-4 1 M8 24.5 l-3 3 M25 15 l4 -1 M25.5 20 l4 1 M24 24.5 l3 3" stroke="#222" stroke-width="1.4" stroke-linecap="round"/>
+  <ellipse cx="16" cy="11" rx="6" ry="4.2" fill="#222"/>
+  <circle cx="13.6" cy="10.4" r="1" fill="#fff"/><circle cx="18.4" cy="10.4" r="1" fill="#fff"/>
+  <ellipse cx="16" cy="19.5" rx="10" ry="9.5" fill="#E0412F"/>
+  <path d="M16 10.5 V29" stroke="#222" stroke-width="1.3"/>
+  <circle cx="11" cy="16.5" r="2" fill="#222"/><circle cx="21" cy="16.5" r="2" fill="#222"/>
+  <circle cx="10.5" cy="23" r="2.2" fill="#222"/><circle cx="21.5" cy="23" r="2.2" fill="#222"/>
+  <ellipse cx="12.5" cy="13.6" rx="2.2" ry="1" fill="#fff" opacity=".45"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M11 9 C 8 5, 6 4, 3 4 M13 8.5 C 12 4, 11 2.5, 9 1.5" stroke="#5E7F24" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M12 18 l-5 2 M13 21.5 l-4.5 4 M16 23.5 l-2 5 M19 17 l3 -5 M21 20 l5 -2 M22 23 l4.5 3" stroke="#5E7F24" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M24 22 l3.5 1.5 M23.5 24 l3 3" stroke="#3F5A14" stroke-width="1.6" stroke-linecap="round"/>
+  <ellipse cx="18" cy="19" rx="7.5" ry="5.8" fill="#A9D46A" transform="rotate(25 18 19)"/>
+  <circle cx="12" cy="11.5" r="3.6" fill="#9CCB5A"/>
+  <circle cx="10.8" cy="10.8" r=".9" fill="#2A3A10"/>
+  <ellipse cx="17" cy="17" rx="2.5" ry="1.2" fill="#fff" opacity=".45" transform="rotate(25 17 17)"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M8 10 C 9 5, 12 3, 16 2" stroke="#3E6B1E" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M7 11 C 6 6, 7 3, 10 1" stroke="#3E6B1E" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M10 20 l-2 7 M14 21 l-1 6" stroke="#4E8A26" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M20 16 L 28 9 L 29.5 10.5 L 23 19 Z" fill="#6AAA33"/>
+  <path d="M28.5 10 L 27 25" stroke="#4E8A26" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M8 14 C 10 11, 20 11, 29 17 C 22 21, 12 21, 8 18 Z" fill="#8CC84B"/>
+  <path d="M13 13.5 C 18 13, 23 14.5, 27 16.8" stroke="#5E9A30" stroke-width="1.2" fill="none"/>
+  <ellipse cx="7.5" cy="14.5" rx="3.6" ry="3.8" fill="#7BBE3E"/>
+  <circle cx="6.6" cy="13.6" r="1.1" fill="#1E2A12"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M13 7 C 11 4, 9 3, 7 3 M19 7 C 21 4, 23 3, 25 3" stroke="#4A3A1E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M8 14 l-4 -2 M8 19 l-4 1 M10 24 l-3 3 M24 14 l4 -2 M24 19 l4 1 M22 24 l3 3" stroke="#4A3A1E" stroke-width="1.3" stroke-linecap="round"/>
+  <path d="M16 6 L 21 7.5 L 26 12 L 24 20 L 16 29 L 8 20 L 6 12 L 11 7.5 Z" fill="#7C9A3A"/>
+  <path d="M6 12 L 26 12 L 24 15 L 8 15 Z" fill="#6A8530"/>
+  <path d="M16 15 L 21 15 L 16 22 L 11 15 Z" fill="#A5BE5C"/>
+  <circle cx="13.4" cy="9" r=".9" fill="#1E2A12"/><circle cx="18.6" cy="9" r=".9" fill="#1E2A12"/>
+  <path d="M16 22 L 16 29" stroke="#5B7428" stroke-width="1"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M7 7 l-3 -3 M10 6 l-1 -4" stroke="#3B2C5A" stroke-width="1.3" stroke-linecap="round"/>
+  <circle cx="24" cy="21" r="4.4" fill="#F2B63A"/><circle cx="18.5" cy="20.5" r="4.8" fill="#8A6FD1"/>
+  <circle cx="13" cy="18" r="4.8" fill="#F2B63A"/><circle cx="9" cy="12.5" r="4.6" fill="#8A6FD1"/>
+  <circle cx="8.2" cy="11.2" r="1.2" fill="#fff"/><circle cx="8.5" cy="11.5" r=".6" fill="#222"/>
+  <path d="M7.3 14.4 q1.6 1.2 3 0" stroke="#3B2C5A" stroke-width=".9" fill="none" stroke-linecap="round"/>
+  <path d="M13 23 v2.6 M18.5 25.5 v2.4 M24 25.6 v2.2" stroke="#3B2C5A" stroke-width="1.3" stroke-linecap="round"/>
+</svg>`
+];
+const HORNWORM_SVG = BUG_ICONS[0];
+const QUICK_BUGS = ["Hornworm", "Aphids", "Whiteflies", "Stink bugs", "Leaf-footed bugs", "Caterpillars", "Flea beetles", "Spider mites"];
+const COMMON_PESTS = ["Tomato hornworm", "Tobacco hornworm", "Aphids", "Whiteflies", "Stink bugs", "Southern green stink bug",
+  "Leaf-footed bugs", "Pickleworm", "Melonworm", "Squash vine borer", "Squash bugs", "Cucumber beetles", "Cabbage looper",
+  "Diamondback moth", "Imported cabbageworm", "Fall armyworm", "Beet armyworm", "Tomato fruitworm", "Flea beetles",
+  "Spider mites", "Thrips", "Leafminers", "Mealybugs", "Scale", "Pepper weevil", "Colorado potato beetle",
+  "Sweet potato weevil", "Mole crickets", "Grasshoppers", "Lubber grasshoppers", "Fire ants", "Slugs", "Snails",
+  "Cutworms", "Root-knot nematodes", "Caterpillars", "Japanese beetles", "Earwigs", "Pill bugs"];
+async function getBugsFor(season, slug){
+  try{
+    const r = await window.storage.get(`bugs:${season}:${slug}`, false);
+    return r ? (JSON.parse(r.value) || []) : [];
+  }catch(e){ return []; }
+}
+async function getBugs(slug){ return getBugsFor(activeSeason, slug); }
+async function setBugs(slug, arr){
+  try{ await window.storage.set(`bugs:${activeSeason}:${slug}`, JSON.stringify(arr), false); }catch(e){}
+}
+function bugEsc(v){ return String(v == null ? "" : v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function bugFmtDate(iso){
+  const p = String(iso || "").split("-").map(Number);
+  return (p.length === 3 && !p.some(isNaN)) ? `${MONTHS[p[1]-1]} ${p[2]}` : String(iso || "");
+}
+function bugRowsHTML(bugs, editingId){
+  return bugs.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)) || (b.addedAt || 0) - (a.addedAt || 0)).map(b => {
+    const locked = isEntryLocked(b.addedAt);
+    return `<div class="bug-row${locked ? " locked" : ""}${b.id === editingId ? " editing" : ""}" data-bug-id="${bugEsc(b.id)}">
+      <span class="bug-row-date">${bugFmtDate(b.date)}</span>
+      <div class="bug-row-main"><div class="bug-row-name">${bugEsc(b.bug)}</div>${b.note ? `<div class="bug-row-note">${bugEsc(b.note)}</div>` : ""}</div>
+      ${locked ? `<span class="bug-row-lock" title="Locked — use the unlock in Save a copy to change">🔒</span>` : ""}
+    </div>`;
+  }).join("");
+}
+// Opens the Bug Alert pop-up for one crop. onChange runs after any save or
+// delete so the crop card can refresh its list and the red count badge.
+async function openBugSheet(p, onChange, editId, icon){
+  const sheet = document.getElementById("bugSheet");
+  const dateEl = document.getElementById("bugDate");
+  const nameEl = document.getElementById("bugName");
+  const noteEl = document.getElementById("bugNote");
+  const saveBtn = document.getElementById("bugSaveBtn");
+  const delBtn = document.getElementById("bugDeleteBtn");
+  const listEl = document.getElementById("bugSheetList");
+  const histWrap = document.getElementById("bugHistoryWrap");
+  const quick = document.getElementById("bugQuick");
+  document.getElementById("bugSheetTitle").innerHTML = `${icon || HORNWORM_SVG}<span>Bug Alert — ${bugEsc(p.name)}</span>`;
+  document.getElementById("bugNameList").innerHTML = COMMON_PESTS.map(n => `<option value="${bugEsc(n)}">`).join("");
+  let bugs = await getBugs(p.slug);
+  let editing = null;
+  const syncQuick = () => quick.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.textContent.toLowerCase() === nameEl.value.trim().toLowerCase()));
+  quick.innerHTML = QUICK_BUGS.map(n => `<button type="button">${n}</button>`).join("");
+  quick.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { nameEl.value = b.textContent; syncQuick(); }));
+  nameEl.oninput = syncQuick;
+  function loadForm(entry){
+    editing = entry;
+    dateEl.value = entry ? entry.date : todayISO();
+    nameEl.value = entry ? entry.bug : "";
+    noteEl.value = entry ? (entry.note || "") : "";
+    saveBtn.textContent = entry ? "Save changes" : "🐛 Log bug alert";
+    delBtn.style.display = entry ? "" : "none";
+    syncQuick();
+    drawList();
+  }
+  function drawList(){
+    histWrap.style.display = bugs.length ? "" : "none";
+    listEl.innerHTML = bugRowsHTML(bugs, editing && editing.id);
+    listEl.querySelectorAll(".bug-row:not(.locked)").forEach(row => row.addEventListener("click", () => {
+      const entry = bugs.find(b => b.id === row.dataset.bugId);
+      if(entry){ loadForm(entry); sheet.querySelector(".modal").scrollTop = 0; }
+    }));
+  }
+  saveBtn.onclick = async () => {
+    const bug = nameEl.value.trim();
+    if(!bug){ nameEl.focus(); nameEl.classList.add("date-missing-flash"); setTimeout(() => nameEl.classList.remove("date-missing-flash"), 900); return; }
+    const date = dateEl.value || todayISO();
+    const note = noteEl.value.trim();
+    if(editing){
+      const i = bugs.findIndex(b => b.id === editing.id);
+      if(i >= 0) bugs[i] = { ...bugs[i], date, bug, note };
+    } else {
+      bugs.push({ id: `b${Date.now()}${Math.random().toString(36).slice(2,6)}`, date, bug, note, addedAt: Date.now() });
+    }
+    await setBugs(p.slug, bugs);
+    if(onChange) await onChange();
+    const wasEditing = !!editing;
+    loadForm(null);
+    showUndoToast(wasEditing ? "Bug alert updated." : `🐛 ${bug} logged for ${p.name}.`, null, "OK");
+  };
+  delBtn.onclick = () => {
+    if(!editing) return;
+    const removed = editing;
+    requestGenericDelete(`Delete the bug alert "${removed.bug}" (${bugFmtDate(removed.date)})?`, async () => {
+      bugs = bugs.filter(b => b.id !== removed.id);
+      await setBugs(p.slug, bugs);
+      if(onChange) await onChange();
+      loadForm(null);
+      showUndoToast("Bug alert deleted.", async () => {
+        bugs.push(removed);
+        await setBugs(p.slug, bugs);
+        if(onChange) await onChange();
+        drawList();
+      });
+    });
+  };
+  loadForm(editId ? (bugs.find(b => b.id === editId) || null) : null);
+  sheet.classList.add("show");
+  sheet.querySelector(".modal").scrollTop = 0;
+}
+(function(){
+  const sheet = document.getElementById("bugSheet");
+  const close = () => sheet.classList.remove("show");
+  document.getElementById("bugCancelBtn").addEventListener("click", close);
+  sheet.addEventListener("click", e => { if(e.target === sheet) close(); });
+})();
 let undoToastTimer = null;
 function showUndoToast(message, onUndo, actionLabel){
   const toast = document.getElementById("undoToast");
