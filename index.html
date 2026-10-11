@@ -1185,7 +1185,7 @@
     border-radius:6px; padding:2px 6px; line-height:1.3; cursor:pointer;
   }
   .variety-chip:not(:last-child)::after{ content:"·"; margin-left:6px; color:var(--ink-soft); font-weight:400; }
-  .variety-chip.locked{ cursor:default; opacity:.7; }
+  .variety-chip.locked{ cursor:pointer; color:#4A4058; }
   .variety-chip:not(.locked):hover{ background:rgba(58,92,58,0.12); }
   /* A whole sow entry flagged "Seeds didn't germinate" — every variety in
      that entry turns red with a strikethrough so a failed sowing is
@@ -1305,6 +1305,25 @@
     font-size:11px; font-weight:700; line-height:19px; text-align:center; border:2px solid var(--card);
   }
   .bug-field{ margin-top:10px; }
+  /* The little bug that sits in the top corner of each open crop card —
+     no box or label, just the critter. Tap it to log a bug alert. */
+  .card-body.has-critter{ position:relative; }
+  .card-body.has-critter > :nth-child(2){ margin-right:50px; }
+  .bug-critter{
+    position:absolute; top:-6px; right:-8px; width:48px; height:48px; padding:4px;
+    border:none; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .bug-critter svg{ width:40px; height:40px; display:block; transform-origin:50% 70%;
+    animation:critterWiggle 6s ease-in-out infinite; filter:drop-shadow(0 2px 2px rgba(60,40,80,.18)); }
+  .bug-critter:active svg{ animation:none; transform:scale(1.25) rotate(-10deg); }
+  .bug-critter .bug-btn-count{ top:0; right:0; }
+  @keyframes critterWiggle{
+    0%, 86%, 100%{ transform:rotate(0) translateY(0); }
+    89%{ transform:rotate(-12deg) translateY(-2px); }
+    92%{ transform:rotate(10deg) translateY(-1px); }
+    95%{ transform:rotate(-6deg); }
+  }
+  @media (prefers-reduced-motion: reduce){ .bug-critter svg{ animation:none; } }
   .bug-field > label{
     display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
     letter-spacing:.05em; text-transform:uppercase; color:#5E7F24; margin-bottom:4px;
@@ -1359,6 +1378,143 @@
     margin:18px 0 8px; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.05em;
     text-transform:uppercase; color:var(--ink-soft);
   }
+  /* ---------- Variety score (1–10) ---------- */
+  .variety-score{
+    display:inline-block; margin-left:4px; padding:1px 7px; border-radius:999px;
+    color:#fff; font-size:11.5px; font-weight:700; line-height:1.5; vertical-align:1px;
+    text-decoration:none !important;
+  }
+  .variety-edit-score-row{ display:flex; flex-wrap:wrap; align-items:center; gap:5px; width:100%; flex:1 1 100%; margin-top:2px; }
+  .variety-edit-score-row > span{ font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--ink-soft); margin-right:2px; text-transform:none; letter-spacing:0; }
+  .variety-edit-score-row button{
+    width:34px; height:34px; border-radius:9px; border:1px solid var(--line); background:#fff;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; padding:0;
+  }
+  .variety-edit-score-row button.on{ background:var(--sc); border-color:var(--sc); color:#fff; }
+  #scoreSheet{ z-index:38; }
+  #scoreSheet h3{ font-size:20px; }
+  #scoreGrid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin:6px 0 4px; }
+  #scoreGrid button{
+    height:56px; border-radius:14px; border:2px solid var(--sc); background:#fff; color:var(--sc);
+    font-family:'Inter',sans-serif; font-size:22px; font-weight:800; cursor:pointer;
+  }
+  #scoreGrid button.on{ background:var(--sc); color:#fff; }
+  .score-scale{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin:2px 2px 6px; }
+  #scoreSheet .modal-close{ min-height:50px; }
+  #scoreClearBtn{ background:#FBE9E7; color:#b3261e; border:1px solid #e5b8b4; margin-top:8px; }
+  #scoreCancelBtn{ background:var(--paper-2); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px; }
+  .date-chip-menu button.score{ background:#FFF4D6; color:#8A6410; border-color:#EFD38A; }
+  /* ---------- Simplified crop card ----------
+     Once a step (sow, potting, transplant, germination) has an entry
+     logged, its empty entry boxes fold away and only the logged entry
+     shows, with one small "+ Add another" button to bring the boxes back
+     for the next round. */
+  .actual-field.af-collapsed > :not(label):not(.sow-cards):not(.date-chips):not(.germ-days):not(.af-reveal){ display:none !important; }
+  .actual-field.af-collapsed > .sow-cards, .actual-field.af-collapsed > .date-chips{ margin-top:4px; }
+  .af-reveal{ display:none; }
+  .actual-field.af-collapsed > .af-reveal, .actual-field.af-open > .af-reveal{
+    display:inline-flex; align-items:center; gap:6px; margin-top:8px; min-height:40px;
+    padding:8px 14px; border-radius:999px; cursor:pointer;
+    border:1px dashed var(--evergreen-2); background:transparent; color:var(--evergreen);
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:700;
+  }
+  .actual-field.af-collapsed, .actual-field.af-open{ display:flex; flex-direction:column; }
+  .actual-field.af-collapsed > .af-reveal, .actual-field.af-open > .af-reveal{ order:99; align-self:flex-start; }
+  /* 3D, color-coded: green = sow, terracotta = pot up, blue = transplant,
+     gold = germination. A thick darker bottom edge makes them look raised;
+     pressing pushes them down. */
+  .actual-field.af-collapsed > .af-reveal, .actual-field.af-open > .af-reveal{
+    --c1:#DDF3DC; --c2:#BFE5BE; --edge:#93C893; --ink:#2F6B35;
+    border:none; color:var(--ink); font-size:15px; padding:10px 18px 9px; min-height:44px;
+    background:linear-gradient(180deg, var(--c1) 0%, var(--c2) 100%);
+    box-shadow:0 4px 0 var(--edge), 0 6px 10px rgba(40,30,60,.22), inset 0 1px 0 rgba(255,255,255,.45);
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+    margin-bottom:6px; transition:transform .08s, box-shadow .08s;
+  }
+  .actual-field > .af-reveal:active{
+    transform:translateY(3px);
+    box-shadow:0 1px 0 var(--edge), 0 2px 4px rgba(40,30,60,.2), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .actual-field > .af-reveal.af-pottedup{ --c1:#FDE3D3; --c2:#F8C9AE; --edge:#E3A07D; --ink:#9A4E2B; }
+  .actual-field > .af-reveal.af-transplant{ --c1:#DCEBFA; --c2:#BFD8F2; --edge:#8FB3DC; --ink:#2F5D8E; }
+  .actual-field > .af-reveal.af-sprouted{ display:none !important; }
+  .actual-field > .af-reveal.af-sprouted-unused{ --c1:#FDF1C9; --c2:#F8E2A0; --edge:#E0C26A; --ink:#856312; }
+  .actual-field.af-open > .af-reveal{
+    --c1:#F3EEF7; --c2:#E2D9EC; --edge:#BFB2CF; --ink:var(--ink-soft);
+  }
+  /* ---------- Harvest amount: lbs / oz / count ---------- */
+  .harvest-add-row.amount-row{ display:flex; gap:8px; align-items:stretch; }
+  .unit-pick{ display:flex; flex:none; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-2); }
+  .unit-pick button{
+    border:none; background:transparent; padding:0 12px; min-height:40px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:var(--ink-soft);
+  }
+  .unit-pick button + button{ border-left:1px solid var(--line); }
+  .unit-pick button.on{ background:var(--evergreen); color:#fff; }
+  /* ---------- Harvest Year in Review ---------- */
+  #harvestYearBody{ --hyr-fruit:#B565A7; --hyr-veg:#4E9A55; }
+  body.night-mode #harvestYearBody{ --hyr-fruit:#D48BC6; --hyr-veg:#6DBA73; }
+  .hyr-fruit-bg{ background:var(--hyr-fruit); } .hyr-veg-bg{ background:var(--hyr-veg); }
+  .hyr-controls{ display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; margin-bottom:12px; }
+  .hyr-years, .hyr-mode{ display:flex; gap:6px; flex-wrap:wrap; }
+  .hyr-years button, .hyr-mode button{
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600; min-height:36px; padding:6px 12px;
+    border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer;
+  }
+  .hyr-years button.on{ background:var(--evergreen); border-color:var(--evergreen); color:#fff; }
+  .hyr-mode button.on{ background:var(--paper-2); border-color:var(--evergreen-2); color:var(--ink); }
+  .hyr-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+  .hyr-tile{ border:1px solid var(--line); border-radius:14px; padding:10px 12px; background:var(--card); min-width:0; }
+  .hyr-tile.wide{ grid-column:1 / -1; }
+  .hyr-tile .k{ font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+  .hyr-tile .k .sw{ display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:5px; }
+  .hyr-tile .v{ font-size:24px; font-weight:800; color:var(--ink); margin-top:2px; font-variant-numeric:tabular-nums; }
+  .hyr-tile .v small{ font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .hyr-sub{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .hyr-sec{ font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin:4px 0 6px; }
+  .hyr-legend{ display:flex; gap:14px; font-size:12.5px; color:var(--ink); margin-bottom:4px; }
+  .hyr-legend i, .hyr-readout i{ display:inline-block; width:10px; height:10px; border-radius:3px; margin:0 5px 0 2px; vertical-align:-1px; }
+  .hyr-readout{ font-size:12.5px; color:var(--ink-soft); min-height:18px; margin-bottom:2px; }
+  .hyr-readout b{ color:var(--ink); }
+  .hyr-chart{ width:100%; height:auto; display:block; }
+  .hyr-chart .hyr-grid{ stroke:var(--line); stroke-width:1; opacity:.7; }
+  .hyr-chart .hyr-base{ stroke:var(--ink-soft); stroke-width:1; opacity:.5; }
+  .hyr-chart .hyr-axis{ font-size:10px; fill:var(--ink-soft); font-family:'Inter',sans-serif; }
+  .hyr-chart .hyr-peak{ font-size:10.5px; font-weight:700; fill:var(--ink); font-family:'Inter',sans-serif; }
+  .hyr-chart .hyr-fruit{ fill:var(--hyr-fruit); } .hyr-chart .hyr-veg{ fill:var(--hyr-veg); }
+  .hyr-chart .hyr-hit{ cursor:pointer; }
+  .hyr-chart .hyr-hit.on{ fill:var(--ink); fill-opacity:.06; }
+  .hyr-table{ width:100%; border-collapse:collapse; font-size:13px; margin-top:4px; }
+  .hyr-table th{ text-align:left; font-size:11px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:.04em; padding:5px 4px; border-bottom:1px solid var(--line); }
+  .hyr-table td{ padding:6px 4px; border-bottom:1px solid var(--line); color:var(--ink); }
+  .hyr-table .n{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .hyr-table .hyr-top{ color:var(--ink-soft); font-size:12px; }
+  .hyr-table tr.hyr-empty-row td{ color:var(--ink-soft); }
+  .hyr-table tr.hyr-total td{ font-weight:800; border-bottom:none; }
+  .hyr-pick{ font-size:12px; color:var(--ink-soft); }
+  .hyr-dim{ color:var(--ink-soft); opacity:.7; }
+  .hyr-crops{ display:flex; flex-direction:column; gap:6px; }
+  .hyr-crow{ display:grid; grid-template-columns:minmax(0,120px) 1fr auto; align-items:center; gap:8px; font-size:13px; color:var(--ink); }
+  .hyr-crow .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hyr-crow .bar{ height:10px; border-radius:0 4px 4px 0; display:block; }
+  .hyr-crow .nv{ font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .hyr-note{ font-size:12px; color:var(--ink-soft); margin-top:10px; font-style:italic; }
+  .hyr-note:empty{ display:none; }
+  /* Indoors / Direct outside choice in the Actual sow box */
+  .sow-where{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:6px 0 4px; }
+  .sow-where-label{ font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--ink-soft); margin-right:2px; }
+  .sow-where button{
+    font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; min-height:36px; padding:6px 13px;
+    border-radius:999px; border:1px solid var(--line); background:var(--paper-2); color:var(--ink-soft); cursor:pointer;
+  }
+  .sow-where button[data-w="indoor"].on{ background:#FDE3D3; border-color:#E3A07D; color:#9A4E2B; }
+  .sow-where button[data-w="direct"].on{ background:#DDF3DC; border-color:#93C893; color:#2F6B35; }
+  .sow-where-badge{
+    display:inline-block; font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; letter-spacing:0; text-transform:none;
+    padding:2px 8px; border-radius:999px; vertical-align:1px; margin-left:4px;
+  }
+  .sow-where-badge.indoor{ background:#FDE3D3; color:#9A4E2B; }
+  .sow-where-badge.direct{ background:#DDF3DC; color:#2F6B35; }
   .entry-delete-link{
     display:block; width:100%; margin:10px 0 2px; min-height:46px;
     font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
@@ -1840,6 +1996,52 @@
      instead of changing any field's font-size — resizing a date field the
      instant it's focused was confusing iOS into thinking the field moved,
      which dismissed its native picker immediately after opening it. */
+
+  /* ================= 3D buttons, app-wide =================
+     Every real button gets a raised look: a soft top highlight, a darker
+     bottom "edge" and a drop shadow, and it presses down when tapped.
+     It sits on top of each button's own colors, so pastel buttons stay
+     pastel. Left flat on purpose: the bottom tab bar, section/crop
+     headers that open and close, segmented pickers (lbs/oz/count,
+     wk/day), the little bug, buttons inside the Biodynamic Calendar,
+     tiny × buttons on chips and photos, and buttons that already have
+     their own 3D style. */
+  button:where(:not(.tabbtn, .rain-toggle, .month-toggle, .plant-head, .bug-critter, .af-reveal, .pest-ok, .pest-snooze, .jk-badge, .note-photo-badge, .photo-remove-btn, [aria-label^="Back to the top"], [data-fert-chip], :disabled)){
+    --b3d-edge: rgba(74,64,88,.22);
+    background-image:linear-gradient(180deg, rgba(255,255,255,.38) 0%, rgba(255,255,255,0) 58%);
+    box-shadow:0 3px 0 var(--b3d-edge), 0 5px 10px rgba(74,64,88,.12), inset 0 1px 0 rgba(255,255,255,.55);
+    transition:transform .07s ease, box-shadow .07s ease, filter .15s;
+  }
+  button:where(:not(.tabbtn, .rain-toggle, .month-toggle, .plant-head, .bug-critter, .af-reveal, .pest-ok, .pest-snooze, .jk-badge, .note-photo-badge, .photo-remove-btn, [aria-label^="Back to the top"], [data-fert-chip], :disabled)):active{
+    transform:translateY(2px);
+    box-shadow:0 1px 0 var(--b3d-edge), 0 2px 4px rgba(74,64,88,.12), inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  /* Opt-outs where a raised edge would look wrong */
+  .unit-pick button, .gtemp-tw-unit button, .bc-cal button, nav.bc-tabs button,
+  .harvest-entry button:not(.h-edit):not(.h-remove), .note-entry button:not(.n-edit):not(.n-remove),
+  .fert-chip button{
+    background-image:none !important; box-shadow:none !important; transform:none !important;
+  }
+  /* Selected pills/segments read as "pressed in" */
+  .hyr-years button.on, .hyr-mode button.on, .sow-where button.on, .bug-quick button.on,
+  #scoreGrid button.on, .variety-edit-score-row button.on, .qty-toggle-btn.on{
+    transform:translateY(2px);
+    box-shadow:0 1px 0 var(--b3d-edge, rgba(74,64,88,.22)), inset 0 2px 3px rgba(74,64,88,.15) !important;
+  }
+  /* Edge colors that match each button family */
+  .sow-add-btn, .h-add-btn, .season-done-btn, .modal-close, .tomorrow-modal-close, .add-crop-btn,
+  .date-chip-menu button.edit, .variety-edit-confirm-btn, .unit-pick button.on, .hyr-years button.on,
+  #bugSaveBtn{ --b3d-edge:#3F7A60; }
+  .seedpacket-add-btn, .fridge-add-btn{ --b3d-edge: rgba(120,90,160,.32); }
+  .date-chip-menu button.delete, .entry-delete-link, #bugDeleteBtn, #scoreClearBtn,
+  .variety-edit-delete-btn, .h-remove, .n-remove, .reorder-delete, .plant-delete-btn{ --b3d-edge:#E2A9A3; }
+  .date-chip-menu button.reorder, .variety-edit-reorder-btn{ --b3d-edge:#E9B897; }
+  .date-chip-menu button.score{ --b3d-edge:#E2C277; }
+  .home-tab-btn{ --b3d-edge: rgba(120,90,160,.28); }
+  body.night-mode button{ --b3d-edge: rgba(0,0,0,.45); }
+  body.night-mode button:where(:not(.tabbtn, .rain-toggle, .plant-head, .af-reveal)){
+    background-image:linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 58%);
+  }
 </style>
 </head>
 <body>
@@ -2106,7 +2308,10 @@
                 <span class="date-input-label">Date</span>
                 <input id="harvest-date-input" type="date">
               </div>
-              <input id="harvest-qty-input" type="text" inputmode="decimal" class="qty-input-inline" placeholder="Quantity" autocomplete="off">
+            </div>
+            <div class="harvest-add-row amount-row">
+              <input id="harvest-qty-input" type="text" inputmode="decimal" class="qty-input-inline" placeholder="Amount (optional)" autocomplete="off">
+              <div class="unit-pick" id="harvest-unit-pick" role="group" aria-label="Unit"><button type="button" data-u="lb">lbs</button><button type="button" data-u="oz">oz</button><button type="button" data-u="count">count</button></div>
             </div>
             <div class="harvest-add-actions">
               <button id="harvest-add-btn" class="h-add-btn">Add to harvest log</button>
@@ -2137,7 +2342,10 @@
                 <span class="date-input-label">Date</span>
                 <input id="harvest-veg-date-input" type="date">
               </div>
-              <input id="harvest-veg-qty-input" type="text" inputmode="decimal" class="qty-input-inline" placeholder="Quantity" autocomplete="off">
+            </div>
+            <div class="harvest-add-row amount-row">
+              <input id="harvest-veg-qty-input" type="text" inputmode="decimal" class="qty-input-inline" placeholder="Amount (optional)" autocomplete="off">
+              <div class="unit-pick" id="harvest-veg-unit-pick" role="group" aria-label="Unit"><button type="button" data-u="lb">lbs</button><button type="button" data-u="oz">oz</button><button type="button" data-u="count">count</button></div>
             </div>
             <div class="harvest-add-row harvest-size-wrap" id="harvest-veg-size-wrap">
               <input id="harvest-veg-size-input" type="text" class="qty-input-inline" placeholder="Size/Length (e.g. 6 in)" autocomplete="off">
@@ -2161,6 +2369,19 @@
         <div id="harvestChartBodyWrap" style="display:none; margin-top:10px;">
           <p class="backup-hint" style="margin:0 0 12px;">One box per month — every crop harvested then, fruits and vegetables together.</p>
           <div id="harvestChartBody"></div>
+        </div>
+      </div>
+
+      <div class="legend-card">
+        <button type="button" id="harvestYearToggle" class="rain-toggle">
+          <span class="legend-title" style="margin-bottom:0; color:var(--clay-dark);">Harvest Year in Review</span>
+          <span class="rain-toggle-right">
+            <span id="harvestYearChevron" class="rain-chevron">▾</span>
+          </span>
+        </button>
+        <div id="harvestYearBodyWrap" style="display:none; margin-top:10px;">
+          <p class="backup-hint" style="margin:0 0 12px;">How much you picked each month — by weight or by count, whichever you entered.</p>
+          <div id="harvestYearBody"></div>
         </div>
       </div>
 
@@ -2234,7 +2455,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.10-7</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.11-8</div>
   </main>
 
   <nav class="tabbar">
@@ -2370,6 +2591,17 @@
       <div class="bug-history-title">Bug alerts for this crop</div>
       <div class="bug-list" id="bugSheetList"></div>
     </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="scoreSheet">
+  <div class="modal">
+    <h3 id="scoreSheetTitle">Score this variety</h3>
+    <p style="margin:-4px 0 10px; font-size:14.5px;">How did it do for you? Taste, yield, disease resistance, how it handled the heat — your call.</p>
+    <div id="scoreGrid"></div>
+    <div class="score-scale"><span>1 = never again</span><span>10 = grow it every year</span></div>
+    <button type="button" class="modal-close" id="scoreClearBtn">Remove score</button>
+    <button type="button" class="modal-close" id="scoreCancelBtn">Cancel</button>
   </div>
 </div>
 
@@ -3273,10 +3505,13 @@ function mergeSameDaySowVarieties(entries){
   const order = [];
   const byDate = new Map();
   entries.forEach(d => {
-    const key = entryDate(d);
+    // Same day but one indoors and one direct outside stay separate cards.
+    const where = (typeof d === "object" && d && d.where) || "";
+    const key = `${entryDate(d)}|${where}`;
     if(!byDate.has(key)){
       byDate.set(key, {
         date: entryDate(d),
+        where,
         temp: entryTemp(d),
         addedAt: entryAddedAt(d),
         varieties: entryVarieties(d).slice()
@@ -3292,7 +3527,9 @@ function mergeSameDaySowVarieties(entries){
   });
   return order.map(key => {
     const g = byDate.get(key);
-    return { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
+    const out = { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
+    if(g.where) out.where = g.where;
+    return out;
   });
 }
 // Appends an F suffix when saving a temperature, unless one's already there
@@ -3340,7 +3577,38 @@ function varietyMetaText(v, slug){
     const hexMap = CROP_COLOR_HEX[slug] || TOMATO_COLOR_HEX;
     out += v.colors.map(c => `<span class="variety-color-swatch" style="background:${hexMap[c] || "#ccc"}" title="${c}"></span>`).join("");
   }
+  if(v.score) out += ` <span class="variety-score" style="background:${scoreColor(v.score)}" title="Your score: ${v.score} out of 10">⭐${v.score}</span>`;
   return out;
+}
+// Red (1) through amber (5) to green (10) for the score badge.
+function scoreColor(n){
+  const t = Math.max(0, Math.min(1, (Number(n) - 1) / 9));
+  const stops = [[200,75,60],[226,160,40],[76,150,80]];
+  const [a, b, k] = t < .5 ? [stops[0], stops[1], t / .5] : [stops[1], stops[2], (t - .5) / .5];
+  return `rgb(${a.map((x, i) => Math.round(x + (b[i] - x) * k)).join(",")})`;
+}
+// Pop-up with ten big buttons to score one variety 1–10. Works even after
+// the entry has locked, since you usually score at harvest time.
+function openScoreSheet(varietyLabel, current, onPick){
+  const sheet = document.getElementById("scoreSheet");
+  document.getElementById("scoreSheetTitle").textContent = `Score ${varietyLabel}`;
+  const grid = document.getElementById("scoreGrid");
+  grid.innerHTML = Array.from({length:10}, (_, k) => k + 1).map(n =>
+    `<button type="button" data-score="${n}" class="${Number(current) === n ? "on" : ""}" style="--sc:${scoreColor(n)}">${n}</button>`).join("");
+  const close = () => sheet.classList.remove("show");
+  grid.querySelectorAll("button").forEach(b => b.onclick = async () => { close(); await onPick(Number(b.dataset.score)); });
+  const clearBtn = document.getElementById("scoreClearBtn");
+  clearBtn.style.display = current ? "" : "none";
+  clearBtn.onclick = async () => { close(); await onPick(0); };
+  document.getElementById("scoreCancelBtn").onclick = close;
+  sheet.onclick = e => { if(e.target === sheet) close(); };
+  sheet.classList.add("show");
+}
+// Returns a copy of a logged variety with its score set (0 removes it).
+function withScore(v, score){
+  const obj = (typeof v === "object" && v) ? { ...v } : { name: v };
+  if(score) obj.score = score; else delete obj.score;
+  return obj;
 }
 function varietyDisplay(v, slug){ return `${varietyName(v)}${varietyMetaText(v, slug)}`; }
 // Whether one specific logged variety has been flagged "didn't germinate"
@@ -3916,6 +4184,25 @@ async function wireHarvestSection(kind, ids){
   const addBtn = document.getElementById(ids.addBtn);
   const cancelBtn = document.getElementById(ids.cancelBtn);
   const qtyInput = document.getElementById(ids.qtyInput);
+  // lbs / oz / count picker beside the amount. The last one you used is
+  // remembered (per log) so you don't have to re-pick it every time.
+  const unitPick = ids.unitPick ? document.getElementById(ids.unitPick) : null;
+  const unitMemKey = `harvest-unit-${kind}`;
+  let rememberedUnit = "count";
+  try{ rememberedUnit = localStorage.getItem(unitMemKey) || "count"; }catch(e){}
+  let currentUnit = rememberedUnit;
+  function setUnit(u){
+    currentUnit = u || "count";
+    if(unitPick) unitPick.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.u === currentUnit));
+  }
+  if(unitPick){
+    unitPick.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+      setUnit(b.dataset.u);
+      rememberedUnit = currentUnit;
+      try{ localStorage.setItem(unitMemKey, currentUnit); }catch(e){}
+    }));
+  }
+  setUnit(currentUnit);
   const sizeInput = ids.sizeInput ? document.getElementById(ids.sizeInput) : null;
   const sizeWrap = ids.sizeWrap ? document.getElementById(ids.sizeWrap) : null;
   const emptyLabel = kind === "vegetable" ? "vegetable" : "fruit";
@@ -4023,6 +4310,7 @@ async function wireHarvestSection(kind, ids){
 
   function hideQtyWrap(){
     qtyInput.value = "";
+    setUnit(rememberedUnit);
   }
 
   function exitEditMode(){
@@ -4077,7 +4365,7 @@ async function wireHarvestSection(kind, ids){
         <div class="harvest-entry${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}" data-i="${i}">
           <span class="h-date">${entry.date}</span>
           <span class="h-fruit">${entry.fruit}</span>
-          ${entry.qty ? `<span class="h-qty">${entry.qty}</span>` : ""}
+          ${entry.qty ? `<span class="h-qty">${harvestQtyLabel(entry)}</span>` : ""}
           ${entry.size ? `<span class="h-size">${entry.size}</span>` : ""}
           ${locked ? "" : `
             <button type="button" class="h-edit" data-i="${i}" aria-label="Edit">✎</button>
@@ -4117,6 +4405,7 @@ async function wireHarvestSection(kind, ids){
       dateInput.value = log[i].date;
       syncDateLabel();
       qtyInput.value = log[i].qty || "";
+      setUnit(log[i].unit || (harvestAmount(log[i]).type === "weight" ? "lb" : "count"));
       if(sizeInput) sizeInput.value = log[i].size || "";
       updateSizeVisibility();
       addBtn.textContent = "Update entry";
@@ -4168,7 +4457,7 @@ async function wireHarvestSection(kind, ids){
     const size = sizeInput ? sizeInput.value.trim() : "";
     if(!val || !date) return;
     const entry = { date, fruit: val };
-    if(qty) entry.qty = qty;
+    if(qty){ entry.qty = qty; entry.unit = currentUnit; }
     if(size) entry.size = size;
     if(editingIndex !== null){
       entry.addedAt = log[editingIndex].addedAt || Date.now();
@@ -4185,6 +4474,166 @@ async function wireHarvestSection(kind, ids){
   addBtn.onclick = addEntry;
   nameInput.onkeydown = (e) => { if(e.key === "Enter"){ e.preventDefault(); addEntry(); } };
   cancelBtn.onclick = () => { exitEditMode(); draw(); };
+}
+
+/* ---------------- harvest amounts: weight and/or count ---------------- */
+// Reads one harvest entry's amount. Entries saved with the lbs/oz/count
+// picker carry .unit; older entries just have free text in .qty, so units
+// typed into the text ("3 lbs", "12 oz", "1.5 kg") are recognized too.
+// Anything else with a number counts as pieces; no amount at all = one picking.
+function harvestAmount(e){
+  const raw = String(e.qty || "").trim().toLowerCase();
+  const n = parseFloat(raw.replace(",", "."));
+  if(!raw || isNaN(n)) return { type: "picking" };
+  let u = e.unit;
+  if(!u){
+    if(/\b(lb|lbs|pound|pounds)\b/.test(raw)) u = "lb";
+    else if(/\b(oz|ounce|ounces)\b/.test(raw)) u = "oz";
+    else if(/\bkg\b/.test(raw)) u = "kg";
+    else if(/\d\s*g\b|\bgrams?\b/.test(raw)) u = "g";
+    else u = "count";
+  }
+  if(u === "lb") return { type: "weight", lbs: n };
+  if(u === "oz") return { type: "weight", lbs: n / 16 };
+  if(u === "kg") return { type: "weight", lbs: n * 2.20462 };
+  if(u === "g") return { type: "weight", lbs: n / 453.592 };
+  return { type: "count", n };
+}
+function harvestQtyLabel(e){
+  if(!e.unit) return e.qty;
+  return e.unit === "lb" ? `${e.qty} lbs` : e.unit === "oz" ? `${e.qty} oz` : `×${e.qty}`;
+}
+function fmtLbs(v){ return v >= 10 ? Math.round(v).toLocaleString() : (Math.round(v * 10) / 10).toLocaleString(); }
+
+let hyrYear = null, hyrMode = null, hyrTip = null;
+async function renderHarvestYear(){
+  const el = document.getElementById("harvestYearBody");
+  if(!el) return;
+  const entries = await getAllHarvestEntries();
+  const years = [...new Set(entries.map(e => hchartParseDate(e.date).getFullYear()))].sort();
+  if(!years.length){
+    el.innerHTML = `<div class="harvest-empty">Nothing logged yet — this fills in as you add harvests above.</div>`;
+    return;
+  }
+  if(!years.includes(hyrYear)) hyrYear = years.includes(new Date().getFullYear()) ? new Date().getFullYear() : years[years.length - 1];
+  const yearEntries = entries.filter(e => hchartParseDate(e.date).getFullYear() === hyrYear);
+  const months = Array.from({length:12}, () => ({ fruit:{lbs:0,n:0,pick:0}, vegetable:{lbs:0,n:0,pick:0}, crops:{} }));
+  const crops = {};
+  const tot = { lbs:0, n:0, pick:0, all:0, fruitLbs:0, vegLbs:0, fruitN:0, vegN:0 };
+  yearEntries.forEach(e => {
+    const m = hchartParseDate(e.date).getMonth();
+    const a = harvestAmount(e);
+    const k = e.kind === "fruit" ? "fruit" : "vegetable";
+    const name = String(e.fruit || "").trim();
+    const ck = name.toLowerCase();
+    const c = crops[ck] = crops[ck] || { name, kind:k, lbs:0, n:0, pick:0 };
+    const mc = months[m].crops[ck] = months[m].crops[ck] || { name, lbs:0, n:0, pick:0 };
+    tot.all++; months[m].all = (months[m].all || 0) + 1;
+    if(a.type === "picking"){ tot.pick++; months[m][k].pick++; c.pick++; mc.pick++; }
+    if(a.type === "weight"){ tot.lbs += a.lbs; months[m][k].lbs += a.lbs; c.lbs += a.lbs; mc.lbs += a.lbs; tot[k === "fruit" ? "fruitLbs" : "vegLbs"] += a.lbs; }
+    if(a.type === "count"){ tot.n += a.n; months[m][k].n += a.n; c.n += a.n; mc.n += a.n; tot[k === "fruit" ? "fruitN" : "vegN"] += a.n; }
+  });
+  // Default view: weight if anything was weighed, otherwise count.
+  const mode = hyrMode || (tot.lbs > 0 ? "lbs" : "n");
+  // Count view also adds "pickings" for entries with no amount, so nothing
+  // you logged disappears from the totals.
+  const val = o => mode === "lbs" ? o.lbs : o.n;
+  const fmt = v => mode === "lbs" ? `${fmtLbs(v)} lbs` : `${Math.round(v).toLocaleString()}`;
+  const monthVals = months.map(m => ({ f: val(m.fruit), v: val(m.vegetable) }));
+  let best = -1, bestV = 0;
+  monthVals.forEach((mv, i) => { if(mv.f + mv.v > bestV){ bestV = mv.f + mv.v; best = i; } });
+  const max = Math.max(1, ...monthVals.map(mv => mv.f + mv.v));
+  const step = (() => { const raw = max / 4; const p = Math.pow(10, Math.floor(Math.log10(raw))); return [1,2,2.5,5,10].map(x => x * p).find(x => x >= raw); })();
+  const top = step * Math.ceil(max / step);
+  const W = 340, H = 200, L = 30, B = 22, T = 18, pw = W - L - 4, ph = H - B - T, bw = pw / 12;
+  let svg = "";
+  for(let v = 0; v <= top + 1e-9; v += step){
+    const y = T + ph - v / top * ph;
+    svg += `<line x1="${L}" x2="${W-4}" y1="${y}" y2="${y}" class="hyr-grid"/><text x="${L-5}" y="${y+4}" text-anchor="end" class="hyr-axis">${mode === "lbs" ? fmtLbs(v) : Math.round(v)}</text>`;
+  }
+  monthVals.forEach((mv, i) => {
+    const x = L + i * bw + 4, w = bw - 8, y0 = T + ph;
+    const hv = mv.v / top * ph, hf = mv.f / top * ph;
+    const r = 4;
+    // vegetables on the bottom, fruits stacked on top, 2px gap between
+    if(hv > 0){
+      const yv = y0 - hv, rr = hf > 0 ? 0 : Math.min(r, hv);
+      svg += `<path class="hyr-veg" d="M${x},${y0} V${yv+rr} ${rr ? `Q${x},${yv} ${x+rr},${yv} H${x+w-rr} Q${x+w},${yv} ${x+w},${yv+rr}` : `H${x+w}`} V${y0} Z"/>`;
+    }
+    if(hf > 0){
+      const base = y0 - hv - (hv > 0 ? 2 : 0), yf = base - hf, rr = Math.min(r, hf);
+      svg += `<path class="hyr-fruit" d="M${x},${base} V${yf+rr} Q${x},${yf} ${x+rr},${yf} H${x+w-rr} Q${x+w},${yf} ${x+w},${yf+rr} V${base} Z"/>`;
+    }
+    if(i === best && bestV > 0){
+      svg += `<text x="${x+w/2}" y="${y0 - hv - hf - (hv>0&&hf>0?2:0) - 5}" text-anchor="middle" class="hyr-peak">${mode === "lbs" ? fmtLbs(bestV) : Math.round(bestV)}</text>`;
+    }
+    svg += `<text x="${x+w/2}" y="${H-6}" text-anchor="middle" class="hyr-axis">${MONTHS[i][0]}</text>`;
+    svg += `<rect class="hyr-hit" data-m="${i}" x="${L + i*bw}" y="${T}" width="${bw}" height="${ph + B}" fill="transparent"/>`;
+  });
+  svg += `<line x1="${L}" x2="${W-4}" y1="${T+ph}" y2="${T+ph}" class="hyr-base"/>`;
+
+  const topCropOf = m => {
+    const other = o => mode === "lbs" ? o.n : o.lbs;
+    const list = Object.values(months[m].crops).sort((a, b) => val(b) - val(a) || other(b) - other(a) || b.pick - a.pick);
+    return list.length ? list[0].name : "—";
+  };
+  const rows = MONTHS.map((mn, i) => {
+    const has = (months[i].all || 0) > 0;
+    const cell = (o) => {
+      const v = val(o);
+      if(v > 0) return fmt(v);
+      if(o.pick) return `<span class="hyr-pick">${o.pick} picking${o.pick > 1 ? "s" : ""}</span>`;
+      if(mode === "lbs" && o.n > 0) return `<span class="hyr-pick">counted</span>`;
+      if(mode === "n" && o.lbs > 0) return `<span class="hyr-pick">weighed</span>`;
+      return `<span class="hyr-dim">—</span>`;
+    };
+    return `<tr class="${has ? "" : "hyr-empty-row"}"><td>${mn.slice(0,3)}</td><td class="n">${cell(months[i].fruit)}</td><td class="n">${cell(months[i].vegetable)}</td><td class="hyr-top">${has ? topCropOf(i) : ""}</td></tr>`;
+  }).join("");
+  const fTot = mode === "lbs" ? tot.fruitLbs : tot.fruitN, vTot = mode === "lbs" ? tot.vegLbs : tot.vegN;
+  const topCrops = Object.values(crops).filter(c => val(c) > 0).sort((a, b) => val(b) - val(a)).slice(0, 8);
+  const topMax = topCrops.length ? val(topCrops[0]) : 1;
+  const noAmt = yearEntries.filter(e => harvestAmount(e).type === "picking").length;
+  const otherUnitEntries = yearEntries.filter(e => harvestAmount(e).type === (mode === "lbs" ? "count" : "weight")).length;
+
+  el.innerHTML = `
+    <div class="hyr-controls">
+      <div class="hyr-years">${years.map(y => `<button type="button" data-y="${y}" class="${y === hyrYear ? "on" : ""}">${y}</button>`).join("")}</div>
+      <div class="hyr-mode"><button type="button" data-mode="lbs" class="${mode === "lbs" ? "on" : ""}">⚖️ Weight</button><button type="button" data-mode="n" class="${mode === "n" ? "on" : ""}">🔢 Count</button></div>
+    </div>
+    <div class="hyr-tiles">
+      <div class="hyr-tile"><div class="k">Total weight</div><div class="v">${fmtLbs(tot.lbs)} <small>lbs</small></div></div>
+      <div class="hyr-tile"><div class="k">Total count</div><div class="v">${Math.round(tot.n).toLocaleString()} <small>pieces</small></div></div>
+      <div class="hyr-tile"><div class="k"><i class="sw hyr-fruit-bg"></i>Fruits</div><div class="v">${mode === "lbs" ? fmtLbs(fTot) : Math.round(fTot).toLocaleString()} <small>${mode === "lbs" ? "lbs" : "pieces"}</small></div></div>
+      <div class="hyr-tile"><div class="k"><i class="sw hyr-veg-bg"></i>Vegetables</div><div class="v">${mode === "lbs" ? fmtLbs(vTot) : Math.round(vTot).toLocaleString()} <small>${mode === "lbs" ? "lbs" : "pieces"}</small></div></div>
+      <div class="hyr-tile wide"><div class="k">Best month</div><div class="v">${best >= 0 ? MONTHS[best] : "—"} ${best >= 0 ? `<small>${fmt(bestV)}${mode === "n" ? " pieces" : ""}</small>` : ""}</div><div class="hyr-sub">${tot.all} harvest${tot.all === 1 ? "" : "s"} logged in ${hyrYear}</div></div>
+    </div>
+    <div class="hyr-sec">${mode === "lbs" ? "Pounds" : "Pieces"} picked each month</div>
+    <div class="hyr-legend"><span><i class="hyr-fruit-bg"></i>Fruits</span><span><i class="hyr-veg-bg"></i>Vegetables</span></div>
+    <div class="hyr-readout" id="hyrReadout">Tap a month for its numbers.</div>
+    <svg class="hyr-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${mode === "lbs" ? "Pounds" : "Pieces"} harvested each month of ${hyrYear}, fruits and vegetables">${svg}</svg>
+    <div class="hyr-sec" style="margin-top:14px;">Month by month</div>
+    <table class="hyr-table"><thead><tr><th>Month</th><th class="n">Fruits</th><th class="n">Veg</th><th>Top crop</th></tr></thead>
+      <tbody>${rows}<tr class="hyr-total"><td>Total</td><td class="n">${fmt(fTot)}</td><td class="n">${fmt(vTot)}</td><td></td></tr></tbody></table>
+    <div class="hyr-sec" style="margin-top:16px;">Top crops of the year</div>
+    <div class="hyr-crops">${topCrops.length ? topCrops.map(c => `<div class="hyr-crow"><span class="nm">${c.name}</span><span class="bar ${c.kind === "fruit" ? "hyr-fruit-bg" : "hyr-veg-bg"}" style="width:${Math.max(4, val(c) / topMax * 100)}%"></span><span class="nv">${fmt(val(c))}</span></div>`).join("") : `<div class="hyr-dim" style="font-size:13px;">No ${mode === "lbs" ? "weights" : "counts"} entered for ${hyrYear} yet.</div>`}</div>
+    <div class="hyr-note">${[
+      otherUnitEntries ? `${otherUnitEntries} harvest${otherUnitEntries > 1 ? "s were" : " was"} entered by ${mode === "lbs" ? "count" : "weight"} — switch to ${mode === "lbs" ? "🔢 Count" : "⚖️ Weight"} to see ${otherUnitEntries > 1 ? "them" : "it"}.` : "",
+      noAmt ? `${noAmt} harvest${noAmt > 1 ? "s have" : " has"} no amount, so ${noAmt > 1 ? "they show" : "it shows"} as “pickings”.` : ""
+    ].filter(Boolean).join(" ")}</div>
+  `;
+  el.querySelectorAll(".hyr-years button").forEach(b => b.addEventListener("click", () => { hyrYear = Number(b.dataset.y); hyrMode = null; renderHarvestYear(); }));
+  el.querySelectorAll(".hyr-mode button").forEach(b => b.addEventListener("click", () => { hyrMode = b.dataset.mode; renderHarvestYear(); }));
+  const readout = el.querySelector("#hyrReadout");
+  const showMonth = i => {
+    const m = months[i];
+    const part = (o, label) => { const v = val(o); return `${label} ${v > 0 ? fmt(v) + (mode === "n" ? " pcs" : "") : (o.pick ? `${o.pick} picking${o.pick > 1 ? "s" : ""}` : (mode === "lbs" && o.n ? "counted" : mode === "n" && o.lbs ? "weighed" : "—"))}`; };
+    readout.innerHTML = `<b>${MONTHS[i]} ${hyrYear}</b> · <i class="hyr-fruit-bg"></i>${part(m.fruit, "Fruits")} · <i class="hyr-veg-bg"></i>${part(m.vegetable, "Veg")}`;
+    el.querySelectorAll(".hyr-hit").forEach(h => h.classList.toggle("on", Number(h.dataset.m) === i));
+  };
+  el.querySelectorAll(".hyr-hit").forEach(h => {
+    h.addEventListener("mouseenter", () => showMonth(Number(h.dataset.m)));
+    h.addEventListener("click", () => showMonth(Number(h.dataset.m)));
+  });
 }
 
 function hchartParseDate(iso){
@@ -4253,11 +4702,12 @@ async function renderHarvestChart(){
 
   if(entries.length === 0){
     el.innerHTML = `<div class="harvest-empty">Nothing logged yet — this will fill in as you add harvests above.</div>`;
+    renderHarvestYear();
     return;
   }
 
   const monthGroups = buildHarvestByMonth(entries)
-    .filter(m => m.year > 2026 || (m.year === 2026 && m.month >= 2)); // month is 0-indexed, so 2 = March
+    .filter(m => m.year > 2026 || (m.year === 2026 && m.month >= 6)); // month is 0-indexed, so 6 = July
 
   const boxesHTML = monthGroups.map(m => `
     <div class="hchart-month-box hm-${m.month}${m.crops.length === 0 ? " empty" : ""}">
@@ -4279,6 +4729,7 @@ async function renderHarvestChart(){
       <span><i style="background:var(--sage);"></i>Vegetables</span>
     </div>
   `;
+  renderHarvestYear();
 }
 
 /* ---------------- harvest pictures (standalone gallery) ---------------- */
@@ -4996,12 +5447,12 @@ async function renderHarvestLog(){
   await wireHarvestSection("fruit", {
     log: "harvest-log", input: "harvest-fruit-input", date: "harvest-date-input",
     addBtn: "harvest-add-btn", cancelBtn: "harvest-cancel-btn",
-    qtyInput: "harvest-qty-input", suggest: "harvest-fruit-suggest"
+    qtyInput: "harvest-qty-input", unitPick: "harvest-unit-pick", suggest: "harvest-fruit-suggest"
   });
   await wireHarvestSection("vegetable", {
     log: "harvest-log-veg", input: "harvest-veg-input", date: "harvest-veg-date-input",
     addBtn: "harvest-veg-add-btn", cancelBtn: "harvest-veg-cancel-btn",
-    qtyInput: "harvest-veg-qty-input",
+    qtyInput: "harvest-veg-qty-input", unitPick: "harvest-veg-unit-pick",
     sizeInput: "harvest-veg-size-input", sizeWrap: "harvest-veg-size-wrap",
     suggest: "harvest-veg-suggest"
   });
@@ -5159,9 +5610,8 @@ async function renderGrid(sectionKey, containerId){
     const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings);
     const cropBugs = isPastSeason ? [] : await getBugs(p.slug);
     const bugFieldHTML = `
-      <div class="bug-field">
+      <div class="bug-field" id="bug-field-${p.slug}"${cropBugs.length ? "" : ` style="display:none;"`}>
         <label>🐛 Bug alerts</label>
-        <button type="button" class="bug-add-inline" data-bug-add="${p.slug}">${bugIcon}<span>Log a bug I found</span></button>
         <div class="bug-list" id="bug-list-${p.slug}">${bugRowsHTML(cropBugs)}</div>
       </div>
     `;
@@ -5234,6 +5684,12 @@ async function renderGrid(sectionKey, containerId){
                 ${p.slug === "garlic" ? "" : `<input id="sow-variety-dtm-${p.slug}" type="text" inputmode="numeric" pattern="[0-9]*" class="sow-variety-dtm-input" placeholder="Days to Maturity" aria-label="Days to Maturity" title="Days to Maturity">`}
                 <input id="sow-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature at sow time">
               </div>
+              ${p.slug === "garlic" ? "" : `
+              <div class="sow-where" id="sow-where-${p.slug}" role="group" aria-label="Where were the seeds started?">
+                <span class="sow-where-label">Started:</span>
+                <button type="button" data-w="indoor">🏠 Indoors</button>
+                <button type="button" data-w="direct">🌤️ Direct outside</button>
+              </div>`}
               ${p.slug === "garlic" ? "" : `
               <div class="sow-variety-input-wrap">
                 <input id="sow-variety-${p.slug}" type="text" class="sow-variety-input" placeholder="Variety seeded, press Enter" autocomplete="off">
@@ -5322,7 +5778,8 @@ async function renderGrid(sectionKey, containerId){
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
       </div>
-      <div id="card-body-${p.slug}" class="card-body" style="display:none;">
+      <div id="card-body-${p.slug}" class="card-body${isPastSeason ? "" : " has-critter"}" style="display:none;">
+      ${isPastSeason ? "" : `<button type="button" class="bug-critter" id="bug-btn-${p.slug}" title="Found a bug on ${p.name}? Tap me" aria-label="Bug Alert for ${p.name}">${bugIcon}${cropBugs.length ? `<span class="bug-btn-count">${cropBugs.length}</span>` : ""}</button>`}
       ${germTempHTML}
       ${p.slug === "leafygreens" ? (() => {
         const lettuceCrop = DATA_now().vegetables.find(c => c.slug === "lettuce");
@@ -5341,6 +5798,8 @@ async function renderGrid(sectionKey, containerId){
         const list = await getBugs(p.slug);
         const listEl = card.querySelector(`#bug-list-${p.slug}`);
         if(listEl){ listEl.innerHTML = bugRowsHTML(list); wireBugRows(); }
+        const fieldEl = card.querySelector(`#bug-field-${p.slug}`);
+        if(fieldEl) fieldEl.style.display = list.length ? "" : "none";
         const btn = card.querySelector(`#bug-btn-${p.slug}`);
         if(btn){
           const old = btn.querySelector(".bug-btn-count"); if(old) old.remove();
@@ -5864,6 +6323,18 @@ async function renderGrid(sectionKey, containerId){
             wireSourceOtherAutocomplete(sourceOtherInput);
             }
           }
+          let scoreVal = (typeof current === "object" && current && current.score) ? Number(current.score) : 0;
+          const scoreRow = document.createElement("span");
+          scoreRow.className = "variety-edit-score-row";
+          scoreRow.innerHTML = `<span>⭐ Score</span>` + Array.from({length:10}, (_, k) => k + 1).map(n =>
+            `<button type="button" data-score="${n}" style="--sc:${scoreColor(n)}" class="${scoreVal === n ? "on" : ""}">${n}</button>`).join("");
+          scoreRow.querySelectorAll("button").forEach(b => b.addEventListener("click", (ce) => {
+            ce.stopPropagation();
+            const n = Number(b.dataset.score);
+            scoreVal = scoreVal === n ? 0 : n;
+            scoreRow.querySelectorAll("button").forEach(x => x.classList.toggle("on", Number(x.dataset.score) === scoreVal));
+          }));
+          wrap.appendChild(scoreRow);
           wrap.appendChild(buildNoGermLabel());
           wrap.appendChild(buildNoGermReasonLabel());
           const confirmBtn = document.createElement("button");
@@ -5909,7 +6380,7 @@ async function renderGrid(sectionKey, containerId){
               source.push(sourceOtherInput.value.trim());
               if(p.slug !== "garlic") rememberCustomSeedSource(sourceOtherInput.value.trim());
             }
-            onCommit(val ? composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, noGermReasonBox ? noGermReasonBox.checked : false, hBox ? hBox.checked : false, source, heightInput ? heightInput.value : "", widthInput ? widthInput.value : "") : null);
+            onCommit(val ? withScore(composeVariety(val, typeSel ? typeSel.value : "", dtmInput ? dtmInput.value : "", f1Box ? f1Box.checked : false, colors, opBox ? opBox.checked : false, noGermBox ? noGermBox.checked : false, noGermReasonBox ? noGermReasonBox.checked : false, hBox ? hBox.checked : false, source, heightInput ? heightInput.value : "", widthInput ? widthInput.value : ""), scoreVal) : null);
           };
           const cancel = () => {
             if(done) return;
@@ -6228,7 +6699,7 @@ async function renderGrid(sectionKey, containerId){
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}${varietyNoGermReason(v) ? " no-germ-temp" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}${varietyNoGermReason(v) ? " 🌡️" : ""}<span class="variety-meta-badge">${varietyMetaText(v, p.slug)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
-                <div class="sow-card-head">${prefix} ${label}${locked ? " 🔒" : ""}</div>
+                <div class="sow-card-head">${prefix} ${label}${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}${locked ? " 🔒" : ""}</div>
                 ${varietiesLine}
               </div>`;
             }).join("");
@@ -6276,6 +6747,7 @@ async function renderGrid(sectionKey, containerId){
                     pendingVarieties = entryVarieties(entry).slice();
                     renderPendingVarieties();
                   }
+                  if(kind === "sow" && typeof setWhere === "function") setWhere((entry && entry.where) || "");
                   // Only remove the entry from the in-memory list (so it
                   // doesn't show twice while its fields are open for
                   // editing) — do NOT persist that removal yet. Storage
@@ -6304,18 +6776,32 @@ async function renderGrid(sectionKey, containerId){
           // as its own button in this tap-menu, so it's never a single
           // stray tap away.
           if(kind === "sow" && !isPastSeason){
-            chipsContainer.querySelectorAll(".variety-chip:not(.locked)").forEach(chip => {
+            chipsContainer.querySelectorAll(".variety-chip").forEach(chip => {
               chip.addEventListener("click", (e) => {
+                if(e.target.closest(".variety-search-link")) return;
                 e.stopPropagation();
                 const already = chip.querySelector(".date-chip-menu");
                 document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
                 if(already) return;
                 const i = Number(chip.dataset.i);
                 const vi = Number(chip.dataset.vi);
+                const chipLocked = chip.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="cancel">Cancel</button>`;
+                menu.innerHTML = `${chipLocked ? "" : `<button type="button" class="edit">✏️ Edit</button>`}<button type="button" class="score">⭐ Score</button><button type="button" class="cancel">Cancel</button>`;
                 chip.appendChild(menu);
+                menu.querySelector(".score").addEventListener("click", (ev) => {
+                  ev.stopPropagation();
+                  menu.remove();
+                  const cur = dates[i].varieties[vi];
+                  openScoreSheet(varietyName(cur), cur && cur.score, async (n) => {
+                    dates[i].varieties[vi] = withScore(dates[i].varieties[vi], n);
+                    renderDateChips();
+                    await setActualDates(p.slug, kind, dates);
+                    showUndoToast(n ? `⭐ ${varietyName(cur)} scored ${n}/10.` : `Score removed from ${varietyName(cur)}.`, null, "OK");
+                  });
+                });
+                if(chipLocked) return;
                 menu.querySelector(".edit").addEventListener("click", (ev) => {
                   ev.stopPropagation();
                   menu.remove();
@@ -6372,12 +6858,25 @@ async function renderGrid(sectionKey, containerId){
         // fields are moved into the pop-up panel (and moved back when done),
         // so everything needed is on screen right where you tapped.
         const fieldEl = dateEl.closest(".actual-field");
+        // Indoors / Direct outside choice for a sow entry (optional — tap
+        // the selected one again to clear it).
+        const whereEl = (kind === "sow" && fieldEl) ? fieldEl.querySelector(".sow-where") : null;
+        function setWhere(w){
+          if(!whereEl) return;
+          whereEl.dataset.w = w || "";
+          whereEl.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.w === w));
+        }
+        if(whereEl){
+          whereEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+            setWhere(whereEl.dataset.w === b.dataset.w ? "" : b.dataset.w);
+          }));
+        }
         let inSheet = false, sheetMarker = null, sheetNodes = [];
         function openEditSheet(){
           if(inSheet || !fieldEl) return;
           sheetNodes = [];
           let n = fieldEl.firstElementChild ? fieldEl.firstElementChild.nextElementSibling : null;
-          while(n && n !== chipsContainer){ sheetNodes.push(n); n = n.nextElementSibling; }
+          while(n && n !== chipsContainer){ if(!n.classList.contains("af-reveal")) sheetNodes.push(n); n = n.nextElementSibling; }
           if(!sheetNodes.length) return;
           sheetMarker = document.createComment("edit-form");
           fieldEl.insertBefore(sheetMarker, sheetNodes[0]);
@@ -6408,6 +6907,7 @@ async function renderGrid(sectionKey, containerId){
           }
           dateEl.value = "";
           tempEl.value = "";
+          setWhere("");
           if(kind === "sow" && varietyInput){
             pendingVarieties = [];
             renderPendingVarieties();
@@ -6432,6 +6932,8 @@ async function renderGrid(sectionKey, containerId){
           }
           const temp = withF(tempEl.value);
           const entry = { date: dateEl.value, temp: temp || "", addedAt: Date.now() };
+          if(whereEl && whereEl.dataset.w) entry.where = whereEl.dataset.w;
+          if(whereEl) setWhere("");
           if(kind === "sow"){
             if(varietyInput && varietyInput.value.trim()){
               pendingVarieties.push(buildVarietyEntry(varietyInput.value.trim()));
@@ -7221,6 +7723,7 @@ async function generateSeasonPDF(seasonKey){
         const kinds = [v.type, v.h ? "H" : "", v.f1 ? "F1" : "", v.op ? "OP" : ""].filter(Boolean);
         if(kinds.length) bits.push(kinds.join(" "));
         if(v.source && v.source.length) bits.push((Array.isArray(v.source) ? v.source : [v.source]).join(" / "));
+        if(v.score) bits.push(`scored ${v.score}/10`);
         return bits.length ? `${name} — ${bits.join(" · ")}` : name;
       };
       const loggedVars = new Set();
@@ -7962,7 +8465,10 @@ document.getElementById("genericDeleteModalBackdrop").addEventListener("click", 
       if(n.nodeType === 1 && n.classList.contains("date-chip-menu")) placeMenu(n);
     }));
   }).observe(document.body, { childList: true, subtree: true });
+  let menuScrollY = 0;
+  document.addEventListener("pointerdown", () => { menuScrollY = window.scrollY; }, true);
   window.addEventListener("scroll", () => {
+    if(Math.abs(window.scrollY - menuScrollY) < 60) return;
     document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
   }, { passive: true });
 })();
@@ -8026,6 +8532,18 @@ const BUG_ICONS = [
   <circle cx="8.2" cy="11.2" r="1.2" fill="#fff"/><circle cx="8.5" cy="11.5" r=".6" fill="#222"/>
   <path d="M7.3 14.4 q1.6 1.2 3 0" stroke="#3B2C5A" stroke-width=".9" fill="none" stroke-linecap="round"/>
   <path d="M13 23 v2.6 M18.5 25.5 v2.4 M24 25.6 v2.2" stroke="#3B2C5A" stroke-width="1.3" stroke-linecap="round"/>
+</svg>`,
+`<svg viewBox="0 0 32 32" aria-hidden="true">
+  <path d="M15 8 C 13 4, 11 3, 9.5 2.5 M17 8 C 19 4, 21 3, 22.5 2.5" stroke="#3B2C5A" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <circle cx="9.5" cy="2.6" r="1" fill="#3B2C5A"/><circle cx="22.5" cy="2.6" r="1" fill="#3B2C5A"/>
+  <path d="M15.2 12 C 11 4.5, 3 4, 2.5 9.5 C 2 14.5, 8.5 17.5, 15.2 16 Z" fill="#F08BB6"/>
+  <path d="M16.8 12 C 21 4.5, 29 4, 29.5 9.5 C 30 14.5, 23.5 17.5, 16.8 16 Z" fill="#F08BB6"/>
+  <path d="M15.2 17 C 9 16.5, 4.5 20, 6 25 C 7.5 29, 13 27, 15.2 21 Z" fill="#B49CDA"/>
+  <path d="M16.8 17 C 23 16.5, 27.5 20, 26 25 C 24.5 29, 19 27, 16.8 21 Z" fill="#B49CDA"/>
+  <circle cx="8" cy="10" r="2" fill="#FFF3B0"/><circle cx="24" cy="10" r="2" fill="#FFF3B0"/>
+  <circle cx="10" cy="23.5" r="1.4" fill="#fff" opacity=".8"/><circle cx="22" cy="23.5" r="1.4" fill="#fff" opacity=".8"/>
+  <ellipse cx="16" cy="17" rx="1.6" ry="8" fill="#3B2C5A"/>
+  <circle cx="16" cy="9" r="1.9" fill="#3B2C5A"/>
 </svg>`
 ];
 const HORNWORM_SVG = BUG_ICONS[0];
@@ -8141,6 +8659,77 @@ async function openBugSheet(p, onChange, editId, icon){
   const close = () => sheet.classList.remove("show");
   document.getElementById("bugCancelBtn").addEventListener("click", close);
   sheet.addEventListener("click", e => { if(e.target === sheet) close(); });
+})();
+// Fold away the entry boxes for any step that already has an entry logged.
+(function(){
+  const LABELS = { sow: "🌱 Sow another batch", pottedup: "🪴 Pot up more seedlings",
+    transplant: "🏡 Move more to the garden", sprouted: "🌾 Log more sprouts" };
+  function apply(field){
+    const chips = field.querySelector(":scope > .sow-cards, :scope > .date-chips");
+    if(!chips) return;
+    const dateInput = field.querySelector(':scope input[type="date"]');
+    // While an entry is open in the Edit pop-up its inputs live there, so
+    // leave the field alone until they come back.
+    const formHere = !!dateInput;
+    const count = chips.children.length;
+    let btn = field.querySelector(":scope > .af-reveal");
+    if(!btn){
+      const id = (field.querySelector(":scope > label") || {}).htmlFor || "";
+      const kind = id.split("-")[0];
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "af-reveal af-" + kind;
+      btn.dataset.openLabel = LABELS[kind] || "＋ Add another";
+      btn.textContent = btn.dataset.openLabel;
+      const label = field.querySelector(":scope > label");
+      if(label) label.insertAdjacentElement("afterend", btn); else field.prepend(btn);
+      btn.addEventListener("click", () => {
+        if(field.classList.contains("af-open")){
+          field.classList.remove("af-open");
+          field.dataset.afOpen = "";
+        } else {
+          field.dataset.afOpen = "1";
+          field.classList.remove("af-collapsed");
+          field.classList.add("af-open");
+          const d = field.querySelector('input[type="date"]');
+          if(d) d.focus({ preventScroll: true });
+        }
+        apply(field);
+      });
+    }
+    if(String(count) !== field.dataset.afCount){
+      // A new entry was just saved (or one removed) — fold the boxes away again.
+      if(field.dataset.afCount !== undefined && count > Number(field.dataset.afCount)) field.dataset.afOpen = "";
+      field.dataset.afCount = String(count);
+    }
+    let open = field.dataset.afOpen === "1";
+    // Germination has no "add another" button: its boxes simply come back
+    // whenever there are more sow entries than germination dates logged
+    // (i.e. you sowed a new batch that hasn't come up yet).
+    if(btn.classList.contains("af-sprouted")){
+      const row = field.closest(".actual-row");
+      const sowCards = row && row.querySelector(".sow-cards");
+      const sowCount = sowCards ? sowCards.children.length : 0;
+      open = sowCount > count;
+      field.dataset.afOpen = "";
+    }
+    const collapse = formHere && count > 0 && !open;
+    field.classList.toggle("af-collapsed", collapse);
+    field.classList.toggle("af-open", formHere && count > 0 && open && !btn.classList.contains("af-sprouted"));
+    btn.textContent = open ? "Hide entry boxes" : btn.dataset.openLabel;
+  }
+  let queued = false;
+  function scan(){
+    queued = false;
+    document.querySelectorAll(".actual-row > .actual-field").forEach(apply);
+  }
+  new MutationObserver(muts => {
+    if(queued) return;
+    if(muts.some(m => m.target.nodeType === 1 && (m.target.closest(".actual-row") || m.target.querySelector && m.target.querySelector(".actual-row")))){
+      queued = true;
+      requestAnimationFrame(scan);
+    }
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 let undoToastTimer = null;
 function showUndoToast(message, onUndo, actionLabel){
@@ -8713,6 +9302,7 @@ function wireSimpleToggle(toggleId, bodyId){
 wireSimpleToggle("harvestFruitToggle", "harvestFruitBody");
 wireSimpleToggle("harvestVegToggle", "harvestVegBody");
 wireSimpleToggle("harvestChartToggle", "harvestChartBodyWrap");
+wireSimpleToggle("harvestYearToggle", "harvestYearBodyWrap");
 wireSimpleToggle("harvestPicsToggle", "harvestPicsBodyWrap");
 document.getElementById("calPrevBtn").addEventListener("click", () => {
   calMonth--; if(calMonth < 1){ calMonth = 12; calYear--; }
