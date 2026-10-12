@@ -1606,12 +1606,21 @@
   .date-chip-menu button:hover{ filter:brightness(0.97); }
   .notes-field{margin-top:8px;}
   .note-edit-date-row{
-    display:flex; align-items:center; gap:8px; margin-top:6px; font-size:12px; color:var(--ink-soft);
+    flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px; font-size:13px; font-weight:600; color:var(--ink-soft);
   }
+  .note-edit-date-row[style*="flex"]{ display:flex; }
   .note-edit-date-row input[type="date"]{
-    font-family:'Inter',sans-serif; font-size:12.5px; color:var(--entry-text);
-    background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:5px 7px;
+    flex:1; min-width:150px; min-height:44px; box-sizing:border-box;
+    font-family:'Inter',sans-serif; font-size:16px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:6px 10px;
   }
+  .note-edit-actions{ display:flex; gap:8px; width:100%; }
+  .note-edit-actions button{
+    flex:1; min-height:44px; border-radius:12px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+  }
+  .note-edit-save{ background:var(--evergreen); color:#fff; border:1px solid var(--evergreen); --b3d-edge:#3F7A60; }
+  .note-edit-cancel{ background:var(--paper-2); color:var(--ink-soft); border:1px solid var(--line); --b3d-edge: rgba(120,90,160,.28); }
   .notes-field label{
     display:block; font-family:'IBM Plex Mono', monospace; font-size:10.8px;
     letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:3px;
@@ -2456,7 +2465,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.11-9</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.12-1</div>
   </main>
 
   <nav class="tabbar">
@@ -5623,6 +5632,10 @@ async function renderGrid(sectionKey, containerId){
         <div class="note-edit-date-row" id="notes-edit-date-wrap-${p.slug}" style="display:none;">
           <label for="notes-edit-date-${p.slug}">Note date</label>
           <input type="date" id="notes-edit-date-${p.slug}">
+          <div class="note-edit-actions">
+            <button type="button" class="note-edit-save" id="notes-edit-save-${p.slug}">Save changes</button>
+            <button type="button" class="note-edit-cancel" id="notes-edit-cancel-${p.slug}">Cancel</button>
+          </div>
         </div>
         <div class="notes-list" id="notes-list-${p.slug}"></div>
       </div>
@@ -7056,6 +7069,8 @@ async function renderGrid(sectionKey, containerId){
       const notesListEl = card.querySelector(`#notes-list-${p.slug}`);
       const notesDateWrap = card.querySelector(`#notes-edit-date-wrap-${p.slug}`);
       const notesDateInput = card.querySelector(`#notes-edit-date-${p.slug}`);
+      const notesSaveBtn = card.querySelector(`#notes-edit-save-${p.slug}`);
+      const notesCancelBtn = card.querySelector(`#notes-edit-cancel-${p.slug}`);
       let editingNoteIndex = null;
 
       // Notes are stored with just a display string like "Aug 27" (no
@@ -7161,7 +7176,22 @@ async function renderGrid(sectionKey, containerId){
       notesInput.addEventListener("keydown", (e) => {
         if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); addNote(); }
       });
-      notesInput.addEventListener("blur", addNote);
+      // A brand-new note still saves when you tap away. While editing an
+      // existing note, tapping away does NOT save — otherwise tapping the
+      // date box (to change the date) saved and closed the editor before
+      // the calendar could open. Use Save changes / Cancel instead.
+      notesInput.addEventListener("blur", () => { if(editingNoteIndex === null) addNote(); });
+      if(notesSaveBtn) notesSaveBtn.addEventListener("click", () => {
+        if(!notesInput.value.trim() && editingNoteIndex !== null) notesInput.value = notes[editingNoteIndex].text;
+        addNote();
+      });
+      if(notesCancelBtn) notesCancelBtn.addEventListener("click", () => {
+        editingNoteIndex = null;
+        notesInput.value = "";
+        notesInput.style.height = "auto";
+        if(notesDateWrap) notesDateWrap.style.display = "none";
+        renderNotes();
+      });
       // Grows the textarea to fit multi-line notes, up to a few rows, then
       // stops growing and shows a scrollbar for anything beyond that.
       function autoGrowNotesInput(){
