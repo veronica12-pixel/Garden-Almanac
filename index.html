@@ -2083,9 +2083,20 @@
         <div class="header-season-label" id="headerSeasonLabel"></div>
       </div>
       <div class="header-date-box">
-        <div class="header-date-num" id="todayDayLabel">21</div>
-        <div class="header-date-month" id="todayMonthLabel">Jul</div>
+        <div class="header-date-num" id="todayDayLabel"></div>
+        <div class="header-date-month" id="todayMonthLabel"></div>
       </div>
+      <script>
+        /* Fill in today's date the instant the header appears, so the box
+           never shows a placeholder date while the rest of the app loads. */
+        (function(){
+          var now = new Date();
+          document.getElementById("todayDayLabel").textContent = now.getDate();
+          var m = document.getElementById("todayMonthLabel");
+          m.textContent = now.toLocaleDateString(undefined, {month:"long"});
+          if(m.scrollWidth > m.clientWidth) m.textContent = now.toLocaleDateString(undefined, {month:"short"});
+        })();
+      </script>
     </div>
   </header>
   <div id="stickyCropBar"><button type="button" aria-label="Back to the top of this crop"></button></div>
@@ -2465,7 +2476,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.12-1</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.12-2</div>
   </main>
 
   <nav class="tabbar">
