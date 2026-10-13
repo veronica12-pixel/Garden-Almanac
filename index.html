@@ -2476,7 +2476,7 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.12-2</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.13-1</div>
   </main>
 
   <nav class="tabbar">
@@ -3698,6 +3698,9 @@ function fmtGermDay(iso){
   return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][q[1]-1] + " " + q[2];
 }
 const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "carrots", "fennel", "longbeans"];
+// Crops whose card has the "Germinated — days to germinate" section: every
+// direct-sown crop, plus squash, cucumbers and melons (often started in pots).
+const GERM_TRACKED_CROPS = DIRECT_SOW_CROPS.concat(["squash", "cucumbers", "watermelon", "muskmelon"]);
 async function getPlantCountFor(season, slug){
   try{
     const r = await window.storage.get(`plants:${season}:${slug}`, false);
@@ -5751,6 +5754,16 @@ async function renderGrid(sectionKey, containerId){
               <button type="button" class="sow-add-btn" id="sow-add-${p.slug}">+ Add sow entry</button>
               <div class="sow-cards" id="sow-chips-${p.slug}"></div>
             </div>
+            ${GERM_TRACKED_CROPS.includes(p.slug) ? `
+            <div class="actual-field germ-field">
+              <label for="sprouted-${p.slug}">🌱 Germinated — days after ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"}</label>
+              <div class="actual-input-row">
+                <input id="sprouted-${p.slug}" type="date" aria-label="Date the seedlings came up">
+                <input id="sprouted-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature when the seedlings came up">
+              </div>
+              <div class="date-chips" id="sprouted-chips-${p.slug}"></div>
+              <div class="germ-days" id="germdays-${p.slug}"><span class="germ-days-empty">Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.</span></div>
+            </div>` : ""}
             ${["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug) ? `
             <div class="actual-field">
               <label for="pottedup-${p.slug}">Potted in individual pots</label>
@@ -5769,16 +5782,6 @@ async function renderGrid(sectionKey, containerId){
               </div>
               <div class="date-chips" id="transplant-chips-${p.slug}"></div>
             </div>`}
-            ${DIRECT_SOW_CROPS.includes(p.slug) ? `
-            <div class="actual-field germ-field">
-              <label for="sprouted-${p.slug}">🌱 Germinated — days after direct sow</label>
-              <div class="actual-input-row">
-                <input id="sprouted-${p.slug}" type="date" aria-label="Date the seedlings came up">
-                <input id="sprouted-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature when the seedlings came up">
-              </div>
-              <div class="date-chips" id="sprouted-chips-${p.slug}"></div>
-              <div class="germ-days" id="germdays-${p.slug}"><span class="germ-days-empty">Pick the day the first seedlings came up — the days since direct sow are counted for you.</span></div>
-            </div>` : ""}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
           ${plantCountFieldHTML}
@@ -7021,19 +7024,19 @@ async function renderGrid(sectionKey, containerId){
       if(p.slug !== "garlic" && !DIRECT_SOW_CROPS.includes(p.slug)){
         await wireDateChips("transplant", card.querySelector(`#transplant-${p.slug}`), card.querySelector(`#transplant-temp-${p.slug}`), card.querySelector(`#transplant-chips-${p.slug}`));
       }
-      if(DIRECT_SOW_CROPS.includes(p.slug)){
+      if(GERM_TRACKED_CROPS.includes(p.slug)){
         await wireDateChips("sprouted", card.querySelector(`#sprouted-${p.slug}`), card.querySelector(`#sprouted-temp-${p.slug}`), card.querySelector(`#sprouted-chips-${p.slug}`));
         const germOut = card.querySelector(`#germdays-${p.slug}`);
         const updateGermDays = async () => {
           const sows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean).sort();
           const ups = (await getActualDates(p.slug, "sprouted")).map(entryDate).filter(Boolean).sort();
           if(!ups.length){
-            germOut.innerHTML = `<span class="germ-days-empty">Pick the day the first seedlings came up — the days since direct sow are counted for you.</span>`;
+            germOut.innerHTML = `<span class="germ-days-empty">Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.</span>`;
             return;
           }
           germOut.innerHTML = ups.map(up => {
             const sow = sows.filter(d => d <= up).pop();
-            if(!sow) return `<div class="germ-days-line">🌱 Came up ${fmtGermDay(up)} — <i>add the direct sow date above to count the days</i></div>`;
+            if(!sow) return `<div class="germ-days-line">🌱 Came up ${fmtGermDay(up)} — <i>add the sow date above to count the days</i></div>`;
             const n = daysBetweenISO(sow, up);
             return `<div class="germ-days-line"><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to germinate <span class="germ-days-range">sown ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></div>`;
           }).join("");
