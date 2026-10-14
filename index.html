@@ -555,25 +555,26 @@
     display:inline-block; color:var(--clay-dark); font-size:42px; line-height:0.6; transition:transform .2s;
   }
   .rain-toggle.open .rain-chevron{transform:rotate(180deg);}
+  /* All 12 months fit across a phone screen — no sideways scrolling. */
   .rain-chart{
-    display:flex; align-items:flex-end; gap:6px; height:180px;
-    padding:0 2px 0; overflow-x:auto; -webkit-overflow-scrolling:touch;
+    display:flex; align-items:flex-end; gap:1px; height:180px;
+    padding:0; overflow:hidden;
   }
   .rain-chart-col{
     display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
-    flex:1 0 34px; min-width:34px; height:100%;
+    flex:1 1 0; min-width:0; height:100%;
   }
   .rain-chart-val{
-    font-size:10px; font-weight:700; color:var(--ink-soft); margin-bottom:3px;
-    white-space:nowrap;
+    font-size:8.5px; font-weight:700; color:var(--ink-soft); margin-bottom:3px;
+    white-space:nowrap; letter-spacing:-.2px;
   }
   .rain-chart-bar{
-    width:20px; border-radius:5px 5px 0 0; background:#5FA3C4; min-height:2px;
+    width:90%; max-width:26px; border-radius:4px 4px 0 0; background:#5FA3C4; min-height:2px;
     transition:height .3s ease;
   }
   .rain-chart-bar.no-data{ background:var(--line); }
   .rain-chart-label{
-    font-size:10.5px; color:var(--ink-soft); margin-top:6px; white-space:nowrap;
+    font-size:9.5px; color:var(--ink-soft); margin-top:6px; white-space:nowrap; letter-spacing:-.2px;
   }
   #rainAutoFrom, #rainAutoTo{
     font-family:'Inter',sans-serif; font-size:13.5px; color:var(--entry-text);
@@ -1933,6 +1934,13 @@
     padding:22px 22px calc(26px + env(safe-area-inset-bottom)); box-shadow:0 -8px 30px rgba(0,0,0,0.2);
     max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
+  /* Close button that stays pinned to the top right while the window scrolls. */
+  .modal-top-close-wrap{ position:sticky; top:0; height:0; z-index:6; display:flex; justify-content:flex-end; }
+  .modal-top-close{
+    width:38px; height:38px; margin-top:-8px; margin-right:-8px; border-radius:50%; cursor:pointer;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-soft);
+    font-size:17px; font-weight:700; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
   .modal h3{font-family:'Fraunces',serif; color:var(--evergreen); margin:0 0 10px; font-size:22px;}
   .modal p{font-size:15.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 10px;}
   .modal ol{padding-left:18px; font-size:15.5px; color:var(--ink); line-height:1.7;}
@@ -2314,7 +2322,6 @@
         <div class="notes-list" id="journalList"></div>
         </div>
         <div id="fertBody" class="home-tab-body" style="display:none;">
-        <p class="backup-hint">Log each feeding — granular, liquid, foliar, compost or worm castings. Set "Feed again in" and the list at the top shows what's due next. Entries lock 48 hours after you add them.</p>
         <div id="fertDue"></div>
         <div id="fertFormWrap">
           <div class="fert-form">
@@ -2618,7 +2625,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.14-24</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.14-28</div>
   </main>
 
   <nav class="tabbar">
@@ -2655,6 +2662,7 @@
 
 <div class="modal-backdrop" id="compareModalBackdrop">
   <div class="modal">
+    <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="compareModalTopClose" aria-label="Close">✕</button></div>
     <h3>Year-over-Year</h3>
     <p>When each crop first went in, season by season. Dashed boxes are still to come.</p>
     <div class="compare-table-wrap" id="compareList"></div>
@@ -9010,6 +9018,10 @@ document.getElementById("compareBtn").addEventListener("click", () => {
 document.getElementById("compareModalClose").addEventListener("click", () => {
   document.getElementById("compareModalBackdrop").classList.remove("show");
   document.getElementById("compareBtn").classList.remove("active");
+});
+// Same as Close at the bottom, but always in reach at the top right.
+document.getElementById("compareModalTopClose").addEventListener("click", () => {
+  document.getElementById("compareModalClose").click();
 });
 document.getElementById("compareModalBackdrop").addEventListener("click", (e) => {
   if(e.target.id === "compareModalBackdrop"){
