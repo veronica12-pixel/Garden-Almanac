@@ -588,6 +588,9 @@
   .rain-chart-legend span{ display:inline-flex; align-items:center; gap:4px; }
   .rain-chart-legend i{ width:8px; height:8px; border-radius:2px; display:inline-block; }
   .home-tabs-card{ margin-bottom:18px; }
+  /* Kept invisible until Coming Up / By Month are drawn, so the box doesn't
+     flash at the top of Home and then jump down once the lists fill in. */
+  body:not(.home-ready) .home-tabs-card{ visibility:hidden; }
   .home-tabs-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .home-tab-btn{
     font-family:'Inter',sans-serif; font-size:15px; font-weight:600;
@@ -625,6 +628,19 @@
   .home-tabs-row-3 .home-tab-btn{ flex-direction:column; justify-content:center; text-align:center; gap:6px; padding:10px 6px; font-size:14px; }
   .home-tab-btn.tab-fert{ background:linear-gradient(160deg, #FBEBF8 0%, #F2D3EE 100%); color:#96468A; border-color:#E8C2E2; }
   .home-tab-btn.tab-fert.active{ background:#C06FB3; color:#fff; border-color:#C06FB3; }
+  .home-tab-btn.tab-opc{ background:linear-gradient(160deg, #E9F5EC 0%, #CFE8D6 100%); color:#2F7A4E; border-color:#BFDEC9; }
+  .home-tab-btn.tab-opc.active{ background:#4E9A6C; color:#fff; border-color:#4E9A6C; }
+  /* Last home row holds four buttons now: 2 x 2 so labels still fit on a phone. */
+  .home-tabs-row.home-tabs-row-3.home-tabs-row-4{ grid-template-columns:1fr 1fr; }
+  .opc-due b, .opc-next{ color:#2F7A4E !important; }
+  .opc-day-head{ font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:2px; }
+  .opc-batch-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .opc-tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+  .opc-tags .fert-bed-tag{ margin-right:0; }
+  .opc-crop-tag{ display:inline-block; font-size:12px; font-weight:700; color:var(--ink); background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:1px 9px; }
+  .opc-actions{ margin-top:6px; }
+  .fert-entry-actions.opc-actions button{ padding:5px 14px; min-height:34px; font-size:13.5px; }
+  .opc-tag{ display:inline-block; font-size:12px; font-weight:700; color:#2F7A4E; background:#E4F2E8; border:1px solid #BFDEC9; border-radius:999px; padding:1px 9px; margin-right:7px; }
   /* ---------- fertilizer log ---------- */
   .fert-form{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
   .fert-form .fert-wide{ grid-column:1 / -1; }
@@ -969,6 +985,25 @@
     justify-content:center; line-height:1;
   }
   .card-body{margin-top:9px;}
+  /* "Skip season" pill next to the crop name. Shown when the card is open,
+     or always once the crop is skipped. */
+  .skip-season-btn{
+    flex:none; display:inline-flex; align-items:center; gap:3px; cursor:pointer; user-select:none;
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; line-height:19px;
+    padding:1px 9px; border-radius:999px; border:1px dashed #B9A3E3; color:#6C4AB0; background:#F3ECFD;
+  }
+  .skip-season-btn.on{ border:1px solid #9170D1; background:#9170D1; color:#fff; }
+  .plant-head:not(.open) .skip-season-btn:not(.on){ display:none; }
+  .wave-skip-btn{
+    display:inline-flex; align-items:center; gap:3px; cursor:pointer; user-select:none; vertical-align:1px; margin-left:4px;
+    font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700; line-height:19px; font-style:normal;
+    padding:1px 8px; border-radius:999px; border:1px dashed #B9A3E3; color:#6C4AB0; background:#F3ECFD;
+  }
+  .wave-skip-btn.on{ border:1px solid #9170D1; background:#9170D1; color:#fff; }
+  .wave-line.date-skipped, .wave-line.wave-notneeded{ color:var(--ink-soft); }
+  .wave-line.wave-notneeded .lbl{ color:var(--ink-soft); text-decoration:line-through; }
+  .wave-line.date-skipped .lbl{ color:var(--ink-soft); text-decoration:line-through; }
+  .season-done-banner.season-skip-banner{ background:linear-gradient(160deg, #F3ECFD 0%, #E2D3F8 100%); color:#6C4AB0; border:1px solid #D4C2F0; }
   .dose{font-size:13.5px; color:var(--ink-soft); line-height:1.65;}
   .dose .wave + .wave{margin-top:5px; padding-top:5px; border-top:1px dotted var(--line);}
   .dose .lbl{color:var(--ink); font-weight:500;}
@@ -1177,8 +1212,13 @@
   .sow-card:hover{ background:var(--paper-2); }
   .sow-card.locked{ cursor:default; border-color:var(--line); }
   .sow-card-head{
-    font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700;
-    text-transform:uppercase; letter-spacing:.02em; color:#000;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#000;
+    display:flex; align-items:center; flex-wrap:wrap; gap:6px;
+  }
+  /* Same green tag as "✓ started Aug 5" */
+  .tag-green{
+    display:inline-flex; align-items:center; gap:3px; font-family:'Inter',sans-serif; font-size:11.5px; font-weight:700;
+    background:#DDEFC0; color:#4C6B1C; border-radius:6px; padding:1px 7px; line-height:19px;
   }
   .variety-chip{
     position:relative; background:transparent; color:#000; font-size:11.5px; font-weight:600;
@@ -1442,6 +1482,28 @@
   .actual-field.af-open > .af-reveal{
     --c1:#F3EEF7; --c2:#E2D9EC; --edge:#BFB2CF; --ink:var(--ink-soft);
   }
+  /* Crop card "add more" buttons gathered into one stack at the end of the
+     sow / pot up / transplant section, styled like the Home buttons. */
+  .af-stack{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .af-stack[hidden]{ display:none; }
+  .af-stack > .af-reveal{ display:none; }
+  .af-stack > .af-reveal.af-show{
+    display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box;
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:600; line-height:1.25; text-align:left;
+    border-radius:12px; padding:10px; cursor:pointer; border:1px solid #CFE3AC;
+    background:linear-gradient(160deg, #F1F8E3 0%, #DDEFC0 100%); color:#5E7F24;
+    box-shadow:0 3px 0 rgba(120,90,160,.28), 0 5px 10px rgba(74,64,88,.12), inset 0 1px 0 rgba(255,255,255,.55);
+    transition:transform .07s ease, box-shadow .07s ease;
+  }
+  .af-stack > .af-reveal.af-show:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(120,90,160,.28), 0 2px 4px rgba(74,64,88,.12); }
+  .af-stack > .af-reveal.af-pottedup{ background:linear-gradient(160deg, #FFF0E3 0%, #FCDAC0 100%); color:#B9692E; border-color:#F4CFAE; }
+  .af-stack > .af-reveal.af-transplant{ background:linear-gradient(160deg, #E6F2FC 0%, #CBE2F7 100%); color:#2F6A9E; border-color:#B6D6EF; }
+  .af-stack > .af-reveal.af-is-open{ background:linear-gradient(160deg, #F3EEF7 0%, #E2D9EC 100%); color:var(--ink-soft); border-color:#D8CDE4; }
+  .af-stack .af-icon{
+    flex:none; width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.55);
+    display:flex; align-items:center; justify-content:center; font-size:19px; line-height:1;
+  }
+  body.night-mode .af-stack > .af-reveal.af-show{ filter:brightness(.92); }
   /* ---------- Harvest amount: lbs / oz / count ---------- */
   .harvest-add-row.amount-row{ display:flex; gap:8px; align-items:stretch; }
   .unit-pick{ display:flex; flex:none; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-2); }
@@ -1564,14 +1626,22 @@
   .germ-field > label{ color:#5E7F24; }
   .germ-days{ margin-top:7px; display:flex; flex-direction:column; gap:5px; }
   .germ-days-empty{ font-size:12px; font-style:italic; color:var(--ink-soft); }
+  /* Same look as the Home buttons (icon square on the left), in golden yellow. */
   .germ-days-line{
-    display:flex; align-items:baseline; flex-wrap:wrap; gap:6px;
-    background:linear-gradient(160deg, #F1F8E3 0%, #DDEFC0 100%);
-    border:1px solid #CFE3AC; border-radius:12px; padding:7px 11px;
-    font-size:13.5px; color:#3F5A14; font-weight:600;
+    display:flex; align-items:center; gap:10px;
+    background:linear-gradient(160deg, #FFF9DF 0%, #FBEDB5 100%);
+    border:1px solid #EFE0A0; border-radius:12px; padding:10px;
+    box-shadow:0 3px 0 rgba(120,90,160,.28), 0 5px 10px rgba(74,64,88,.12), inset 0 1px 0 rgba(255,255,255,.55);
+    font-family:'Inter',sans-serif; font-size:15px; line-height:1.25; color:#957517; font-weight:600;
+    margin-bottom:4px;
   }
-  .germ-days-num{ font-size:22px; line-height:1; color:#5E7F24; font-weight:700; }
-  .germ-days-range{ font-weight:400; font-size:12px; color:#5E7F24; margin-left:auto; }
+  .germ-days-icon{
+    flex:none; width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.55);
+    display:flex; align-items:center; justify-content:center; font-size:19px; line-height:1;
+  }
+  .germ-days-text{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .germ-days-num{ font-size:18px; line-height:1; color:#7A5F0F; font-weight:800; }
+  .germ-days-range{ font-weight:500; font-size:12.5px; color:#A08328; }
   .date-chips{display:flex; flex-wrap:wrap; gap:4px; margin-top:5px;}
   .date-chip{
     display:flex; align-items:center; gap:3px; position:relative;
@@ -1582,6 +1652,14 @@
     border-radius:20px; padding:3px 10px; line-height:1.2;
   }
   .date-chip.locked{padding:4px 10px; cursor:default;}
+  /* Potted / germinated / transplanted entries: same green tag as "✓ started Aug 5". */
+  .date-chip.done-tag, .date-chip.done-tag.locked{
+    font-family:'Inter',sans-serif; text-transform:none; letter-spacing:0;
+    font-size:11.5px; font-weight:700; background:#DDEFC0; color:#4C6B1C;
+    border:none; border-radius:6px; padding:1px 7px; line-height:19px;
+  }
+  .date-chip.done-tag:not(.locked):hover{ background:#CFE6AA; }
+  .done-tag-lock{ font-size:9px; margin-left:2px; }
   .date-chip:not(.locked){cursor:pointer;}
   .date-chip:not(.locked):hover{background:var(--paper-2);}
   /* Tapping an entry opens a big action bar pinned near the bottom of the
@@ -1706,6 +1784,9 @@
     padding:6px 8px; outline:none;
   }
   .seedpacket-input-row input:focus{ border-color:var(--sage); }
+  .seedpacket-input-wrap{ position:relative; flex:1; min-width:0; display:flex; }
+  .seedpacket-input-wrap input{ width:100%; }
+  .seedpacket-input-wrap .variety-suggest{ max-height:240px; overflow-y:auto; }
   .seedpacket-input-row input::placeholder{ color:var(--entry-placeholder); }
   .seedpacket-add-btn{
     flex:none; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
@@ -1770,6 +1851,32 @@
   .plantcount-cell input::placeholder{ color:var(--entry-placeholder); }
   .plantcount-total{ font-weight:600; color:var(--evergreen); background:var(--card); }
   .plantcount-last{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; }
+  /* Same look as the Home buttons / days-to-germinate box, in mint. */
+  .plantcount-field{
+    display:flex; align-items:flex-start; gap:10px; margin-top:12px; margin-bottom:4px;
+    background:linear-gradient(160deg, #E5F7F3 0%, #C8ECE3 100%);
+    border:1px solid #B3E0D5; border-radius:12px; padding:10px;
+    box-shadow:0 3px 0 rgba(120,90,160,.28), 0 5px 10px rgba(74,64,88,.12), inset 0 1px 0 rgba(255,255,255,.55);
+  }
+  .pc-icon{
+    flex:none; width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,0.55);
+    display:flex; align-items:center; justify-content:center; font-size:19px; line-height:1;
+  }
+  .pc-main{ flex:1; min-width:0; }
+  .plantcount-field .pc-main > label{
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:600; letter-spacing:0; text-transform:none;
+    color:#2D7E6E; margin:7px 0 8px; line-height:1.25;
+  }
+  .plantcount-field .plantcount-cell span{ color:#2D7E6E; font-weight:500; }
+  .plantcount-field .plantcount-row{ flex-wrap:nowrap; }
+  .plantcount-field .plantcount-cell{ flex:1 1 0; }
+  .plantcount-field .plantcount-cell span{ white-space:nowrap; }
+  .plantcount-field .plantcount-cell input, .plantcount-field .plantcount-total{
+    background:rgba(255,255,255,.75); border-color:#B3E0D5; font-size:15px; font-weight:600; padding:7px 8px;
+  }
+  .plantcount-field .plantcount-cell input:disabled{ background:rgba(255,255,255,.45); }
+  .plantcount-field .plantcount-total{ color:#2D7E6E; }
+  .plantcount-field .plantcount-last{ color:#3F8C7C; }
 
   /* ---------- tab bar ---------- */
   nav.tabbar{
@@ -2104,7 +2211,14 @@
 
   <main>
     <section class="tab-panel active" id="tab-today">
-      <div class="legend-card home-tabs-card">
+      <h2 class="section-title" style="margin-top:0;">Coming Up</h2>
+      <div class="sub">Sowing &amp; transplant dates in the weeks ahead</div>
+      <div class="ledger" id="ledger"></div>
+
+      <h2 class="section-title" style="margin-top:22px;">By Month</h2>
+      <div class="sub">Every planned task, month by month</div>
+      <div id="monthDropdowns"></div>
+      <div class="legend-card home-tabs-card" style="margin-top:22px;">
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
@@ -2113,10 +2227,11 @@
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
           <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
         </div>
-        <div class="home-tabs-row home-tabs-row-3">
+        <div class="home-tabs-row" style="margin-top:8px;">
           <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Log</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">💧</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-fert" data-hometab="fert"><span class="home-tab-icon">🧪</span><span>Fertilizer Log</span></button>
+          <button type="button" class="home-tab-btn tab-opc" data-hometab="opc"><span class="home-tab-icon">🐞</span><span>Organic Pest Control</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
           <div id="seasonButtons">
@@ -2226,6 +2341,37 @@
         </div>
         <div id="fertList" class="fert-list" style="margin-top:12px;"></div>
         </div>
+        <div id="opcBody" class="home-tab-body" style="display:none;">
+        <div id="opcDue"></div>
+        <div id="opcFormWrap">
+          <div class="fert-form">
+            <label>Date<input type="date" id="opcDate"></label>
+            <label>Crops or beds<input type="text" id="opcCrop" list="opcCropList" placeholder="Add a crop" autocomplete="off"></label>
+            <datalist id="opcCropList"></datalist>
+            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you treated — pick from the list or type one and press Enter. Each gets its own entry.</div><div id="opcCrops" class="fert-crops"></div></div>
+            <label>Treatment<select id="opcType">
+              <option value="Neem oil">Neem oil</option>
+              <option value="Bt (Bacillus thuringiensis)">Bt (Bacillus thuringiensis)</option>
+              <option value="Insecticidal soap">Insecticidal soap</option>
+              <option value="Spinosad">Spinosad</option>
+              <option value="Horticultural oil">Horticultural oil</option>
+              <option value="Copper / sulfur (fungicide)">Copper / sulfur (fungicide)</option>
+              <option value="Diatomaceous earth">Diatomaceous earth</option>
+              <option value="Beneficial insects">Beneficial insects</option>
+              <option value="Other">Other</option>
+            </select></label>
+            <label>Product / brand<input type="text" id="opcProduct" placeholder="e.g. Monterey B.t." autocomplete="off"></label>
+            <label class="fert-wide">Target pest or disease<input type="text" id="opcTarget" placeholder="e.g. hornworms, aphids, powdery mildew" autocomplete="off"></label>
+            <label>Mix rate / amount<input type="text" id="opcAmount" placeholder="e.g. 2 tbsp/gal" autocomplete="off"></label>
+            <label>Repeat in (days)<input type="number" id="opcEvery" min="0" step="1" inputmode="numeric" placeholder="e.g. 7"></label>
+          </div>
+          <div class="harvest-add-actions">
+            <button id="opcAddBtn" type="button" class="h-add-btn">Add treatment</button>
+            <button id="opcCancelBtn" type="button" class="h-cancel-btn" style="display:none;">Cancel</button>
+          </div>
+        </div>
+        <div id="opcList" class="fert-list" style="margin-top:12px;"></div>
+        </div>
         <div id="germinationBody" class="home-tab-body" style="display:none;"></div>
         <div id="germtempBody" class="home-tab-body" style="display:none;"></div>
         <div id="reorderBody" class="home-tab-body" style="display:none;">
@@ -2239,18 +2385,10 @@
         <p>Sow and transplant dates start from what worked in this Odessa, FL (Zone 9B) garden last year, then align to the nearest matching Fruit / Leaf / Root / Flower day on the <b>Biodynamic Calendar</b> tab — some windows span a few days (e.g. "Aug 12-14"), and that tab opens on whichever month is current.</p>
         <p>Tap a crop card to expand it. Cards sort by whichever date is coming up soonest, and flag <b>Overdue</b> if a planned date's passed with nothing logged yet. Missing a crop? Use <b>+ Add</b> on any tab; the ✕ next to Season DONE removes one for the season.</p>
         <p>Log what actually happened in <b>Actual sow</b> / <b>Actual transplant</b>. Every crop lets you tag a variety as F1 or OP (open-pollinated) as you type it in; for tomatoes you can also tag type, days-to-maturity, and color — they're kept auto-sorted by maturity in one box, and the 🌐 next to a variety searches for it online. Entries lock 48 hours after you log them. <b>Finished Seed Packets</b>, below Notes, tracks what's run out so you know what to reorder.</p>
-        <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> further down breaks the season out month by month. <b>Compare Seasons</b> lays crops down the left and seasons across the top — scroll it both ways — and leaves a cell blank until that crop's planned date actually arrives. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
+        <p>The buttons above also cover <b>Full Calendar</b>, <b>Compare Seasons</b>, <b>Rain Log</b>, and <b>Daily Journal</b>; <b>By Month</b> above breaks the season out month by month. <b>Compare Seasons</b> lays crops down the left and seasons across the top — scroll it both ways — and leaves a cell blank until that crop's planned date actually arrives. The <b>Harvests</b> tab logs what you actually pick, plus its own Harvest Calendar.</p>
         <p>Your data syncs automatically — no manual backup needed.</p>
         </div>
       </div>
-
-      <h2 class="section-title">Coming Up</h2>
-      <div class="sub">Sowing &amp; transplant dates in the weeks ahead</div>
-      <div class="ledger" id="ledger"></div>
-
-      <h2 class="section-title" style="margin-top:22px;">By Month</h2>
-      <div class="sub">Every planned task, month by month</div>
-      <div id="monthDropdowns"></div>
     </section>
 
     <section class="tab-panel" id="tab-vegetables">
@@ -2476,7 +2614,11 @@
       </div>
     </section>
 
-    <div class="app-footer">© 2026 Thor · v2026.10.13-1</div>
+    <script>(function(){ /* show the Home buttons if loading fails or stalls */
+      function ready(){ document.body.classList.add("home-ready"); }
+      window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
+      setTimeout(ready, 20000); })();</script>
+    <div class="app-footer">© 2026 Thor · v2026.10.14-24</div>
   </main>
 
   <nav class="tabbar">
@@ -3202,13 +3344,13 @@ const SEASONS = {
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"fennel", name:"Fennel", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"garlic", name:"Garlic", shape:"bulb", color:C.cream,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"onionslips", name:"Onion slips", shape:"bulb", color:C.lavender,
       dates:[[{a:"Start", m:12, d:5}]]},
     {slug:"strawberries", name:"Strawberries", shape:"circleTop", color:C.red,
@@ -3278,13 +3420,13 @@ const SEASONS = {
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
       note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"fennel", name:"Fennel", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"garlic", name:"Garlic", shape:"bulb", color:C.cream,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"onionslips", name:"Onion slips", shape:"bulb", color:C.lavender,
       dates:[[{a:"Start", m:12, d:4, m2:12, d2:5}]]},
     {slug:"strawberries", name:"Strawberries", shape:"circleTop", color:C.red,
@@ -3439,6 +3581,7 @@ async function deleteCrop(sectionKey, slug){
     `notes:${activeSeason}:${slug}`,
     `plants:${activeSeason}:${slug}`,
     `seasonDone:${activeSeason}:${slug}`,
+    `seasonSkip:${activeSeason}:${slug}`,
     `actual:sow:${activeSeason}:${slug}`,
     `actual:transplant:${activeSeason}:${slug}`
   ];
@@ -3487,7 +3630,58 @@ function isEntryLocked(addedAt){
 function isVarietyLocked(v){
   return !!(v && v.addedAt && isEntryLocked(v.addedAt));
 }
+/* Skip season: "I'm not planting this crop this season" (e.g. last year's
+   strawberries are still alive). Stored per season as seasonSkip:<season>:<slug>;
+   cached in SKIPPED so the synchronous Coming Up / By Month lists can use it.
+   A skipped crop counts as done for reminders, overdue flags and calendars. */
+const SKIPPED = new Set();
+function isSkipped(slug, season){ return SKIPPED.has(`${season || activeSeason}:${slug}`); }
+async function loadSkips(){
+  try{
+    const { keys } = await window.storage.list("seasonSkip:", false);
+    for(const k of keys){
+      try{ const r = await window.storage.get(k, false); if(r && r.value === "true") SKIPPED.add(k.slice("seasonSkip:".length)); }catch(e){}
+    }
+  }catch(e){}
+}
+// Skip one planned date of a crop that has several (e.g. skip the October
+// beans but keep January and February). Stored per season as
+// dateSkip:<season>:<slug>:<planting index>:<date index>.
+const SKIPPED_DATES = new Set();
+function isDateSkipped(slug, wi, ti, season){ return SKIPPED_DATES.has(`${season || activeSeason}:${slug}:${wi}:${ti}`); }
+async function loadWaveSkips(){
+  try{
+    const { keys } = await window.storage.list("dateSkip:", false);
+    for(const k of keys){
+      try{ const r = await window.storage.get(k, false); if(r && r.value === "true") SKIPPED_DATES.add(k.slice("dateSkip:".length)); }catch(e){}
+    }
+  }catch(e){}
+}
+async function setDateSkip(slug, wi, ti, val){
+  const k = `${activeSeason}:${slug}:${wi}:${ti}`;
+  if(val) SKIPPED_DATES.add(k); else SKIPPED_DATES.delete(k);
+  try{ await window.storage.set(`dateSkip:${k}`, val ? "true" : "false", false); }catch(e){}
+}
+// The planned dates that still count for reminders this season
+// (same nested shape as p.dates, with skipped dates left out).
+// Dates made unnecessary by how a crop was actually planted (e.g. sown
+// direct, so its Transplant date isn't needed). Filled in when the crop's
+// card is drawn; same key shape as SKIPPED_DATES.
+const NOT_NEEDED_DATES = new Set();
+// Planned "Start" dates that were actually done another way (e.g. planned
+// indoor, sown direct): key -> label to show instead, like "Sown (direct)".
+const ACTUAL_METHOD_LABEL = new Map();
+function activeWaves(p, season){
+  const ss = season || activeSeason;
+  return (p.dates || []).map((w, wi) => w.filter((t, ti) => !isDateSkipped(p.slug, wi, ti, ss) && !NOT_NEEDED_DATES.has(`${ss}:${p.slug}:${wi}:${ti}`))).filter(w => w.length);
+}
+async function setSkip(slug, val){
+  const k = `${activeSeason}:${slug}`;
+  if(val) SKIPPED.add(k); else SKIPPED.delete(k);
+  try{ await window.storage.set(`seasonSkip:${k}`, val ? "true" : "false", false); }catch(e){}
+}
 async function getSeasonDone(slug){
+  if(isSkipped(slug)) return true;
   try{
     const r = await window.storage.get(`seasonDone:${activeSeason}:${slug}`, false);
     return r ? r.value === "true" : false;
@@ -3567,6 +3761,14 @@ function fmtTemp(raw){
   if(!raw) return "";
   const num = raw.trim().replace(/f$/i, "").trim();
   return `(${num}°F)`;
+}
+// "2026-08-31" -> "Aug 31", and "85" -> " · 85°F", for the green ✓ tags.
+function fmtTagDate(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || "").trim());
+  return m ? `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}` : (iso || "");
+}
+function fmtTagTemp(tp){
+  return tp ? ` · ${String(tp).trim().replace(/f$/i, "").trim()}°F` : "";
 }
 function fmtActualEntry(d, fallbackTemp){
   const dt = entryDate(d);
@@ -5138,6 +5340,235 @@ document.getElementById("fertAddBtn").addEventListener("click", async () => {
   refreshCropCardsForFert();
 });
 document.getElementById("fertCancelBtn").addEventListener("click", () => { fertResetForm(); renderFertilizerLog(); });
+
+/* ---------------- organic pest control log (Home page) ----------------
+   Same shape as the Fertilizer Log: one list per season under
+   `pestcontrol:<season>` — { id, date, crop, type (treatment), product,
+   target, amount, every (DAYS), addedAt }. Locks 48h after it's added. */
+async function getOpcLog(season){
+  try{
+    const r = await window.storage.get(`pestcontrol:${season || activeSeason}`, false);
+    return r ? (JSON.parse(r.value) || []) : [];
+  }catch(e){ return []; }
+}
+async function setOpcLog(arr){
+  try{ await window.storage.set(`pestcontrol:${activeSeason}`, JSON.stringify(arr), false); }catch(e){}
+}
+let opcEditingIds = [];
+let opcCrops = [];
+function opcBits(e){ return [e.type, e.product, e.target ? `for ${e.target}` : "", e.amount].filter(Boolean); }
+function opcNextInfo(e){
+  if(!(Number(e.every) > 0) || !e.date) return null;
+  const next = new Date(`${e.date}T00:00:00`); next.setDate(next.getDate() + Number(e.every));
+  const days = Math.round((next.getTime() - new Date(`${fertTodayISO()}T00:00:00`).getTime()) / 86400000);
+  return { next, days };
+}
+function opcWhenHTML(x){
+  return x.days < 0 ? `<span class="fert-over">overdue by ${-x.days} day${x.days === -1 ? "" : "s"}</span>`
+    : x.days === 0 ? `<span class="fert-over">today</span>`
+    : `${x.next.toLocaleDateString(undefined, { month:"short", day:"numeric" })} (in ${x.days} day${x.days === 1 ? "" : "s"})`;
+}
+function renderOpcChips(){
+  const wrap = document.getElementById("opcCrops");
+  if(!wrap) return;
+  wrap.innerHTML = opcCrops.map((c, i) => `<span class="fert-chip">${fertEsc(c)}<button type="button" data-opc-chip="${i}" aria-label="Remove ${fertEsc(c)}">×</button></span>`).join("");
+  wrap.querySelectorAll("[data-opc-chip]").forEach(b => b.addEventListener("click", () => {
+    opcCrops.splice(Number(b.dataset.opcChip), 1);
+    renderOpcChips();
+  }));
+}
+function addOpcCrop(name){
+  const v = String(name || "").trim();
+  if(!v) return false;
+  if(!opcCrops.some(c => c.toLowerCase() === v.toLowerCase())) opcCrops.push(v);
+  renderOpcChips();
+  return true;
+}
+// Read-only list on a crop's card, like the Fertilizer field.
+function cropOpcFieldHTML(p, allTreatments){
+  const mine = (allTreatments || []).filter(e => fertMatchesCrop(e, p))
+    .sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.addedAt || 0) - (a.addedAt || 0));
+  if(!mine.length) return "";
+  const n = opcNextInfo(mine[0]);
+  const nextHTML = n ? `<div class="cropfert-next opc-next">Next treatment: ${opcWhenHTML(n)}</div>` : "";
+  const rows = mine.map(e => {
+    const bits = opcBits(e).map(fertEsc).join(" · ");
+    return `<div class="cropfert-row">${fertFmtDate(e.date)}${bits ? ` — <span>${bits}</span>` : ""}</div>`;
+  }).join("");
+  return `<div class="cropfert-field"><label>🐞 Organic pest control</label>${nextHTML}${rows}</div>`;
+}
+function opcResetForm(){
+  opcEditingIds = [];
+  ["opcCrop","opcProduct","opcTarget","opcAmount","opcEvery"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+  opcCrops = [];
+  renderOpcChips();
+  const d = document.getElementById("opcDate"); if(d) d.value = fertTodayISO();
+  const t = document.getElementById("opcType"); if(t) t.value = "Neem oil";
+  document.getElementById("opcAddBtn").textContent = "Add treatment";
+  document.getElementById("opcCancelBtn").style.display = "none";
+}
+async function renderOpcLog(){
+  const listEl = document.getElementById("opcList");
+  const dueEl = document.getElementById("opcDue");
+  if(!listEl) return;
+  const isPastSeason = activeSeason === "2025-26" || READ_ONLY;
+  document.getElementById("opcFormWrap").style.display = isPastSeason ? "none" : "";
+  const dl = document.getElementById("opcCropList");
+  if(dl){
+    const names = new Set();
+    const data = DATA_now();
+    Object.keys(data || {}).forEach(k => (Array.isArray(data[k]) ? data[k] : []).forEach(p => p && p.name && names.add(p.name)));
+    dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">` + [1,2,3,4].map(n => `<option value="Bed ${n}">`).join("");
+  }
+  const d = document.getElementById("opcDate");
+  if(d && !d.value) d.value = fertTodayISO();
+
+  const entries = (await getOpcLog()).slice().sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.addedAt || 0) - (a.addedAt || 0));
+
+  // Due next: latest treatment per crop + treatment, if it has a repeat interval.
+  const latest = {};
+  entries.forEach(e => { const k = `${(e.crop || "").trim().toLowerCase()}|${e.type || ""}`; if((e.crop || "").trim() && !latest[k]) latest[k] = e; });
+  const due = Object.values(latest).map(e => ({ e, ...(opcNextInfo(e) || {}) })).filter(x => x.next).sort((a, b) => a.next - b.next);
+  // Same treatment due the same day -> one line ("Bed 1, Bed 2 (Bt) — Oct 21").
+  const dueRows = [];
+  due.forEach(x => {
+    const t = String(x.e.type || "treatment").replace(/ \(.*\)$/, "");
+    const k = `${x.next.getTime()}|${t}`;
+    const row = dueRows.find(r => r.k === k);
+    if(row) row.crops.push(x.e.crop); else dueRows.push({ k, t, x, crops: [x.e.crop] });
+  });
+  dueEl.innerHTML = (!isPastSeason && dueRows.length) ? `<div class="fert-due opc-due"><b>Due next</b><br>${dueRows.map(r => `${r.crops.map(fertEsc).join(", ")} (${fertEsc(r.t)}) — ${opcWhenHTML(r.x)}`).join("<br>")}</div>` : "";
+
+  if(!entries.length){
+    listEl.innerHTML = `<div class="harvest-empty">No treatments logged for ${SEASONS[activeSeason].label} yet.</div>`;
+    return;
+  }
+  // One card per day. Treatments logged the same day with the same details
+  // (treatment, product, target, mix rate, repeat) share one line, with every
+  // crop / bed shown as a tag and a single Edit / Delete for the batch.
+  const bedNum = name => {
+    const words = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10 };
+    const m = String(name || "").toLowerCase().match(/(\d+)|\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/);
+    return m ? (m[1] ? Number(m[1]) : words[m[2]]) : 999;
+  };
+  const isBed = name => /\bbeds?\b/i.test(String(name || ""));
+  const sig = e => [e.type, e.product, e.target, e.amount, e.every].map(v => String(v == null ? "" : v).trim().toLowerCase()).join("|");
+  const days = [];
+  const dayIdx = {};
+  entries.forEach(e => {
+    const d = e.date || "";
+    if(!(d in dayIdx)){ dayIdx[d] = days.length; days.push({ date: d, batches: [], bySig: {} }); }
+    const day = days[dayIdx[d]];
+    const k = sig(e);
+    if(!day.bySig[k]){ day.bySig[k] = { items: [] }; day.batches.push(day.bySig[k]); }
+    day.bySig[k].items.push(e);
+  });
+  // Tag order inside a batch: crops A–Z, then beds by number.
+  days.forEach(day => day.batches.forEach(b => b.items.sort((a, c) =>
+    (isBed(a.crop) - isBed(c.crop)) || (isBed(a.crop) ? bedNum(a.crop) - bedNum(c.crop) : String(a.crop || "").localeCompare(String(c.crop || "")))
+  )));
+  const batchKey = b => b.items.map(x => x.id).join(",");
+  window.__opcBatches = {};
+  listEl.innerHTML = days.map(day => `
+    <div class="fert-entry opc-day">
+      <div class="opc-day-head">🗓️ ${fertFmtDate(day.date)}</div>
+      ${day.batches.map(b => {
+        const e = b.items[0];
+        const key = batchKey(b);
+        window.__opcBatches[key] = b.items;
+        const locked = isPastSeason || b.items.some(x => isEntryLocked(x.addedAt));
+        const editing = opcEditingIds.length && b.items.some(x => opcEditingIds.includes(x.id));
+        const tags = b.items.map(x => isBed(x.crop)
+          ? `<span class="fert-bed-tag">${bedNum(x.crop) !== 999 ? `Bed ${bedNum(x.crop)}` : fertEsc(x.crop)}</span>`
+          : `<span class="opc-crop-tag">${fertEsc(x.crop || "—")}</span>`).join("");
+        const detail = [e.product, e.target ? `for ${e.target}` : "", e.amount].filter(Boolean).map(fertEsc).join(" · ");
+        const every = Number(e.every) > 0 ? `Repeat every ${Number(e.every)} day${Number(e.every) === 1 ? "" : "s"}` : "";
+        return `<div class="fert-item opc-batch${editing ? " editing" : ""}">
+          <div class="opc-batch-top">${e.type ? `<span class="opc-tag">${fertEsc(e.type)}</span>` : ""}${locked && !isPastSeason ? '<span aria-label="Locked">🔒</span>' : ""}</div>
+          <div class="opc-tags">${tags}</div>
+          ${detail ? `<div class="fert-entry-detail">${detail}</div>` : ""}
+          ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
+          ${locked ? "" : `<div class="fert-entry-actions opc-actions"><button type="button" data-opc-edit="${key}">Edit</button><button type="button" class="fert-del" data-opc-del="${key}">Delete${b.items.length > 1 ? ` all ${b.items.length}` : ""}</button></div>`}
+        </div>`;
+      }).join("")}
+    </div>`).join("");
+  listEl.querySelectorAll("[data-opc-edit]").forEach(btn => btn.addEventListener("click", () => {
+    const items = window.__opcBatches[btn.dataset.opcEdit]; if(!items || !items.length) return;
+    const e = items[0];
+    opcEditingIds = items.map(x => x.id);
+    document.getElementById("opcDate").value = e.date || "";
+    document.getElementById("opcCrop").value = "";
+    opcCrops = items.map(x => x.crop).filter(Boolean);
+    renderOpcChips();
+    document.getElementById("opcType").value = e.type || "Neem oil";
+    document.getElementById("opcProduct").value = e.product || "";
+    document.getElementById("opcTarget").value = e.target || "";
+    document.getElementById("opcAmount").value = e.amount || "";
+    document.getElementById("opcEvery").value = e.every || "";
+    document.getElementById("opcAddBtn").textContent = "Save changes";
+    document.getElementById("opcCancelBtn").style.display = "";
+    renderOpcLog();
+    document.getElementById("opcFormWrap").scrollIntoView({ behavior:"smooth", block:"center" });
+  }));
+  listEl.querySelectorAll("[data-opc-del]").forEach(btn => btn.addEventListener("click", async () => {
+    const items = window.__opcBatches[btn.dataset.opcDel]; if(!items || !items.length) return;
+    const names = items.map(x => x.crop).filter(Boolean).join(", ");
+    if(!confirm(items.length > 1 ? `Delete this treatment for all ${items.length} (${names})?` : "Delete this treatment?")) return;
+    const ids = new Set(items.map(x => x.id));
+    const arr = (await getOpcLog()).filter(x => !ids.has(x.id));
+    await setOpcLog(arr);
+    if(opcEditingIds.some(id => ids.has(id))) opcResetForm();
+    renderOpcLog();
+    refreshCropCardsForFert();
+  }));
+}
+document.getElementById("opcAddBtn").addEventListener("click", async () => {
+  const val = id => document.getElementById(id).value.trim();
+  if(val("opcCrop")){ addOpcCrop(val("opcCrop")); document.getElementById("opcCrop").value = ""; }
+  if(!opcCrops.length && !val("opcProduct") && !val("opcTarget")){ document.getElementById("opcCrop").focus(); return; }
+  const every = val("opcEvery");
+  const shared = {
+    date: val("opcDate") || fertTodayISO(), type: document.getElementById("opcType").value,
+    product: val("opcProduct"), target: val("opcTarget"), amount: val("opcAmount"),
+    every: every === "" ? "" : Math.max(0, Math.round(Number(every)) || 0)
+  };
+  const crops = opcCrops.length ? opcCrops.slice() : [""];
+  let arr = await getOpcLog();
+  const now = Date.now();
+  const newEntry = (crop, k, addedAt) => ({ id: `o${now}${k}${Math.random().toString(36).slice(2,6)}`, addedAt: addedAt || now, ...shared, crop });
+  if(opcEditingIds.length){
+    // Editing a batch: the whole batch is rewritten from the form — crops
+    // still listed keep their entry (and lock clock), removed ones go,
+    // new ones are added.
+    const old = arr.filter(x => opcEditingIds.includes(x.id));
+    if(old.some(x => isEntryLocked(x.addedAt))){ opcResetForm(); renderOpcLog(); return; }
+    const keepAt = old.length ? Math.min(...old.map(x => x.addedAt || now)) : now;
+    arr = arr.filter(x => !opcEditingIds.includes(x.id));
+    crops.forEach((c, k) => {
+      const prev = old.find(x => String(x.crop || "").toLowerCase() === String(c || "").toLowerCase());
+      arr.push(prev ? { ...prev, ...shared, crop: c } : newEntry(c, k, keepAt));
+    });
+  } else {
+    crops.forEach((c, k) => arr.push(newEntry(c, k)));
+  }
+  await setOpcLog(arr);
+  opcResetForm();
+  renderOpcLog();
+  refreshCropCardsForFert();
+});
+document.getElementById("opcCancelBtn").addEventListener("click", () => { opcResetForm(); renderOpcLog(); });
+(function(){
+  const inp = document.getElementById("opcCrop");
+  inp.addEventListener("keydown", e => {
+    if(e.key === "Enter"){ e.preventDefault(); if(addOpcCrop(inp.value)) inp.value = ""; }
+  });
+  inp.addEventListener("input", () => {
+    const v = inp.value.trim().toLowerCase();
+    if(!v) return;
+    const match = [...document.querySelectorAll("#opcCropList option")].map(o => o.value).find(o => o.toLowerCase() === v);
+    if(match){ addOpcCrop(match); inp.value = ""; }
+  });
+})();
 (function(){
   const inp = document.getElementById("fertCrop");
   inp.addEventListener("keydown", e => {
@@ -5516,6 +5947,7 @@ async function renderGrid(sectionKey, containerId){
   if(addBtn) addBtn.style.display = isPastSeason ? "none" : "";
   const plants = [...DATA_now()[sectionKey]].sort((a, b) => nextDateOffset(a) - nextDateOffset(b));
   const seasonFeedings = await getFertLog();
+  const seasonTreatments = await getOpcLog();
   let bugIconIdx = 0;
   for(const p of plants){
     const bugIcon = BUG_ICONS[bugIconIdx++ % BUG_ICONS.length];
@@ -5526,27 +5958,77 @@ async function renderGrid(sectionKey, containerId){
     // transplant, for Transplant lines) logged within 2 days of a planned
     // window marks that line ✓ with the real date; a window that has
     // passed with nothing logged near it is greyed out as "passed".
-    const plannedSows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean);
+    const sowEntriesAll = await getActualDates(p.slug, "sow");
+    const plannedSows = sowEntriesAll.map(entryDate).filter(Boolean);
+    // How a logged sow was done ("direct" / "indoor"), looked up by its date.
+    const whereOnDate = d => {
+      const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      const e = sowEntriesAll.find(x => entryDate(x) === iso && typeof x === "object" && x && x.where);
+      return e ? e.where : "";
+    };
     const plannedTransplants = (await getActualDates(p.slug, "transplant")).map(entryDate).filter(Boolean);
     const isoToLocal = iso => { const q = String(iso).split("-").map(Number); return new Date(q[0], q[1]-1, q[2]); };
-    const waveLine = t => {
+    const lineHit = t => {
       const start = plannedDateObj(activeSeason, t);
       const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
       const pool = /^Transplant/.test(t.a) ? plannedTransplants : plannedSows;
       const lo = start.getTime() - 2 * 86400000, hi = end.getTime() + 2 * 86400000;
-      const hit = pool.map(isoToLocal).filter(d => d.getTime() >= lo && d.getTime() <= hi).sort((a, b) => a - b)[0];
+      return pool.map(isoToLocal).filter(d => d.getTime() >= lo && d.getTime() <= hi).sort((a, b) => a - b)[0];
+    };
+    // Labels follow how a date was actually planted (direct / indoor). Other
+    // dates stay as planned — skip them by hand with their Skip buttons.
+    [...NOT_NEEDED_DATES].filter(k => k.startsWith(`${activeSeason}:${p.slug}:`)).forEach(k => NOT_NEEDED_DATES.delete(k));
+    [...ACTUAL_METHOD_LABEL.keys()].filter(k => k.startsWith(`${activeSeason}:${p.slug}:`)).forEach(k => ACTUAL_METHOD_LABEL.delete(k));
+    if(!isPastSeason) p.dates.forEach((wave, wi) => wave.forEach((t, ti) => {
+      if(!/^Start/.test(t.a)) return;
+      const h = lineHit(t); const w = h ? whereOnDate(h) : "";
+      if(w === "direct" && !/direct/i.test(t.a)) ACTUAL_METHOD_LABEL.set(`${activeSeason}:${p.slug}:${wi}:${ti}`, "Sown (direct)");
+      if(w === "indoor" && /direct/i.test(t.a)) ACTUAL_METHOD_LABEL.set(`${activeSeason}:${p.slug}:${wi}:${ti}`, "Started (indoor)");
+    }));
+    const notNeeded = {};
+    const waveLine = (t, wi, ti) => {
+      const start = plannedDateObj(activeSeason, t);
+      const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
+      const hit = lineHit(t);
       const passed = !hit && isDatePast(end) && p.slug && !isPastSeason;
       const note = bcNoteFor(p.slug, activeSeason, t.m, t.d);
+      const nn = notNeeded[`${wi}:${ti}`];
+      if(!hit && nn){
+        return `<div class="wave-line wave-notneeded"><span class="lbl">${t.a} :</span> ${fmtDate(t)} <span class="wave-passed-tag">not needed — sown direct ${nn}</span></div>`;
+      }
       if(hit){
-        const verb = /^Transplant/.test(t.a) ? "transplanted" : (DIRECT_SOW_CROPS.includes(p.slug) || /direct/i.test(t.a)) ? "sown" : "started";
-        return `<div class="wave-line wave-done"><span class="lbl">${pastTenseAction(t.a)} :</span> ${fmtDate(t)} <span class="wave-done-tag">✓ ${verb} ${MONTHS[hit.getMonth()]} ${hit.getDate()}</span>${note}</div>`;
+        const isStart = /^Start/.test(t.a);
+        const where = isStart ? whereOnDate(hit) : "";
+        // The label follows how it was actually planted, not the plan.
+        const lbl = where === "direct" ? "Sown (direct)" : where === "indoor" ? (/seeds/i.test(t.a) ? "Started seeds (indoor)" : "Started (indoor)") : pastTenseAction(t.a);
+        const verb = /^Transplant/.test(t.a) ? "transplanted"
+          : where === "direct" ? "sown direct"
+          : where === "indoor" ? "started indoors"
+          : (DIRECT_SOW_CROPS.includes(p.slug) || /direct/i.test(t.a)) ? "sown" : "started";
+        return `<div class="wave-line wave-done"><span class="lbl">${lbl} :</span> ${fmtDate(t)} <span class="wave-done-tag">✓ ${verb} ${MONTHS[hit.getMonth()]} ${hit.getDate()}</span>${note}</div>`;
       }
       if(passed) return `<div class="wave-line wave-passed"><span class="lbl">${t.a} :</span> ${fmtDate(t)} <span class="wave-passed-tag">passed</span>${note}</div>`;
       return `<div class="wave-line"><span class="lbl">${t.a} :</span> ${fmtDate(t)}${note}</div>`;
     };
-    const wavesHTML = p.dates.map(wave =>
-      `<div class="wave">${wave.map(waveLine).join("")}</div>`
-    ).join("");
+    // Crops with more than one planned date get a small Skip pill on each
+    // date that hasn't been planted yet (e.g. skip Oct, keep Jan and Feb).
+    const cropSkipped = !isPastSeason && isSkipped(p.slug);
+    const totalDates = p.dates.reduce((n, w) => n + w.length, 0);
+    const wavesHTML = p.dates.map((wave, wi) => {
+      const lines = wave.map((t, ti) => {
+        const skipped = !isPastSeason && !cropSkipped && isDateSkipped(p.slug, wi, ti);
+        let line = skipped
+          ? `<div class="wave-line date-skipped"><span class="lbl">${t.a} :</span> ${fmtDate(t)}</div>`
+          : waveLine(t, wi, ti);
+        const planted = line.includes("wave-done") || line.includes("wave-notneeded");
+        if(!isPastSeason && !cropSkipped && totalDates > 1 && !planted){
+          const pill = `<span class="wave-skip-btn${skipped ? " on" : ""}" data-wi="${wi}" data-ti="${ti}" role="button" tabindex="0" aria-pressed="${skipped}" title="${skipped ? "Tap to plant on this date after all" : "Skip just this date"}">${skipped ? "⏭ Skipped" : "⏭ Skip"}</span>`;
+          line = line.replace(/(<span class="lbl">[\s\S]*?<\/span> [^<]*)/, `$1 ${pill}`);
+        }
+        return line;
+      });
+      return `<div class="wave">${lines.join("")}</div>`;
+    }).join("");
     const gt = GERM_TEMP_DATA[p.slug];
     const germTempHTML = !gt ? "" : gt.special
       ? `<div class="plant-germtemp">🌡️ <b>Germination:</b> ${gt.special}</div>`
@@ -5559,6 +6041,16 @@ async function renderGrid(sectionKey, containerId){
     const transplantActualCheck = await getActualDates(p.slug, "transplant");
     const notes = await getNotes(p.slug);
     const plantCount = isPastSeason ? {} : await getPlantCountFor(activeSeason, p.slug);
+    // Numbers saved before the 48h stamp existed have no time stamp, so they
+    // would never lock — stamp them now so they lock 48h from today.
+    if(!isPastSeason && !READ_ONLY){
+      let pcBackfilled = false;
+      ["existing", "new", "count"].forEach(f => {
+        const v = plantCount[f];
+        if(v !== undefined && v !== null && v !== "" && !plantCount[f + "At"]){ plantCount[f + "At"] = Date.now(); pcBackfilled = true; }
+      });
+      if(pcBackfilled) await setPlantCount(p.slug, plantCount);
+    }
     const prevSeason = previousSeasonKey();
     const prevPlantSummary = (isPastSeason || !prevSeason) ? "" : plantCountSummary(p.slug, await getPlantCountFor(prevSeason, p.slug));
     const finishedSeeds = await getFinishedSeeds(p.slug);
@@ -5584,7 +6076,7 @@ async function renderGrid(sectionKey, containerId){
       const transplantDates = await getActualDates(p.slug, "transplant");
       const today = new Date(); today.setHours(0,0,0,0);
       const sowPlanned = [], transplantPlanned = [];
-      p.dates.forEach(wave => wave.forEach(t => {
+      activeWaves(p).forEach(wave => wave.forEach(t => {
         if(/^Start/.test(t.a)) sowPlanned.push(plannedDateObj(activeSeason, t));
         else if(/^Transplant/.test(t.a)) transplantPlanned.push(plannedDateObj(activeSeason, t));
       }));
@@ -5620,6 +6112,8 @@ async function renderGrid(sectionKey, containerId){
     const pcLockIcon = f => pcLocked(f) ? `<span class="plantcount-lock" aria-label="Locked">🔒</span>` : "";
     const plantCountFieldHTML = PLANT_COUNT_SKIP.includes(p.slug) ? "" : `
       <div class="plantcount-field">
+        <span class="pc-icon">🌳</span>
+        <div class="pc-main">
         <label>Plants in the garden</label>
         <div class="plantcount-row">
           ${PLANT_COUNT_SPLIT.includes(p.slug) ? `
@@ -5629,9 +6123,10 @@ async function renderGrid(sectionKey, containerId){
           <label class="plantcount-cell"><span>Number of plants${pcLockIcon("count")}</span><input type="number" min="0" step="1" inputmode="numeric" id="plants-count-${p.slug}" value="${pcVal(plantCount.count)}" placeholder="0"${pcLockAttr("count")}></label>`}
         </div>
         ${prevPlantSummary ? `<div class="plantcount-last">Last season: ${prevPlantSummary}</div>` : ""}
+        </div>
       </div>
     `;
-    const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings);
+    const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings) + cropOpcFieldHTML(p, seasonTreatments);
     const cropBugs = isPastSeason ? [] : await getBugs(p.slug);
     const bugFieldHTML = `
       <div class="bug-field" id="bug-field-${p.slug}"${cropBugs.length ? "" : ` style="display:none;"`}>
@@ -5662,7 +6157,10 @@ async function renderGrid(sectionKey, containerId){
       <div class="seedpacket-field">
         <label for="seedpacket-${p.slug}">Finished Seed Packets</label>
         <div class="seedpacket-input-row">
-          <input id="seedpacket-${p.slug}" type="text" placeholder="Which variety/packet ran out?" autocomplete="off">
+          <div class="seedpacket-input-wrap">
+            <input id="seedpacket-${p.slug}" type="text" placeholder="Which variety/packet ran out?" autocomplete="off">
+            <div class="variety-suggest" id="seedpacket-suggest-${p.slug}"></div>
+          </div>
           <button type="button" class="seedpacket-add-btn" id="seedpacket-add-${p.slug}">+ Mark finished</button>
         </div>
         <div class="seedpacket-list" id="seedpacket-list-${p.slug}"></div>
@@ -5690,9 +6188,11 @@ async function renderGrid(sectionKey, containerId){
         // Season marked done: no more editing of variety/sow/transplant —
         // just a read-only recap of what was logged, plus notes stay open.
         editableSectionsHTML = `
-          <div class="season-done-banner">
+          ${isSkipped(p.slug) ? `<div class="season-done-banner season-skip-banner">
+            <span>⏭ Skipping this season — no new planting</span>
+          </div>` : `<div class="season-done-banner">
             <span>✓ Season marked done</span>
-          </div>
+          </div>`}
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
@@ -5787,6 +6287,7 @@ async function renderGrid(sectionKey, containerId){
           ${plantCountFieldHTML}
           ${fertFieldHTML}
           ${bugFieldHTML}
+          <div class="af-stack" hidden></div>
           ${notesFieldHTML}
           ${p.slug === "garlic" ? "" : seedPacketsFieldHTML}
           <div class="season-actions-row">
@@ -5802,6 +6303,7 @@ async function renderGrid(sectionKey, containerId){
       <div class="plant-head-row">
         <button type="button" class="plant-head" data-body="card-body-${p.slug}">
           ${cropIcon(p, sectionKey)}<span class="name">${p.name}</span>
+          ${isPastSeason ? "" : `<span class="skip-season-btn${isSkipped(p.slug) ? " on" : ""}" role="button" tabindex="0" aria-pressed="${isSkipped(p.slug)}" title="${isSkipped(p.slug) ? "Tap to plant this crop again this season" : "Not planting this crop this season"}">${isSkipped(p.slug) ? "⏭ Skipped" : "⏭ Skip season"}</span>`}
           <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">✓</span>
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
@@ -5877,6 +6379,50 @@ async function renderGrid(sectionKey, containerId){
       });
     }
 
+    card.querySelectorAll(".wave-skip-btn").forEach(btn => {
+      const toggleWave = async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const wi = Number(btn.dataset.wi), ti = Number(btn.dataset.ti);
+        const nowSkipped = !isDateSkipped(p.slug, wi, ti);
+        const t0 = (p.dates[wi] || [])[ti];
+        const what = t0 ? `${t0.a} ${fmtDate(t0)}` : "this date";
+        const redraw = async () => {
+          await renderGrid(sectionKey, containerId);
+          reopenCard(containerId, p.slug);
+          renderLedger();
+          renderMonthDropdowns();
+        };
+        await setDateSkip(p.slug, wi, ti, nowSkipped);
+        await redraw();
+        showUndoToast(nowSkipped ? `${p.name}: skipping ${what}.` : `${p.name}: ${what} is back on.`, async () => {
+          await setDateSkip(p.slug, wi, ti, !nowSkipped);
+          await redraw();
+        });
+      };
+      btn.addEventListener("click", toggleWave);
+      btn.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") toggleWave(e); });
+    });
+    const skipBtn = card.querySelector(".skip-season-btn");
+    if(skipBtn){
+      const toggleSkip = async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const nowSkipped = !isSkipped(p.slug);
+        const redraw = async () => {
+          await renderGrid(sectionKey, containerId);
+          reopenCard(containerId, p.slug);
+          renderLedger();
+          renderMonthDropdowns();
+        };
+        await setSkip(p.slug, nowSkipped);
+        await redraw();
+        showUndoToast(nowSkipped ? `${p.name}: skipping this season.` : `${p.name}: back in this season's plan.`, async () => {
+          await setSkip(p.slug, !nowSkipped);
+          await redraw();
+        });
+      };
+      skipBtn.addEventListener("click", toggleSkip);
+      skipBtn.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") toggleSkip(e); });
+    }
     const cardToggleBtn = card.querySelector(".plant-head");
     cardToggleBtn.addEventListener("click", () => {
       const body = card.querySelector(`#card-body-${p.slug}`);
@@ -6727,18 +7273,21 @@ async function renderGrid(sectionKey, containerId){
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}${varietyNoGermReason(v) ? " no-germ-temp" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}${varietyNoGermReason(v) ? " 🌡️" : ""}<span class="variety-meta-badge">${varietyMetaText(v, p.slug)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
-                <div class="sow-card-head">${prefix} ${label}${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}${locked ? " 🔒" : ""}</div>
+                <div class="sow-card-head"><span class="tag-green">✓ ${p.slug === "garlic" ? "planted" : "seeded"} ${fmtTagDate(entryDate(d))}${fmtTagTemp(entryTemp(d))}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}</div>
                 ${varietiesLine}
               </div>`;
             }).join("");
           } else {
+            // Same look as the green "✓ started Aug 5" tags up top.
+            const verb = kind === "pottedUp" ? "potted" : kind === "sprouted" ? "germinated" : kind === "sow" ? "seeded" : "transplanted";
             chipsContainer.innerHTML = dates.map((d, i) => {
-              const label = fmtActualEntry(d);
+              const iso = entryDate(d);
+              const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+              const when = m ? `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}` : (iso || "");
+              const tp = entryTemp(d);
+              const tempTxt = tp ? ` · ${String(tp).trim().replace(/f$/i, "").trim()}°F` : "";
               const locked = isPastSeason || isEntryLocked(entryAddedAt(d));
-              if(locked){
-                return `<span class="date-chip locked" data-i="${i}">${prefix}:${label}</span>`;
-              }
-              return `<span class="date-chip" data-i="${i}">${prefix}:${label}</span>`;
+              return `<span class="date-chip done-tag${locked ? " locked" : ""}" data-i="${i}" title="${prefix}: ${fmtActualEntry(d)}">✓ ${verb} ${when}${tempTxt}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>`;
             }).join("");
           }
           chipsContainer.querySelectorAll(".variety-search-link").forEach(a => {
@@ -7036,9 +7585,9 @@ async function renderGrid(sectionKey, containerId){
           }
           germOut.innerHTML = ups.map(up => {
             const sow = sows.filter(d => d <= up).pop();
-            if(!sow) return `<div class="germ-days-line">🌱 Came up ${fmtGermDay(up)} — <i>add the sow date above to count the days</i></div>`;
+            if(!sow) return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span>Came up ${fmtGermDay(up)}</span><span class="germ-days-range"><i>Add the sow date above to count the days</i></span></span></div>`;
             const n = daysBetweenISO(sow, up);
-            return `<div class="germ-days-line"><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to germinate <span class="germ-days-range">sown ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></div>`;
+            return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to germinate</span><span class="germ-days-range">Sown ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></span></div>`;
           }).join("");
         };
         await updateGermDays();
@@ -7241,7 +7790,7 @@ async function renderGrid(sectionKey, containerId){
         seedPacketListEl.innerHTML = `<div class="sow-cards">${groups.map(g => {
           const groupLocked = g.indexes.every(i => isEntryLocked(finishedSeeds[i].addedAt));
           return `<div class="sow-card${groupLocked ? " locked" : ""}">
-            <div class="sow-card-head">${g.date} Finished seed packets${groupLocked ? " 🔒" : ""}</div>
+            <div class="sow-card-head"><span class="tag-green">✓ finished packets ${fmtTagDate(g.date)}${groupLocked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span></div>
             <div class="sow-card-varieties">${g.indexes.map(i => {
               const locked = isEntryLocked(finishedSeeds[i].addedAt);
               return `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}">${finishedSeeds[i].name}</span>`;
@@ -7340,6 +7889,56 @@ async function renderGrid(sectionKey, containerId){
         if(e.key === "Enter"){ e.preventDefault(); addFinishedSeed(); }
       });
       if(seedPacketAddBtn) seedPacketAddBtn.addEventListener("click", addFinishedSeed);
+
+      // As you type, suggest varieties you've sown for this crop (any season),
+      // matching anywhere in the name: "kale" -> "White Russian Kale",
+      // "Kale Thousandhead"… Tap one to fill the box.
+      const spSuggest = card.querySelector(`#seedpacket-suggest-${p.slug}`);
+      if(spSuggest){
+        let spPool = null;
+        const loadPool = async () => {
+          const seen = new Map();
+          const add = (v) => {
+            const name = String(varietyName(v) || "").trim();
+            if(!name) return;
+            const k = name.toLowerCase();
+            if(!seen.has(k)) seen.set(k, { name, meta: typeof v === "object" ? varietyMetaText(v, p.slug) : "" });
+          };
+          const seasons = Object.keys(SEASONS).sort().reverse(); // newest first
+          for(const sk of seasons){
+            (await getActualDatesFor(sk, p.slug, "sow")).forEach(d => entryVarieties(d).forEach(add));
+          }
+          (await getVarieties(p.slug)).forEach(add);
+          return [...seen.values()];
+        };
+        const close = () => { spSuggest.classList.remove("open"); spSuggest.innerHTML = ""; };
+        const show = async () => {
+          const q = seedPacketInput.value.trim().toLowerCase();
+          if(!q){ close(); return; }
+          if(!spPool) spPool = await loadPool();
+          const done = new Set(finishedSeeds.map(x => String(x.name || "").toLowerCase()));
+          const hits = spPool
+            .filter(v => v.name.toLowerCase().includes(q) && v.name.toLowerCase() !== q)
+            .sort((a, b) => (a.name.toLowerCase().startsWith(q) ? 0 : 1) - (b.name.toLowerCase().startsWith(q) ? 0 : 1) || a.name.localeCompare(b.name))
+            .slice(0, 8);
+          if(!hits.length){ close(); return; }
+          spSuggest.innerHTML = hits.map((v, i) => `<div class="variety-suggest-item" data-i="${i}"><span class="vs-name">${fertEsc(v.name)}</span><span class="vs-meta">${done.has(v.name.toLowerCase()) ? "already finished" : fertEsc(v.meta || "")}</span></div>`).join("");
+          spSuggest.classList.add("open");
+          spSuggest.querySelectorAll(".variety-suggest-item").forEach(item => {
+            // pointerdown so the pick lands before the input loses focus
+            item.addEventListener("pointerdown", (e) => {
+              e.preventDefault();
+              seedPacketInput.value = hits[Number(item.dataset.i)].name;
+              close();
+              seedPacketInput.focus();
+            });
+          });
+        };
+        seedPacketInput.addEventListener("input", show);
+        seedPacketInput.addEventListener("focus", show);
+        seedPacketInput.addEventListener("blur", () => setTimeout(close, 150));
+        seedPacketInput.addEventListener("keydown", (e) => { if(e.key === "Escape") close(); if(e.key === "Enter") close(); });
+      }
       }
 
       // Garlic-only: fridge (cold treatment) date log. Capped at a single
@@ -7359,8 +7958,8 @@ async function renderGrid(sectionKey, containerId){
             if(fridgeSourceRow) fridgeSourceRow.style.display = fridgeLog.length ? "none" : "";
             fridgeListEl.innerHTML = fridgeLog.map((f, i) => {
               const locked = isEntryLocked(f.addedAt);
-              const label = f.source ? `In fridge: ${f.date} cloves from ${f.source}` : `In fridge: ${f.date}`;
-              return `<span class="date-chip${locked ? " locked" : ""}" data-i="${i}">${label}</span>`;
+              const label = `✓ in fridge ${fmtTagDate(f.date)}${f.source ? ` · cloves from ${f.source}` : ""}`;
+              return `<span class="date-chip done-tag${locked ? " locked" : ""}" data-i="${i}">${label}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>`;
             }).join("");
             fridgeListEl.querySelectorAll(".date-chip:not(.locked)").forEach(chip => {
               chip.addEventListener("click", (e) => {
@@ -7463,7 +8062,7 @@ function nextDateOffset(p){
   if(!p.dates || p.dates.length === 0) return Infinity;
   const now = new Date();
   let min = Infinity;
-  p.dates.forEach(wave => wave.forEach(t => {
+  activeWaves(p).forEach(wave => wave.forEach(t => {
     const d = daysUntilTask(t, now);
     if(d < min) min = d;
   }));
@@ -7478,8 +8077,11 @@ function getMonthEntries(m){
   const entries = [];
   ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
     (DATA_now()[sectionKey] || []).forEach(p => {
-      p.dates.forEach(wave => wave.forEach(t => {
-        if(t.m === m) entries.push({ day: t.d, text: `${p.name} — ${actionLabelForDate(t.a, plannedDateObj(activeSeason, t))}: ${fmtDate(t)}`, sectionKey, slug: p.slug });
+      if(isSkipped(p.slug)) return;
+      p.dates.forEach((wave, wi) => wave.forEach((t, ti) => {
+        const k = `${activeSeason}:${p.slug}:${wi}:${ti}`;
+        if(isDateSkipped(p.slug, wi, ti) || NOT_NEEDED_DATES.has(k)) return;
+        if(t.m === m) entries.push({ day: t.d, text: `${p.name} — ${ACTUAL_METHOD_LABEL.get(k) || actionLabelForDate(t.a, plannedDateObj(activeSeason, t))}: ${fmtDate(t)}`, sectionKey, slug: p.slug });
       }));
     });
   });
@@ -7597,7 +8199,8 @@ function renderLedger(){
   const all = [];
   for(const sectionKey of Object.keys(DATA_now())){
     for(const p of DATA_now()[sectionKey]){
-      for(const wave of p.dates){
+      if(isSkipped(p.slug)) continue;
+      for(const wave of activeWaves(p)){
         for(const t of wave){
           const diff = daysUntilTask(t, now);
           all.push({diff, name:p.name, action:t.a, shape:p.shape, color:p.color, m:t.m, d:t.d, m2:t.m2, d2:t.d2, sectionKey, slug:p.slug});
@@ -7736,6 +8339,7 @@ async function generateSeasonPDF(seasonKey){
   const pendingCrops = [];
   let fertLog = [];
   try{ const r = await window.storage.get(`fertilizer:${seasonKey}`, false); fertLog = r ? (JSON.parse(r.value) || []) : []; }catch(e){}
+  const opcLog = await getOpcLog(seasonKey);
 
   for(const sectionKey of Object.keys(season.data)){
     for(const p of season.data[sectionKey]){
@@ -7837,6 +8441,11 @@ async function generateSeasonPDF(seasonKey){
         const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount].filter(Boolean).join(" · ");
         cropSlot(pd.m, p.name, pd.d).feeds.push({ day: pd.d, text: `Fed ${shortISO(e.date)}: ${bits || e.type || "fertilizer"}` });
       });
+      // organic pest control treatments for this crop
+      opcLog.filter(e => fertMatchesCrop(e, p)).forEach(e => {
+        const pd = parseISO(e.date); if(!pd) return;
+        cropSlot(pd.m, p.name, pd.d).feeds.push({ day: pd.d, text: `Treated ${shortISO(e.date)}: ${opcBits(e).join(" · ") || "organic pest control"}` });
+      });
     }
   }
   // feedings logged for beds / whole garden (not tied to one crop)
@@ -7845,6 +8454,10 @@ async function generateSeasonPDF(seasonKey){
     const pd = parseISO(e.date); if(!pd) return;
     const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount].filter(Boolean).join(" · ");
     cropSlot(pd.m, e.crop || "Garden", pd.d).feeds.push({ day: pd.d, text: `Fed ${shortISO(e.date)}: ${bits || e.type || "fertilizer"}` });
+  });
+  opcLog.filter(e => !allCrops.some(p => fertMatchesCrop(e, p))).forEach(e => {
+    const pd = parseISO(e.date); if(!pd) return;
+    cropSlot(pd.m, e.crop || "Garden", pd.d).feeds.push({ day: pd.d, text: `Treated ${shortISO(e.date)}: ${opcBits(e).join(" · ") || "organic pest control"}` });
   });
 
   /* ---------- collect: harvests (per month -> fruits / vegetables -> item -> dates) ---------- */
@@ -8709,6 +9322,24 @@ async function openBugSheet(p, onChange, editId, icon){
 (function(){
   const LABELS = { sow: "🌱 Sow another batch", pottedup: "🪴 Pot up more seedlings",
     transplant: "🏡 Move more to the garden", sprouted: "🌾 Log more sprouts" };
+  // "🌱 Sow another batch" -> icon square + label, like the Home buttons.
+  function setBtnLabel(btn, text){
+    const m = String(text).match(/^(\S+)\s+(.*)$/);
+    const icon = m && /[^\w＋+]/.test(m[1]) ? m[1] : "";
+    const label = icon ? m[2] : text;
+    btn.innerHTML = `${icon ? `<span class="af-icon">${icon}</span>` : ""}<span>${label}</span>`;
+  }
+  // The stack sits after Bug alerts (a slot in the card template); if a
+  // card has no slot, fall back to the end of the sow/transplant section.
+  function stackFor(field){
+    const row = field.closest(".actual-row");
+    if(!row) return null;
+    const slot = row.parentElement && row.parentElement.querySelector(":scope > .af-stack");
+    if(slot) return slot;
+    let st = row.querySelector(":scope > .af-stack");
+    if(!st){ st = document.createElement("div"); st.className = "af-stack"; row.appendChild(st); }
+    return st;
+  }
   function apply(field){
     const chips = field.querySelector(":scope > .sow-cards, :scope > .date-chips");
     if(!chips) return;
@@ -8717,7 +9348,7 @@ async function openBugSheet(p, onChange, editId, icon){
     // leave the field alone until they come back.
     const formHere = !!dateInput;
     const count = chips.children.length;
-    let btn = field.querySelector(":scope > .af-reveal");
+    let btn = field._afBtn && field._afBtn.isConnected ? field._afBtn : null;
     if(!btn){
       const id = (field.querySelector(":scope > label") || {}).htmlFor || "";
       const kind = id.split("-")[0];
@@ -8725,9 +9356,10 @@ async function openBugSheet(p, onChange, editId, icon){
       btn.type = "button";
       btn.className = "af-reveal af-" + kind;
       btn.dataset.openLabel = LABELS[kind] || "＋ Add another";
-      btn.textContent = btn.dataset.openLabel;
-      const label = field.querySelector(":scope > label");
-      if(label) label.insertAdjacentElement("afterend", btn); else field.prepend(btn);
+      setBtnLabel(btn, btn.dataset.openLabel);
+      field._afBtn = btn;
+      const stack = stackFor(field);
+      if(stack) stack.appendChild(btn); else field.prepend(btn);
       btn.addEventListener("click", () => {
         if(field.classList.contains("af-open")){
           field.classList.remove("af-open");
@@ -8740,6 +9372,8 @@ async function openBugSheet(p, onChange, editId, icon){
           if(d) d.focus({ preventScroll: true });
         }
         apply(field);
+        // The button sits in the stack below, so bring its section into view.
+        if(field.classList.contains("af-open")) field.scrollIntoView({ behavior:"smooth", block:"center" });
       });
     }
     if(String(count) !== field.dataset.afCount){
@@ -8761,7 +9395,20 @@ async function openBugSheet(p, onChange, editId, icon){
     const collapse = formHere && count > 0 && !open;
     field.classList.toggle("af-collapsed", collapse);
     field.classList.toggle("af-open", formHere && count > 0 && open && !btn.classList.contains("af-sprouted"));
-    btn.textContent = open ? "Hide entry boxes" : btn.dataset.openLabel;
+    const nextLabel = open ? "▲ Hide entry boxes" : btn.dataset.openLabel;
+    if(btn.dataset.shownLabel !== nextLabel){ setBtnLabel(btn, nextLabel); btn.dataset.shownLabel = nextLabel; }
+    const show = formHere && count > 0 && !btn.classList.contains("af-sprouted");
+    btn.classList.toggle("af-show", show);
+    btn.classList.toggle("af-is-open", show && open);
+    // Keep the stack in section order (sow, pot up, transplant) and hide it when empty.
+    const stack = btn.parentElement;
+    if(stack && stack.classList.contains("af-stack")){
+      const row = field.closest(".actual-row");
+      const order = [...row.querySelectorAll(":scope > .actual-field")].map(f => f._afBtn).filter(b => b && b.parentElement === stack);
+      if(order.some((b, i) => stack.children[i] !== b)) order.forEach(b => stack.appendChild(b));
+      const any = !!stack.querySelector(".af-show");
+      if(stack.hidden === any) stack.hidden = !any;
+    }
   }
   let queued = false;
   function scan(){
@@ -9000,7 +9647,7 @@ async function buildPlantingICS(){
   for(const sectionKey of ["vegetables", "herbs", "flowers", "coverCrops"]){
     for(const p of (DATA_now()[sectionKey] || [])){
       if(await getSeasonDone(p.slug)) continue;
-      for(const wave of p.dates){
+      for(const wave of activeWaves(p)){
         for(const t of wave){
           const isSow = /^Start/.test(t.a);
           const isTransplant = /^Transplant/.test(t.a);
@@ -9218,7 +9865,8 @@ function getMonthTasks(year, month){
   const map = {};
   ["vegetables","herbs","flowers","coverCrops"].forEach(sectionKey => {
     (DATA_now()[sectionKey] || []).forEach(p => {
-      p.dates.forEach(wave => {
+      if(isSkipped(p.slug)) return;
+      activeWaves(p).forEach(wave => {
         wave.forEach(t => {
           expandTaskDays(t).forEach(day => {
             if(day.y === year && day.m === month){
@@ -9331,6 +9979,7 @@ document.querySelectorAll(".home-tab-btn[data-hometab]").forEach(btn => {
       if(key === "germination") renderGerminationReport();
       if(key === "germtemp") renderGerminationTempChart();
       if(key === "fert") renderFertilizerLog();
+      if(key === "opc") renderOpcLog();
     }
     updateHomeButtonsVisibility();
   });
@@ -9400,15 +10049,20 @@ function goToCropInSection(sectionKey){
 async function renderAll(){
   renderLedger();
   renderMonthDropdowns();
+  document.body.classList.add("home-ready");
   await renderGrid("vegetables", "grid-vegetables");
   await renderGrid("herbs", "grid-herbs");
   await renderGrid("flowers", "grid-flowers");
   await renderGrid("coverCrops", "grid-coverCrops");
+  // Cards just worked out which dates aren't needed (sown direct) — redraw the lists.
+  renderLedger();
+  renderMonthDropdowns();
   await renderHarvestLog();
   await renderHarvestPictures();
   await renderJournal();
   await renderReorderList();
   await renderFertilizerLog();
+  await renderOpcLog();
 }
 
 /* ---------------- backup: export / import all stored data ---------------- */
@@ -10038,7 +10692,6 @@ const BC_DATA = {
       ["19","Mon","all day",""],
       ["20","Tue","until midnight",""],
       ["27","Tue","from 11am",""],
-      ["28","Wed","until 1am",""],
       ["29","Thu","3am – 9pm",""]
     ],
     "November 2026": [
@@ -10663,7 +11316,7 @@ async function getPlantingTasksForOffset(offsetDays){
   for(const sectionKey of ["vegetables","herbs","flowers","coverCrops"]){
     for(const p of (DATA_now()[sectionKey] || [])){
       if(await getSeasonDone(p.slug)) continue;
-      for(const wave of p.dates){
+      for(const wave of activeWaves(p)){
         for(const t of wave){
           const isSow = /^Start/.test(t.a);
           const isTransplant = /^Transplant/.test(t.a);
@@ -10763,6 +11416,8 @@ async function checkTomorrowReminder(){
   }catch(e){}
   await loadAllCustomCrops();
   await loadCustomSeedSources();
+  await loadSkips();
+  await loadWaveSkips();
   try{ alignPlannedDatesToBiodynamic(); }catch(e){}
   renderSeasonUI();
   renderSavePdfList();
