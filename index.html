@@ -556,20 +556,27 @@
   }
   .rain-toggle.open .rain-chevron{transform:rotate(180deg);}
   /* All 12 months fit across a phone screen — no sideways scrolling. */
+  /* Exactly 12 months fill the width (one year per screen); later months
+     scroll sideways. */
   .rain-chart{
-    display:flex; align-items:flex-end; gap:1px; height:180px;
-    padding:0; overflow:hidden;
+    display:flex; align-items:stretch; gap:0; min-height:180px; position:relative;
+    padding:0 0 8px; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch;
   }
   .rain-chart-col{
     display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
-    flex:1 1 0; min-width:0; height:100%;
+    flex:0 0 calc(100% / 12); min-width:0; position:relative;
   }
+  .rain-chart-col.future .rain-chart-bar.no-data{ background:transparent; border-bottom:2px dashed var(--line); border-radius:0; }
+  .rain-chart-col.future .rain-chart-label{ opacity:.6; }
+  .rain-chart-col.year-start{ border-left:1px dashed rgba(62,127,160,.35); }
+  .rain-chart-year{ position:absolute; top:0; left:3px; font-size:9px; font-weight:700; color:#3E7FA0; }
+  .rain-chart-bar{ flex:none; }
   .rain-chart-val{
     font-size:8.5px; font-weight:700; color:var(--ink-soft); margin-bottom:3px;
     white-space:nowrap; letter-spacing:-.2px;
   }
   .rain-chart-bar{
-    width:90%; max-width:26px; border-radius:4px 4px 0 0; background:#5FA3C4; min-height:2px;
+    width:80%; max-width:26px; border-radius:4px 4px 0 0; background:#5FA3C4; min-height:2px;
     transition:height .3s ease;
   }
   .rain-chart-bar.no-data{ background:var(--line); }
@@ -638,12 +645,20 @@
   .opc-batch-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .opc-tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
   .opc-tags .fert-bed-tag{ margin-right:0; }
+  .fert-product-tag{ display:inline-block; font-size:12px; font-weight:700; color:#96468A; background:#FBEBF8; border:1px solid #E8C2E2; border-radius:999px; padding:1px 9px; }
   .opc-crop-tag{ display:inline-block; font-size:12px; font-weight:700; color:var(--ink); background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:1px 9px; }
   .opc-actions{ margin-top:6px; }
   .fert-entry-actions.opc-actions button{ padding:5px 14px; min-height:34px; font-size:13.5px; }
   .opc-tag{ display:inline-block; font-size:12px; font-weight:700; color:#2F7A4E; background:#E4F2E8; border:1px solid #BFDEC9; border-radius:999px; padding:1px 9px; margin-right:7px; }
   /* ---------- fertilizer log ---------- */
-  .fert-form{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .fert-form{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px 10px; margin-bottom:10px; }
+  /* iPhone date boxes have a built-in minimum width and spill into the next
+     column — make them shrink to their own half like the other boxes. */
+  .fert-form input[type="date"]{
+    -webkit-appearance:none; appearance:none; display:block;
+    min-width:0; max-width:100%; min-height:36px; line-height:1.2;
+  }
+  .fert-form input[type="date"]::-webkit-date-and-time-value{ text-align:left; margin:0; }
   .fert-form .fert-wide{ grid-column:1 / -1; }
   .fert-form label{ display:flex; flex-direction:column; gap:3px; font-size:11px; color:var(--ink-soft); font-weight:600; min-width:0; }
   .fert-form input, .fert-form select{
@@ -1965,6 +1980,26 @@
   }
 
   /* ---------- tomorrow planting reminder popup ---------- */
+  .crop-confetti-layer{ position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden; }
+  .crop-confetti{
+    position:absolute; top:-50px; line-height:1; will-change:transform;
+    animation-name:cropFall, cropSway; animation-timing-function:cubic-bezier(.3,.1,.5,1), ease-in-out;
+    animation-iteration-count:1, infinite; animation-direction:normal, alternate; animation-fill-mode:forwards, none;
+  }
+  @keyframes cropFall{
+    0%{ transform:translate3d(0,0,0) rotate(0deg); opacity:1; }
+    85%{ opacity:1; }
+    100%{ transform:translate3d(var(--sway,0),110vh,0) rotate(var(--spin,360deg)); opacity:.2; }
+  }
+  @keyframes cropSway{ from{ margin-left:-14px; } to{ margin-left:14px; } }
+  .tomorrow-modal-card{ position:relative; z-index:2; }
+  .crop-confetti-layer.in-modal{ z-index:1; }
+  .jingle-toggle{
+    position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--line); background:var(--card); font-size:16px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .tomorrow-icon{ cursor:pointer; }
   .tomorrow-modal-overlay{
     position:fixed; inset:0; background:rgba(30,25,20,0.45); z-index:60;
     display:flex; align-items:center; justify-content:center; padding:16px;
@@ -2239,7 +2274,7 @@
           <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Log</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">💧</span><span>Rain Log</span></button>
           <button type="button" class="home-tab-btn tab-fert" data-hometab="fert"><span class="home-tab-icon">🧪</span><span>Fertilizer Log</span></button>
-          <button type="button" class="home-tab-btn tab-opc" data-hometab="opc"><span class="home-tab-icon">🐞</span><span>Organic Pest Control</span></button>
+          <button type="button" class="home-tab-btn tab-opc" data-hometab="opc"><span class="home-tab-icon">🐞</span><span>Organic Pest Control Log</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
           <div id="seasonButtons">
@@ -2625,7 +2660,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.14-28</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.15-5</div>
   </main>
 
   <nav class="tabbar">
@@ -4345,10 +4380,13 @@ async function fetchAndRenderRainChart(){
     });
     const months = [];
     let cursor = new Date(2026, 0, 1);
-    const stop = new Date(today.getFullYear(), today.getMonth(), 1);
+    // Run through December of next year: this year always fills the screen
+    // (Jan–Dec), and the scroll bar slides on into the months still to come.
+    const stop = new Date(today.getFullYear() + 1, 11, 1);
     while(cursor <= stop){
       const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}`;
-      months.push({ key, label: cursor.toLocaleString("en-US", { month: "short" }), total: totals[key] });
+      const isFuture = cursor > new Date(today.getFullYear(), today.getMonth(), 1);
+      months.push({ key, label: cursor.toLocaleString("en-US", { month: "short" }), total: isFuture ? undefined : totals[key], future: isFuture, jan: cursor.getMonth() === 0, year: cursor.getFullYear() });
       cursor.setMonth(cursor.getMonth() + 1);
     }
 
@@ -4358,11 +4396,15 @@ async function fetchAndRenderRainChart(){
     bodyEl.innerHTML = `<div class="rain-chart">${months.map(m => {
       const hasData = m.total !== undefined;
       const t = hasData ? Math.max(0, Math.min(1, m.total / max)) : 0;
-      const pct = hasData ? Math.max(4, Math.round(t * 100)) : 4;
-      const barStyle = hasData ? `height:${pct}%; background:${rainBarColor(t)};` : `height:${pct}%;`;
+      // Bars get their own fixed-height area (RAIN_BAR_MAX px) so the amount
+      // above and the month below never squeeze them — heights stay true to scale.
+      const RAIN_BAR_MAX = 130;
+      const px = hasData ? Math.max(3, Math.round(t * RAIN_BAR_MAX)) : 3;
+      const barStyle = hasData ? `height:${px}px; background:${rainBarColor(t)};` : `height:${px}px;`;
       return `
-        <div class="rain-chart-col">
-          <div class="rain-chart-val">${hasData ? m.total.toFixed(1) + '"' : "—"}</div>
+        <div class="rain-chart-col${m.future ? " future" : ""}${m.jan ? " year-start" : ""}" data-key="${m.key}">
+          ${m.jan ? `<div class="rain-chart-year">${m.year}</div>` : ""}
+          <div class="rain-chart-val">${hasData ? m.total.toFixed(1) + '"' : (m.future ? "" : "—")}</div>
           <div class="rain-chart-bar${hasData ? "" : " no-data"}" style="${barStyle}"></div>
           <div class="rain-chart-label">${m.label}</div>
         </div>`;
@@ -4373,6 +4415,10 @@ async function fetchAndRenderRainChart(){
       <span><i style="background:rgb(62,127,160);"></i>More rain</span>
     </div>`;
     statusEl.textContent = "";
+    // Start the view on January of the current year.
+    const chartEl = bodyEl.querySelector(".rain-chart");
+    const jan = chartEl && chartEl.querySelector(`[data-key="${today.getFullYear()}-01"]`);
+    if(chartEl && jan) requestAnimationFrame(() => { chartEl.scrollLeft = jan.offsetLeft; });
   }catch(e){
     if(e && e.name === "AbortError"){
       statusEl.textContent = "The weather service is taking too long to respond — try again in a bit.";
@@ -5143,7 +5189,7 @@ async function getFertLog(){
 async function setFertLog(arr){
   try{ await window.storage.set(`fertilizer:${activeSeason}`, JSON.stringify(arr), false); }catch(e){}
 }
-let fertEditingId = null;
+let fertEditingIds = [];
 let fertCrops = [];
 function renderFertChips(){
   const wrap = document.getElementById("fertCrops");
@@ -5201,7 +5247,7 @@ async function refreshCropCardsForFert(){
   await renderGrid("coverCrops", "grid-coverCrops");
 }
 function fertResetForm(){
-  fertEditingId = null;
+  fertEditingIds = [];
   ["fertCrop","fertProduct","fertNpk","fertAmount","fertEvery"].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
   fertCrops = [];
   renderFertChips();
@@ -5237,66 +5283,79 @@ async function renderFertilizerLog(){
     const next = new Date(`${e.date}T00:00:00`); next.setDate(next.getDate() + Number(e.every) * 7);
     return { e, next, days: Math.round((next.getTime() - today) / 86400000) };
   }).sort((a, b) => a.next - b.next);
-  dueEl.innerHTML = (!isPastSeason && due.length) ? `<div class="fert-due"><b>Due next</b><br>${due.map(x => {
+  // Same day due -> one line ("Bed 1, Bed 2, Tomatoes — Oct 21").
+  const dueRows = [];
+  due.forEach(x => {
+    const row = dueRows.find(r => r.t === x.next.getTime());
+    if(row) row.crops.push(x.e.crop); else dueRows.push({ t: x.next.getTime(), x, crops: [x.e.crop] });
+  });
+  dueEl.innerHTML = (!isPastSeason && dueRows.length) ? `<div class="fert-due"><b>Due next</b><br>${dueRows.map(r => {
+    const x = r.x;
     const when = x.days < 0 ? `<span class="fert-over">overdue by ${-x.days} day${x.days === -1 ? "" : "s"}</span>`
       : x.days === 0 ? `<span class="fert-over">today</span>`
       : `${x.next.toLocaleDateString(undefined, { month:"short", day:"numeric" })} (in ${x.days} day${x.days === 1 ? "" : "s"})`;
-    return `${fertEsc(x.e.crop)} — ${when}`;
+    return `${r.crops.map(fertEsc).join(", ")} — ${when}`;
   }).join("<br>")}</div>` : "";
 
   if(!entries.length){
     listEl.innerHTML = `<div class="harvest-empty">No feedings logged for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  // One card per crop, with every feeding for that crop inside it
-  // (newest first). Cards are ordered by each crop's latest feeding.
-  const groups = [];
-  const byKey = {};
-  // Every bed ("Bed 1", "bed #2", "Bed three"…) shares one "Garden beds"
-  // card, with each feeding labeled by its bed.
+  // One card per day. Feedings logged the same day with the same details
+  // (product, N-P-K, amount, type, repeat) share one line, with every crop /
+  // bed shown as a tag and a single Edit / Delete for the batch.
   const isBed = name => /\bbeds?\b/i.test(String(name || ""));
   const bedNum = name => {
     const words = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10 };
     const m = String(name || "").toLowerCase().match(/(\d+)|\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/);
     return m ? (m[1] ? Number(m[1]) : words[m[2]]) : 999;
   };
+  const sig = e => [e.product, e.npk, e.amount, e.type, e.every].map(v => String(v == null ? "" : v).trim().toLowerCase()).join("|");
+  const days = [];
+  const dayIdx = {};
   entries.forEach(e => {
-    const bed = isBed(e.crop);
-    const k = bed ? "__beds" : (String(e.crop || "").toLowerCase().replace(/[^a-z0-9]/g, "") || "__none");
-    if(!byKey[k]){ byKey[k] = { name: bed ? "Garden beds" : (e.crop || "—"), beds: bed, items: [] }; groups.push(byKey[k]); }
-    byKey[k].items.push(e);
+    const d = e.date || "";
+    if(!(d in dayIdx)){ dayIdx[d] = days.length; days.push({ date: d, batches: [], bySig: {} }); }
+    const day = days[dayIdx[d]];
+    const k = sig(e);
+    if(!day.bySig[k]){ day.bySig[k] = { items: [] }; day.batches.push(day.bySig[k]); }
+    day.bySig[k].items.push(e);
   });
-  groups.forEach(g => { if(g.beds) g.items.sort((a, b) => (b.date || "").localeCompare(a.date || "") || bedNum(a.crop) - bedNum(b.crop)); });
-  const data = DATA_now();
-  const iconFor = name => {
-    for(const sk of Object.keys(data || {})){
-      const p = (Array.isArray(data[sk]) ? data[sk] : []).find(p => p && fertMatchesCrop({ crop: name }, p));
-      if(p) return cropIcon(p, sk);
-    }
-    const generic = /garden|bed|all/i.test(name) ? "🏡" : "🌱";
-    return `<span class="plant-icon" style="background:#E8F1E4">${generic}</span>`;
-  };
-  listEl.innerHTML = groups.map(g => `
-    <div class="fert-entry">
-      <div class="fert-group-head">${iconFor(g.name)}<span class="fert-entry-crop">${fertEsc(g.name)}</span></div>
-      ${g.items.map(e => {
-        const locked = isPastSeason || isEntryLocked(e.addedAt);
-        const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
+  days.forEach(day => day.batches.forEach(b => b.items.sort((a, c) =>
+    (isBed(a.crop) - isBed(c.crop)) || (isBed(a.crop) ? bedNum(a.crop) - bedNum(c.crop) : String(a.crop || "").localeCompare(String(c.crop || "")))
+  )));
+  const batchKey = b => b.items.map(x => x.id).join(",");
+  window.__fertBatches = {};
+  listEl.innerHTML = days.map(day => `
+    <div class="fert-entry opc-day">
+      <div class="opc-day-head">🗓️ ${fertFmtDate(day.date)}</div>
+      ${day.batches.map(b => {
+        const e = b.items[0];
+        const key = batchKey(b);
+        window.__fertBatches[key] = b.items;
+        const locked = isPastSeason || b.items.some(x => isEntryLocked(x.addedAt));
+        const editing = fertEditingIds.length && b.items.some(x => fertEditingIds.includes(x.id));
+        const tags = b.items.map(x => isBed(x.crop)
+          ? `<span class="fert-bed-tag">${bedNum(x.crop) !== 999 ? `Bed ${bedNum(x.crop)}` : fertEsc(x.crop)}</span>`
+          : `<span class="opc-crop-tag">${fertEsc(x.crop || "—")}</span>`).join("");
+        const detail = [e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
         const every = Number(e.every) > 0 ? `Feed again every ${Number(e.every)} week${Number(e.every) === 1 ? "" : "s"}` : "";
-        return `<div class="fert-item${fertEditingId === e.id ? " editing" : ""}">
-          <div class="fert-entry-date">${g.beds ? `<span class="fert-bed-tag">${bedNum(e.crop) !== 999 ? `Bed ${bedNum(e.crop)}` : fertEsc(e.crop)}</span>` : ""}${fertFmtDate(e.date)}${locked && !isPastSeason ? ' <span aria-label="Locked">🔒</span>' : ""}</div>
-          ${bits ? `<div class="fert-entry-detail">${bits}</div>` : ""}
+        return `<div class="fert-item opc-batch${editing ? " editing" : ""}">
+          <div class="opc-batch-top">${e.product ? `<span class="fert-product-tag">${fertEsc(e.product)}</span>` : ""}${locked && !isPastSeason ? '<span aria-label="Locked">🔒</span>' : ""}</div>
+          <div class="opc-tags">${tags}</div>
+          ${detail ? `<div class="fert-entry-detail">${detail}</div>` : ""}
           ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
-          ${locked ? "" : `<div class="fert-entry-actions"><button type="button" data-fert-edit="${e.id}">Edit</button><button type="button" class="fert-del" data-fert-del="${e.id}">Delete</button></div>`}
+          ${locked ? "" : `<div class="fert-entry-actions opc-actions"><button type="button" data-fert-edit="${key}">Edit</button><button type="button" class="fert-del" data-fert-del="${key}">Delete${b.items.length > 1 ? ` all ${b.items.length}` : ""}</button></div>`}
         </div>`;
       }).join("")}
     </div>`).join("");
-  listEl.querySelectorAll("[data-fert-edit]").forEach(b => b.addEventListener("click", () => {
-    const e = entries.find(x => x.id === b.dataset.fertEdit); if(!e) return;
-    fertEditingId = e.id;
+  listEl.querySelectorAll("[data-fert-edit]").forEach(btn => btn.addEventListener("click", () => {
+    const items = window.__fertBatches[btn.dataset.fertEdit]; if(!items || !items.length) return;
+    const e = items[0];
+    fertEditingIds = items.map(x => x.id);
     document.getElementById("fertDate").value = e.date || "";
     document.getElementById("fertCrop").value = "";
-    fertCrops = e.crop ? [e.crop] : [];
+    fertCrops = items.map(x => x.crop).filter(Boolean);
     renderFertChips();
     document.getElementById("fertProduct").value = e.product || "";
     document.getElementById("fertNpk").value = e.npk || "";
@@ -5308,11 +5367,14 @@ async function renderFertilizerLog(){
     renderFertilizerLog();
     document.getElementById("fertFormWrap").scrollIntoView({ behavior:"smooth", block:"center" });
   }));
-  listEl.querySelectorAll("[data-fert-del]").forEach(b => b.addEventListener("click", async () => {
-    if(!confirm("Delete this feeding?")) return;
-    const arr = (await getFertLog()).filter(x => x.id !== b.dataset.fertDel);
+  listEl.querySelectorAll("[data-fert-del]").forEach(btn => btn.addEventListener("click", async () => {
+    const items = window.__fertBatches[btn.dataset.fertDel]; if(!items || !items.length) return;
+    const names = items.map(x => x.crop).filter(Boolean).join(", ");
+    if(!confirm(items.length > 1 ? `Delete this feeding for all ${items.length} (${names})?` : "Delete this feeding?")) return;
+    const ids = new Set(items.map(x => x.id));
+    const arr = (await getFertLog()).filter(x => !ids.has(x.id));
     await setFertLog(arr);
-    if(fertEditingId === b.dataset.fertDel) fertResetForm();
+    if(fertEditingIds.some(id => ids.has(id))) fertResetForm();
     renderFertilizerLog();
     refreshCropCardsForFert();
   }));
@@ -5330,15 +5392,20 @@ document.getElementById("fertAddBtn").addEventListener("click", async () => {
     every: every === "" ? "" : Math.max(0, Math.round(Number(every)) || 0)
   };
   const crops = fertCrops.length ? fertCrops.slice() : [""];
-  const arr = await getFertLog();
+  let arr = await getFertLog();
   const now = Date.now();
-  const newEntry = (crop, k) => ({ id: `f${now}${k}${Math.random().toString(36).slice(2,6)}`, addedAt: now, ...shared, crop });
-  if(fertEditingId){
-    // Editing one feeding: the first crop updates it, any extra crops
-    // become new feedings with the same details.
-    const i = arr.findIndex(x => x.id === fertEditingId);
-    if(i >= 0 && !isEntryLocked(arr[i].addedAt)) arr[i] = { ...arr[i], ...shared, crop: crops[0] };
-    crops.slice(1).forEach((c, k) => arr.push(newEntry(c, k)));
+  const newEntry = (crop, k, addedAt) => ({ id: `f${now}${k}${Math.random().toString(36).slice(2,6)}`, addedAt: addedAt || now, ...shared, crop });
+  if(fertEditingIds.length){
+    // Editing a batch: rewritten from the form — crops still listed keep
+    // their entry (and lock clock), removed ones go, new ones are added.
+    const old = arr.filter(x => fertEditingIds.includes(x.id));
+    if(old.some(x => isEntryLocked(x.addedAt))){ fertResetForm(); renderFertilizerLog(); return; }
+    const keepAt = old.length ? Math.min(...old.map(x => x.addedAt || now)) : now;
+    arr = arr.filter(x => !fertEditingIds.includes(x.id));
+    crops.forEach((c, k) => {
+      const prev = old.find(x => String(x.crop || "").toLowerCase() === String(c || "").toLowerCase());
+      arr.push(prev ? { ...prev, ...shared, crop: c } : newEntry(c, k, keepAt));
+    });
   } else {
     crops.forEach((c, k) => arr.push(newEntry(c, k)));
   }
@@ -11360,6 +11427,101 @@ async function getPlantingTasksForOffset(offsetDays){
 // Shows a small popup card listing crops due, and resolves once the user
 // dismisses it (closing the button or tapping outside), so callers can
 // chain multiple popups one after another instead of stacking them.
+/* ---------- "Plant today!" celebration: crop confetti + a short jingle ----------
+   The crops due today (🥬 leafy greens, 🥕 carrots…) rain down the screen
+   for a few seconds, with a little bell jingle made in the browser (no sound
+   file). Sound can be muted with the 🔊 button on the pop-up (remembered on
+   this phone). Phones only allow sound after a tap, so if the pop-up opens
+   before you've touched the page, the jingle plays on your first tap. */
+function cropConfetti(emojis, opts){
+  const list = (emojis || []).filter(Boolean);
+  if(!list.length) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const count = reduce ? 10 : ((opts && opts.count) || 42);
+  const layer = document.createElement("div");
+  layer.className = "crop-confetti-layer";
+  for(let i = 0; i < count; i++){
+    const piece = document.createElement("span");
+    piece.className = "crop-confetti";
+    piece.textContent = list[i % list.length];
+    const size = 20 + Math.random() * 18;
+    const dur = 2.6 + Math.random() * 1.8;
+    piece.style.left = (Math.random() * 100) + "vw";
+    piece.style.fontSize = size + "px";
+    piece.style.animationDuration = `${dur}s, ${0.9 + Math.random() * 0.8}s`;
+    piece.style.animationDelay = `${Math.random() * 1.4}s, 0s`;
+    piece.style.setProperty("--spin", `${(Math.random() < .5 ? -1 : 1) * (180 + Math.random() * 360)}deg`);
+    piece.style.setProperty("--sway", `${(Math.random() * 2 - 1) * 40}px`);
+    layer.appendChild(piece);
+  }
+  // Inside the pop-up's dimmed backdrop, behind its white card, so the
+  // reminder text stays readable while the crops fall around it.
+  const host = (opts && opts.host) || document.body;
+  if(host !== document.body) layer.classList.add("in-modal");
+  host.insertBefore(layer, host.firstChild);
+  setTimeout(() => layer.remove(), 6500);
+}
+function jingleMuted(){ try{ return localStorage.getItem("jingleMuted") === "1"; }catch(e){ return false; } }
+function setJingleMuted(v){ try{ localStorage.setItem("jingleMuted", v ? "1" : "0"); }catch(e){} }
+let jingleCtx = null;
+function playGardenJingle(){
+  if(jingleMuted()) return Promise.resolve(false);
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return Promise.resolve(false);
+    if(!jingleCtx) jingleCtx = new AC();
+    const ctx = jingleCtx;
+    // Alternates by day: birdsong one day, harp sparkle the next.
+    const dayNum = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+    const variant = dayNum % 2 === 0 ? "birdsong" : "harp";
+    const note = (start, freq, dur, decay, peak, type, master, vibHz) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.value = freq;
+      if(vibHz){
+        const lfo = ctx.createOscillator(), lg = ctx.createGain();
+        lfo.frequency.value = 5.5; lg.gain.value = vibHz;
+        lfo.connect(lg); lg.connect(o.frequency);
+        lfo.start(start); lfo.stop(start + dur + 0.05);
+      }
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(peak, start + 0.01);
+      g.gain.setTargetAtTime(0.0001, start + 0.01, decay);
+      o.connect(g); g.connect(master);
+      o.start(start); o.stop(start + dur + 0.05);
+    };
+    const go = () => {
+      const t0 = ctx.currentTime + 0.03;
+      const master = ctx.createGain(); master.connect(ctx.destination);
+      if(variant === "birdsong"){
+        // Two little rising chirps, then a quick trill.
+        master.gain.value = 0.2;
+        [[0, 2600], [.09, 3100], [.35, 2800], [.44, 3400]].forEach(([at, f]) => note(t0 + at, f, .12, .04, .8, "sine", master, 165));
+        for(let i = 0; i < 8; i++) note(t0 + .75 + i * .05, i % 2 ? 3400 : 3000, .06, .02, .6, "sine", master, 0);
+      } else {
+        // Harp sparkle: a fast shimmering run up.
+        master.gain.value = 0.16;
+        [72, 74, 76, 79, 81, 84, 86, 88, 91, 93].forEach((m, i) => note(t0 + i * .06, 440 * Math.pow(2, (m - 69) / 12), 1.0, .25, .55, "triangle", master, 0));
+      }
+      return true;
+    };
+    if(ctx.state === "running") return Promise.resolve(go());
+    return ctx.resume().then(() => ctx.state === "running" ? go() : false).catch(() => false);
+  }catch(e){ return Promise.resolve(false); }
+}
+function celebratePlantingDay(items, card){
+  const emojis = [...new Set((items || []).map(it => it.emoji).filter(Boolean))];
+  cropConfetti(emojis, { host: card });
+  playGardenJingle().then(played => {
+    if(played) return;
+    // Blocked until the first tap: play it then (once).
+    const once = () => { document.removeEventListener("pointerdown", once, true); playGardenJingle(); };
+    document.addEventListener("pointerdown", once, true);
+  });
+  if(card){
+    // Tap a crop's icon to rain it again.
+    card.querySelectorAll(".tomorrow-icon").forEach(ic => ic.addEventListener("click", () => cropConfetti([ic.textContent.trim()], { count: 24, host: card })));
+  }
+}
 function showPlantingModal(id, title, items){
   return new Promise(resolve => {
     const existing = document.getElementById(id);
@@ -11375,12 +11537,23 @@ function showPlantingModal(id, title, items){
     wrap.className = "tomorrow-modal-overlay";
     wrap.innerHTML = `
       <div class="tomorrow-modal-card">
+        ${id === "todayModal" ? `<button type="button" class="jingle-toggle" aria-label="${jingleMuted() ? "Turn sound on" : "Mute sound"}">${jingleMuted() ? "🔇" : "🔊"}</button>` : ""}
         <div class="tomorrow-modal-title">${title}</div>
         <div class="tomorrow-modal-body">${rows}</div>
         <button type="button" class="tomorrow-modal-close">Got it</button>
       </div>
     `;
     document.body.appendChild(wrap);
+    if(id === "todayModal"){
+      celebratePlantingDay(items, wrap);
+      const jt = wrap.querySelector(".jingle-toggle");
+      if(jt) jt.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const m = !jingleMuted(); setJingleMuted(m);
+        jt.textContent = m ? "🔇" : "🔊"; jt.setAttribute("aria-label", m ? "Turn sound on" : "Mute sound");
+        if(!m) playGardenJingle();
+      });
+    }
     const done = () => { wrap.remove(); resolve(); };
     wrap.querySelector(".tomorrow-modal-close").addEventListener("click", done);
     wrap.addEventListener("click", (e) => { if(e.target === wrap) done(); });
