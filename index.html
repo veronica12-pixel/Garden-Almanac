@@ -1946,7 +1946,7 @@
   .bg-tool{ flex:none; width:58px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:5px 2px; border-radius:10px;
     border:2px solid transparent; background:var(--paper-2); cursor:grab; font-family:'Inter',sans-serif; user-select:none; -webkit-user-select:none; }
   .bg-tool .bgt-ic{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:20px; }
-  .bg-tool .bgt-nm{ font-size:9.5px; font-weight:600; color:var(--ink); line-height:1.15; text-align:center; max-height:22px; overflow:hidden; }
+  .bg-tool .bgt-nm{ font-size:9.5px; font-weight:600; color:var(--ink); line-height:1.15; text-align:center; max-height:34px; overflow:hidden; }
   .bg-tool.on{ border-color:#8A5A2B; background:#F7EFE4; }
   .bg-btns{ display:flex; gap:8px; margin-top:8px; }
   .bg-btn{ flex:1; min-height:40px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
@@ -1978,6 +1978,8 @@
     justify-content:center; font-size:16px; line-height:1; cursor:pointer; user-select:none; -webkit-user-select:none; }
   .bg-cell:nth-child(44n){ border-right:none; }
   .bg-cell.has{ touch-action:none; }
+  .bg-svg{ display:inline-block; width:1.15em; height:1.15em; vertical-align:-0.22em; }
+  .bg-cell .bg-svg, .bgt-ic .bg-svg, .bg-ghost .bg-svg{ width:1.2em; height:1.2em; vertical-align:middle; }
   .bg-cell{ position:relative; }
   /* Halfway mark: a dark line after foot 22 in every bed */
   .bg-cell[data-k$="-21"]::after{ content:""; position:absolute; top:-1px; bottom:-1px; right:-2px; width:3px;
@@ -2730,7 +2732,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.15-16</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.15-19</div>
   </main>
 
   <nav class="tabbar">
@@ -10204,16 +10206,37 @@ function goToCropInSection(sectionKey){
    Saved per season under `bedgrid:<season>` as
    { "1": { "row-col": { s: crop slug, n: crop name, at: time placed } }, ... }.
    Each square locks 48h after it's planted (global unlock overrides). */
+
+// Hand-drawn icons for crops that have no emoji of their own.
+const BG_SVG = {
+  basil: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 18.6V9.4" stroke="#3E7A2E" stroke-width="1.4" stroke-linecap="round"/><path d="M10 10C4 10 2 5 4.5 2.4 8 2.4 10.6 6 10 10Z" fill="#52AE3F"/><path d="M10 10C16 10 18 5 15.5 2.4 12 2.4 9.4 6 10 10Z" fill="#3F9832"/><path d="M10 15.2C6 15.7 3.4 13.2 4 11 7 10.4 9.6 12.6 10 15.2Z" fill="#5FBA4A"/><path d="M10 15.2C14 15.7 16.6 13.2 16 11 13 10.4 10.4 12.6 10 15.2Z" fill="#4CA63B"/><path d="M9.6 9.4 5.3 3.4M10.4 9.4l4.3-6" stroke="#C6EAB0" stroke-width=".6"/></svg>',
+  parsley: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 19v-8M10 13.5 5.4 8.6M10 13.5l4.6-4.9" stroke="#3B7A2A" stroke-width="1.2" stroke-linecap="round" fill="none"/><g fill="#2F8A3C"><circle cx="10" cy="4.4" r="2.2"/><circle cx="8" cy="6.9" r="2.2"/><circle cx="12" cy="6.9" r="2.2"/><circle cx="5" cy="4.9" r="2"/><circle cx="3.3" cy="7.3" r="2"/><circle cx="6.6" cy="7.6" r="1.8"/><circle cx="15" cy="4.9" r="2"/><circle cx="16.7" cy="7.3" r="2"/><circle cx="13.4" cy="7.6" r="1.8"/></g><g fill="#4DB05A"><circle cx="9.4" cy="3.8" r=".9"/><circle cx="4.5" cy="4.4" r=".8"/><circle cx="14.5" cy="4.4" r=".8"/></g></svg>',
+  dill: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 19.5V6.5" stroke="#5E9A6B" stroke-width="1.2" stroke-linecap="round"/><path d="M10 6.5 4.2 3.6M10 6.5 6.3 2.2M10 6.5 10 1.6M10 6.5l3.7-4.3M10 6.5l5.8-2.9" stroke="#7FB27E" stroke-width=".8" fill="none"/><g fill="#F2C531"><circle cx="4.2" cy="3.6" r="1.3"/><circle cx="6.3" cy="2.2" r="1.3"/><circle cx="10" cy="1.6" r="1.3"/><circle cx="13.7" cy="2.2" r="1.3"/><circle cx="15.8" cy="3.6" r="1.3"/></g><path d="M10 11 5.5 8.8M6.8 9.4 5.6 10.8M8 10 7.2 11.5M10 11l4.5-2.2M13.2 9.4l1.2 1.4M12 10l.8 1.5M10 15.2 5.2 13.4M6.6 13.9 5.8 15.4M10 15.2l4.8-1.8M13.4 13.9l.8 1.5" stroke="#6FA77A" stroke-width=".8" stroke-linecap="round" fill="none"/></svg>',
+  fennel: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M8.6 12 6.6 4.2M10 12V3M11.4 12l2-7.8" stroke="#86BC52" stroke-width="1.4" stroke-linecap="round"/><path d="M6.6 4.2 4.6 2.6M6.6 4.2 5 5.2M10 3 8.6 1.4M10 3l1.4-1.6M13.4 4.2l2-1.6M13.4 4.2l1.6 1" stroke="#A3D86E" stroke-width=".9" stroke-linecap="round"/><path d="M10 19C4.6 19 4.4 13.6 7.6 11.6h4.8C15.6 13.6 15.4 19 10 19Z" fill="#EEF4DA" stroke="#B4C98A" stroke-width=".9"/><path d="M8 13.4c-.6 2-.3 3.8.8 5M12 13.4c.6 2 .3 3.8-.8 5" stroke="#C9D9A6" stroke-width=".7" fill="none"/></svg>',
+  walkingonion: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M7 18.6C7 12 7.6 8 10.6 5.6" stroke="#5DA23A" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M11 18.6C11.4 14 12 11 13.4 9.4" stroke="#6DAE45" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M11 4.6 12.2 1.4M12.6 5.2l2.4-2.4M13 6.6l3 .2M10.4 4.4 9 1.8" stroke="#7DC052" stroke-width=".9" stroke-linecap="round"/><g fill="#B5517A"><circle cx="11.2" cy="5.4" r="1.6"/><circle cx="13" cy="6.1" r="1.4"/><circle cx="10" cy="6.4" r="1.3"/><circle cx="12" cy="7.3" r="1.2"/></g><g fill="#E3A0BC"><circle cx="10.8" cy="4.9" r=".5"/><circle cx="12.7" cy="5.7" r=".45"/></g><path d="M5.6 18.8c0-1.8.6-2.6 1.4-2.6s1.4.8 1.4 2.6Z" fill="#F1EEE4" stroke="#C9C2A8" stroke-width=".5"/><path d="M9.6 18.8c0-1.6.6-2.3 1.4-2.3s1.4.7 1.4 2.3Z" fill="#F1EEE4" stroke="#C9C2A8" stroke-width=".5"/></svg>',
+  butterflypeablue: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 18.8V13" stroke="#4E9A3A" stroke-width="1.1" stroke-linecap="round"/><path d="M10 16.4C7.6 16.6 5.6 15.6 5.2 14 7.4 13.6 9.2 14.6 10 16.4Z" fill="#5FAE45"/><path d="M10 16.4C12.4 16.6 14.4 15.6 14.8 14 12.6 13.6 10.8 14.6 10 16.4Z" fill="#4E9A3A"/><path d="M10 13.6C5.2 13.6 2 10.4 2.4 6.4 2.8 2.8 6 1.2 10 2.6 14 1.2 17.2 2.8 17.6 6.4 18 10.4 14.8 13.6 10 13.6Z" fill="#2E4FC9" stroke="#1D3596" stroke-width=".7"/><path d="M10 4.4C8.4 6.4 8.2 9.4 10 12.4 11.8 9.4 11.6 6.4 10 4.4Z" fill="#FFFFFF"/><path d="M10 7.6C9.4 8.8 9.4 10.2 10 11.6 10.6 10.2 10.6 8.8 10 7.6Z" fill="#F2D24B"/><path d="M10 12.4V13.6" stroke="#7F6BB0" stroke-width=".6"/></svg>',
+  butterflypeawhite: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 18.8V13" stroke="#4E9A3A" stroke-width="1.1" stroke-linecap="round"/><path d="M10 16.4C7.6 16.6 5.6 15.6 5.2 14 7.4 13.6 9.2 14.6 10 16.4Z" fill="#5FAE45"/><path d="M10 16.4C12.4 16.6 14.4 15.6 14.8 14 12.6 13.6 10.8 14.6 10 16.4Z" fill="#4E9A3A"/><path d="M10 13.6C5.2 13.6 2 10.4 2.4 6.4 2.8 2.8 6 1.2 10 2.6 14 1.2 17.2 2.8 17.6 6.4 18 10.4 14.8 13.6 10 13.6Z" fill="#FBFBF7" stroke="#C9C6D8" stroke-width=".7"/><path d="M10 4.4C8.4 6.4 8.2 9.4 10 12.4 11.8 9.4 11.6 6.4 10 4.4Z" fill="#F6EFC9"/><path d="M10 7.6C9.4 8.8 9.4 10.2 10 11.6 10.6 10.2 10.6 8.8 10 7.6Z" fill="#F2D24B"/><path d="M10 12.4V13.6" stroke="#7F6BB0" stroke-width=".6"/></svg>',
+  asparagus: '<svg class="bg-svg" viewBox="0 0 20 20"><g><path d="M5.4 19V8.4Q6.5 3.6 7.6 8.4V19Z" fill="#6DAE45"/><path d="M8.9 19V5.6Q10 1 11.1 5.6V19Z" fill="#5DA23A"/><path d="M12.4 19V7.4Q13.5 2.8 14.6 7.4V19Z" fill="#6DAE45"/></g><g fill="#8A62B3"><path d="M5.4 8.4Q6.5 3.6 7.6 8.4L6.5 7.4Z"/><path d="M8.9 5.6Q10 1 11.1 5.6L10 4.6Z"/><path d="M12.4 7.4Q13.5 2.8 14.6 7.4L13.5 6.4Z"/></g><path d="M5.9 11.5l.6-.6.6.6M9.4 9.4l.6-.6.6.6M12.9 11l.6-.6.6.6M9.4 13.2l.6-.6.6.6" stroke="#3F7E28" stroke-width=".55" fill="none"/><rect x="4.6" y="15.6" width="10.8" height="1.7" rx=".8" fill="#C9A57E"/></svg>'
+};
+function bgIc(e){ return e && String(e).startsWith("svg:") ? (BG_SVG[String(e).slice(4)] || "🌿") : (e || ""); }
+function bgTx(e){ return e && String(e).startsWith("svg:") ? "" : (e ? e + " " : ""); }
 const BG_BEDS = 4, BG_ROWS = 5, BG_COLS = 44;
 let bgNames = {};
 const bgName = b => (bgNames[b] && bgNames[b].trim()) || `Bed ${b}`;
 let bgData = {}, bgTool = null, bgDirty = false, bgLockedHit = false;
 let bgCustom = [];
+// Always in the crops box, every season.
+const BG_EXTRA_CROPS = [
+  { s: "walkingonions", n: "Walking onions", color: "#D9C8EC", emoji: "svg:walkingonion" },
+  { s: "butterflypeablue", n: "Butterfly pea (blue)", color: "#C9D6F5", emoji: "svg:butterflypeablue" },
+  { s: "butterflypeawhite", n: "Butterfly pea (white)", color: "#9BC49A", emoji: "svg:butterflypeawhite" }
+];
 const BG_CUSTOM_COLORS = ["#F2C6AC","#CBB9EA","#A9CB94","#EDA3C0","#8FBF9F","#EEB49B","#B49CDA","#F2D98C"];
-const BG_EMOJIS = ["🌱","🌿","🍅","🌽","🥔","🍠","🌶️","🫑","🥒","🍆","🎃","🥕","🔴","🧅","🧄","🥬","🥦","🫛","🫘","🥜","🍉","🍈","🍓","🫐","🍋","🍌","🍍","🥭","🥑","🫚","🌻","🌼","🌸","🍀","🌾","🪴","🍄","🌳"];
+const BG_EMOJIS = ["🌱","🌿","svg:basil","svg:parsley","svg:dill","svg:fennel","svg:asparagus","svg:walkingonion","svg:butterflypeablue","svg:butterflypeawhite","🍅","🌽","🥔","🍠","🌶️","🫑","🥒","🍆","🎃","🥕","🔴","🧅","🧄","🥬","🥦","🫛","🫘","🥜","🍉","🍈","🍓","🫐","🍋","🍌","🍍","🥭","🥑","🫚","🌻","🌼","🌸","🍀","🌾","🪴","🍄","🌳"];
 // Picks an icon from the crop's name: first any crop already in the app
 // with the same name, then common words (basil -> 🌿, corn -> 🌽 ...).
 const BG_EMOJI_WORDS = [
+  [/asparagus/, "svg:asparagus"], [/butterfly.*white|white.*butterfly/, "svg:butterflypeawhite"], [/butterfly|clitoria/, "svg:butterflypeablue"], [/walking onion|egyptian onion|tree onion|top.?set onion/, "svg:walkingonion"], [/fennel/, "svg:fennel"], [/\bdill/, "svg:dill"], [/parsley/, "svg:parsley"], [/basil/, "svg:basil"],
   [/sweet ?potato|yam/, "🍠"], [/potato/, "🥔"], [/tomato/, "🍅"], [/corn|maize/, "🌽"],
   [/basil|mint|oregano|thyme|sage|rosemary|parsley|cilantro|coriander|dill|herb|chive|lemongrass|moringa|tarragon|fennel|lavender/, "🌿"],
   [/bell pepper|sweet pepper/, "🫑"], [/pepper|chil|jalape|habanero|cayenne/, "🌶️"], [/cucumber|zucchini|okra|luffa|gourd/, "🥒"],
@@ -10237,7 +10260,7 @@ function bgGuessEmoji(name){
 }
 function bgDeleteCustom(c, after){
   const used = Object.values(bgData).reduce((n, bed) => n + Object.values(bed || {}).filter(x => x.s === c.s).length, 0);
-  requestGenericDelete(`Delete ${c.emoji} ${c.n} from your crops?${used ? ` Its ${used} planted squares stay until you clear or erase them.` : ""}`, async () => {
+  requestGenericDelete(`Delete ${bgTx(c.emoji)}${c.n} from your crops?${used ? ` Its ${used} planted squares stay until you clear or erase them.` : ""}`, async () => {
     const removed = c, at = bgCustom.findIndex(x => x.s === c.s);
     bgCustom = bgCustom.filter(x => x.s !== c.s);
     await bgSaveCustom(); await renderBedGrid();
@@ -10249,7 +10272,8 @@ function bgDeleteCustom(c, after){
 }
 function bgCrops(){
   const out = [], data = DATA_now();
-  SECTION_KEYS.forEach(sk => (data[sk] || []).forEach(p => out.push({ s: p.slug, n: p.name, color: p.color, emoji: CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sk] || "🌱" })));
+  SECTION_KEYS.forEach(sk => (data[sk] || []).forEach(p => out.push({ s: p.slug, n: p.name, color: p.color, emoji: BG_SVG[p.slug] ? `svg:${p.slug}` : (CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sk] || "🌱") })));
+  BG_EXTRA_CROPS.forEach(c => { if(!out.some(x => x.s === c.s)) out.push({ ...c }); });
   bgCustom.forEach(c => out.push({ s: c.s, n: c.n, color: c.color, emoji: c.emoji, custom: true }));
   return out;
 }
@@ -10259,7 +10283,7 @@ function bgOpenPanel(kind){
   if(!kind || panel.dataset.kind === kind && !panel.hidden){ panel.hidden = true; panel.dataset.kind = ""; return; }
   panel.dataset.kind = kind; panel.hidden = false;
   if(kind === "delete"){
-    const list = bgCustom.map(c => `<button type="button" class="bg-chip" data-edit-crop="${fertEsc(c.s)}">${c.emoji} ${fertEsc(c.n)}</button>`).join("");
+    const list = bgCustom.map(c => `<button type="button" class="bg-chip" data-edit-crop="${fertEsc(c.s)}">${bgIc(c.emoji)} ${fertEsc(c.n)}</button>`).join("");
     panel.innerHTML = `<div class="bg-panel-title">Edit a crop you added</div><div class="bg-chips">${list}<button type="button" class="bg-chip" data-edit-cancel>Done</button></div><div id="bgEditForm"></div>`;
     panel.querySelector("[data-edit-cancel]").addEventListener("click", () => bgOpenPanel(null));
     panel.querySelectorAll("[data-edit-crop]").forEach(chip => chip.addEventListener("click", () => {
@@ -10269,7 +10293,7 @@ function bgOpenPanel(kind){
       let pick = c.emoji;
       const f = panel.querySelector("#bgEditForm");
       f.innerHTML = `<div style="margin-top:10px;"><input type="text" id="bgEditName" maxlength="30" value="${fertEsc(c.n)}"></div>
-        <div class="bg-emoji-row">${BG_EMOJIS.map(e => `<button type="button" data-emoji="${e}" class="${e === pick ? "on" : ""}">${e}</button>`).join("")}</div>
+        <div class="bg-emoji-row">${BG_EMOJIS.map(e => `<button type="button" data-emoji="${e}" class="${e === pick ? "on" : ""}">${bgIc(e)}</button>`).join("")}</div>
         <div class="bg-chips"><button type="button" class="bg-chip on" id="bgEditSave">Save</button><button type="button" class="bg-chip danger" id="bgEditDel">🗑️ Delete</button></div>`;
       f.querySelectorAll("[data-emoji]").forEach(btn => btn.addEventListener("click", () => {
         pick = btn.dataset.emoji; f.querySelectorAll("[data-emoji]").forEach(x => x.classList.toggle("on", x === btn));
@@ -10280,7 +10304,7 @@ function bgOpenPanel(kind){
         c.n = n; c.emoji = pick;
         Object.values(bgData).forEach(bed => Object.values(bed || {}).forEach(x => { if(x.s === c.s){ x.n = n; if(x.e) x.e = pick; } }));
         await bgSaveCustom(); await bgSave(); await renderBedGrid(); bgOpenPanel("delete");
-        showUndoToast(`${pick} ${n} saved.`, null, "OK");
+        showUndoToast(`${bgTx(pick)}${n} saved.`, null, "OK");
       });
       f.querySelector("#bgEditDel").addEventListener("click", () => bgDeleteCustom(c, () => { if(bgCustom.length && GLOBAL_UNLOCK) bgOpenPanel("delete"); }));
     }));
@@ -10318,11 +10342,11 @@ function bgOpenPanel(kind){
     }));
   } else {
     let pick = "🌱";
-    const mine = bgCustom.map(c => `<button type="button" class="bg-chip" data-del-crop="${fertEsc(c.s)}">${c.emoji} ${fertEsc(c.n)} ✕</button>`).join("");
+    const mine = bgCustom.map(c => `<button type="button" class="bg-chip" data-del-crop="${fertEsc(c.s)}">${bgIc(c.emoji)} ${fertEsc(c.n)} ✕</button>`).join("");
     panel.innerHTML = `<div class="bg-panel-title">Add your own crop</div>
       <div class="bg-hint" style="margin:-4px 0 8px;">Type the name and an icon is picked for you — tap another one to change it.</div>
       <input type="text" id="bgNewCrop" placeholder="Crop name, e.g. Okra" maxlength="30" autocomplete="off">
-      <div class="bg-emoji-row">${BG_EMOJIS.map(e => `<button type="button" data-emoji="${e}" class="${e === pick ? "on" : ""}">${e}</button>`).join("")}</div>
+      <div class="bg-emoji-row">${BG_EMOJIS.map(e => `<button type="button" data-emoji="${e}" class="${e === pick ? "on" : ""}">${bgIc(e)}</button>`).join("")}</div>
       <div class="bg-chips"><button type="button" class="bg-chip on" id="bgNewCropSave">Add to crops</button><button type="button" class="bg-chip" id="bgNewCropCancel">Cancel</button></div>
 `;
     let userPicked = false;
@@ -10347,7 +10371,7 @@ function bgOpenPanel(kind){
       bgSetTool(t);
       const btn = document.querySelector(`#bgTools .bg-tool[data-s="${id}"]`);
       if(btn) btn.scrollIntoView({ inline:"center", block:"nearest" });
-      showUndoToast(`${pick} ${n} added — it's selected, tap squares to plant it.`, null, "OK");
+      showUndoToast(`${bgTx(pick)}${n} added — it's selected, tap squares to plant it.`, null, "OK");
     };
     panel.querySelector("#bgNewCropSave").addEventListener("click", save);
     panel.querySelector("#bgNewCrop").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); save(); } });
@@ -10370,7 +10394,7 @@ function bgPaintCell(el){
   const cell = (bgData[el.dataset.b] || {})[el.dataset.k];
   if(cell){
     const i = bgInfo(cell);
-    el.style.background = i.color; el.textContent = i.emoji; el.title = i.n;
+    el.style.background = i.color; el.innerHTML = bgIc(i.emoji); el.title = i.n;
     el.classList.toggle("lk", isEntryLocked(cell.at)); el.classList.add("has");
   } else { el.style.background = ""; el.textContent = ""; el.title = ""; el.classList.remove("lk", "has"); }
 }
@@ -10394,7 +10418,7 @@ function bgRenderSummary(){
     const counts = {};
     Object.values(bgData[b] || {}).forEach(c => { counts[c.s] = (counts[c.s] || 0) + 1; });
     const used = Object.values(counts).reduce((a, n) => a + n, 0);
-    const parts = Object.entries(counts).sort((a, c) => c[1] - a[1]).map(([s, n]) => { const i = bgInfo({ s }); return `${i.emoji} ${fertEsc(i.n)} ${n}`; });
+    const parts = Object.entries(counts).sort((a, c) => c[1] - a[1]).map(([s, n]) => { const i = bgInfo({ s }); return `${bgIc(i.emoji)} ${fertEsc(i.n)} ${n}`; });
     html += `<div class="bg-sum"><b>${fertEsc(bgName(b))}:</b> ${parts.length ? parts.join(" · ") + ` · ${BG_ROWS * BG_COLS - used} open` : "empty"}</div>`;
   }
   document.getElementById("bgSummary").innerHTML = html;
@@ -10406,7 +10430,7 @@ function bgSetTool(t){
   document.getElementById("bgHint").innerHTML = !t
     ? "Drag a crop onto a square, then press that square and drag to stretch it over the whole area. Or tap a crop, then tap or drag across squares."
     : t === "erase" ? "🧽 <b>Eraser</b> — tap or drag across squares to clear them. Tap the eraser again to stop."
-    : `${t.emoji} <b>Planting ${fertEsc(t.n)}</b> — tap or drag across squares. Tap ${fertEsc(t.n)} again to stop and scroll the beds.`;
+    : `${bgIc(t.emoji)} <b>Planting ${fertEsc(t.n)}</b> — tap or drag across squares. Tap ${fertEsc(t.n)} again to stop and scroll the beds.`;
 }
 async function renderBedGrid(){
   const inner = document.getElementById("bgInner");
@@ -10419,7 +10443,7 @@ async function renderBedGrid(){
   try{ const r = await window.storage.get("bedgridNames", false); bgNames = r ? (JSON.parse(r.value) || {}) : {}; }catch(e){ bgNames = {}; }
   const crops = bgCrops();
   document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops).map(c =>
-    `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${c.emoji}</span><span class="bgt-nm">${fertEsc(c.n)}</span></button>`).join("")
+    `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${bgIc(c.emoji)}</span><span class="bgt-nm">${fertEsc(c.n)}</span></button>`).join("")
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__add"><span class="bgt-ic" style="background:#FBF6EF; border:2px dashed #C9A57E; color:#8A5A2B; font-size:22px; font-weight:700; box-sizing:border-box;">＋</span><span class="bgt-nm">Add crop</span></button>`)
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__erase"><span class="bgt-ic" style="background:#EDE7F5">🧽</span><span class="bgt-nm">Eraser</span></button><button type="button" class="bg-tool" data-s="__clear"><span class="bgt-ic" style="background:#FBE9E7">🧹</span><span class="bgt-nm">Clear bed</span></button>` + (GLOBAL_UNLOCK && bgCustom.length ? `<button type="button" class="bg-tool" data-s="__delete"><span class="bgt-ic" style="background:#F1EEF4; font-size:17px;">✏️</span><span class="bgt-nm">Edit crops</span></button>` : ""));
   let ruler = "";
@@ -10469,7 +10493,7 @@ async function renderBedGrid(){
         fillLoop();
         return;
       }
-      if(cur){ const i = bgInfo(cur); showUndoToast(`${i.emoji} ${i.n} — ${bgName(cell.dataset.b)}, foot ${Number(cell.dataset.k.split("-")[1]) + 1}${isEntryLocked(cur.at) ? " 🔒" : ""}`, null, "OK"); }
+      if(cur){ const i = bgInfo(cur); showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(cell.dataset.b)}, foot ${Number(cell.dataset.k.split("-")[1]) + 1}${isEntryLocked(cur.at) ? " 🔒" : ""}`, null, "OK"); }
       return;
     }
     e.preventDefault(); painting = true; bgApply(cell, bgTool);
@@ -10508,7 +10532,7 @@ async function renderBedGrid(){
       const f = fill; fill = null;
       f.cell.classList.remove("fill-start");
       if(f.moved){ bgDirty = true; bgFinish(); }
-      else { const i = bgInfo(f.cur); showUndoToast(`${i.emoji} ${i.n} — ${bgName(f.b)}, foot ${f.c0 + 1}${isEntryLocked(f.cur.at) ? " 🔒" : ""}. Press and drag to fill an area.`, null, "OK"); }
+      else { const i = bgInfo(f.cur); showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(f.b)}, foot ${f.c0 + 1}${isEntryLocked(f.cur.at) ? " 🔒" : ""}. Press and drag to fill an area.`, null, "OK"); }
     }
   };
   window.addEventListener("pointerup", stop); window.addEventListener("pointercancel", stop);
@@ -10529,7 +10553,7 @@ async function renderBedGrid(){
       if(Math.abs(e.clientX - drag.x) > Math.abs(e.clientY - drag.y)){ drag = null; return; } // sideways = scroll the box
       const ic = drag.btn.querySelector(".bgt-ic");
       drag.ghost = document.createElement("div");
-      drag.ghost.className = "bg-ghost"; drag.ghost.style.background = ic.style.background; drag.ghost.textContent = ic.textContent;
+      drag.ghost.className = "bg-ghost"; drag.ghost.style.background = ic.style.background; drag.ghost.innerHTML = ic.innerHTML;
       document.body.appendChild(drag.ghost);
     }
     if(drag.ghost){ e.preventDefault(); drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px"; }
