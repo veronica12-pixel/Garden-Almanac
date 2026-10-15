@@ -1953,6 +1953,7 @@
     font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; }
   .bg-panel{ margin-top:8px; padding:10px; border-radius:10px; background:#FBF6EF; border:1px solid #E3CFB2; }
   .bg-panel[hidden]{ display:none; }
+  .bg-panel{ max-height:52vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   .bg-panel-title{ font-size:13px; font-weight:700; color:#8A5A2B; margin-bottom:8px; }
   .bg-chips{ display:flex; flex-wrap:wrap; gap:6px; }
   .bg-chip{ min-height:36px; padding:6px 12px; border-radius:999px; border:1px solid #E3CFB2; background:#fff; color:var(--ink);
@@ -2732,7 +2733,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.15-19</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.15-20</div>
   </main>
 
   <nav class="tabbar">
@@ -8431,6 +8432,7 @@ function applyGlobalUnlock(on){
 }
 document.getElementById("globalUnlockToggle").addEventListener("click", async () => {
   applyGlobalUnlock(!GLOBAL_UNLOCK);
+  try{ await renderBedGrid(); }catch(e){}
   await renderAll();
 });
 
@@ -10225,6 +10227,8 @@ let bgNames = {};
 const bgName = b => (bgNames[b] && bgNames[b].trim()) || `Bed ${b}`;
 let bgData = {}, bgTool = null, bgDirty = false, bgLockedHit = false;
 let bgCustom = [];
+let bgHidden = [];  // crops hidden from the crops box (not deleted anywhere)
+async function bgSaveHidden(){ try{ await window.storage.set("bedgridHidden", JSON.stringify(bgHidden), false); }catch(e){} }
 // Always in the crops box, every season.
 const BG_EXTRA_CROPS = [
   { s: "walkingonions", n: "Walking onions", color: "#D9C8EC", emoji: "svg:walkingonion" },
@@ -10283,9 +10287,32 @@ function bgOpenPanel(kind){
   if(!kind || panel.dataset.kind === kind && !panel.hidden){ panel.hidden = true; panel.dataset.kind = ""; return; }
   panel.dataset.kind = kind; panel.hidden = false;
   if(kind === "delete"){
-    const list = bgCustom.map(c => `<button type="button" class="bg-chip" data-edit-crop="${fertEsc(c.s)}">${bgIc(c.emoji)} ${fertEsc(c.n)}</button>`).join("");
-    panel.innerHTML = `<div class="bg-panel-title">Edit a crop you added</div><div class="bg-chips">${list}<button type="button" class="bg-chip" data-edit-cancel>Done</button></div><div id="bgEditForm"></div>`;
+    if(!GLOBAL_UNLOCK){
+      panel.innerHTML = `<div class="bg-panel-title">Edit crops is locked 🔒</div>
+        <div class="bg-hint" style="margin:0 0 8px;">To edit, delete or hide crops: tap the <b>© 2026 Thor</b> line at the very bottom of the page, tap the 🔒 button in <b>Save a copy</b> so it turns pink 🔓, close that window, and tap <b>Edit crops</b> again.</div>
+        <div class="bg-chips"><button type="button" class="bg-chip" data-edit-cancel>OK</button></div>`;
+      panel.querySelector("[data-edit-cancel]").addEventListener("click", () => bgOpenPanel(null));
+      return;
+    }
+    const all = bgCrops();
+    const mine = bgCustom.map(c => `<button type="button" class="bg-chip" data-edit-crop="${fertEsc(c.s)}">${bgIc(c.emoji)} ${fertEsc(c.n)}</button>`).join("");
+    const others = all.filter(c => !c.custom).map(c => {
+      const hid = bgHidden.includes(c.s);
+      return `<button type="button" class="bg-chip" data-hide-crop="${fertEsc(c.s)}" style="${hid ? "opacity:.5;" : ""}">${bgIc(c.emoji)} ${fertEsc(c.n)} · ${hid ? "Show" : "Hide"}</button>`;
+    }).join("");
+    panel.innerHTML = `<div class="bg-panel-title">Crops you added — tap one to rename, change icon or delete</div>
+      ${mine ? `<div class="bg-chips">${mine}</div>` : `<div class="bg-hint" style="margin:0 0 4px;">You haven't added any crops yet (use ＋ Add crop).</div>`}
+      <div id="bgEditForm"></div>
+      <div class="bg-panel-title" style="margin-top:14px;">Other crops — tap to hide or show them in the crops box</div>
+      <div class="bg-hint" style="margin:-4px 0 8px;">Hiding only takes the button off this list. The crop stays on its own tab, and squares already planted with it stay.</div>
+      <div class="bg-chips">${others}</div>
+      <div class="bg-chips" style="margin-top:12px;"><button type="button" class="bg-chip on" data-edit-cancel>Done</button></div>`;
     panel.querySelector("[data-edit-cancel]").addEventListener("click", () => bgOpenPanel(null));
+    panel.querySelectorAll("[data-hide-crop]").forEach(chip => chip.addEventListener("click", async () => {
+      const id = chip.dataset.hideCrop;
+      bgHidden = bgHidden.includes(id) ? bgHidden.filter(x => x !== id) : bgHidden.concat(id);
+      await bgSaveHidden(); await renderBedGrid(); bgOpenPanel("delete");
+    }));
     panel.querySelectorAll("[data-edit-crop]").forEach(chip => chip.addEventListener("click", () => {
       const c = bgCustom.find(x => x.s === chip.dataset.editCrop);
       if(!c) return;
@@ -10306,7 +10333,7 @@ function bgOpenPanel(kind){
         await bgSaveCustom(); await bgSave(); await renderBedGrid(); bgOpenPanel("delete");
         showUndoToast(`${bgTx(pick)}${n} saved.`, null, "OK");
       });
-      f.querySelector("#bgEditDel").addEventListener("click", () => bgDeleteCustom(c, () => { if(bgCustom.length && GLOBAL_UNLOCK) bgOpenPanel("delete"); }));
+      f.querySelector("#bgEditDel").addEventListener("click", () => bgDeleteCustom(c, () => bgOpenPanel("delete")));
     }));
     return;
   }
@@ -10442,10 +10469,11 @@ async function renderBedGrid(){
 
   try{ const r = await window.storage.get("bedgridNames", false); bgNames = r ? (JSON.parse(r.value) || {}) : {}; }catch(e){ bgNames = {}; }
   const crops = bgCrops();
-  document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops).map(c =>
+  try{ const r = await window.storage.get("bedgridHidden", false); bgHidden = r ? (JSON.parse(r.value) || []) : []; }catch(e){ bgHidden = []; }
+  document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops.filter(c => !bgHidden.includes(c.s))).map(c =>
     `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${bgIc(c.emoji)}</span><span class="bgt-nm">${fertEsc(c.n)}</span></button>`).join("")
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__add"><span class="bgt-ic" style="background:#FBF6EF; border:2px dashed #C9A57E; color:#8A5A2B; font-size:22px; font-weight:700; box-sizing:border-box;">＋</span><span class="bgt-nm">Add crop</span></button>`)
-    + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__erase"><span class="bgt-ic" style="background:#EDE7F5">🧽</span><span class="bgt-nm">Eraser</span></button><button type="button" class="bg-tool" data-s="__clear"><span class="bgt-ic" style="background:#FBE9E7">🧹</span><span class="bgt-nm">Clear bed</span></button>` + (GLOBAL_UNLOCK && bgCustom.length ? `<button type="button" class="bg-tool" data-s="__delete"><span class="bgt-ic" style="background:#F1EEF4; font-size:17px;">✏️</span><span class="bgt-nm">Edit crops</span></button>` : ""));
+    + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__erase"><span class="bgt-ic" style="background:#EDE7F5">🧽</span><span class="bgt-nm">Eraser</span></button><button type="button" class="bg-tool" data-s="__clear"><span class="bgt-ic" style="background:#FBE9E7">🧹</span><span class="bgt-nm">Clear bed</span></button>` + `<button type="button" class="bg-tool" data-s="__delete"><span class="bgt-ic" style="background:#F1EEF4; font-size:17px;">✏️</span><span class="bgt-nm">Edit crops</span></button>`);
   let ruler = "";
   for(let c = 0; c < BG_COLS; c++) ruler += c === 22 ? `<span class="mid" style="margin-left:-6px;">22</span>` : `<span>${c % 4 === 0 && c !== 24 ? c : ""}</span>`;
   let html = `<div class="bg-ruler">${ruler}</div>`;
