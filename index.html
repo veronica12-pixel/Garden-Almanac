@@ -988,6 +988,7 @@
     background:none; border:none; padding:0; cursor:pointer; text-align:left; font:inherit;
   }
   .plant-head .name{font-weight:600; font-size:17px; color:var(--evergreen); line-height:1.2; min-width:0; overflow-wrap:break-word; flex:1;}
+  .plant-icon .crop-svg{ width:1.25em; height:1.25em; vertical-align:middle; }
   .plant-icon{
     flex:none; width:32px; height:32px; border-radius:9px;
     display:flex; align-items:center; justify-content:center;
@@ -1967,7 +1968,7 @@
     background:#fff; border:1px solid #E3CFB2; border-radius:8px; padding:8px 10px; outline:none; }
   .bg-hint{ font-size:12px; color:var(--ink-soft); margin:6px 2px 0; line-height:1.4; }
   /* The beds sit in their own window: swipe up/down/left/right inside it. */
-  .bg-scroll{ overflow:auto; padding:0 2px 10px; touch-action:none; cursor:grab; overscroll-behavior:contain;
+  .bg-scroll{ overflow:hidden; padding:0; touch-action:none; cursor:grab; overscroll-behavior:contain;
     height:var(--bg-win-h, 60vh); min-height:220px; border:1px solid var(--line); border-radius:14px; background:var(--card);
     box-shadow:var(--shadow); position:relative; }
   .bg-scroll.painting{ touch-action:none; cursor:crosshair; }
@@ -2066,11 +2067,11 @@
   .bg-stopbar span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bg-stopbar button{ flex:none; min-height:38px; border-radius:999px; border:none; background:#fff; color:#8A5A2B;
     font-family:'Inter',sans-serif; font-size:14px; font-weight:700; padding:0 14px; cursor:pointer; }
-  .bg-inner{ width:max-content; }
+  .bg-inner{ width:max-content; padding:0 2px 10px; transform-origin:0 0; will-change:transform; backface-visibility:hidden; }
   .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); padding-left:clamp(3px, calc(var(--bgc) * .23), 6px); height:18px; align-items:end;
-    position:sticky; top:0; z-index:4; background:var(--card); }
+    position:relative; z-index:4; background:var(--card); }
   .bg-ruler span{ font-size:9px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
-  .bg-label{ position:sticky; left:0; display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer;
+  .bg-label{ position:relative; display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer;
     box-shadow:none !important; background-image:none !important; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B; margin:10px 0 3px 4px; z-index:3; }
   .bg-bed{ display:grid; grid-template-columns:repeat(44, var(--bgc)); grid-template-rows:repeat(5, var(--bgc));
     border:clamp(3px, calc(var(--bgc) * .23), 6px) solid #B8916A; border-radius:clamp(6px, calc(var(--bgc) * .45), 12px); background:#E6D2B5; box-shadow:0 2px 6px rgba(60,40,20,.18); }
@@ -2097,7 +2098,7 @@
   .bg-cell.press{ box-shadow:inset 0 0 0 3px #FFE08A; }
   .bg-cell.lk{ box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
   .bg-label .bg-pen{ font-size:12px; opacity:.55; }
-  .bg-name-input{ position:sticky; left:0; margin:6px 0 3px 4px; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B;
+  .bg-name-input{ position:relative; z-index:3; margin:6px 0 3px 4px; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B;
     border:1px solid #C9A57E; border-radius:8px; padding:4px 8px; background:#FBF6EF; width:220px; outline:none; }
   .bg-sum{ font-size:12.5px; color:var(--ink); line-height:1.6; margin:4px 2px 0; }
   .bg-sum b{ color:#8A5A2B; }
@@ -2855,7 +2856,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.16-1</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.17-5</div>
   </main>
 
   <nav class="tabbar">
@@ -3350,11 +3351,13 @@ const EGGPLANT_COLORS = ["Dark Purple", "Light Purple", "Green", "White", "Pink"
 const EGGPLANT_COLOR_HEX = { "Dark Purple":"#3D2350", "Light Purple":"#9B7FC7", Green:"#5B8A3C", White:"#F1EEE4", Pink:"#E07B9E", Lavender:"#C9B6E4" };
 const RADISH_COLORS = ["White", "Red", "Pink", "Purple"];
 const RADISH_COLOR_HEX = { White:"#F1EEE4", Red:"#C0392B", Pink:"#E07B9E", Purple:"#6B3FA0" };
+const BEET_COLORS = ["Red", "Golden", "Chioggia", "White"];
+const BEET_COLOR_HEX = { Red:"#8E1F4A", Golden:"#E8A93B", Chioggia:"#E07B9E", White:"#F1EEE4" };
 // Which crops get a color-tagging checkbox row at all, and which palette
 // each one offers. Add a crop here to give it the same color-checkbox
 // feature tomatoes and carrots have.
-const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS, peppers: PEPPER_COLORS, eggplants: EGGPLANT_COLORS, radishes: RADISH_COLORS };
-const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX, peppers: PEPPER_COLOR_HEX, eggplants: EGGPLANT_COLOR_HEX, radishes: RADISH_COLOR_HEX };
+const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS, peppers: PEPPER_COLORS, eggplants: EGGPLANT_COLORS, radishes: RADISH_COLORS, beets: BEET_COLORS };
+const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX, peppers: PEPPER_COLOR_HEX, eggplants: EGGPLANT_COLOR_HEX, radishes: RADISH_COLOR_HEX, beets: BEET_COLOR_HEX };
 function varietyColorCheckboxesHTML(slug){
   return (CROP_COLOR_OPTIONS[slug] || []).map(c => `<label class="variety-color-check"><input type="checkbox" class="variety-color-input" value="${c}"> ${c}</label>`).join("");
 }
@@ -3543,7 +3546,7 @@ const CROP_EMOJI = {
   tomatoes:"🍅", peppers:"🫑", eggplants:"🍆", squash:"🎃", cucumbers:"🥒", luffa:"🥒",
   leafygreens:"🥬", broccoli:"🥦", bushbeans:"🫘", snappeas:"🫛", rattlesnake:"🫘",
   lettuce:"🥬", kale:"🥬", collards:"🥬", kalethousandheads:"🥬", treecollards:"🥬",
-  radishes:"🔴", carrots:"🥕", fennel:"🌿", garlic:"🧄",
+  radishes:"🔴", beets:"🔴", carrots:"🥕", fennel:"🌿", garlic:"🧄",
   onionslips:"🧅", strawberries:"🍓", muskmelon:"🍈", watermelon:"🍉",
   longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
@@ -3551,8 +3554,10 @@ const CROP_EMOJI = {
   nasturtium:"🌼", roselle:"🌺"
 };
 const SECTION_EMOJI_FALLBACK = { vegetables:"🥕", herbs:"🌿", flowers:"🌸", coverCrops:"🌱" };
+// Crops drawn as a small picture instead of an emoji.
+const CROP_SVG_ICON = { beets: '<svg class="bg-svg crop-svg" viewBox="0 0 20 20"><path d="M9.2 9.2 6.6 2.4M10 9V1.6M10.8 9.2l2.8-6.4" stroke="#B0294F" stroke-width="1.1" stroke-linecap="round"/><path d="M6.6 2.4C3.6 2.6 2.6 5.6 4.4 7.2 6.2 7 7.4 4.8 6.6 2.4Z" fill="#4E9A3A"/><path d="M10 1.6C8 3 8.2 6.4 10 7.4 11.8 6.4 12 3 10 1.6Z" fill="#5FAE45"/><path d="M13.6 2.8C16.6 3 17.4 6 15.6 7.6 13.8 7.2 12.6 5 13.6 2.8Z" fill="#4E9A3A"/><path d="M10 8.6C6 8.6 4.4 11.4 5.2 14 6 16.4 8.4 17.2 10 19.4 11.6 17.2 14 16.4 14.8 14 15.6 11.4 14 8.6 10 8.6Z" fill="#8E1F4A"/><path d="M7.2 11.4C7.6 10.4 8.6 9.8 9.6 9.8" stroke="#C04A78" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M10 19.4V20" stroke="#8E1F4A" stroke-width=".8" stroke-linecap="round"/></svg>' };
 function cropIcon(p, sectionKey){
-  const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
+  const emoji = CROP_SVG_ICON[p.slug] || CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
   return `<span class="plant-icon" style="background:${p.color}">${emoji}</span>`;
 }
 
@@ -3586,6 +3591,8 @@ const SEASONS = {
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
+    {slug:"beets", name:"Beets", shape:"circle", color:C.magenta,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
@@ -3662,6 +3669,8 @@ const SEASONS = {
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
       note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
+    {slug:"beets", name:"Beets", shape:"circle", color:C.magenta,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
@@ -4132,7 +4141,7 @@ async function setTemp(slug, kind, val){
 // split crops (tomatoes/peppers/eggplants) and {count} for everything else.
 const PLANT_COUNT_SPLIT = ["tomatoes", "peppers", "eggplants"];
 // Crops that don't get the plant count box at all.
-const PLANT_COUNT_SKIP = ["lettuce", "radishes", "carrots"];
+const PLANT_COUNT_SKIP = ["lettuce", "radishes", "beets", "carrots"];
 // Sown straight into the garden — no transplant step, so no "Actual transplant" field.
 function daysBetweenISO(a, b){
   const pa = String(a).split("-").map(Number), pb = String(b).split("-").map(Number);
@@ -4142,7 +4151,7 @@ function fmtGermDay(iso){
   const q = String(iso).split("-").map(Number);
   return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][q[1]-1] + " " + q[2];
 }
-const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "carrots", "fennel", "longbeans"];
+const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "beets", "carrots", "fennel", "longbeans"];
 // Crops whose card has the "Germinated — days to germinate" section: every
 // direct-sown crop, plus squash, cucumbers and melons (often started in pots).
 const GERM_TRACKED_CROPS = DIRECT_SOW_CROPS.concat(["squash", "cucumbers", "watermelon", "muskmelon"]);
@@ -4647,7 +4656,7 @@ function wireRainChart(){
 // useful (e.g. "6 in" for a carrot or cucumber) — matched against whatever
 // the person types in the Vegetables harvest name field, substring/
 // case-insensitive, so "Peppers", "Bell Pepper", etc. all match.
-const SIZE_TRACKED_CROP_KEYWORDS = ["carrot", "radish", "cucumber", "eggplant", "pepper", "bean"];
+const SIZE_TRACKED_CROP_KEYWORDS = ["carrot", "radish", "beet", "cucumber", "eggplant", "pepper", "bean"];
 function nameLooksSizeTracked(name){
   const q = (name || "").trim().toLowerCase();
   if(!q) return false;
@@ -6220,7 +6229,8 @@ async function renderGrid(sectionKey, containerId){
   const isPastSeason = activeSeason === "2025-26" || READ_ONLY;
   const addBtn = document.querySelector(`.add-crop-btn[data-section="${sectionKey}"]`);
   if(addBtn) addBtn.style.display = isPastSeason ? "none" : "";
-  const plants = [...DATA_now()[sectionKey]].sort((a, b) => nextDateOffset(a) - nextDateOffset(b));
+  // Crop windows are listed A–Z by name.
+  const plants = [...DATA_now()[sectionKey]].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity:"base", numeric:true }));
   const seasonFeedings = await getFertLog();
   const seasonTreatments = await getOpcLog();
   let bugIconIdx = 0;
@@ -9232,6 +9242,7 @@ const GERM_TEMP_DATA = {
   rattlesnake:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[60,75]},
   lettuce:{min:35,optMin:40,optMax:75,max:80,days:[2,8],dtm:[45,65]},
   radishes:{min:40,optMin:55,optMax:75,max:95,days:[3,7],dtm:[21,35]},
+  beets:{min:40,optMin:50,optMax:85,max:90,days:[5,10],dtm:[50,70]},
   carrots:{min:40,optMin:45,optMax:85,max:95,days:[14,21],dtm:[60,80]},
   fennel:{min:40,optMin:60,optMax:85,max:85,days:[7,14],dtm:[65,90]},
   garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate.", days:[14,21], dtm:[150,270], dtmApprox:true},
@@ -9316,7 +9327,7 @@ async function renderGerminationTempChart(){
     html += `<div class="gtemp-section-header-row"><span class="gtemp-section-title">${section.label}</span><span class="gtemp-col-header-temp"><span class="gtemp-col-header-rotate">Temperature</span></span><span class="gtemp-col-header-days"><span class="gtemp-col-header-rotate">Germination</span></span><span class="gtemp-col-header-dtm"><span class="gtemp-col-header-rotate">Maturity</span></span><span class="gtemp-col-header-tw"><span class="gtemp-col-header-rotate">Transplant</span></span></div><div class="gtemp-chart">`;
     plants.forEach(p => {
       const g = GERM_TEMP_DATA[p.slug];
-      const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
+      const emoji = CROP_SVG_ICON[p.slug] || CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[section.key] || "🌱";
       if(g.approx || g.daysApprox || g.dtmApprox) anyApprox = true;
       const label = (g.approx || g.daysApprox || g.dtmApprox) ? `${p.name} <span class="gtemp-approx">*</span>` : p.name;
       if(g.special){
@@ -10442,6 +10453,7 @@ function goToCropInSection(sectionKey){
 
 // Hand-drawn icons for crops that have no emoji of their own.
 const BG_SVG = {
+  beets: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M9.2 9.2 6.6 2.4M10 9V1.6M10.8 9.2l2.8-6.4" stroke="#B0294F" stroke-width="1.1" stroke-linecap="round"/><path d="M6.6 2.4C3.6 2.6 2.6 5.6 4.4 7.2 6.2 7 7.4 4.8 6.6 2.4Z" fill="#4E9A3A"/><path d="M10 1.6C8 3 8.2 6.4 10 7.4 11.8 6.4 12 3 10 1.6Z" fill="#5FAE45"/><path d="M13.6 2.8C16.6 3 17.4 6 15.6 7.6 13.8 7.2 12.6 5 13.6 2.8Z" fill="#4E9A3A"/><path d="M10 8.6C6 8.6 4.4 11.4 5.2 14 6 16.4 8.4 17.2 10 19.4 11.6 17.2 14 16.4 14.8 14 15.6 11.4 14 8.6 10 8.6Z" fill="#8E1F4A"/><path d="M7.2 11.4C7.6 10.4 8.6 9.8 9.6 9.8" stroke="#C04A78" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M10 19.4V20" stroke="#8E1F4A" stroke-width=".8" stroke-linecap="round"/></svg>',
   basil: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 18.6V9.4" stroke="#3E7A2E" stroke-width="1.4" stroke-linecap="round"/><path d="M10 10C4 10 2 5 4.5 2.4 8 2.4 10.6 6 10 10Z" fill="#52AE3F"/><path d="M10 10C16 10 18 5 15.5 2.4 12 2.4 9.4 6 10 10Z" fill="#3F9832"/><path d="M10 15.2C6 15.7 3.4 13.2 4 11 7 10.4 9.6 12.6 10 15.2Z" fill="#5FBA4A"/><path d="M10 15.2C14 15.7 16.6 13.2 16 11 13 10.4 10.4 12.6 10 15.2Z" fill="#4CA63B"/><path d="M9.6 9.4 5.3 3.4M10.4 9.4l4.3-6" stroke="#C6EAB0" stroke-width=".6"/></svg>',
   parsley: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 19v-8M10 13.5 5.4 8.6M10 13.5l4.6-4.9" stroke="#3B7A2A" stroke-width="1.2" stroke-linecap="round" fill="none"/><g fill="#2F8A3C"><circle cx="10" cy="4.4" r="2.2"/><circle cx="8" cy="6.9" r="2.2"/><circle cx="12" cy="6.9" r="2.2"/><circle cx="5" cy="4.9" r="2"/><circle cx="3.3" cy="7.3" r="2"/><circle cx="6.6" cy="7.6" r="1.8"/><circle cx="15" cy="4.9" r="2"/><circle cx="16.7" cy="7.3" r="2"/><circle cx="13.4" cy="7.6" r="1.8"/></g><g fill="#4DB05A"><circle cx="9.4" cy="3.8" r=".9"/><circle cx="4.5" cy="4.4" r=".8"/><circle cx="14.5" cy="4.4" r=".8"/></g></svg>',
   dill: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 19.5V6.5" stroke="#5E9A6B" stroke-width="1.2" stroke-linecap="round"/><path d="M10 6.5 4.2 3.6M10 6.5 6.3 2.2M10 6.5 10 1.6M10 6.5l3.7-4.3M10 6.5l5.8-2.9" stroke="#7FB27E" stroke-width=".8" fill="none"/><g fill="#F2C531"><circle cx="4.2" cy="3.6" r="1.3"/><circle cx="6.3" cy="2.2" r="1.3"/><circle cx="10" cy="1.6" r="1.3"/><circle cx="13.7" cy="2.2" r="1.3"/><circle cx="15.8" cy="3.6" r="1.3"/></g><path d="M10 11 5.5 8.8M6.8 9.4 5.6 10.8M8 10 7.2 11.5M10 11l4.5-2.2M13.2 9.4l1.2 1.4M12 10l.8 1.5M10 15.2 5.2 13.4M6.6 13.9 5.8 15.4M10 15.2l4.8-1.8M13.4 13.9l.8 1.5" stroke="#6FA77A" stroke-width=".8" stroke-linecap="round" fill="none"/></svg>',
@@ -10887,6 +10899,7 @@ async function renderBedGrid(){
   bgSetTool(null);
   bgRenderSummary();
   bgLoadSaves();
+  if(window.bgApplyView) window.bgApplyView();
 }
 (function(){
   const scroll = document.getElementById("bgScroll"), tools = document.getElementById("bgTools");
@@ -10913,49 +10926,88 @@ async function renderBedGrid(){
     if(Math.abs(h - lastH) < 2) return;
     lastH = h;
     scroll.style.setProperty("--bg-win-h", h + "px");
+    if(window.bgApplyView) window.bgApplyView();
   };
   window.addEventListener("resize", () => fitWindow());
   window.addEventListener("orientationchange", () => setTimeout(() => fitWindow(true), 300));
   if(window.ResizeObserver && box) new ResizeObserver(() => fitWindow()).observe(box);
   document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(() => fitWindow(true), 30));
   fitWindow(true);
-  // Square size (zoom), remembered on this phone.
-  // Zoom steps. The smallest step ("fit") makes a whole 44-ft bed fit
-  // across this screen; it is measured each time, since the tab can be
-  // hidden at load and the phone can be turned.
-  const STEPS = [10, 12, 14, 16, 20, 24, 26, 30, 36, 42];
-  const fitCell = () => scroll.clientWidth > 0 ? Math.max(5, Math.floor((scroll.clientWidth - 12) / BG_COLS * 10) / 10) : 8;
-  const levels = () => { const f = fitCell(); return ["fit", ...STEPS.filter(v => v > f)]; };
-  const sizeOf = z => z === "fit" ? fitCell() : z;
+  /* ---------- Moving and zooming the beds ----------
+     The beds are one picture slid around inside a fixed window by the
+     phone's graphics chip (a transform), the way photo apps do it. Nothing
+     is scrolled, so iPhone Safari has nothing to re-draw while you drag
+     (scrolling by code made it flicker). The ruler stays on top and the bed
+     names stay on the left by sliding back the opposite way. */
+  const inner = document.getElementById("bgInner");
+  let vx = 0, vy = 0, pinchS = 1, viewFrame = 0;
+  const maxX = () => Math.max(0, inner.offsetWidth - scroll.clientWidth);
+  const maxY = () => Math.max(0, inner.offsetHeight - scroll.clientHeight);
+  function applyView(){
+    viewFrame = 0;
+    inner.style.transform = `translate3d(${-vx}px,${-vy}px,0)${pinchS !== 1 ? ` scale(${pinchS})` : ""}`;
+    const pin = pinchS === 1;
+    const r = inner.querySelector(".bg-ruler"); if(r) r.style.transform = pin ? `translate3d(0,${vy}px,0)` : "";
+    inner.querySelectorAll(".bg-label, .bg-name-input").forEach(l => { l.style.transform = pin ? `translate3d(${vx}px,0,0)` : ""; });
+  }
+  function setView(x, y, now){
+    vx = Math.round(Math.max(0, Math.min(maxX(), x)));
+    vy = Math.round(Math.max(0, Math.min(maxY(), y)));
+    if(now){ if(viewFrame){ cancelAnimationFrame(viewFrame); } applyView(); }
+    else if(!viewFrame) viewFrame = requestAnimationFrame(applyView);
+  }
+  window.bgApplyView = () => setView(vx, vy, true);
+  window.addEventListener("resize", () => setView(vx, vy));
+  // Square size (zoom), remembered on this phone. Buttons step through set
+  // sizes; pinching can land anywhere between the smallest ("fit": a whole
+  // 44-ft bed across the screen) and the largest.
+  const STEPS = [10, 12, 14, 16, 20, 24, 26, 30, 36, 42], MAXC = 42;
+  const fitCell = () => scroll.clientWidth > 0 ? Math.max(5, Math.floor((scroll.clientWidth - 8) / BG_COLS * 10) / 10) : 8;
+  const sizeOf = z => z === "fit" ? fitCell() : Math.max(fitCell(), Math.min(MAXC, z));
   let zoom = 26, curC = 26;
-  try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(STEPS.includes(Number(v))) zoom = Number(v); }catch(e){}
-  const updateZoomButtons = (z, c) => {
-    const L = levels(), i = L.indexOf(z);
+  try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(Number(v) >= 5 && Number(v) <= MAXC) zoom = Number(v); }catch(e){}
+  const updateZoomButtons = c => {
     document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
-    document.getElementById("bgZoomOut").disabled = i === 0;
-    document.getElementById("bgZoomIn").disabled = i === L.length - 1;
+    document.getElementById("bgZoomOut").disabled = c <= fitCell() + 0.05;
+    document.getElementById("bgZoomIn").disabled = c >= MAXC - 0.05;
   };
-  const setZoom = z => {
-    const L = levels();
-    if(z !== "fit" && !L.includes(z)) z = "fit";
+  // Zoom keeping the spot at (mx, my) inside the window still.
+  const zoomAt = (z, mx, my) => {
+    if(z !== "fit" && z <= fitCell() + 0.05) z = "fit";
     zoom = z;
-    const c = sizeOf(z), oldC = curC || c;
-    if(c === curC && scroll.style.getPropertyValue("--bgc") === c + "px"){ updateZoomButtons(z, c); return; }
-    // Keep the same spot centered while zooming.
-    const cx = scroll.scrollLeft + scroll.clientWidth / 2, cy = scroll.scrollTop + scroll.clientHeight / 2;
-    scroll.style.setProperty("--bgc", c + "px"); curC = c;
-    updateZoomButtons(z, c);
-    scroll.scrollLeft = cx * c / oldC - scroll.clientWidth / 2;
-    scroll.scrollTop = cy * c / oldC - scroll.clientHeight / 2;
+    const c = Math.round(sizeOf(z) * 10) / 10, oldC = curC || c;
+    if(mx === undefined){ mx = scroll.clientWidth / 2; my = scroll.clientHeight / 2; }
+    const px = (vx + mx) / oldC, py = (vy + my) / oldC;
+    if(c !== curC || scroll.style.getPropertyValue("--bgc") !== c + "px"){ scroll.style.setProperty("--bgc", c + "px"); curC = c; }
+    updateZoomButtons(c);
+    setView(px * c - mx, py * c - my, true);
     try{ localStorage.setItem("bedgridZoom", String(z)); }catch(e){}
   };
-  const stepZoom = d => { const L = levels(); const i = L.indexOf(zoom); setZoom(L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]); };
+  const setZoom = z => zoomAt(z);
+  const stepZoom = d => {
+    const f = fitCell(), L = [f, ...STEPS.filter(v => v > f + 0.05)];
+    let next;
+    if(d > 0) next = L.find(v => v > curC + 0.05);
+    else next = [...L].reverse().find(v => v < curC - 0.05);
+    if(next === undefined) return;
+    setZoom(next === f ? "fit" : next);
+  };
   document.getElementById("bgZoomOut").addEventListener("click", () => stepZoom(-1));
   document.getElementById("bgZoomIn").addEventListener("click", () => stepZoom(1));
   let zoomW = window.innerWidth;
   window.addEventListener("resize", () => { if(window.innerWidth !== zoomW){ zoomW = window.innerWidth; setZoom(zoom); } });
   document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(() => setZoom(zoom), 60));
   setZoom(zoom);
+  // Computer: mouse wheel / trackpad moves the beds; Ctrl + wheel or a
+  // trackpad pinch zooms.
+  scroll.addEventListener("wheel", e => {
+    e.preventDefault();
+    const r = scroll.getBoundingClientRect();
+    if(e.ctrlKey){ zoomAt(Math.max(fitCell(), Math.min(MAXC, curC * Math.exp(-e.deltaY * 0.01))), e.clientX - r.left, e.clientY - r.top); return; }
+    let dx = e.deltaX, dy = e.deltaY;
+    if(e.shiftKey && !dx){ dx = dy; dy = 0; }
+    setView(vx + dx, vy + dy);
+  }, { passive:false });
   // Hide / show the crops row to give the beds more room.
   const colBtn = document.getElementById("bgCollapse");
   const setCollapsed = on => {
@@ -11019,6 +11071,7 @@ async function renderBedGrid(){
   const clearPress = () => { if(press){ clearTimeout(press.timer); press.cell.classList.remove("press"); press = null; } };
   scroll.addEventListener("pointerdown", e => {
     if(e.target.closest("input")) return;
+    if(e.pointerType === "touch" && (touches.size > 1 || pinchDone)) return;
     const cell = e.target.closest(".bg-cell");
     if(!cell || !bgTool) startPan(e);
     if(!cell) return;
@@ -11048,7 +11101,6 @@ async function renderBedGrid(){
   scroll.addEventListener("pointermove", e => {
     if(press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) clearPress();
   });
-  scroll.addEventListener("scroll", clearPress, { passive:true });
   scroll.addEventListener("pointerup", () => {
     if(!press || panMoved) return;
     const p = press; clearPress();
@@ -11061,62 +11113,87 @@ async function renderBedGrid(){
   // space between beds — to move around in every direction. Past the top or
   // bottom of the beds, the drag carries on and scrolls the page.
   scroll.addEventListener("touchmove", e => { if(e.cancelable) e.preventDefault(); }, { passive:false });
-  // Drag-to-move. The beds only ever scroll inside their own window, never
-  // the page: scrolling the page mid-drag made iPhone Safari's toolbar slide
-  // in and out, which re-drew the screen over and over (the flashing).
-  // Moves are applied at most once per screen refresh.
-  let pan = null, panMoved = false, glide = 0, panFrame = 0, want = null;
-  const maxL = () => Math.max(0, scroll.scrollWidth - scroll.clientWidth);
-  const maxT = () => Math.max(0, scroll.scrollHeight - scroll.clientHeight);
-  function applyMove(){
-    panFrame = 0;
-    if(!want) return;
-    const l = Math.round(Math.max(0, Math.min(maxL(), want.l))), t = Math.round(Math.max(0, Math.min(maxT(), want.t)));
-    if(l !== scroll.scrollLeft) scroll.scrollLeft = l;
-    if(t !== scroll.scrollTop) scroll.scrollTop = t;
-    want = null;
-  }
-  function moveTo(left, top){
-    want = { l: left, t: top };
-    if(!panFrame) panFrame = requestAnimationFrame(applyMove);
-  }
+  // Drag-to-move (one finger or the mouse), with a short glide after a flick.
+  let pan = null, panMoved = false, glide = 0;
   function startPan(e){
     cancelAnimationFrame(glide); glide = 0;
     panMoved = false;
-    pan = { x: e.clientX, y: e.clientY, sl: scroll.scrollLeft, st: scroll.scrollTop,
+    pan = { id: e.pointerId, x: e.clientX, y: e.clientY, sl: vx, st: vy,
       lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
   }
   function endPan(withGlide){
     if(!pan) return;
     const p = pan; pan = null;
     if(!withGlide || !panMoved) return;
-    // Short glide after a flick, stopping at the window's edges.
-    let vx = p.vx, vy = p.vy, last = performance.now();
-    if(performance.now() - p.lt > 80){ vx = 0; vy = 0; }   // finger had stopped
-    let x = scroll.scrollLeft, y = scroll.scrollTop;
+    let gx = p.vx, gy = p.vy, last = performance.now();
+    if(performance.now() - p.lt > 80){ gx = 0; gy = 0; }   // finger had stopped
     const step = now => {
       const dt = Math.min(32, now - last); last = now;
-      vx *= Math.pow(0.92, dt / 16); vy *= Math.pow(0.92, dt / 16);
-      if(Math.abs(vx) < 0.03 && Math.abs(vy) < 0.03){ glide = 0; return; }
-      x = Math.max(0, Math.min(maxL(), x - vx * dt)); y = Math.max(0, Math.min(maxT(), y - vy * dt));
-      scroll.scrollLeft = Math.round(x); scroll.scrollTop = Math.round(y);
-      if((x <= 0 || x >= maxL()) && (y <= 0 || y >= maxT())){ glide = 0; return; }
+      gx *= Math.pow(0.92, dt / 16); gy *= Math.pow(0.92, dt / 16);
+      if(Math.abs(gx) < 0.03 && Math.abs(gy) < 0.03){ glide = 0; return; }
+      const ox = vx, oy = vy;
+      setView(vx - gx * dt, vy - gy * dt, true);
+      if(ox === vx && oy === vy){ glide = 0; return; }
       glide = requestAnimationFrame(step);
     };
     glide = requestAnimationFrame(step);
   }
   window.addEventListener("pointermove", e => {
-    if(!pan) return;
+    if(!pan || e.pointerId !== pan.id) return;
     const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
     if(!panMoved && Math.hypot(dx, dy) < 6) return;
     if(!panMoved){ panMoved = true; clearPress(); }
-    moveTo(pan.sl - dx, pan.st - dy);
+    setView(pan.sl - dx, pan.st - dy);
     const now = performance.now(), dt = Math.max(1, now - pan.lt);
     pan.vx = (e.clientX - pan.lx) / dt; pan.vy = (e.clientY - pan.ly) / dt;
     pan.lx = e.clientX; pan.ly = e.clientY; pan.lt = now;
   });
-  window.addEventListener("pointerup", () => endPan(true));
-  window.addEventListener("pointercancel", () => endPan(false));
+  window.addEventListener("pointerup", e => { if(pan && e.pointerId === pan.id) endPan(true); });
+  window.addEventListener("pointercancel", e => { if(pan && e.pointerId === pan.id) endPan(false); });
+  // Two-finger pinch to zoom in and out (phone). While pinching the picture
+  // is simply scaled; the new square size is set once the fingers lift.
+  const touches = new Map();
+  let pinch = null, pinchDone = false;
+  const touchMid = () => { const a = [...touches.values()]; return { x: (a[0].x + a[1].x) / 2, y: (a[0].y + a[1].y) / 2, d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) }; };
+  scroll.addEventListener("pointerdown", e => {
+    if(e.pointerType !== "touch") return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(touches.size === 2){
+      // Second finger down: stop whatever the first finger started.
+      clearPress(); pan = null; cancelAnimationFrame(glide);
+      if(painting || fill) stop();
+      const m = touchMid(), r = scroll.getBoundingClientRect();
+      pinch = { d0: Math.max(20, m.d), c0: curC, px: (vx + m.x - r.left) / curC, py: (vy + m.y - r.top) / curC, s: 1, mx: m.x - r.left, my: m.y - r.top };
+      pinchDone = true;
+    }
+  }, true);
+  window.addEventListener("pointermove", e => {
+    if(!touches.has(e.pointerId)) return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(!pinch || touches.size < 2) return;
+    const m = touchMid(), r = scroll.getBoundingClientRect();
+    const lo = fitCell() / pinch.c0, hi = MAXC / pinch.c0;
+    pinch.s = Math.max(lo * 0.9, Math.min(hi * 1.1, m.d / pinch.d0));
+    pinch.mx = m.x - r.left; pinch.my = m.y - r.top;
+    pinchS = pinch.s;
+    vx = pinch.px * pinch.c0 * pinch.s - pinch.mx;
+    vy = pinch.py * pinch.c0 * pinch.s - pinch.my;
+    if(!viewFrame) viewFrame = requestAnimationFrame(applyView);
+  });
+  const touchUp = e => {
+    if(!touches.has(e.pointerId)) return;
+    touches.delete(e.pointerId);
+    if(pinch && touches.size < 2){
+      const p = pinch; pinch = null; pinchS = 1;
+      // Back to the size it had, then zoom for real around the same spot.
+      vx = p.px * p.c0 - p.mx; vy = p.py * p.c0 - p.my;
+      const c = Math.max(fitCell(), Math.min(MAXC, p.c0 * p.s));
+      zoomAt(c <= fitCell() + 0.05 ? "fit" : Math.round(c * 10) / 10, p.mx, p.my);
+    }
+    if(!touches.size) pinchDone = false;
+  };
+  window.addEventListener("pointerup", touchUp);
+  window.addEventListener("pointercancel", touchUp);
   // A drag that starts on a bed name shouldn't open the rename box.
   scroll.addEventListener("click", e => { if(panMoved){ e.stopPropagation(); e.preventDefault(); panMoved = false; } }, true);
   // Stretch a planted square over an area: press it, drag, and every
@@ -11140,10 +11217,10 @@ async function renderBedGrid(){
   const fillLoop = () => {
     if(!fill) return;
     const box = scroll.getBoundingClientRect();
-    if(fill.x < box.left + 40) scroll.scrollLeft -= 12;
-    else if(fill.x > box.right - 40) scroll.scrollLeft += 12;
-    if(fill.y < box.top + 40) scroll.scrollTop -= 10;
-    else if(fill.y > box.bottom - 40) scroll.scrollTop += 10;
+    let ax = 0, ay = 0;
+    if(fill.x < box.left + 40) ax = -12; else if(fill.x > box.right - 40) ax = 12;
+    if(fill.y < box.top + 40) ay = -10; else if(fill.y > box.bottom - 40) ay = 10;
+    if(ax || ay) setView(vx + ax, vy + ay, true);
     fillTo(cellAt(fill.x, fill.y));
     requestAnimationFrame(fillLoop);
   };
@@ -11231,8 +11308,10 @@ async function renderBedGrid(){
     const loop = () => {
       if(!drag || !drag.anchor) return;
       const box = scroll.getBoundingClientRect();
-      if(drag.px < box.left + 40) scroll.scrollLeft -= 12; else if(drag.px > box.right - 40) scroll.scrollLeft += 12;
-      if(drag.py < box.top + 40) scroll.scrollTop -= 10; else if(drag.py > box.bottom - 40) scroll.scrollTop += 10;
+      let ax = 0, ay = 0;
+      if(drag.px < box.left + 40) ax = -12; else if(drag.px > box.right - 40) ax = 12;
+      if(drag.py < box.top + 40) ay = -10; else if(drag.py > box.bottom - 40) ay = 10;
+      if(ax || ay) setView(vx + ax, vy + ay, true);
       dragFillTo(cellAt(drag.px, drag.py));
       requestAnimationFrame(loop);
     };
@@ -12316,7 +12395,7 @@ const BC_DATA = {
 const CROP_BIO_TYPE = {
   tomatoes:"fruit", peppers:"fruit", eggplants:"fruit", squash:"fruit", cucumbers:"fruit", luffa:"fruit",
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
-  lettuce:"leaf", radishes:"root", carrots:"root", garlic:"root", onionslips:"root",
+  lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", garlic:"root", onionslips:"root",
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
   nigerianspinach:"leaf", fennel:"root", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
@@ -12570,6 +12649,7 @@ async function getPlantingTasksForOffset(offsetDays){
               name: p.name,
               action: isTransplant ? "Transplant" : "Start seeds",
               emoji,
+              icon: CROP_SVG_ICON[p.slug] || emoji,
               key: `${p.slug}:${t.a}:${t.m}-${t.d}:${activeSeason}`
             });
           }
@@ -12675,7 +12755,7 @@ function celebratePlantingDay(items, card){
   });
   if(card){
     // Tap a crop's icon to rain it again.
-    card.querySelectorAll(".tomorrow-icon").forEach(ic => ic.addEventListener("click", () => cropConfetti([ic.textContent.trim()], { count: 24, host: card })));
+    card.querySelectorAll(".tomorrow-icon").forEach(ic => ic.addEventListener("click", () => cropConfetti([ic.dataset.e || ic.textContent.trim()], { count: 24, host: card })));
   }
 }
 function showPlantingModal(id, title, items){
@@ -12684,7 +12764,7 @@ function showPlantingModal(id, title, items){
     if(existing) existing.remove();
     const rows = items.map(item => `
       <div class="tomorrow-row">
-        <span class="tomorrow-icon">${item.emoji}</span>
+        <span class="tomorrow-icon" data-e="${item.emoji}">${item.icon || item.emoji}</span>
         <span class="tomorrow-text"><b>${item.action}</b> ${item.name}</span>
       </div>
     `).join("");
