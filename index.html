@@ -2072,6 +2072,9 @@
   .bg-zoomctl button:disabled{ opacity:.3; }
   .bg-zoomctl span{ font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; color:var(--ink-soft); padding:1px 0; border-top:1px solid #EFE2D0; border-bottom:1px solid #EFE2D0; width:100%; text-align:center; }
   .bg-stage{ margin:0 auto; }
+  /* Solid strip behind the pinned bed numbers, so beds never show above or between them */
+  .bg-topband{ position:absolute; left:-40px; right:-40px; top:0; height:0; background:var(--card); z-index:4; pointer-events:none;
+    box-shadow:0 3px 4px -2px rgba(60,40,20,.18); }
   .bg-viewbar .bg-zoomval{ font-size:12.5px; font-weight:600; color:var(--ink-soft); min-width:38px; text-align:center; }
   .bg-viewbar .bg-collapse{ margin-left:auto; font-size:13px; }
   .bg-box.collapsed .bg-tools, .bg-box.collapsed .bg-hint, .bg-box.collapsed .bg-panel, .bg-box.collapsed .bg-box-title{ display:none !important; }
@@ -2098,7 +2101,7 @@
     padding:clamp(3px, calc(var(--bgc) * .23), 6px) 3px clamp(3px, calc(var(--bgc) * .23), 6px) 4px; background:transparent; pointer-events:none; }
   .bg-stage.vert .bg-ruler span{ text-shadow:0 0 3px #fff, 0 0 3px #fff, 0 0 2px #fff; font-weight:600; }
   .bg-stage.vert .bg-ruler span{ margin:0 !important; text-align:right; line-height:1; transform:translateY(50%); }
-  .bg-stage.vert .bg-label, .bg-stage.vert .bg-name-input{ display:flex; justify-content:center; text-align:center; margin:6px 0 0; padding:2px 0;
+  .bg-stage.vert .bg-label, .bg-stage.vert .bg-name-input{ display:flex; justify-content:center; text-align:center; margin:0; padding:6px 0 3px; position:relative;
     width:calc(var(--bgc) * 5 + 2 * clamp(3px, calc(var(--bgc) * .23), 6px)); min-width:40px; box-sizing:border-box;
     font-size:13px; line-height:1.1; white-space:normal; background:var(--card); z-index:5; }
   .bg-stage.vert .bg-name-input{ width:110px; }
@@ -2715,7 +2718,7 @@
         <div class="bg-panel" id="bgPanel" hidden></div>
       </div>
       <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
-      <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-stage" id="bgStage"><div class="bg-inner" id="bgInner"></div></div>
+      <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-stage" id="bgStage"><div class="bg-topband" id="bgTopband"></div><div class="bg-inner" id="bgInner"></div></div>
         <div class="bg-zoomctl" id="bgZoomCtl"><button type="button" id="bgZoomIn" aria-label="Zoom in">+</button><span id="bgZoomVal">100%</span><button type="button" id="bgZoomOut" aria-label="Zoom out">−</button></div></div>
       <div id="bgSummary" class="bg-summary-under"></div>
       <div class="bg-actions">
@@ -2905,7 +2908,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.17-12</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.17-13</div>
   </main>
 
   <nav class="tabbar">
@@ -11066,6 +11069,7 @@ async function renderBedGrid(){
   // laid out this way (not spun), so names, numbers and icons stay upright.
   const vertical = true;
   function layoutStage(){
+    const band = document.getElementById("bgTopband"); if(band) band._h = 0;
     stage.classList.toggle("vert", vertical);
     bgOrient(inner, vertical);
   }
@@ -11078,6 +11082,14 @@ async function renderBedGrid(){
     // Upright beds: foot numbers stay on the left, bed names stay on top.
     const r = inner.querySelector(".bg-ruler"); if(r) r.style.transform = pin ? (vertical ? `translate3d(${vx}px,0,0)` : `translate3d(0,${vy}px,0)`) : "";
     inner.querySelectorAll(".bg-label, .bg-name-input").forEach(l => { l.style.transform = pin ? (vertical ? `translate3d(0,${vy}px,0)` : `translate3d(${vx}px,0,0)`) : ""; });
+    const band = document.getElementById("bgTopband");
+    if(band){
+      if(vertical && pin){
+        if(!band._h){ let h = 0; inner.querySelectorAll(".bg-label, .bg-name-input").forEach(l => { h = Math.max(h, l.offsetTop + l.offsetHeight); }); band._h = h + 3; band.style.height = band._h + "px"; }
+        band.style.transform = `translate3d(0,${vy}px,0)`;
+        band.style.display = vy > 0 ? "" : "none";
+      } else band.style.display = "none";
+    }
   }
   function setView(x, y, now){
     vx = Math.round(Math.max(0, Math.min(maxX(), x)));
