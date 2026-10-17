@@ -1966,19 +1966,41 @@
   .bg-panel input[type=text]{ width:100%; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:16px; color:var(--entry-text);
     background:#fff; border:1px solid #E3CFB2; border-radius:8px; padding:8px 10px; outline:none; }
   .bg-hint{ font-size:12px; color:var(--ink-soft); margin:6px 2px 0; line-height:1.4; }
-  .bg-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; padding:4px 2px 10px; touch-action:pan-x pan-y; }
-  .bg-scroll.painting{ touch-action:none; }
+  /* The beds sit in their own window: swipe up/down/left/right inside it. */
+  .bg-scroll{ overflow:auto; -webkit-overflow-scrolling:touch; padding:0 2px 10px; touch-action:none; cursor:grab;
+    height:var(--bg-win-h, 60vh); min-height:220px; border:1px solid var(--line); border-radius:14px; background:var(--card);
+    box-shadow:var(--shadow); overscroll-behavior:auto; position:relative; }
+  .bg-scroll.painting{ touch-action:none; cursor:crosshair; }
+  .bg-scroll.grabbing{ cursor:grabbing; }
+  .bg-scroll.grabbing .bg-bed{ box-shadow:0 2px 10px rgba(60,40,20,.35); }
+  .bg-movetag{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .bg-viewbar{ display:flex; align-items:center; gap:6px; margin:8px 0 0; flex-wrap:wrap; }
+  .bg-viewbar .bg-vlabel{ font-size:12px; font-weight:700; color:#8A5A2B; margin-right:2px; }
+  .bg-viewbar button{ min-width:40px; min-height:36px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
+    font-family:'Inter',sans-serif; font-size:16px; font-weight:700; cursor:pointer; padding:0 10px; }
+  .bg-viewbar .bg-zoomval{ font-size:12.5px; font-weight:600; color:var(--ink-soft); min-width:38px; text-align:center; }
+  .bg-viewbar .bg-collapse{ margin-left:auto; font-size:13px; }
+  .bg-box.collapsed .bg-tools, .bg-box.collapsed .bg-hint, .bg-box.collapsed .bg-panel, .bg-box.collapsed .bg-box-title{ display:none !important; }
+  .bg-box.collapsed .bg-viewbar{ margin-top:0; }
+  .bg-stopbar{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(78px + env(safe-area-inset-bottom)); z-index:35;
+    display:none; align-items:center; gap:10px; max-width:calc(100% - 24px); box-sizing:border-box;
+    background:#8A5A2B; color:#fff; border-radius:999px; padding:6px 6px 6px 14px; box-shadow:0 6px 18px rgba(0,0,0,.28);
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:600; }
+  .bg-stopbar.show{ display:flex; }
+  .bg-stopbar span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bg-stopbar button{ flex:none; min-height:38px; border-radius:999px; border:none; background:#fff; color:#8A5A2B;
+    font-family:'Inter',sans-serif; font-size:14px; font-weight:700; padding:0 14px; cursor:pointer; }
   .bg-inner{ width:max-content; }
-  .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); margin-left:6px; height:14px; }
+  .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); padding-left:6px; height:18px; align-items:end;
+    position:sticky; top:0; z-index:4; background:var(--card); }
   .bg-ruler span{ font-size:9px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
   .bg-label{ position:sticky; left:0; display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer;
-    box-shadow:none !important; background-image:none !important; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B; margin:10px 0 3px 4px; }
+    box-shadow:none !important; background-image:none !important; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B; margin:10px 0 3px 4px; z-index:3; }
   .bg-bed{ display:grid; grid-template-columns:repeat(44, var(--bgc)); grid-template-rows:repeat(5, var(--bgc));
     border:6px solid #7A5236; border-radius:12px; background:#8E6443; box-shadow:0 2px 6px rgba(60,40,20,.25); }
   .bg-cell{ border-right:1px solid rgba(255,235,210,.22); border-bottom:1px solid rgba(255,235,210,.22); display:flex; align-items:center;
-    justify-content:center; font-size:16px; line-height:1; cursor:pointer; user-select:none; -webkit-user-select:none; }
+    justify-content:center; font-size:calc(var(--bgc) * .6); line-height:1; cursor:pointer; user-select:none; -webkit-user-select:none; }
   .bg-cell:nth-child(44n){ border-right:none; }
-  .bg-cell.has{ touch-action:none; }
   .bg-svg{ display:inline-block; width:1.15em; height:1.15em; vertical-align:-0.22em; }
   .bg-cell .bg-svg, .bgt-ic .bg-svg, .bg-ghost .bg-svg{ width:1.2em; height:1.2em; vertical-align:middle; }
   .bg-cell{ position:relative; }
@@ -1988,6 +2010,14 @@
   .bg-ruler span.mid{ color:#8A5A2B; font-weight:700; }
   #tab-beds .bg-box, #tab-beds .bg-scroll{ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
   .bg-cell.fill-start{ box-shadow:inset 0 0 0 2px #fff; }
+  .bg-bed{ position:relative; }
+  .bg-cell.big-hide{ font-size:0 !important; }
+  .bg-cell.big-hide .bg-svg{ display:none; }
+  .bg-big{ position:absolute; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:3;
+    line-height:1; filter:drop-shadow(0 2px 3px rgba(40,25,10,.3)); }
+  .bg-big .bg-svg{ width:1em; height:1em; vertical-align:middle; }
+  .bg-cell.anchor{ box-shadow:inset 0 0 0 3px #FFE08A; }
+  .bg-cell.press{ box-shadow:inset 0 0 0 3px #FFE08A; transform:scale(.92); transition:transform .3s; }
   .bg-cell.lk{ box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
   .bg-label .bg-pen{ font-size:12px; opacity:.55; }
   .bg-name-input{ position:sticky; left:0; margin:6px 0 3px 4px; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B;
@@ -2553,7 +2583,16 @@
         <div class="bg-tools" id="bgTools"></div>
         <div class="bg-hint" id="bgHint"></div>
         <div class="bg-panel" id="bgPanel" hidden></div>
+        <div class="bg-viewbar">
+          <span class="bg-vlabel">🔍 Size</span>
+          <button type="button" id="bgZoomOut" aria-label="Smaller squares">−</button>
+          <span class="bg-zoomval" id="bgZoomVal">100%</span>
+          <button type="button" id="bgZoomIn" aria-label="Bigger squares">+</button>
+          <span class="bg-movetag" id="bgMoveTag">✋ Drag to move</span>
+          <button type="button" class="bg-collapse" id="bgCollapse">▲ Hide crops</button>
+        </div>
       </div>
+      <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
       <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-inner" id="bgInner"></div></div>
       <div id="bgSummary"></div>
     </section>
@@ -2733,7 +2772,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.15-20</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.16-1</div>
   </main>
 
   <nav class="tabbar">
@@ -3546,7 +3585,8 @@ const SEASONS = {
     {slug:"fennel", name:"Fennel", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"garlic", name:"Garlic", shape:"bulb", color:C.cream,
-      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:19, m2:10, d2:20, exact:true}]],
+      note:"Moved from Oct 27 & 29 to Oct 19–20."},
     {slug:"onionslips", name:"Onion slips", shape:"bulb", color:C.lavender,
       dates:[[{a:"Start", m:12, d:4, m2:12, d2:5}]]},
     {slug:"strawberries", name:"Strawberries", shape:"circleTop", color:C.red,
@@ -9818,7 +9858,7 @@ async function buildPlantingICS(){
           // like "Jan 23-25" would show as ending a day early.
           const endExclusive = new Date(last.y, last.m - 1, last.d + 1);
           const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
-          const action = isTransplant ? "Transplant" : "Start seeds";
+          const action = isTransplant ? "Transplant" : (p.slug === "garlic" ? "Plant" : "Start seeds");
           const uid = `${p.slug}-${t.a}-${t.m}-${t.d}-${activeSeason}@odessagarden`.replace(/[^A-Za-z0-9@._-]/g, "_");
           lines.push(
             "BEGIN:VEVENT",
@@ -10424,6 +10464,73 @@ function bgPaintCell(el){
     el.style.background = i.color; el.innerHTML = bgIc(i.emoji); el.title = i.n;
     el.classList.toggle("lk", isEntryLocked(cell.at)); el.classList.add("has");
   } else { el.style.background = ""; el.textContent = ""; el.title = ""; el.classList.remove("lk", "has"); }
+  bgScheduleBig();
+}
+// A filled area (at least 2 x 2 squares of the same crop) shows one giant
+// icon in the middle instead of a small icon in every square.
+let bgBigQueued = false;
+function bgScheduleBig(){
+  if(bgBigQueued) return;
+  bgBigQueued = true;
+  requestAnimationFrame(() => { bgBigQueued = false; bgRenderBig(); });
+}
+function bgRenderBig(){
+  document.querySelectorAll("#bgInner .bg-bed").forEach((bedEl, bi) => {
+    const b = String(bi + 1), data = bgData[b] || {};
+    bedEl.querySelectorAll(".bg-big").forEach(x => x.remove());
+    bedEl.querySelectorAll(".bg-cell.big-hide").forEach(x => x.classList.remove("big-hide"));
+    // Squares filled by dragging carry an area mark (g); squares tapped or
+    // clicked one at a time don't, and keep their own small icons.
+    // Touching areas of the same crop join up, so a block painted in a few
+    // strokes still gets one icon.
+    const at = (r, c) => { const x = data[`${r}-${c}`]; return x && x.g ? x.s : null; };
+    const seen = new Set(), groups = [];
+    for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++){
+      const sl = at(r, c), k = `${r}-${c}`;
+      if(!sl || seen.has(k)) continue;
+      const comp = [], q = [[r, c]]; seen.add(k);
+      while(q.length){
+        const [y, x] = q.pop(); comp.push([y, x]);
+        [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dy, dx]) => {
+          const ny = y + dy, nx = x + dx, nk = `${ny}-${nx}`;
+          if(ny < 0 || nx < 0 || ny >= BG_ROWS || nx >= BG_COLS || seen.has(nk) || at(ny, nx) !== sl) return;
+          seen.add(nk); q.push([ny, nx]);
+        });
+      }
+      groups.push(comp);
+    }
+    for(const comp of groups){
+      const k0 = `${comp[0][0]}-${comp[0][1]}`;
+      if(comp.length < 4) continue;
+      const inComp = new Set(comp.map(([y, x]) => `${y}-${x}`));
+      // Biggest solid rectangle inside it, favouring the squarest one.
+      let best = null;
+      for(let r0 = 0; r0 < BG_ROWS; r0++) for(let c0 = 0; c0 < BG_COLS; c0++){
+        if(!inComp.has(`${r0}-${c0}`)) continue;
+        let maxW = BG_COLS;
+        for(let r1 = r0; r1 < BG_ROWS && inComp.has(`${r1}-${c0}`); r1++){
+          let w = 0;
+          while(w < maxW && inComp.has(`${r1}-${c0 + w}`)) w++;
+          maxW = w;
+          const h = r1 - r0 + 1, side = Math.min(h, maxW), score = side * 1000 + h * maxW;
+          if(!best || score > best.score) best = { r0, c0, h, w: maxW, side, score };
+        }
+      }
+      if(!best || best.side < 2) continue;
+      comp.forEach(([y, x]) => { const el = bedEl.children[y * BG_COLS + x]; if(el) el.classList.add("big-hide"); });
+      const info = bgInfo(data[k0]);
+      const big = document.createElement("div");
+      big.className = "bg-big";
+      big.style.left = `calc(var(--bgc) * ${best.c0})`;
+      big.style.top = `calc(var(--bgc) * ${best.r0})`;
+      big.style.width = `calc(var(--bgc) * ${best.w})`;
+      big.style.height = `calc(var(--bgc) * ${best.h})`;
+      big.style.fontSize = `calc(var(--bgc) * ${(best.side * 0.8).toFixed(2)})`;
+      big.innerHTML = bgIc(info.emoji);
+      big.title = info.n;
+      bedEl.appendChild(big);
+    }
+  });
 }
 function bgApply(el, tool){
   if(READ_ONLY || !el || !tool) return;
@@ -10455,9 +10562,14 @@ function bgSetTool(t){
   document.querySelectorAll("#bgTools .bg-tool").forEach(x => x.classList.toggle("on", !!t && x.dataset.s === (t === "erase" ? "__erase" : t.s)));
   document.getElementById("bgScroll").classList.toggle("painting", !!t);
   document.getElementById("bgHint").innerHTML = !t
-    ? "Drag a crop onto a square, then press that square and drag to stretch it over the whole area. Or tap a crop, then tap or drag across squares."
-    : t === "erase" ? "🧽 <b>Eraser</b> — tap or drag across squares to clear them. Tap the eraser again to stop."
-    : `${bgIc(t.emoji)} <b>Planting ${fertEsc(t.n)}</b> — tap or drag across squares. Tap ${fertEsc(t.n)} again to stop and scroll the beds.`;
+    ? "✋ Drag the beds to move around. Drag a crop onto a bed, hold still a moment, then keep holding and drag to cover an area."
+    : t === "erase" ? "🧽 <b>Eraser</b> — tap or drag across squares to clear them. Tap ✋ Done to move around again."
+    : `${bgIc(t.emoji)} <b>Planting ${fertEsc(t.n)}</b> — tap or drag across squares. Tap ✋ Done to move around again.`;
+  const bar = document.getElementById("bgStopbar");
+  if(bar){
+    bar.classList.toggle("show", !!t);
+    document.getElementById("bgStopText").innerHTML = !t ? "" : t === "erase" ? "🧽 Erasing" : `${bgIc(t.emoji)} Planting ${fertEsc(t.n)}`;
+  }
 }
 async function renderBedGrid(){
   const inner = document.getElementById("bgInner");
@@ -10470,7 +10582,7 @@ async function renderBedGrid(){
   try{ const r = await window.storage.get("bedgridNames", false); bgNames = r ? (JSON.parse(r.value) || {}) : {}; }catch(e){ bgNames = {}; }
   const crops = bgCrops();
   try{ const r = await window.storage.get("bedgridHidden", false); bgHidden = r ? (JSON.parse(r.value) || []) : []; }catch(e){ bgHidden = []; }
-  document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops.filter(c => !bgHidden.includes(c.s))).map(c =>
+  document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops.filter(c => !bgHidden.includes(c.s)).sort((x, y) => x.n.localeCompare(y.n, undefined, { sensitivity:"base" }))).map(c =>
     `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${bgIc(c.emoji)}</span><span class="bgt-nm">${fertEsc(c.n)}</span></button>`).join("")
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__add"><span class="bgt-ic" style="background:#FBF6EF; border:2px dashed #C9A57E; color:#8A5A2B; font-size:22px; font-weight:700; box-sizing:border-box;">＋</span><span class="bgt-nm">Add crop</span></button>`)
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__erase"><span class="bgt-ic" style="background:#EDE7F5">🧽</span><span class="bgt-nm">Eraser</span></button><button type="button" class="bg-tool" data-s="__clear"><span class="bgt-ic" style="background:#FBE9E7">🧹</span><span class="bgt-nm">Clear bed</span></button>` + `<button type="button" class="bg-tool" data-s="__delete"><span class="bgt-ic" style="background:#F1EEF4; font-size:17px;">✏️</span><span class="bgt-nm">Edit crops</span></button>`);
@@ -10506,26 +10618,146 @@ async function renderBedGrid(){
 (function(){
   const scroll = document.getElementById("bgScroll"), tools = document.getElementById("bgTools");
   if(!scroll || !tools) return;
+  const box = document.querySelector("#tab-beds .bg-box");
+  // Bed window fills the space left on screen under the sticky crops box.
+  const fitWindow = () => {
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--topbar-h")) || 112;
+    const tab = document.querySelector("nav.tabbar");
+    const h = vh - top - (box ? box.offsetHeight + 12 : 0) - (tab ? tab.offsetHeight : 70) - 14;
+    scroll.style.setProperty("--bg-win-h", Math.max(220, Math.round(h)) + "px");
+  };
+  window.addEventListener("resize", fitWindow);
+  if(window.visualViewport) window.visualViewport.addEventListener("resize", fitWindow);
+  if(window.ResizeObserver && box) new ResizeObserver(fitWindow).observe(box);
+  document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(fitWindow, 30));
+  fitWindow();
+  // Square size (zoom), remembered on this phone.
+  const ZOOMS = [16, 20, 24, 26, 30, 36, 42];
+  let zi = 3;
+  try{ const v = Number(localStorage.getItem("bedgridZoom")); if(ZOOMS.includes(v)) zi = ZOOMS.indexOf(v); }catch(e){}
+  const setZoom = i => {
+    // Keep the same spot centered while zooming.
+    const oldC = ZOOMS[zi], cx = scroll.scrollLeft + scroll.clientWidth / 2, cy = scroll.scrollTop + scroll.clientHeight / 2;
+    zi = Math.max(0, Math.min(ZOOMS.length - 1, i));
+    const c = ZOOMS[zi];
+    scroll.style.setProperty("--bgc", c + "px");
+    document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
+    document.getElementById("bgZoomOut").disabled = zi === 0;
+    document.getElementById("bgZoomIn").disabled = zi === ZOOMS.length - 1;
+    scroll.scrollLeft = cx * c / oldC - scroll.clientWidth / 2;
+    scroll.scrollTop = cy * c / oldC - scroll.clientHeight / 2;
+    try{ localStorage.setItem("bedgridZoom", String(c)); }catch(e){}
+  };
+  document.getElementById("bgZoomOut").addEventListener("click", () => setZoom(zi - 1));
+  document.getElementById("bgZoomIn").addEventListener("click", () => setZoom(zi + 1));
+  setZoom(zi);
+  // Hide / show the crops row to give the beds more room.
+  const colBtn = document.getElementById("bgCollapse");
+  const setCollapsed = on => {
+    box.classList.toggle("collapsed", on);
+    colBtn.textContent = on ? "▼ Show crops" : "▲ Hide crops";
+    try{ localStorage.setItem("bedgridCollapsed", on ? "1" : "0"); }catch(e){}
+    fitWindow();
+  };
+  colBtn.addEventListener("click", () => setCollapsed(!box.classList.contains("collapsed")));
+  try{ if(localStorage.getItem("bedgridCollapsed") === "1") setCollapsed(true); }catch(e){}
+  document.getElementById("bgStopBtn").addEventListener("click", () => bgSetTool(null));
   let painting = false;
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".bg-cell") : null; };
+  // Long-press (hold still ~0.4s) on a planted square starts stretching it;
+  // a swipe just moves around the beds; a quick tap shows what's planted there.
+  let press = null;
+  const clearPress = () => { if(press){ clearTimeout(press.timer); press.cell.classList.remove("press"); press = null; } };
   scroll.addEventListener("pointerdown", e => {
+    if(e.target.closest("input")) return;
     const cell = e.target.closest(".bg-cell");
+    if(!cell || !bgTool) startPan(e);
     if(!cell) return;
     if(!bgTool){
       const cur = (bgData[cell.dataset.b] || {})[cell.dataset.k];
-      if(cur && !READ_ONLY){
-        e.preventDefault();
-        const [r0, c0] = cell.dataset.k.split("-").map(Number);
-        fill = { b: cell.dataset.b, r0, c0, cur, cell, snap: JSON.parse(JSON.stringify(bgData[cell.dataset.b] || {})), last: cell.dataset.k, moved: false, x: e.clientX, y: e.clientY };
-        cell.classList.add("fill-start");
-        fillLoop();
-        return;
+      if(!cur) return;
+      clearPress();
+      press = { cell, cur, x: e.clientX, y: e.clientY, timer: null };
+      if(!READ_ONLY){
+        cell.classList.add("press");
+        press.timer = setTimeout(() => {
+          if(!press) return;
+          const p = press; press = null;
+          p.cell.classList.remove("press");
+          endPan(false);
+          const [r0, c0] = p.cell.dataset.k.split("-").map(Number);
+          fill = { g: "g" + Date.now().toString(36), b: p.cell.dataset.b, r0, c0, cur: p.cur, cell: p.cell, snap: JSON.parse(JSON.stringify(bgData[p.cell.dataset.b] || {})), last: p.cell.dataset.k, moved: false, x: p.x, y: p.y };
+          p.cell.classList.add("fill-start");
+          try{ if(navigator.vibrate) navigator.vibrate(15); }catch(err){}
+          fillLoop();
+        }, 400);
       }
-      if(cur){ const i = bgInfo(cur); showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(cell.dataset.b)}, foot ${Number(cell.dataset.k.split("-")[1]) + 1}${isEntryLocked(cur.at) ? " 🔒" : ""}`, null, "OK"); }
       return;
     }
-    e.preventDefault(); painting = true; bgApply(cell, bgTool);
+    e.preventDefault(); painting = true; stroke = new Set([cell.dataset.b + ":" + cell.dataset.k]); bgApply(cell, bgTool);
   });
+  scroll.addEventListener("pointermove", e => {
+    if(press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8) clearPress();
+  });
+  scroll.addEventListener("scroll", clearPress, { passive:true });
+  scroll.addEventListener("pointerup", () => {
+    if(!press || panMoved) return;
+    const p = press; clearPress();
+    const i = bgInfo(p.cur);
+    showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(p.cell.dataset.b)}, foot ${Number(p.cell.dataset.k.split("-")[1]) + 1}${isEntryLocked(p.cur.at) ? " 🔒" : ""}${READ_ONLY ? "" : ". Press and hold, then drag, to fill an area."}`, null, "OK");
+  });
+  scroll.addEventListener("pointercancel", clearPress);
+  // While planting or stretching, a finger drag paints instead of scrolling.
+  // The bed window moves by hand (pan): drag anywhere — squares or the white
+  // space between beds — to move around in every direction. Past the top or
+  // bottom of the beds, the drag carries on and scrolls the page.
+  scroll.addEventListener("touchmove", e => { if(e.cancelable) e.preventDefault(); }, { passive:false });
+  let pan = null, panMoved = false, glide = 0;
+  function startPan(e){
+    cancelAnimationFrame(glide);
+    panMoved = false;
+    pan = { x: e.clientX, y: e.clientY, sl: scroll.scrollLeft, st: scroll.scrollTop, over: 0,
+      lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
+  }
+  function moveTo(left, top){
+    scroll.scrollLeft = left;
+    const max = scroll.scrollHeight - scroll.clientHeight;
+    const clamped = Math.max(0, Math.min(max, top));
+    scroll.scrollTop = clamped;
+    return top - clamped;   // leftover beyond the top/bottom edge
+  }
+  function endPan(withGlide){
+    if(!pan) return;
+    const p = pan; pan = null;
+    scroll.classList.remove("grabbing");
+    if(!withGlide || !panMoved) return;
+    let vx = p.vx, vy = p.vy, last = performance.now();
+    const step = now => {
+      const dt = Math.min(32, now - last); last = now;
+      vx *= Math.pow(0.94, dt / 16); vy *= Math.pow(0.94, dt / 16);
+      if(Math.abs(vx) < 0.02 && Math.abs(vy) < 0.02) return;
+      const over = moveTo(scroll.scrollLeft - vx * dt, scroll.scrollTop - vy * dt);
+      if(over) window.scrollBy(0, over);
+      glide = requestAnimationFrame(step);
+    };
+    glide = requestAnimationFrame(step);
+  }
+  window.addEventListener("pointermove", e => {
+    if(!pan) return;
+    const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
+    if(!panMoved && Math.hypot(dx, dy) < 6) return;
+    if(!panMoved){ panMoved = true; scroll.classList.add("grabbing"); clearPress(); }
+    const over = moveTo(pan.sl - dx, pan.st - dy);
+    if(over !== pan.over){ window.scrollBy(0, over - pan.over); pan.over = over; }
+    const now = performance.now(), dt = Math.max(1, now - pan.lt);
+    pan.vx = (e.clientX - pan.lx) / dt; pan.vy = (e.clientY - pan.ly) / dt;
+    pan.lx = e.clientX; pan.ly = e.clientY; pan.lt = now;
+  });
+  window.addEventListener("pointerup", () => endPan(true));
+  window.addEventListener("pointercancel", () => endPan(false));
+  // A drag that starts on a bed name shouldn't open the rename box.
+  scroll.addEventListener("click", e => { if(panMoved){ e.stopPropagation(); e.preventDefault(); panMoved = false; } }, true);
   // Stretch a planted square over an area: press it, drag, and every
   // square in the rectangle between gets the same crop.
   let fill = null;
@@ -10538,8 +10770,8 @@ async function renderBedGrid(){
       for(let c = Math.min(fill.c0, c1); c <= Math.max(fill.c0, c1); c++){
         const k = `${r}-${c}`, cur = data[k];
         if(cur && isEntryLocked(cur.at)){ if(cur.s !== fill.cur.s) bgLockedHit = true; continue; }
-        if(cur && cur.s === fill.cur.s) continue;
-        data[k] = { s: fill.cur.s, n: fill.cur.n, at: now, ...(fill.cur.c ? { c: fill.cur.c, e: fill.cur.e } : {}) };
+        if(cur && cur.s === fill.cur.s){ data[k] = { ...cur, g: fill.g }; continue; }
+        data[k] = { s: fill.cur.s, n: fill.cur.n, at: now, g: fill.g, ...(fill.cur.c ? { c: fill.cur.c, e: fill.cur.e } : {}) };
       }
     bgData[fill.b] = data;
     document.querySelectorAll(`#bgInner .bg-cell[data-b="${fill.b}"]`).forEach(bgPaintCell);
@@ -10549,18 +10781,40 @@ async function renderBedGrid(){
     const box = scroll.getBoundingClientRect();
     if(fill.x < box.left + 40) scroll.scrollLeft -= 12;
     else if(fill.x > box.right - 40) scroll.scrollLeft += 12;
+    if(fill.y < box.top + 40) scroll.scrollTop -= 10;
+    else if(fill.y > box.bottom - 40) scroll.scrollTop += 10;
     fillTo(cellAt(fill.x, fill.y));
     requestAnimationFrame(fillLoop);
   };
   window.addEventListener("pointermove", e => { if(fill){ fill.x = e.clientX; fill.y = e.clientY; } });
-  scroll.addEventListener("pointermove", e => { if(painting) bgApply(cellAt(e.clientX, e.clientY), bgTool); });
+  // One press-and-drag stroke counts as an area (gets one big icon once it
+  // forms a block of at least 2 x 2); a single click stays a single square.
+  let stroke = null;
+  scroll.addEventListener("pointermove", e => {
+    if(!painting) return;
+    const c = cellAt(e.clientX, e.clientY);
+    if(c && stroke) stroke.add(c.dataset.b + ":" + c.dataset.k);
+    bgApply(c, bgTool);
+  });
   const stop = () => {
-    if(painting){ painting = false; bgFinish(); }
+    if(painting){
+      painting = false;
+      if(stroke && stroke.size >= 2 && bgTool && bgTool !== "erase"){
+        const g = "g" + Date.now().toString(36);
+        stroke.forEach(id => {
+          const [b, k] = id.split(":"), cur = (bgData[b] || {})[k];
+          if(cur && cur.s === bgTool.s){ cur.g = g; bgDirty = true; }
+        });
+        bgScheduleBig();
+      }
+      stroke = null;
+      bgFinish();
+    }
     if(fill){
       const f = fill; fill = null;
       f.cell.classList.remove("fill-start");
       if(f.moved){ bgDirty = true; bgFinish(); }
-      else { const i = bgInfo(f.cur); showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(f.b)}, foot ${f.c0 + 1}${isEntryLocked(f.cur.at) ? " 🔒" : ""}. Press and drag to fill an area.`, null, "OK"); }
+      else { const i = bgInfo(f.cur); showUndoToast(`${bgTx(i.emoji)}${i.n} — ${bgName(f.b)}, foot ${f.c0 + 1}${isEntryLocked(f.cur.at) ? " 🔒" : ""}. Keep holding and drag to fill an area.`, null, "OK"); }
     }
   };
   window.addEventListener("pointerup", stop); window.addEventListener("pointercancel", stop);
@@ -10573,33 +10827,97 @@ async function renderBedGrid(){
     if(btn.dataset.s === "__add"){ bgOpenPanel("add"); return; }
     if(btn.dataset.s === "__clear"){ bgOpenPanel("clear"); return; }
     if(btn.dataset.s === "__delete"){ bgOpenPanel("delete"); return; }
-    drag = { btn, x: e.clientX, y: e.clientY, ghost: null };
+    if(e.pointerType === "mouse") e.preventDefault();
+    drag = { btn, x: e.clientX, y: e.clientY, ghost: null, type: e.pointerType };
+  });
+  ["dragstart", "selectstart"].forEach(ev => {
+    tools.addEventListener(ev, e => e.preventDefault());
+    scroll.addEventListener(ev, e => e.preventDefault());
   });
   window.addEventListener("pointermove", e => {
     if(!drag) return;
     if(!drag.ghost && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 10){
-      if(Math.abs(e.clientX - drag.x) > Math.abs(e.clientY - drag.y)){ drag = null; return; } // sideways = scroll the box
+      // On a phone, a sideways swipe scrolls the crops row instead. With a
+      // mouse, any direction picks the crop up.
+      if(drag.type !== "mouse" && Math.abs(e.clientX - drag.x) > Math.abs(e.clientY - drag.y)){ drag = null; return; }
       const ic = drag.btn.querySelector(".bgt-ic");
       drag.ghost = document.createElement("div");
       drag.ghost.className = "bg-ghost"; drag.ghost.style.background = ic.style.background; drag.ghost.innerHTML = ic.innerHTML;
       document.body.appendChild(drag.ghost);
     }
-    if(drag.ghost){ e.preventDefault(); drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px"; }
+    if(drag.ghost){
+      e.preventDefault(); drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+      drag.px = e.clientX; drag.py = e.clientY;
+      const cell = cellAt(e.clientX, e.clientY);
+      if(drag.anchor){ dragFillTo(cell); return; }
+      const key = cell ? cell.dataset.b + ":" + cell.dataset.k : "";
+      if(key !== drag.hoverKey){
+        drag.hoverKey = key; clearTimeout(drag.holdTimer);
+        if(cell) drag.holdTimer = setTimeout(() => dragAnchor(cell), 400);
+      }
+    }
   }, { passive:false });
+  // Rest the dragged crop on a square for a moment to drop it there, then keep
+  // dragging (finger or mouse still held) to cover a whole area.
+  function dragTool(d){ return d.btn.dataset.s === "__erase" ? "erase" : bgCrops().find(c => c.s === d.btn.dataset.s); }
+  function dragAnchor(cell){
+    if(!drag || !drag.ghost || drag.anchor || READ_ONLY) return;
+    const [r0, c0] = cell.dataset.k.split("-").map(Number);
+    drag.anchor = { g: "g" + Date.now().toString(36), b: cell.dataset.b, r0, c0, cell, snap: JSON.parse(JSON.stringify(bgData[cell.dataset.b] || {})), last: null };
+    cell.classList.add("anchor");
+    try{ if(navigator.vibrate) navigator.vibrate(15); }catch(err){}
+    dragFillTo(cell);
+    const loop = () => {
+      if(!drag || !drag.anchor) return;
+      const box = scroll.getBoundingClientRect();
+      if(drag.px < box.left + 40) scroll.scrollLeft -= 12; else if(drag.px > box.right - 40) scroll.scrollLeft += 12;
+      if(drag.py < box.top + 40) scroll.scrollTop -= 10; else if(drag.py > box.bottom - 40) scroll.scrollTop += 10;
+      dragFillTo(cellAt(drag.px, drag.py));
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+  function dragFillTo(cell){
+    const a = drag && drag.anchor;
+    if(!a || !cell || cell.dataset.b !== a.b || cell.dataset.k === a.last) return;
+    a.last = cell.dataset.k;
+    const tool = dragTool(drag);
+    const [r1, c1] = cell.dataset.k.split("-").map(Number);
+    const data = JSON.parse(JSON.stringify(a.snap)), now = Date.now();
+    for(let r = Math.min(a.r0, r1); r <= Math.max(a.r0, r1); r++)
+      for(let c = Math.min(a.c0, c1); c <= Math.max(a.c0, c1); c++){
+        const k = `${r}-${c}`, cur = data[k];
+        if(cur && isEntryLocked(cur.at)){ if(tool === "erase" || cur.s !== tool.s) bgLockedHit = true; continue; }
+        if(tool === "erase"){ delete data[k]; continue; }
+        if(cur && cur.s === tool.s){ data[k] = { ...cur, g: a.g }; continue; }
+        data[k] = { s: tool.s, n: tool.n, at: now, g: a.g, ...(tool.custom ? { c: tool.color, e: tool.emoji } : {}) };
+      }
+    bgData[a.b] = data;
+    document.querySelectorAll(`#bgInner .bg-cell[data-b="${a.b}"]`).forEach(bgPaintCell);
+  }
   window.addEventListener("pointerup", e => {
     if(!drag) return;
     const d = drag; drag = null;
+    clearTimeout(d.holdTimer);
     const s = d.btn.dataset.s;
     const tool = s === "__erase" ? "erase" : bgCrops().find(c => c.s === s);
     if(d.ghost){
       d.ghost.remove();
+      if(d.anchor){ d.anchor.cell.classList.remove("anchor"); bgDirty = true; bgFinish(); return; }
       bgApply(cellAt(e.clientX, e.clientY), tool); bgFinish();
     } else {
       const same = bgTool && (bgTool === "erase" ? s === "__erase" : bgTool.s === s);
       bgSetTool(same ? null : tool);
     }
   });
-  window.addEventListener("pointercancel", () => { if(drag && drag.ghost) drag.ghost.remove(); drag = null; });
+  window.addEventListener("pointercancel", () => {
+    if(drag){
+      clearTimeout(drag.holdTimer);
+      if(drag.ghost) drag.ghost.remove();
+      if(drag.anchor){ drag.anchor.cell.classList.remove("anchor"); bgDirty = true; bgFinish(); }
+    }
+    drag = null;
+  });
 })();
 async function renderAll(){
   renderLedger();
@@ -11721,7 +12039,7 @@ function alignPlannedDatesToBiodynamic(){
         const type = CROP_BIO_TYPE[p.slug];
         if(!type || !p.dates) return;
         p.dates.forEach(wave => wave.forEach(t => {
-          if(t._bcAligned) return;
+          if(t._bcAligned || t.exact) return; // exact: keep the date as typed
           t._orig = fmtDate(t);
           const year = seasonYearForMonth(seasonKey, t.m);
           if(!bcEntryFor(type, year, t.m, t.d)) return;
