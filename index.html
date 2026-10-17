@@ -2067,7 +2067,33 @@
   .bg-stopbar span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bg-stopbar button{ flex:none; min-height:38px; border-radius:999px; border:none; background:#fff; color:#8A5A2B;
     font-family:'Inter',sans-serif; font-size:14px; font-weight:700; padding:0 14px; cursor:pointer; }
-  .bg-inner{ width:max-content; padding:0 2px 10px; transform-origin:0 0; will-change:transform; backface-visibility:hidden; }
+  .bg-stage{ position:relative; width:max-content; transform-origin:0 0; will-change:transform; backface-visibility:hidden; }
+  .bg-inner{ width:max-content; padding:0 2px 10px; }
+  /* Upright beds */
+  .bg-stage.vert .bg-inner{ display:grid; grid-template-columns:auto repeat(4, auto); grid-template-rows:auto auto;
+    column-gap:12px; row-gap:4px; align-items:end; padding:0 8px 10px 0; }
+  .bg-stage.vert .bg-inner > :nth-child(1){ grid-column:1; grid-row:2; }
+  .bg-stage.vert .bg-inner > :nth-child(2){ grid-column:2; grid-row:1; } .bg-stage.vert .bg-inner > :nth-child(3){ grid-column:2; grid-row:2; }
+  .bg-stage.vert .bg-inner > :nth-child(4){ grid-column:3; grid-row:1; } .bg-stage.vert .bg-inner > :nth-child(5){ grid-column:3; grid-row:2; }
+  .bg-stage.vert .bg-inner > :nth-child(6){ grid-column:4; grid-row:1; } .bg-stage.vert .bg-inner > :nth-child(7){ grid-column:4; grid-row:2; }
+  .bg-stage.vert .bg-inner > :nth-child(8){ grid-column:5; grid-row:1; } .bg-stage.vert .bg-inner > :nth-child(9){ grid-column:5; grid-row:2; }
+  .bg-stage.vert .bg-ruler{ grid-template-columns:auto; grid-template-rows:repeat(44, var(--bgc)); height:auto; align-items:end;
+    padding:clamp(3px, calc(var(--bgc) * .23), 6px) 3px clamp(3px, calc(var(--bgc) * .23), 6px) 4px; background:var(--card); }
+  .bg-stage.vert .bg-ruler span{ margin:0 !important; text-align:right; line-height:1; transform:translateY(50%); }
+  .bg-stage.vert .bg-label, .bg-stage.vert .bg-name-input{ display:flex; justify-content:center; text-align:center; margin:6px 0 0; padding:2px 0;
+    width:calc(var(--bgc) * 5 + 2 * clamp(3px, calc(var(--bgc) * .23), 6px)); min-width:40px; box-sizing:border-box;
+    font-size:13px; line-height:1.1; white-space:normal; background:var(--card); z-index:5; }
+  .bg-stage.vert .bg-name-input{ width:110px; }
+  .bg-stage.vert .bg-label .bg-pen{ font-size:10px; }
+  .bg-stage.vert .bg-bed{ grid-template-columns:repeat(5, var(--bgc)); grid-template-rows:repeat(44, var(--bgc)); }
+  .bg-stage.vert .bg-cell:nth-child(44n){ border-right:1px solid rgba(122,82,54,.22); }
+  .bg-stage.vert .bg-cell[data-k^="4-"]{ border-right:none; }
+  .bg-stage.vert .bg-cell[data-k$="-21"]::after{ top:-2px; bottom:auto; left:-1px; right:-1px; width:auto; height:3px; }
+  .bg-compass{ position:relative; flex:none; width:44px; height:44px; padding:0; pointer-events:none; margin-left:4px;
+    display:flex; flex-direction:column; align-items:center; -webkit-tap-highlight-color:transparent; }
+  .bg-compass svg{ width:44px; height:44px; overflow:visible; filter:drop-shadow(0 1px 2px rgba(60,40,20,.22)); }
+  .bg-compass .bgc-mode{ font-family:'Inter',sans-serif; font-size:9px; font-weight:700; color:#8A5A2B; background:#FBF6EF; border:1px solid #E3CFB2;
+    border-radius:999px; padding:1px 5px; margin-top:2px; white-space:nowrap; }
   .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); padding-left:clamp(3px, calc(var(--bgc) * .23), 6px); height:18px; align-items:end;
     position:relative; z-index:4; background:var(--card); }
   .bg-ruler span{ font-size:9px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
@@ -2663,11 +2689,12 @@
           <button type="button" id="bgZoomOut" aria-label="Smaller squares">−</button>
           <span class="bg-zoomval" id="bgZoomVal">100%</span>
           <button type="button" id="bgZoomIn" aria-label="Bigger squares">+</button>
+          <div class="bg-compass" id="bgCompass" role="img" aria-label="Compass: north is at the top"><svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="28.6" fill="#FFFDF8" stroke="#8A5A2B" stroke-width="1.4"/><circle cx="30" cy="30" r="22.2" fill="none" stroke="#E3CFB2" stroke-width=".7"/><g stroke="#B8916A" stroke-width=".7" stroke-linecap="round"><line x1="36.63" y1="5.27" x2="36.99" y2="3.92"/><line x1="42.80" y1="7.83" x2="43.50" y2="6.62"/><line x1="47.39" y1="12.61" x2="49.09" y2="10.91"/><line x1="52.17" y1="17.20" x2="53.38" y2="16.50"/><line x1="54.73" y1="23.37" x2="56.08" y2="23.01"/><line x1="54.73" y1="36.63" x2="56.08" y2="36.99"/><line x1="52.17" y1="42.80" x2="53.38" y2="43.50"/><line x1="47.39" y1="47.39" x2="49.09" y2="49.09"/><line x1="42.80" y1="52.17" x2="43.50" y2="53.38"/><line x1="36.63" y1="54.73" x2="36.99" y2="56.08"/><line x1="23.37" y1="54.73" x2="23.01" y2="56.08"/><line x1="17.20" y1="52.17" x2="16.50" y2="53.38"/><line x1="12.61" y1="47.39" x2="10.91" y2="49.09"/><line x1="7.83" y1="42.80" x2="6.62" y2="43.50"/><line x1="5.27" y1="36.63" x2="3.92" y2="36.99"/><line x1="5.27" y1="23.37" x2="3.92" y2="23.01"/><line x1="7.83" y1="17.20" x2="6.62" y2="16.50"/><line x1="12.61" y1="12.61" x2="10.91" y2="10.91"/><line x1="17.20" y1="7.83" x2="16.50" y2="6.62"/><line x1="23.37" y1="5.27" x2="23.01" y2="3.92"/></g><polygon points="39.55,20.45 30.00,26.80 30,30" fill="#C9B79E"/><polygon points="39.55,20.45 33.20,30.00 30,30" fill="#A8957A"/><polygon points="39.55,39.55 33.20,30.00 30,30" fill="#C9B79E"/><polygon points="39.55,39.55 30.00,33.20 30,30" fill="#A8957A"/><polygon points="20.45,39.55 30.00,33.20 30,30" fill="#C9B79E"/><polygon points="20.45,39.55 26.80,30.00 30,30" fill="#A8957A"/><polygon points="20.45,20.45 26.80,30.00 30,30" fill="#C9B79E"/><polygon points="20.45,20.45 30.00,26.80 30,30" fill="#A8957A"/><polygon points="30.00,11.00 27.17,27.17 30,30" fill="#E0614D"/><polygon points="30.00,11.00 32.83,27.17 30,30" fill="#A93226"/><polygon points="49.00,30.00 32.83,27.17 30,30" fill="#7A6552"/><polygon points="49.00,30.00 32.83,32.83 30,30" fill="#5A4636"/><polygon points="30.00,49.00 32.83,32.83 30,30" fill="#7A6552"/><polygon points="30.00,49.00 27.17,32.83 30,30" fill="#5A4636"/><polygon points="11.00,30.00 27.17,32.83 30,30" fill="#7A6552"/><polygon points="11.00,30.00 27.17,27.17 30,30" fill="#5A4636"/><circle cx="30" cy="30" r="2.2" fill="#FFFDF8" stroke="#5A4636" stroke-width=".9"/><g font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="8.2" text-anchor="middle" dominant-baseline="central"><text x="30" y="7.6" fill="#B03A2E">N</text><text x="52.6" y="30.4" fill="#5A4636">E</text><text x="30" y="52.6" fill="#5A4636">S</text><text x="7.4" y="30.4" fill="#5A4636">W</text></g></svg></div>
           <button type="button" class="bg-collapse" id="bgCollapse">▲ Hide crops</button>
         </div>
       </div>
       <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
-      <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-inner" id="bgInner"></div></div>
+      <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-stage" id="bgStage"><div class="bg-inner" id="bgInner"></div></div></div>
       <div id="bgSummary" class="bg-summary-under"></div>
       <div class="bg-actions">
         <button type="button" class="bg-act bg-act-all" id="bgAllBtn">🖼️<span>See all 4 beds</span></button>
@@ -2856,7 +2883,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.17-5</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.17-8</div>
   </main>
 
   <nav class="tabbar">
@@ -2881,7 +2908,7 @@
       <span class="tabbtn-2line">Cover<br>Crop</span>
     </button>
     <button class="tabbtn tab-beds" data-tab="beds">
-      <span class="tabbtn-icon" style="background:#F1E6D6"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="2" y="1.6" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="2.5" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="6.9" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="7.800000000000001" width="17.6" height="2.4" rx="1" fill="#6FAF56"/><rect x="2" y="12.2" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="13.1" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="17.5" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="18.4" width="17.6" height="2.4" rx="1" fill="#6FAF56"/></svg></span>
+      <span class="tabbtn-icon" style="background:#F1E6D6"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="transform:rotate(90deg)"><rect x="2" y="1.6" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="2.5" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="6.9" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="7.800000000000001" width="17.6" height="2.4" rx="1" fill="#6FAF56"/><rect x="2" y="12.2" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="13.1" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="17.5" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="18.4" width="17.6" height="2.4" rx="1" fill="#6FAF56"/></svg></span>
       <span class="tabbtn-2line">Garden<br>Beds</span>
     </button>
     <button class="tabbtn tab-harvests" data-tab="fruits">
@@ -10684,6 +10711,28 @@ function bgScheduleBig(){
   bgBigQueued = true;
   requestAnimationFrame(() => { bgBigQueued = false; bgRenderBig(); });
 }
+// Place each square for upright (vertical) or lengthwise beds.
+// Upright: bed row r becomes column r+1; foot c runs bottom (0) to top (43).
+function bgOrient(container, vert){
+  if(!container) return;
+  const key = vert ? "v" : "h";
+  container.querySelectorAll(".bg-bed").forEach(bed => {
+    if(bed._orient === key) return;
+    bed._orient = key;
+    for(const el of bed.children){
+      if(!el.classList.contains("bg-cell")) continue;
+      const [r, c] = el.dataset.k.split("-").map(Number);
+      el.style.gridRow = vert ? String(BG_COLS - c) : "";
+      el.style.gridColumn = vert ? String(r + 1) : "";
+    }
+  });
+  const ruler = container.querySelector(".bg-ruler");
+  if(ruler && ruler._orient !== key){
+    ruler._orient = key;
+    [...ruler.children].forEach((sp, i) => { sp.style.gridRow = vert ? String(BG_COLS - i) : ""; });
+  }
+  bgRenderBigIn(container, container === document.getElementById("bgInner") ? bgData : (container._data || {}));
+}
 function bgRenderBig(){ bgRenderBigIn(document.getElementById("bgInner"), bgData); }
 function bgRenderBigIn(container, allData){
   if(!container) return;
@@ -10732,7 +10781,8 @@ function bgRenderBigIn(container, allData){
     }
     // Only change the page when the big icons actually change, so drawing
     // or stretching an area doesn't make every icon blink.
-    const sig = plans.map(p => `${data[p.k0].s}:${p.best.r0},${p.best.c0},${p.best.h},${p.best.w}|${p.comp.map(([y, x]) => y * BG_COLS + x).sort((a, b) => a - b).join(".")}`).join(";");
+    const vert = !!bedEl.closest(".vert");
+    const sig = (vert ? "v;" : "h;") + plans.map(p => `${data[p.k0].s}:${p.best.r0},${p.best.c0},${p.best.h},${p.best.w}|${p.comp.map(([y, x]) => y * BG_COLS + x).sort((a, b) => a - b).join(".")}`).join(";");
     if(bedEl._bigSig === sig) return;
     bedEl._bigSig = sig;
     bedEl.querySelectorAll(".bg-big").forEach(x => x.remove());
@@ -10742,10 +10792,17 @@ function bgRenderBigIn(container, allData){
       const info = bgInfo(data[k0]);
       const big = document.createElement("div");
       big.className = "bg-big";
-      big.style.left = `calc(var(--bgc) * ${best.c0})`;
-      big.style.top = `calc(var(--bgc) * ${best.r0})`;
-      big.style.width = `calc(var(--bgc) * ${best.w})`;
-      big.style.height = `calc(var(--bgc) * ${best.h})`;
+      if(vert){
+        big.style.left = `calc(var(--bgc) * ${best.r0})`;
+        big.style.top = `calc(var(--bgc) * ${BG_COLS - best.c0 - best.w})`;
+        big.style.width = `calc(var(--bgc) * ${best.h})`;
+        big.style.height = `calc(var(--bgc) * ${best.w})`;
+      } else {
+        big.style.left = `calc(var(--bgc) * ${best.c0})`;
+        big.style.top = `calc(var(--bgc) * ${best.r0})`;
+        big.style.width = `calc(var(--bgc) * ${best.w})`;
+        big.style.height = `calc(var(--bgc) * ${best.h})`;
+      }
       big.style.fontSize = `calc(var(--bgc) * ${(best.side * 0.8).toFixed(2)})`;
       big.innerHTML = bgIc(info.emoji);
       big.title = info.n;
@@ -10939,16 +10996,25 @@ async function renderBedGrid(){
      is scrolled, so iPhone Safari has nothing to re-draw while you drag
      (scrolling by code made it flicker). The ruler stays on top and the bed
      names stay on the left by sliding back the opposite way. */
-  const inner = document.getElementById("bgInner");
+  const inner = document.getElementById("bgInner"), stage = document.getElementById("bgStage");
   let vx = 0, vy = 0, pinchS = 1, viewFrame = 0;
-  const maxX = () => Math.max(0, inner.offsetWidth - scroll.clientWidth);
-  const maxY = () => Math.max(0, inner.offsetHeight - scroll.clientHeight);
+  // The beds stand upright: four tall columns side by side, foot 0 at the
+  // bottom and foot 44 at the top, north at the top of the screen. They are
+  // laid out this way (not spun), so names, numbers and icons stay upright.
+  const vertical = true;
+  function layoutStage(){
+    stage.classList.toggle("vert", vertical);
+    bgOrient(inner, vertical);
+  }
+  const maxX = () => Math.max(0, stage.offsetWidth - scroll.clientWidth);
+  const maxY = () => Math.max(0, stage.offsetHeight - scroll.clientHeight);
   function applyView(){
     viewFrame = 0;
-    inner.style.transform = `translate3d(${-vx}px,${-vy}px,0)${pinchS !== 1 ? ` scale(${pinchS})` : ""}`;
+    stage.style.transform = `translate3d(${-vx}px,${-vy}px,0)${pinchS !== 1 ? ` scale(${pinchS})` : ""}`;
     const pin = pinchS === 1;
-    const r = inner.querySelector(".bg-ruler"); if(r) r.style.transform = pin ? `translate3d(0,${vy}px,0)` : "";
-    inner.querySelectorAll(".bg-label, .bg-name-input").forEach(l => { l.style.transform = pin ? `translate3d(${vx}px,0,0)` : ""; });
+    // Upright beds: foot numbers stay on the left, bed names stay on top.
+    const r = inner.querySelector(".bg-ruler"); if(r) r.style.transform = pin ? (vertical ? `translate3d(${vx}px,0,0)` : `translate3d(0,${vy}px,0)`) : "";
+    inner.querySelectorAll(".bg-label, .bg-name-input").forEach(l => { l.style.transform = pin ? (vertical ? `translate3d(0,${vy}px,0)` : `translate3d(${vx}px,0,0)`) : ""; });
   }
   function setView(x, y, now){
     vx = Math.round(Math.max(0, Math.min(maxX(), x)));
@@ -10956,13 +11022,21 @@ async function renderBedGrid(){
     if(now){ if(viewFrame){ cancelAnimationFrame(viewFrame); } applyView(); }
     else if(!viewFrame) viewFrame = requestAnimationFrame(applyView);
   }
-  window.bgApplyView = () => setView(vx, vy, true);
+  window.bgApplyView = () => { layoutStage(); setView(vx, vy, true); };
   window.addEventListener("resize", () => setView(vx, vy));
   // Square size (zoom), remembered on this phone. Buttons step through set
   // sizes; pinching can land anywhere between the smallest ("fit": a whole
   // 44-ft bed across the screen) and the largest.
   const STEPS = [10, 12, 14, 16, 20, 24, 26, 30, 36, 42], MAXC = 42;
-  const fitCell = () => scroll.clientWidth > 0 ? Math.max(5, Math.floor((scroll.clientWidth - 8) / BG_COLS * 10) / 10) : 8;
+  const fitCell = () => {
+    if(!(scroll.clientWidth > 0)) return 8;
+    if(!vertical) return Math.max(5, Math.floor((scroll.clientWidth - 8) / BG_COLS * 10) / 10);
+    // Upright: smallest size where all four beds, top to bottom, fit the window.
+    // Width = 20 squares + fixed parts (a); height = 44 squares + fixed parts (b).
+    const c0 = curC || 26, a = inner.offsetWidth - BG_BEDS * BG_ROWS * c0, b = inner.offsetHeight - BG_COLS * c0;
+    const c = Math.min((scroll.clientWidth - 4 - a) / (BG_BEDS * BG_ROWS), (scroll.clientHeight - 4 - b) / BG_COLS);
+    return Math.max(4, Math.floor(c * 10) / 10);
+  };
   const sizeOf = z => z === "fit" ? fitCell() : Math.max(fitCell(), Math.min(MAXC, z));
   let zoom = 26, curC = 26;
   try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(Number(v) >= 5 && Number(v) <= MAXC) zoom = Number(v); }catch(e){}
@@ -10979,6 +11053,7 @@ async function renderBedGrid(){
     if(mx === undefined){ mx = scroll.clientWidth / 2; my = scroll.clientHeight / 2; }
     const px = (vx + mx) / oldC, py = (vy + my) / oldC;
     if(c !== curC || scroll.style.getPropertyValue("--bgc") !== c + "px"){ scroll.style.setProperty("--bgc", c + "px"); curC = c; }
+    layoutStage();
     updateZoomButtons(c);
     setView(px * c - mx, py * c - my, true);
     try{ localStorage.setItem("bedgridZoom", String(z)); }catch(e){}
