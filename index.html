@@ -1967,16 +1967,55 @@
     background:#fff; border:1px solid #E3CFB2; border-radius:8px; padding:8px 10px; outline:none; }
   .bg-hint{ font-size:12px; color:var(--ink-soft); margin:6px 2px 0; line-height:1.4; }
   /* The beds sit in their own window: swipe up/down/left/right inside it. */
-  .bg-scroll{ overflow:auto; -webkit-overflow-scrolling:touch; padding:0 2px 10px; touch-action:none; cursor:grab;
+  .bg-scroll{ overflow:auto; padding:0 2px 10px; touch-action:none; cursor:grab; overscroll-behavior:contain;
     height:var(--bg-win-h, 60vh); min-height:220px; border:1px solid var(--line); border-radius:14px; background:var(--card);
-    box-shadow:var(--shadow); overscroll-behavior:auto; position:relative; }
+    box-shadow:var(--shadow); position:relative; }
   .bg-scroll.painting{ touch-action:none; cursor:crosshair; }
   .bg-scroll.grabbing{ cursor:grabbing; }
-  .bg-scroll.grabbing .bg-bed{ box-shadow:0 2px 10px rgba(60,40,20,.35); }
   .bg-movetag{ font-size:12px; font-weight:600; color:var(--ink-soft); }
   .bg-viewbar{ display:flex; align-items:center; gap:6px; margin:8px 0 0; flex-wrap:nowrap; }
   .bg-allbtn{ display:block; width:100%; margin:10px 0 4px; min-height:46px; border-radius:12px; border:1px solid #E3CFB2;
     background:#FBF6EF; color:#8A5A2B; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer; }
+  .bg-summary-under{ margin:8px 2px 0; }
+  .bg-actions{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:10px 0 8px; }
+  .bg-act{ min-height:58px; padding:6px 4px 8px; border-radius:14px; border:1px solid rgba(0,0,0,.06);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; line-height:1.15; text-align:center; cursor:pointer;
+    font-size:20px; transition:transform .08s, box-shadow .08s; }
+  .bg-act span{ font-size:12.5px; }
+  .bg-act span i{ font-style:normal; font-weight:600; opacity:.7; }
+  .bg-act-all{ background:linear-gradient(180deg,#F1E9FB,#E2D3F5); color:#5E4590; box-shadow:0 4px 0 #C8B2E8, 0 6px 10px rgba(94,69,144,.18); }
+  .bg-act-save{ background:linear-gradient(180deg,#E6F6EC,#CDEBD8); color:#2F6B4E; box-shadow:0 4px 0 #A8D6B9, 0 6px 10px rgba(47,107,78,.18); font-size:26px; }
+  .bg-act-log{ background:linear-gradient(180deg,#FFF0E3,#FBDCC4); color:#8A5A2B; box-shadow:0 4px 0 #EDBE98, 0 6px 10px rgba(138,90,43,.18); }
+  .bg-act:active{ transform:translateY(3px); }
+  .bg-act-all:active{ box-shadow:0 1px 0 #C8B2E8, 0 2px 4px rgba(94,69,144,.18); }
+  .bg-act-save:active{ box-shadow:0 1px 0 #A8D6B9, 0 2px 4px rgba(47,107,78,.18); }
+  .bg-act-log:active{ box-shadow:0 1px 0 #EDBE98, 0 2px 4px rgba(138,90,43,.18); }
+  .bg-act-log .bg-logcaret{ display:inline-block; transition:transform .2s; }
+  .bg-act-log[aria-expanded="true"] .bg-logcaret{ transform:rotate(180deg); }
+  .bg-actions .bg-allbtn{ flex:1; margin:0; }
+  .bg-actions .bg-savebtn{ flex:none; width:56px; font-size:22px; padding:0; }
+  .bg-logbtn{ display:flex; align-items:center; gap:6px; width:100%; margin:12px 0 0; min-height:46px; padding:0 14px; border-radius:12px;
+    border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow); color:var(--evergreen);
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer; }
+  .bg-logbtn #bgLogCount{ color:var(--ink-soft); font-weight:600; font-size:13px; }
+  .bg-logbtn .bg-logcaret{ margin-left:auto; font-size:12px; color:var(--ink-soft); transition:transform .2s; }
+  .bg-logbtn[aria-expanded="true"] .bg-logcaret{ transform:rotate(180deg); }
+  .bg-saves{ margin:0 0 10px; padding:8px; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+  .bg-saves[hidden]{ display:none; }
+  .bg-save{ display:flex; gap:6px; margin-bottom:6px; }
+  .bg-save:last-child{ margin-bottom:0; }
+  .bg-save-open{ flex:1; min-height:42px; text-align:left; padding:0 12px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF;
+    color:var(--ink); font-family:'Inter',sans-serif; font-size:14.5px; font-weight:700; cursor:pointer; }
+  .bg-save-del{ flex:none; width:42px; min-height:42px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF; font-size:16px; cursor:pointer; }
+  .bg-savebtn{ background:#EAF3EC !important; border-color:#B9D6C1 !important; color:#2F6B4E !important; }
+  .bg-saves-head{ font-family:'Fraunces', serif; font-weight:600; font-size:17px; color:var(--evergreen); margin:16px 2px 6px; }
+  .bg-saves-empty{ font-size:13px; color:var(--ink-soft); padding:4px 2px 10px; }
+  .bg-save-top{ display:flex; align-items:center; gap:8px; }
+  .bg-save-date{ flex:1; font-weight:700; font-size:14px; color:var(--ink); }
+  .bg-save-top button{ min-height:34px; border-radius:9px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:700; padding:0 10px; cursor:pointer; }
+  .bg-save-sum{ font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.45; }
   .bg-all{ position:fixed; inset:0; z-index:1000; background:var(--paper); display:flex; flex-direction:column;
     padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
   .bg-all[hidden]{ display:none; }
@@ -1996,6 +2035,7 @@
   .bg-all-inner .bg-bed{ border-width:3px; border-radius:7px; }
   .bg-all-inner .bg-cell{ cursor:default; }
   @media (orientation:landscape){ .bg-all-tip{ display:none; } }
+  @media (max-width:520px){ .bg-all-top{ flex-wrap:wrap; row-gap:2px; } .bg-all-tip{ order:5; flex-basis:100%; } }
   #tab-beds .bg-hint{ display:none !important; }
   .bg-box{ padding:8px 8px 6px; }
   .bg-tools{ gap:5px; padding-bottom:2px; }
@@ -2054,7 +2094,7 @@
     line-height:1; filter:drop-shadow(0 2px 3px rgba(40,25,10,.3)); }
   .bg-big .bg-svg{ width:1em; height:1em; vertical-align:middle; }
   .bg-cell.anchor{ box-shadow:inset 0 0 0 3px #FFE08A; }
-  .bg-cell.press{ box-shadow:inset 0 0 0 3px #FFE08A; transform:scale(.92); transition:transform .3s; }
+  .bg-cell.press{ box-shadow:inset 0 0 0 3px #FFE08A; }
   .bg-cell.lk{ box-shadow:inset 0 0 0 1px rgba(0,0,0,.12); }
   .bg-label .bg-pen{ font-size:12px; opacity:.55; }
   .bg-name-input{ position:sticky; left:0; margin:6px 0 3px 4px; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B;
@@ -2627,8 +2667,13 @@
       </div>
       <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
       <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-inner" id="bgInner"></div></div>
-      <button type="button" class="bg-allbtn" id="bgAllBtn">🖼️ See all 4 beds</button>
-      <div id="bgSummary"></div>
+      <div id="bgSummary" class="bg-summary-under"></div>
+      <div class="bg-actions">
+        <button type="button" class="bg-act bg-act-all" id="bgAllBtn">🖼️<span>See all 4 beds</span></button>
+        <button type="button" class="bg-act bg-act-save" id="bgSaveBtn" aria-label="Save garden" title="Save garden">💾</button>
+        <button type="button" class="bg-act bg-act-log" id="bgLogBtn" aria-expanded="false">📒<span>Garden bed log <i id="bgLogCount"></i> <b class="bg-logcaret">▾</b></span></button>
+      </div>
+      <div id="bgSaves" class="bg-saves" hidden></div>
       <div class="bg-all" id="bgAll" hidden>
         <div class="bg-all-top"><b>All beds</b><span class="bg-all-season" id="bgAllSeason"></span><span class="bg-all-tip" id="bgAllTip">↻ Turn sideways to enlarge</span><span style="flex:1"></span><button type="button" id="bgAllClose" aria-label="Close">✕</button></div>
         <div class="bg-all-body" id="bgAllBody"><div class="bg-all-inner" id="bgAllInner"></div></div>
@@ -8507,6 +8552,7 @@ function applyGlobalUnlock(on){
     btn.querySelector(".night-toggle-icon").textContent = on ? "🔓" : "🔒";
     btn.setAttribute("aria-label", on ? "Editing unlocked app-wide — tap to re-lock" : "Unlock all locked entries app-wide for editing");
   }
+  if(typeof bgRenderSaves === "function") bgRenderSaves();
 }
 document.getElementById("globalUnlockToggle").addEventListener("click", async () => {
   applyGlobalUnlock(!GLOBAL_UNLOCK);
@@ -8836,6 +8882,113 @@ async function generateSeasonPDF(seasonKey){
   const T = drawColumn(wrapLines(tail, innerW), margin, page, y);
   page = T.pg; y = T.yy + 10;
   doc.setPage(page);
+
+  /* ---------- garden beds drawing (black & white) + legend ---------- */
+  {
+    let snap = null;
+    try{ const r = await window.storage.get(`bedgridSaves:${seasonKey}`, false); const arr = r ? (JSON.parse(r.value) || []) : []; if(arr.length) snap = arr.slice().sort((a, b) => b.at - a.at)[0]; }catch(e){}
+    let beds = snap ? snap.data : null, names = snap ? (snap.names || {}) : {};
+    if(!beds){
+      try{ const r = await window.storage.get(`bedgrid:${seasonKey}`, false); beds = r ? (JSON.parse(r.value) || {}) : {}; }catch(e){ beds = {}; }
+      try{ const r = await window.storage.get("bedgridNames", false); names = r ? (JSON.parse(r.value) || {}) : {}; }catch(e){}
+    }
+    const bedName = b => (names[b] && String(names[b]).trim()) || `Bed ${b}`;
+    doc.addPage(); page = doc.getNumberOfPages(); doc.setPage(page); y = margin;
+    doc.setTextColor(0); doc.setFont("helvetica", "bold"); doc.setFontSize(14);
+    doc.text("Garden Beds — End of Season", margin, y + 12);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(70);
+    const when = snap ? `Saved garden: ${new Date(snap.at).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" })}` : "Current layout (no saved garden yet)";
+    doc.text(pdfSafe(`${when}  ·  4 beds, 4 ft x 44 ft  ·  each square = 1 sq ft  ·  numbers match the legend under each bed`), margin, y + 26);
+    doc.setDrawColor(0); doc.setLineWidth(0.8); doc.line(margin, y + 32, pageW - margin, y + 32);
+    y += 46;
+
+    // One number per crop, shared across all beds.
+    const cropNo = {}, cropName = {}; let nextNo = 1;
+    for(let b = 1; b <= BG_BEDS; b++) for(let c = 0; c < BG_COLS; c++) for(let r = 0; r < BG_ROWS; r++){
+      const cell = (beds[b] || {})[`${r}-${c}`];
+      if(cell && !cropNo[cell.s]){ cropNo[cell.s] = nextNo++; cropName[cell.s] = bgInfo(cell).n; }
+    }
+    const cs = Math.floor((pageW - margin * 2) / BG_COLS * 10) / 10;
+    const gridW = cs * BG_COLS, gridH = cs * BG_ROWS;
+    for(let b = 1; b <= BG_BEDS; b++){
+      const data = beds[b] || {};
+      const at = (r, c) => (r < 0 || c < 0 || r >= BG_ROWS || c >= BG_COLS) ? null : ((data[`${r}-${c}`] || {}).s || null);
+      // legend lines first, to know the block height
+      const counts = {};
+      Object.values(data).forEach(cell => { counts[cell.s] = (counts[cell.s] || 0) + 1; });
+      const used = Object.values(counts).reduce((a, n) => a + n, 0);
+      const legendText = Object.keys(counts).sort((a, c) => cropNo[a] - cropNo[c])
+        .map(sl => `${cropNo[sl]} = ${cropName[sl]} (${counts[sl]} sq ft)`).join("  ·  ");
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8.5);
+      const legendLines = doc.splitTextToSize(pdfSafe(used ? `${legendText}  ·  Open: ${BG_ROWS * BG_COLS - used} sq ft` : "Empty"), gridW);
+      const blockH = 16 + (b === 1 ? 10 : 0) + gridH + 6 + legendLines.length * 11 + 14;
+      if(y + blockH > pageH - margin - 16){ doc.addPage(); page = doc.getNumberOfPages(); doc.setPage(page); y = margin; }
+      // bed name
+      doc.setTextColor(0); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+      doc.text(pdfSafe(bedName(b)), margin, y + 10); y += 16;
+      const gx = margin;
+      // ruler (first bed only)
+      if(b === 1){
+        doc.setFont("helvetica", "normal"); doc.setFontSize(6.5); doc.setTextColor(90);
+        for(let c = 0; c <= BG_COLS; c += 4) if(c !== 24 && c !== 20) doc.text(String(c), gx + c * cs, y + 6, { align: c === 0 ? "left" : "center" });
+        doc.setFont("helvetica", "bold"); doc.text("22", gx + 22 * cs, y + 6, { align:"center" });
+        y += 10;
+      }
+      const gy = y;
+      // planted squares: light gray; empty: white
+      doc.setFillColor(228, 228, 228);
+      for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++) if(at(r, c)) doc.rect(gx + c * cs, gy + r * cs, cs, cs, "F");
+      // thin square-foot grid
+      doc.setDrawColor(185); doc.setLineWidth(0.3);
+      for(let c = 1; c < BG_COLS; c++) doc.line(gx + c * cs, gy, gx + c * cs, gy + gridH);
+      for(let r = 1; r < BG_ROWS; r++) doc.line(gx, gy + r * cs, gx + gridW, gy + r * cs);
+      // halfway mark at 22 ft
+      doc.setDrawColor(110); doc.setLineWidth(1.4); doc.line(gx + 22 * cs, gy, gx + 22 * cs, gy + gridH);
+      // bold outline around each planted area (where the crop changes)
+      doc.setDrawColor(0); doc.setLineWidth(1.1);
+      for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++){
+        const sl = at(r, c); if(!sl) continue;
+        const x0 = gx + c * cs, y0 = gy + r * cs;
+        if(at(r - 1, c) !== sl) doc.line(x0, y0, x0 + cs, y0);
+        if(at(r + 1, c) !== sl) doc.line(x0, y0 + cs, x0 + cs, y0 + cs);
+        if(at(r, c - 1) !== sl) doc.line(x0, y0, x0, y0 + cs);
+        if(at(r, c + 1) !== sl) doc.line(x0 + cs, y0, x0 + cs, y0 + cs);
+      }
+      // bed frame
+      doc.setLineWidth(1.6); doc.rect(gx, gy, gridW, gridH);
+      // one number in the middle of each planted area
+      const seen = new Set();
+      for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++){
+        const sl = at(r, c), k = `${r}-${c}`; if(!sl || seen.has(k)) continue;
+        const comp = [], q = [[r, c]]; seen.add(k);
+        while(q.length){
+          const [yy, xx] = q.pop(); comp.push([yy, xx]);
+          [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dy, dx]) => { const ny = yy + dy, nx = xx + dx, nk = `${ny}-${nx}`; if(!seen.has(nk) && at(ny, nx) === sl){ seen.add(nk); q.push([ny, nx]); } });
+        }
+        const inC = new Set(comp.map(([a, bb]) => `${a}-${bb}`));
+        let best = null;
+        comp.forEach(([r0, c0]) => {
+          let maxW = BG_COLS;
+          for(let r1 = r0; r1 < BG_ROWS && inC.has(`${r1}-${c0}`); r1++){
+            let w = 0; while(w < maxW && inC.has(`${r1}-${c0 + w}`)) w++; maxW = w;
+            const h = r1 - r0 + 1, side = Math.min(h, maxW), score = side * 1000 + h * maxW;
+            if(!best || score > best.score) best = { r0, c0, h, w: maxW, side, score };
+          }
+        });
+        const fs = Math.max(6.5, Math.min(16, best.side * cs * 0.62));
+        doc.setFont("helvetica", "bold"); doc.setFontSize(fs); doc.setTextColor(0);
+        { const tw = doc.getTextWidth ? doc.getTextWidth(String(cropNo[sl])) : fs * 0.6 * String(cropNo[sl]).length, cx = gx + (best.c0 + best.w / 2) * cs, cy = gy + (best.r0 + best.h / 2) * cs;
+          if(best.side >= 2){ doc.setFillColor(255, 255, 255); doc.rect(cx - tw / 2 - 2.5, cy - fs * 0.45, tw + 5, fs * 0.9, "F"); } }
+        doc.text(String(cropNo[sl]), gx + (best.c0 + best.w / 2) * cs, gy + (best.r0 + best.h / 2) * cs + fs * 0.35, { align:"center" });
+      }
+      y = gy + gridH + 6;
+      // legend
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(30);
+      legendLines.forEach(ln => { doc.text(ln, margin, y + 8.5); y += 11; });
+      y += 14;
+    }
+    doc.setLineWidth(0.57); doc.setDrawColor(0); doc.setTextColor(0);
+  }
   if(y + 14 > pageH - margin){ doc.addPage(); page++; y = margin; }
   doc.setFont("helvetica", "italic"); doc.setFontSize(8); doc.setTextColor(0);
   doc.text("© 2026 Thor", margin, y);
@@ -10501,6 +10654,9 @@ function bgInfo(cell){
 async function bgSave(){ try{ await window.storage.set(`bedgrid:${activeSeason}`, JSON.stringify(bgData), false); }catch(e){} }
 function bgPaintCell(el){
   const cell = (bgData[el.dataset.b] || {})[el.dataset.k];
+  const sig = cell ? `${cell.s}|${cell.c || ""}|${cell.e || ""}|${isEntryLocked(cell.at) ? 1 : 0}` : "";
+  if(el._sig === sig && el._painted){ bgScheduleBig(); return; }
+  el._sig = sig; el._painted = true;
   if(cell){
     const i = bgInfo(cell);
     el.style.background = i.color; el.innerHTML = bgIc(i.emoji); el.title = i.n;
@@ -10516,11 +10672,11 @@ function bgScheduleBig(){
   bgBigQueued = true;
   requestAnimationFrame(() => { bgBigQueued = false; bgRenderBig(); });
 }
-function bgRenderBig(){
-  document.querySelectorAll("#bgInner .bg-bed").forEach((bedEl, bi) => {
-    const b = String(bi + 1), data = bgData[b] || {};
-    bedEl.querySelectorAll(".bg-big").forEach(x => x.remove());
-    bedEl.querySelectorAll(".bg-cell.big-hide").forEach(x => x.classList.remove("big-hide"));
+function bgRenderBig(){ bgRenderBigIn(document.getElementById("bgInner"), bgData); }
+function bgRenderBigIn(container, allData){
+  if(!container) return;
+  container.querySelectorAll(".bg-bed").forEach((bedEl, bi) => {
+    const b = String(bi + 1), data = allData[b] || {};
     // Squares filled by dragging carry an area mark (g); squares tapped or
     // clicked one at a time don't, and keep their own small icons.
     // Touching areas of the same crop join up, so a block painted in a few
@@ -10541,6 +10697,7 @@ function bgRenderBig(){
       }
       groups.push(comp);
     }
+    const plans = [];
     for(const comp of groups){
       const k0 = `${comp[0][0]}-${comp[0][1]}`;
       if(comp.length < 4) continue;
@@ -10559,6 +10716,16 @@ function bgRenderBig(){
         }
       }
       if(!best || best.side < 2) continue;
+      plans.push({ comp, best, k0 });
+    }
+    // Only change the page when the big icons actually change, so drawing
+    // or stretching an area doesn't make every icon blink.
+    const sig = plans.map(p => `${data[p.k0].s}:${p.best.r0},${p.best.c0},${p.best.h},${p.best.w}|${p.comp.map(([y, x]) => y * BG_COLS + x).sort((a, b) => a - b).join(".")}`).join(";");
+    if(bedEl._bigSig === sig) return;
+    bedEl._bigSig = sig;
+    bedEl.querySelectorAll(".bg-big").forEach(x => x.remove());
+    bedEl.querySelectorAll(".bg-cell.big-hide").forEach(x => x.classList.remove("big-hide"));
+    for(const { comp, best, k0 } of plans){
       comp.forEach(([y, x]) => { const el = bedEl.children[y * BG_COLS + x]; if(el) el.classList.add("big-hide"); });
       const info = bgInfo(data[k0]);
       const big = document.createElement("div");
@@ -10598,6 +10765,69 @@ function bgRenderSummary(){
     html += `<div class="bg-sum"><b>${fertEsc(bgName(b))}:</b> ${parts.length ? parts.join(" · ") + ` · ${BG_ROWS * BG_COLS - used} open` : "empty"}</div>`;
   }
   document.getElementById("bgSummary").innerHTML = html;
+}
+/* ---------- Saved gardens: dated snapshots of all four beds ---------- */
+let bgSaves = [];
+const bgSavesKey = () => `bedgridSaves:${activeSeason}`;
+function bgFmtSaveDate(at){
+  return new Date(at).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+}
+// Same-day saves get a number so they can be told apart: "Oct 17, 2026 (2)".
+function bgSaveLabel(sv){
+  const day = bgFmtSaveDate(sv.at);
+  const same = bgSaves.filter(x => bgFmtSaveDate(x.at) === day).sort((a, b) => a.at - b.at);
+  return same.length > 1 ? `${day} (${same.indexOf(sv) + 1})` : day;
+}
+// Same picture as the beds window, built from any snapshot (read-only).
+function bgBuildPicture(data, names){
+  const nm = b => (names && names[b] && String(names[b]).trim()) || `Bed ${b}`;
+  let ruler = "";
+  for(let c = 0; c < BG_COLS; c++) ruler += c === 22 ? `<span class="mid" style="margin-left:-6px;">22</span>` : `<span>${c % 4 === 0 && c !== 24 ? c : ""}</span>`;
+  let html = `<div class="bg-ruler">${ruler}</div>`;
+  for(let b = 1; b <= BG_BEDS; b++){
+    html += `<div class="bg-label">${fertEsc(nm(b))}</div><div class="bg-bed">`;
+    for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++){
+      const cell = (data[b] || {})[`${r}-${c}`];
+      if(cell){ const i = bgInfo(cell); html += `<div class="bg-cell has" data-k="${r}-${c}" style="background:${i.color}" title="${fertEsc(i.n)}">${bgIc(i.emoji)}</div>`; }
+      else html += `<div class="bg-cell" data-k="${r}-${c}"></div>`;
+    }
+    html += `</div>`;
+  }
+  return html;
+}
+function bgSnapshotSummary(data){
+  const counts = {};
+  for(let b = 1; b <= BG_BEDS; b++) Object.values(data[b] || {}).forEach(c => { counts[c.s] = (counts[c.s] || 0) + 1; });
+  const parts = Object.entries(counts).sort((a, c) => c[1] - a[1]).map(([sl, n]) => `${bgIc(bgInfo({ s: sl }).emoji)} ${fertEsc(bgInfo({ s: sl }).n)} ${n}`);
+  return parts.length ? parts.join(" · ") : "All beds empty";
+}
+async function bgLoadSaves(){
+  try{ const r = await window.storage.get(bgSavesKey(), false); bgSaves = r ? (JSON.parse(r.value) || []) : []; }catch(e){ bgSaves = []; }
+  bgRenderSaves();
+}
+async function bgStoreSaves(){ try{ await window.storage.set(bgSavesKey(), JSON.stringify(bgSaves), false); }catch(e){} }
+function bgRenderSaves(){
+  const el = document.getElementById("bgSaves");
+  if(!el) return;
+  const cnt = document.getElementById("bgLogCount"); if(cnt) cnt.textContent = bgSaves.length ? `(${bgSaves.length})` : "";
+  if(!bgSaves.length){ el.innerHTML = `<div class="bg-saves-empty">No gardens saved yet. Tap 💾 to save today's layout.</div>`; return; }
+  el.innerHTML = bgSaves.slice().sort((a, b) => b.at - a.at).map(sv => {
+    const locked = !READ_ONLY && isEntryLocked(sv.at);
+    return `<div class="bg-save" data-id="${sv.id}">
+      <button type="button" class="bg-save-open" data-act="view">📅 ${bgSaveLabel(sv)}</button>
+      ${READ_ONLY ? "" : `<button type="button" class="bg-save-del" data-act="${locked ? "locked" : "del"}" aria-label="${locked ? "Locked" : "Delete"}" title="${locked ? "Locked after 48 hours — unlock in Save a copy" : "Delete"}">${locked ? "🔒" : "🗑️"}</button>`}
+    </div>`;
+  }).join("");
+}
+async function bgSaveGarden(){
+  if(READ_ONLY) return;
+  const now = Date.now();
+  bgSaves.push({ id: "s" + now.toString(36), at: now, data: JSON.parse(JSON.stringify(bgData)), names: JSON.parse(JSON.stringify(bgNames)) });
+  await bgStoreSaves();
+  bgRenderSaves();
+  showUndoToast(`💾 Garden saved — ${bgFmtSaveDate(now)}. Find it in Gardens log.`, async () => {
+    bgSaves = bgSaves.filter(x => x.at !== now); await bgStoreSaves(); bgRenderSaves();
+  }, "Undo");
 }
 function bgSetTool(t){
   bgTool = t;
@@ -10656,6 +10886,7 @@ async function renderBedGrid(){
   }));
   bgSetTool(null);
   bgRenderSummary();
+  bgLoadSaves();
 }
 (function(){
   const scroll = document.getElementById("bgScroll"), tools = document.getElementById("bgTools");
@@ -10747,17 +10978,35 @@ async function renderBedGrid(){
     const c = Math.max(4, Math.floor(Math.min(byW, byH) * 10) / 10);
     allInner.style.setProperty("--bgc", c + "px");
   };
-  const openAll = () => {
-    bgRenderBig();
-    allInner.innerHTML = document.getElementById("bgInner").innerHTML;
-    allInner.querySelectorAll(".press,.anchor,.fill-start").forEach(x => x.classList.remove("press", "anchor", "fill-start"));
-    document.getElementById("bgAllSeason").textContent = document.getElementById("bgSeasonLabel").textContent;
+  const openAll = (snap) => {
+    const isSnap = snap && snap.data;
+    const data = isSnap ? snap.data : bgData;
+    allInner.innerHTML = bgBuildPicture(data, isSnap ? snap.names : bgNames);
+    bgRenderBigIn(allInner, data);
+    document.querySelector("#bgAll .bg-all-top b").textContent = isSnap ? "Saved garden" : "All beds";
+    document.getElementById("bgAllSeason").textContent = isSnap ? bgSaveLabel(snap) : document.getElementById("bgSeasonLabel").textContent;
     all.hidden = false;
     document.documentElement.style.overflow = "hidden";
     requestAnimationFrame(fitAll);
   };
   const closeAll = () => { all.hidden = true; allInner.innerHTML = ""; document.documentElement.style.overflow = ""; };
-  document.getElementById("bgAllBtn").addEventListener("click", openAll);
+  document.getElementById("bgAllBtn").addEventListener("click", () => openAll());
+  document.getElementById("bgSaveBtn").addEventListener("click", bgSaveGarden);
+  document.getElementById("bgLogBtn").addEventListener("click", () => {
+    const list = document.getElementById("bgSaves"), btn = document.getElementById("bgLogBtn");
+    list.hidden = !list.hidden; btn.setAttribute("aria-expanded", list.hidden ? "false" : "true");
+  });
+  document.getElementById("bgSaves").addEventListener("click", async e => {
+    const btn = e.target.closest("button[data-act]"); if(!btn) return;
+    const id = btn.closest(".bg-save").dataset.id, sv = bgSaves.find(x => x.id === id); if(!sv) return;
+    if(btn.dataset.act === "view") openAll(sv);
+    else if(btn.dataset.act === "locked") showUndoToast("🔒 Saved gardens lock after 48 hours. Unlock editing in Save a copy to delete it.", null, "OK");
+    else if(btn.dataset.act === "del"){
+      const idx = bgSaves.indexOf(sv);
+      bgSaves.splice(idx, 1); await bgStoreSaves(); bgRenderSaves();
+      showUndoToast(`Deleted garden from ${bgFmtSaveDate(sv.at)}`, async () => { bgSaves.splice(idx, 0, sv); await bgStoreSaves(); bgRenderSaves(); }, "Undo");
+    }
+  });
   document.getElementById("bgAllClose").addEventListener("click", closeAll);
   document.addEventListener("keydown", e => { if(e.key === "Escape" && !all.hidden) closeAll(); });
   window.addEventListener("resize", () => requestAnimationFrame(fitAll));
@@ -10812,32 +11061,46 @@ async function renderBedGrid(){
   // space between beds — to move around in every direction. Past the top or
   // bottom of the beds, the drag carries on and scrolls the page.
   scroll.addEventListener("touchmove", e => { if(e.cancelable) e.preventDefault(); }, { passive:false });
-  let pan = null, panMoved = false, glide = 0;
-  function startPan(e){
-    cancelAnimationFrame(glide);
-    panMoved = false;
-    pan = { x: e.clientX, y: e.clientY, sl: scroll.scrollLeft, st: scroll.scrollTop, over: 0,
-      lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
+  // Drag-to-move. The beds only ever scroll inside their own window, never
+  // the page: scrolling the page mid-drag made iPhone Safari's toolbar slide
+  // in and out, which re-drew the screen over and over (the flashing).
+  // Moves are applied at most once per screen refresh.
+  let pan = null, panMoved = false, glide = 0, panFrame = 0, want = null;
+  const maxL = () => Math.max(0, scroll.scrollWidth - scroll.clientWidth);
+  const maxT = () => Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+  function applyMove(){
+    panFrame = 0;
+    if(!want) return;
+    const l = Math.round(Math.max(0, Math.min(maxL(), want.l))), t = Math.round(Math.max(0, Math.min(maxT(), want.t)));
+    if(l !== scroll.scrollLeft) scroll.scrollLeft = l;
+    if(t !== scroll.scrollTop) scroll.scrollTop = t;
+    want = null;
   }
   function moveTo(left, top){
-    scroll.scrollLeft = left;
-    const max = scroll.scrollHeight - scroll.clientHeight;
-    const clamped = Math.max(0, Math.min(max, top));
-    scroll.scrollTop = clamped;
-    return top - clamped;   // leftover beyond the top/bottom edge
+    want = { l: left, t: top };
+    if(!panFrame) panFrame = requestAnimationFrame(applyMove);
+  }
+  function startPan(e){
+    cancelAnimationFrame(glide); glide = 0;
+    panMoved = false;
+    pan = { x: e.clientX, y: e.clientY, sl: scroll.scrollLeft, st: scroll.scrollTop,
+      lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
   }
   function endPan(withGlide){
     if(!pan) return;
     const p = pan; pan = null;
-    scroll.classList.remove("grabbing");
     if(!withGlide || !panMoved) return;
+    // Short glide after a flick, stopping at the window's edges.
     let vx = p.vx, vy = p.vy, last = performance.now();
+    if(performance.now() - p.lt > 80){ vx = 0; vy = 0; }   // finger had stopped
+    let x = scroll.scrollLeft, y = scroll.scrollTop;
     const step = now => {
       const dt = Math.min(32, now - last); last = now;
-      vx *= Math.pow(0.94, dt / 16); vy *= Math.pow(0.94, dt / 16);
-      if(Math.abs(vx) < 0.02 && Math.abs(vy) < 0.02) return;
-      const over = moveTo(scroll.scrollLeft - vx * dt, scroll.scrollTop - vy * dt);
-      if(over) window.scrollBy(0, over);
+      vx *= Math.pow(0.92, dt / 16); vy *= Math.pow(0.92, dt / 16);
+      if(Math.abs(vx) < 0.03 && Math.abs(vy) < 0.03){ glide = 0; return; }
+      x = Math.max(0, Math.min(maxL(), x - vx * dt)); y = Math.max(0, Math.min(maxT(), y - vy * dt));
+      scroll.scrollLeft = Math.round(x); scroll.scrollTop = Math.round(y);
+      if((x <= 0 || x >= maxL()) && (y <= 0 || y >= maxT())){ glide = 0; return; }
       glide = requestAnimationFrame(step);
     };
     glide = requestAnimationFrame(step);
@@ -10846,9 +11109,8 @@ async function renderBedGrid(){
     if(!pan) return;
     const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
     if(!panMoved && Math.hypot(dx, dy) < 6) return;
-    if(!panMoved){ panMoved = true; scroll.classList.add("grabbing"); clearPress(); }
-    const over = moveTo(pan.sl - dx, pan.st - dy);
-    if(over !== pan.over){ window.scrollBy(0, over - pan.over); pan.over = over; }
+    if(!panMoved){ panMoved = true; clearPress(); }
+    moveTo(pan.sl - dx, pan.st - dy);
     const now = performance.now(), dt = Math.max(1, now - pan.lt);
     pan.vx = (e.clientX - pan.lx) / dt; pan.vy = (e.clientY - pan.ly) / dt;
     pan.lx = e.clientX; pan.ly = e.clientY; pan.lt = now;
