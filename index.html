@@ -1996,6 +1996,13 @@
   .bg-all-inner .bg-bed{ border-width:3px; border-radius:7px; }
   .bg-all-inner .bg-cell{ cursor:default; }
   @media (orientation:landscape){ .bg-all-tip{ display:none; } }
+  #tab-beds .bg-hint{ display:none !important; }
+  .bg-box{ padding:8px 8px 6px; }
+  .bg-tools{ gap:5px; padding-bottom:2px; }
+  .bg-tool{ width:54px; padding:4px 2px; gap:2px; }
+  .bg-tool .bgt-ic{ width:30px; height:30px; font-size:18px; }
+  .bg-tool .bgt-sm{ font-size:7.5px; white-space:nowrap; letter-spacing:-.01em; }
+  .bg-tool .bgt-nm{ font-size:9px; line-height:1.1; height:20px; max-height:20px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .bg-head{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:0 2px 6px; }
   .bg-head .bg-h{ margin:0; font-family:'Fraunces', serif; font-weight:600; font-size:20px; line-height:1.15; color:var(--evergreen); }
   .bg-head .bg-size{ font-size:13px; color:var(--ink-soft); font-weight:500; }
@@ -2037,6 +2044,7 @@
   .bg-cell[data-k$="-21"]::after{ content:""; position:absolute; top:-1px; bottom:-1px; right:-2px; width:3px;
     background:#8A5A2B; z-index:2; pointer-events:none; }
   .bg-ruler span.mid{ color:#8A5A2B; font-weight:700; }
+  #tab-beds, #tab-beds *{ -webkit-tap-highlight-color:transparent; }
   #tab-beds .bg-box, #tab-beds .bg-scroll{ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
   .bg-cell.fill-start{ box-shadow:inset 0 0 0 2px #fff; }
   .bg-bed{ position:relative; }
@@ -2607,9 +2615,8 @@
     <section class="tab-panel" id="tab-beds">
       <div class="bg-box">
         <div class="bg-head"><h2 class="bg-h">Garden Beds</h2><span class="bg-size">4 beds · 4′ × 44′</span><span id="bgSeasonLabel" hidden></span></div>
-        <div class="bg-box-title">Crops</div>
         <div class="bg-tools" id="bgTools"></div>
-        <div class="bg-hint" id="bgHint"></div>
+        <div class="bg-hint" id="bgHint" hidden></div>
         <div class="bg-panel" id="bgPanel" hidden></div>
         <div class="bg-viewbar">
           <button type="button" id="bgZoomOut" aria-label="Smaller squares">−</button>
@@ -10303,9 +10310,13 @@ async function bgSaveHidden(){ try{ await window.storage.set("bedgridHidden", JS
 // Always in the crops box, every season.
 const BG_EXTRA_CROPS = [
   { s: "walkingonions", n: "Walking onions", color: "#D9C8EC", emoji: "svg:walkingonion" },
-  { s: "butterflypeablue", n: "Butterfly pea (blue)", color: "#C9D6F5", emoji: "svg:butterflypeablue" },
-  { s: "butterflypeawhite", n: "Butterfly pea (white)", color: "#9BC49A", emoji: "svg:butterflypeawhite" }
+  { s: "butterflypeablue", n: "Butterfly Pea (blue)", color: "#C9D6F5", emoji: "svg:butterflypeablue" },
+  { s: "butterflypeawhite", n: "Butterfly Pea (white)", color: "#9BC49A", emoji: "svg:butterflypeawhite" }
 ];
+// Shorter names for the crop buttons only (full names still show on the
+// squares, the summary and everywhere else), so every button fits 2 lines.
+const BG_SHORT_HTML = { puertoricanblackbeans: 'Beans<br><span class="bgt-sm">Puerto Rican</span>' };
+const BG_SHORT = { longbeans: "Beans Red Noodle", butterflypeawhite: "Butterfly Pea", snappeas: "Peas" };
 const BG_CUSTOM_COLORS = ["#F2C6AC","#CBB9EA","#A9CB94","#EDA3C0","#8FBF9F","#EEB49B","#B49CDA","#F2D98C"];
 const BG_EMOJIS = ["🌱","🌿","svg:basil","svg:parsley","svg:dill","svg:fennel","svg:asparagus","svg:walkingonion","svg:butterflypeablue","svg:butterflypeawhite","🍅","🌽","🥔","🍠","🌶️","🫑","🥒","🍆","🎃","🥕","🔴","🧅","🧄","🥬","🥦","🫛","🫘","🥜","🍉","🍈","🍓","🫐","🍋","🍌","🍍","🥭","🥑","🫚","🌻","🌼","🌸","🍀","🌾","🪴","🍄","🌳"];
 // Picks an icon from the crop's name: first any crop already in the app
@@ -10614,7 +10625,7 @@ async function renderBedGrid(){
   const crops = bgCrops();
   try{ const r = await window.storage.get("bedgridHidden", false); bgHidden = r ? (JSON.parse(r.value) || []) : []; }catch(e){ bgHidden = []; }
   document.getElementById("bgTools").innerHTML = (READ_ONLY ? [] : crops.filter(c => !bgHidden.includes(c.s)).sort((x, y) => x.n.localeCompare(y.n, undefined, { sensitivity:"base" }))).map(c =>
-    `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${bgIc(c.emoji)}</span><span class="bgt-nm">${fertEsc(c.n)}</span></button>`).join("")
+    `<button type="button" class="bg-tool" data-s="${fertEsc(c.s)}"><span class="bgt-ic" style="background:${c.color}">${bgIc(c.emoji)}</span><span class="bgt-nm" title="${fertEsc(c.n)}">${BG_SHORT_HTML[c.s] || fertEsc(BG_SHORT[c.s] || c.n)}</span></button>`).join("")
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__add"><span class="bgt-ic" style="background:#FBF6EF; border:2px dashed #C9A57E; color:#8A5A2B; font-size:22px; font-weight:700; box-sizing:border-box;">＋</span><span class="bgt-nm">Add crop</span></button>`)
     + (READ_ONLY ? "" : `<button type="button" class="bg-tool" data-s="__erase"><span class="bgt-ic" style="background:#EDE7F5">🧽</span><span class="bgt-nm">Eraser</span></button><button type="button" class="bg-tool" data-s="__clear"><span class="bgt-ic" style="background:#FBE9E7">🧹</span><span class="bgt-nm">Clear bed</span></button>` + `<button type="button" class="bg-tool" data-s="__delete"><span class="bgt-ic" style="background:#F1EEF4; font-size:17px;">✏️</span><span class="bgt-nm">Edit crops</span></button>`);
   let ruler = "";
@@ -10651,18 +10662,32 @@ async function renderBedGrid(){
   if(!scroll || !tools) return;
   const box = document.querySelector("#tab-beds .bg-box");
   // Bed window fills the space left on screen under the sticky crops box.
-  const fitWindow = () => {
-    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  // On iPhone, Safari's address bar slides in and out when you touch the
+  // screen, changing the screen height. Measuring against that made the
+  // window resize over and over (the flashing), so the height is taken from
+  // the *small* screen height, which never changes while the bar moves, and
+  // the window is only resized when something real changes.
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:fixed;left:-9px;top:0;width:1px;height:100vh;height:100svh;visibility:hidden;pointer-events:none;";
+  document.body.appendChild(probe);
+  let lastH = 0, lastW = 0, lastBox = -1;
+  const fitWindow = (force) => {
+    const W = window.innerWidth, boxH = box ? box.offsetHeight : 0;
+    if(force !== true && W === lastW && boxH === lastBox && lastH) return;
+    lastW = W; lastBox = boxH;
+    const vh = probe.offsetHeight || window.innerHeight;
     const top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--topbar-h")) || 112;
     const tab = document.querySelector("nav.tabbar");
-    const h = vh - top - (box ? box.offsetHeight + 12 : 0) - (tab ? tab.offsetHeight : 70) - 14;
-    scroll.style.setProperty("--bg-win-h", Math.max(220, Math.round(h)) + "px");
+    const h = Math.max(220, Math.round(vh - top - (box ? boxH + 12 : 0) - (tab ? tab.offsetHeight : 70) - 14));
+    if(Math.abs(h - lastH) < 2) return;
+    lastH = h;
+    scroll.style.setProperty("--bg-win-h", h + "px");
   };
-  window.addEventListener("resize", fitWindow);
-  if(window.visualViewport) window.visualViewport.addEventListener("resize", fitWindow);
-  if(window.ResizeObserver && box) new ResizeObserver(fitWindow).observe(box);
-  document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(fitWindow, 30));
-  fitWindow();
+  window.addEventListener("resize", () => fitWindow());
+  window.addEventListener("orientationchange", () => setTimeout(() => fitWindow(true), 300));
+  if(window.ResizeObserver && box) new ResizeObserver(() => fitWindow()).observe(box);
+  document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(() => fitWindow(true), 30));
+  fitWindow(true);
   // Square size (zoom), remembered on this phone.
   // Zoom steps. The smallest step ("fit") makes a whole 44-ft bed fit
   // across this screen; it is measured each time, since the tab can be
@@ -10673,18 +10698,22 @@ async function renderBedGrid(){
   const sizeOf = z => z === "fit" ? fitCell() : z;
   let zoom = 26, curC = 26;
   try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(STEPS.includes(Number(v))) zoom = Number(v); }catch(e){}
+  const updateZoomButtons = (z, c) => {
+    const L = levels(), i = L.indexOf(z);
+    document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
+    document.getElementById("bgZoomOut").disabled = i === 0;
+    document.getElementById("bgZoomIn").disabled = i === L.length - 1;
+  };
   const setZoom = z => {
     const L = levels();
     if(z !== "fit" && !L.includes(z)) z = "fit";
     zoom = z;
     const c = sizeOf(z), oldC = curC || c;
+    if(c === curC && scroll.style.getPropertyValue("--bgc") === c + "px"){ updateZoomButtons(z, c); return; }
     // Keep the same spot centered while zooming.
     const cx = scroll.scrollLeft + scroll.clientWidth / 2, cy = scroll.scrollTop + scroll.clientHeight / 2;
     scroll.style.setProperty("--bgc", c + "px"); curC = c;
-    const i = L.indexOf(z);
-    document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
-    document.getElementById("bgZoomOut").disabled = i === 0;
-    document.getElementById("bgZoomIn").disabled = i === L.length - 1;
+    updateZoomButtons(z, c);
     scroll.scrollLeft = cx * c / oldC - scroll.clientWidth / 2;
     scroll.scrollTop = cy * c / oldC - scroll.clientHeight / 2;
     try{ localStorage.setItem("bedgridZoom", String(z)); }catch(e){}
@@ -10692,7 +10721,8 @@ async function renderBedGrid(){
   const stepZoom = d => { const L = levels(); const i = L.indexOf(zoom); setZoom(L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]); };
   document.getElementById("bgZoomOut").addEventListener("click", () => stepZoom(-1));
   document.getElementById("bgZoomIn").addEventListener("click", () => stepZoom(1));
-  window.addEventListener("resize", () => setZoom(zoom));
+  let zoomW = window.innerWidth;
+  window.addEventListener("resize", () => { if(window.innerWidth !== zoomW){ zoomW = window.innerWidth; setZoom(zoom); } });
   document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(() => setZoom(zoom), 60));
   setZoom(zoom);
   // Hide / show the crops row to give the beds more room.
