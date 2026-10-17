@@ -1974,7 +1974,11 @@
   .bg-scroll.grabbing{ cursor:grabbing; }
   .bg-scroll.grabbing .bg-bed{ box-shadow:0 2px 10px rgba(60,40,20,.35); }
   .bg-movetag{ font-size:12px; font-weight:600; color:var(--ink-soft); }
-  .bg-viewbar{ display:flex; align-items:center; gap:6px; margin:8px 0 0; flex-wrap:wrap; }
+  .bg-viewbar{ display:flex; align-items:center; gap:6px; margin:8px 0 0; flex-wrap:nowrap; }
+  #tab-beds .bg-sub{ margin-bottom:8px; }
+  .bg-box.collapsed{ padding:6px 8px; margin-bottom:8px; }
+  .bg-viewbar button{ min-height:34px !important; }
+  .bg-viewbar .bg-collapse{ white-space:nowrap; padding:0 12px !important; }
   .bg-viewbar .bg-vlabel{ font-size:12px; font-weight:700; color:#8A5A2B; margin-right:2px; }
   .bg-viewbar button{ min-width:40px; min-height:36px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
     font-family:'Inter',sans-serif; font-size:16px; font-weight:700; cursor:pointer; padding:0 10px; }
@@ -1997,8 +2001,8 @@
   .bg-label{ position:sticky; left:0; display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer;
     box-shadow:none !important; background-image:none !important; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B; margin:10px 0 3px 4px; z-index:3; }
   .bg-bed{ display:grid; grid-template-columns:repeat(44, var(--bgc)); grid-template-rows:repeat(5, var(--bgc));
-    border:6px solid #7A5236; border-radius:12px; background:#8E6443; box-shadow:0 2px 6px rgba(60,40,20,.25); }
-  .bg-cell{ border-right:1px solid rgba(255,235,210,.22); border-bottom:1px solid rgba(255,235,210,.22); display:flex; align-items:center;
+    border:6px solid #B8916A; border-radius:12px; background:#E6D2B5; box-shadow:0 2px 6px rgba(60,40,20,.18); }
+  .bg-cell{ border-right:1px solid rgba(122,82,54,.22); border-bottom:1px solid rgba(122,82,54,.22); display:flex; align-items:center;
     justify-content:center; font-size:calc(var(--bgc) * .6); line-height:1; cursor:pointer; user-select:none; -webkit-user-select:none; }
   .bg-cell:nth-child(44n){ border-right:none; }
   .bg-svg{ display:inline-block; width:1.15em; height:1.15em; vertical-align:-0.22em; }
@@ -2006,7 +2010,7 @@
   .bg-cell{ position:relative; }
   /* Halfway mark: a dark line after foot 22 in every bed */
   .bg-cell[data-k$="-21"]::after{ content:""; position:absolute; top:-1px; bottom:-1px; right:-2px; width:3px;
-    background:#3B2414; z-index:2; pointer-events:none; }
+    background:#8A5A2B; z-index:2; pointer-events:none; }
   .bg-ruler span.mid{ color:#8A5A2B; font-weight:700; }
   #tab-beds .bg-box, #tab-beds .bg-scroll{ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
   .bg-cell.fill-start{ box-shadow:inset 0 0 0 2px #fff; }
@@ -2577,18 +2581,16 @@
 
     <section class="tab-panel" id="tab-beds">
       <h2 class="section-title">Garden Beds</h2>
-      <div class="sub">4 beds · 44 ft long · tap a bed's name to rename it · <span id="bgSeasonLabel"></span></div>
+      <div class="sub bg-sub">4 beds · 4 ft × 44 ft<span id="bgSeasonLabel" hidden></span></div>
       <div class="bg-box">
         <div class="bg-box-title">Crops</div>
         <div class="bg-tools" id="bgTools"></div>
         <div class="bg-hint" id="bgHint"></div>
         <div class="bg-panel" id="bgPanel" hidden></div>
         <div class="bg-viewbar">
-          <span class="bg-vlabel">🔍 Size</span>
           <button type="button" id="bgZoomOut" aria-label="Smaller squares">−</button>
           <span class="bg-zoomval" id="bgZoomVal">100%</span>
           <button type="button" id="bgZoomIn" aria-label="Bigger squares">+</button>
-          <span class="bg-movetag" id="bgMoveTag">✋ Drag to move</span>
           <button type="button" class="bg-collapse" id="bgCollapse">▲ Hide crops</button>
         </div>
       </div>
