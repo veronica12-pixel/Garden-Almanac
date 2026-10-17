@@ -1975,7 +1975,32 @@
   .bg-scroll.grabbing .bg-bed{ box-shadow:0 2px 10px rgba(60,40,20,.35); }
   .bg-movetag{ font-size:12px; font-weight:600; color:var(--ink-soft); }
   .bg-viewbar{ display:flex; align-items:center; gap:6px; margin:8px 0 0; flex-wrap:nowrap; }
-  #tab-beds .bg-sub{ margin-bottom:8px; }
+  .bg-allbtn{ display:block; width:100%; margin:10px 0 4px; min-height:46px; border-radius:12px; border:1px solid #E3CFB2;
+    background:#FBF6EF; color:#8A5A2B; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer; }
+  .bg-all{ position:fixed; inset:0; z-index:1000; background:var(--paper); display:flex; flex-direction:column;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  .bg-all[hidden]{ display:none; }
+  .bg-all-top{ display:flex; align-items:center; gap:10px; padding:8px 12px; font-family:'Inter',sans-serif; color:#8A5A2B; }
+  .bg-all-top b{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; color:var(--evergreen); white-space:nowrap; }
+  .bg-all-season{ font-size:12.5px; color:var(--ink-soft); white-space:nowrap; }
+  .bg-all-tip{ font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  #bgAllClose{ flex:none; width:40px; height:40px; border-radius:999px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
+    font-size:18px; font-weight:700; cursor:pointer; }
+  .bg-ruler span:nth-child(21){ visibility:hidden; }
+  .bg-all-body{ flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:0 8px 8px; overflow:hidden; }
+  .bg-all-inner{ width:max-content; pointer-events:none; }
+  .bg-all-inner .bg-ruler{ position:static; padding-left:3px; height:14px; background:none; }
+  .bg-all-inner .bg-ruler span{ font-size:8.5px; }
+  .bg-all-inner .bg-label{ position:static; display:block; font-size:12.5px; margin:3px 0 2px 2px; height:16px; line-height:16px; }
+  .bg-all-inner .bg-pen{ display:none; }
+  .bg-all-inner .bg-bed{ border-width:3px; border-radius:7px; }
+  .bg-all-inner .bg-cell{ cursor:default; }
+  @media (orientation:landscape){ .bg-all-tip{ display:none; } }
+  .bg-head{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:0 2px 6px; }
+  .bg-head .bg-h{ margin:0; font-family:'Fraunces', serif; font-weight:600; font-size:20px; line-height:1.15; color:var(--evergreen); }
+  .bg-head .bg-size{ font-size:13px; color:var(--ink-soft); font-weight:500; }
+  .bg-box .bg-viewbar{ margin-top:4px; }
+  .bg-box.collapsed .bg-head{ margin-bottom:4px; }
   .bg-box.collapsed{ padding:6px 8px; margin-bottom:8px; }
   .bg-viewbar button{ min-height:34px !important; }
   .bg-viewbar .bg-collapse{ white-space:nowrap; padding:0 12px !important; }
@@ -1995,13 +2020,13 @@
   .bg-stopbar button{ flex:none; min-height:38px; border-radius:999px; border:none; background:#fff; color:#8A5A2B;
     font-family:'Inter',sans-serif; font-size:14px; font-weight:700; padding:0 14px; cursor:pointer; }
   .bg-inner{ width:max-content; }
-  .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); padding-left:6px; height:18px; align-items:end;
+  .bg-ruler{ display:grid; grid-template-columns:repeat(44, var(--bgc)); padding-left:clamp(3px, calc(var(--bgc) * .23), 6px); height:18px; align-items:end;
     position:sticky; top:0; z-index:4; background:var(--card); }
   .bg-ruler span{ font-size:9px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
   .bg-label{ position:sticky; left:0; display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer;
     box-shadow:none !important; background-image:none !important; font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#8A5A2B; margin:10px 0 3px 4px; z-index:3; }
   .bg-bed{ display:grid; grid-template-columns:repeat(44, var(--bgc)); grid-template-rows:repeat(5, var(--bgc));
-    border:6px solid #B8916A; border-radius:12px; background:#E6D2B5; box-shadow:0 2px 6px rgba(60,40,20,.18); }
+    border:clamp(3px, calc(var(--bgc) * .23), 6px) solid #B8916A; border-radius:clamp(6px, calc(var(--bgc) * .45), 12px); background:#E6D2B5; box-shadow:0 2px 6px rgba(60,40,20,.18); }
   .bg-cell{ border-right:1px solid rgba(122,82,54,.22); border-bottom:1px solid rgba(122,82,54,.22); display:flex; align-items:center;
     justify-content:center; font-size:calc(var(--bgc) * .6); line-height:1; cursor:pointer; user-select:none; -webkit-user-select:none; }
   .bg-cell:nth-child(44n){ border-right:none; }
@@ -2580,9 +2605,8 @@
     </section>
 
     <section class="tab-panel" id="tab-beds">
-      <h2 class="section-title">Garden Beds</h2>
-      <div class="sub bg-sub">4 beds · 4 ft × 44 ft<span id="bgSeasonLabel" hidden></span></div>
       <div class="bg-box">
+        <div class="bg-head"><h2 class="bg-h">Garden Beds</h2><span class="bg-size">4 beds · 4′ × 44′</span><span id="bgSeasonLabel" hidden></span></div>
         <div class="bg-box-title">Crops</div>
         <div class="bg-tools" id="bgTools"></div>
         <div class="bg-hint" id="bgHint"></div>
@@ -2596,7 +2620,12 @@
       </div>
       <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
       <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-inner" id="bgInner"></div></div>
+      <button type="button" class="bg-allbtn" id="bgAllBtn">🖼️ See all 4 beds</button>
       <div id="bgSummary"></div>
+      <div class="bg-all" id="bgAll" hidden>
+        <div class="bg-all-top"><b>All beds</b><span class="bg-all-season" id="bgAllSeason"></span><span class="bg-all-tip" id="bgAllTip">↻ Turn sideways to enlarge</span><span style="flex:1"></span><button type="button" id="bgAllClose" aria-label="Close">✕</button></div>
+        <div class="bg-all-body" id="bgAllBody"><div class="bg-all-inner" id="bgAllInner"></div></div>
+      </div>
     </section>
 
     <section class="tab-panel" id="tab-fruits">
@@ -10635,25 +10664,37 @@ async function renderBedGrid(){
   document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(fitWindow, 30));
   fitWindow();
   // Square size (zoom), remembered on this phone.
-  const ZOOMS = [16, 20, 24, 26, 30, 36, 42];
-  let zi = 3;
-  try{ const v = Number(localStorage.getItem("bedgridZoom")); if(ZOOMS.includes(v)) zi = ZOOMS.indexOf(v); }catch(e){}
-  const setZoom = i => {
+  // Zoom steps. The smallest step ("fit") makes a whole 44-ft bed fit
+  // across this screen; it is measured each time, since the tab can be
+  // hidden at load and the phone can be turned.
+  const STEPS = [10, 12, 14, 16, 20, 24, 26, 30, 36, 42];
+  const fitCell = () => scroll.clientWidth > 0 ? Math.max(5, Math.floor((scroll.clientWidth - 12) / BG_COLS * 10) / 10) : 8;
+  const levels = () => { const f = fitCell(); return ["fit", ...STEPS.filter(v => v > f)]; };
+  const sizeOf = z => z === "fit" ? fitCell() : z;
+  let zoom = 26, curC = 26;
+  try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(STEPS.includes(Number(v))) zoom = Number(v); }catch(e){}
+  const setZoom = z => {
+    const L = levels();
+    if(z !== "fit" && !L.includes(z)) z = "fit";
+    zoom = z;
+    const c = sizeOf(z), oldC = curC || c;
     // Keep the same spot centered while zooming.
-    const oldC = ZOOMS[zi], cx = scroll.scrollLeft + scroll.clientWidth / 2, cy = scroll.scrollTop + scroll.clientHeight / 2;
-    zi = Math.max(0, Math.min(ZOOMS.length - 1, i));
-    const c = ZOOMS[zi];
-    scroll.style.setProperty("--bgc", c + "px");
+    const cx = scroll.scrollLeft + scroll.clientWidth / 2, cy = scroll.scrollTop + scroll.clientHeight / 2;
+    scroll.style.setProperty("--bgc", c + "px"); curC = c;
+    const i = L.indexOf(z);
     document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
-    document.getElementById("bgZoomOut").disabled = zi === 0;
-    document.getElementById("bgZoomIn").disabled = zi === ZOOMS.length - 1;
+    document.getElementById("bgZoomOut").disabled = i === 0;
+    document.getElementById("bgZoomIn").disabled = i === L.length - 1;
     scroll.scrollLeft = cx * c / oldC - scroll.clientWidth / 2;
     scroll.scrollTop = cy * c / oldC - scroll.clientHeight / 2;
-    try{ localStorage.setItem("bedgridZoom", String(c)); }catch(e){}
+    try{ localStorage.setItem("bedgridZoom", String(z)); }catch(e){}
   };
-  document.getElementById("bgZoomOut").addEventListener("click", () => setZoom(zi - 1));
-  document.getElementById("bgZoomIn").addEventListener("click", () => setZoom(zi + 1));
-  setZoom(zi);
+  const stepZoom = d => { const L = levels(); const i = L.indexOf(zoom); setZoom(L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]); };
+  document.getElementById("bgZoomOut").addEventListener("click", () => stepZoom(-1));
+  document.getElementById("bgZoomIn").addEventListener("click", () => stepZoom(1));
+  window.addEventListener("resize", () => setZoom(zoom));
+  document.querySelector('.tabbtn[data-tab="beds"]')?.addEventListener("click", () => setTimeout(() => setZoom(zoom), 60));
+  setZoom(zoom);
   // Hide / show the crops row to give the beds more room.
   const colBtn = document.getElementById("bgCollapse");
   const setCollapsed = on => {
@@ -10665,6 +10706,32 @@ async function renderBedGrid(){
   colBtn.addEventListener("click", () => setCollapsed(!box.classList.contains("collapsed")));
   try{ if(localStorage.getItem("bedgridCollapsed") === "1") setCollapsed(true); }catch(e){}
   document.getElementById("bgStopBtn").addEventListener("click", () => bgSetTool(null));
+  // "See all 4 beds": a full-screen picture of every bed, sized to fit the
+  // screen. Turning the phone sideways makes it bigger.
+  const all = document.getElementById("bgAll"), allBody = document.getElementById("bgAllBody"), allInner = document.getElementById("bgAllInner");
+  const fitAll = () => {
+    if(all.hidden) return;
+    const W = allBody.clientWidth - 16, H = allBody.clientHeight - 8;
+    const byW = (W - 6) / BG_COLS;
+    const byH = (H - 14 - BG_BEDS * (21 + 6)) / (BG_BEDS * BG_ROWS);
+    const c = Math.max(4, Math.floor(Math.min(byW, byH) * 10) / 10);
+    allInner.style.setProperty("--bgc", c + "px");
+  };
+  const openAll = () => {
+    bgRenderBig();
+    allInner.innerHTML = document.getElementById("bgInner").innerHTML;
+    allInner.querySelectorAll(".press,.anchor,.fill-start").forEach(x => x.classList.remove("press", "anchor", "fill-start"));
+    document.getElementById("bgAllSeason").textContent = document.getElementById("bgSeasonLabel").textContent;
+    all.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    requestAnimationFrame(fitAll);
+  };
+  const closeAll = () => { all.hidden = true; allInner.innerHTML = ""; document.documentElement.style.overflow = ""; };
+  document.getElementById("bgAllBtn").addEventListener("click", openAll);
+  document.getElementById("bgAllClose").addEventListener("click", closeAll);
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && !all.hidden) closeAll(); });
+  window.addEventListener("resize", () => requestAnimationFrame(fitAll));
+  window.addEventListener("orientationchange", () => setTimeout(fitAll, 250));
   let painting = false;
   const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".bg-cell") : null; };
   // Long-press (hold still ~0.4s) on a planted square starts stretching it;
