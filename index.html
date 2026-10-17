@@ -2055,11 +2055,13 @@
   .bg-viewbar .bg-vlabel{ font-size:12px; font-weight:700; color:#8A5A2B; margin-right:2px; }
   .bg-viewbar button{ min-width:40px; min-height:36px; border-radius:10px; border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B;
     font-family:'Inter',sans-serif; font-size:16px; font-weight:700; cursor:pointer; padding:0 10px; }
+  #bgZoomOut, #bgZoomIn, #bgZoomVal{ display:none !important; }
+  .bg-stage{ margin:0 auto; }
   .bg-viewbar .bg-zoomval{ font-size:12.5px; font-weight:600; color:var(--ink-soft); min-width:38px; text-align:center; }
   .bg-viewbar .bg-collapse{ margin-left:auto; font-size:13px; }
   .bg-box.collapsed .bg-tools, .bg-box.collapsed .bg-hint, .bg-box.collapsed .bg-panel, .bg-box.collapsed .bg-box-title{ display:none !important; }
   .bg-box.collapsed .bg-viewbar{ margin-top:0; }
-  .bg-stopbar{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(78px + env(safe-area-inset-bottom)); z-index:35;
+  .bg-stopbar{ position:fixed; left:0; right:0; margin:0 auto; width:max-content; bottom:calc(78px + env(safe-area-inset-bottom)); z-index:35;
     display:none; align-items:center; gap:10px; max-width:calc(100% - 24px); box-sizing:border-box;
     background:#8A5A2B; color:#fff; border-radius:999px; padding:6px 6px 6px 14px; box-shadow:0 6px 18px rgba(0,0,0,.28);
     font-family:'Inter',sans-serif; font-size:14px; font-weight:600; }
@@ -2084,7 +2086,13 @@
     width:calc(var(--bgc) * 5 + 2 * clamp(3px, calc(var(--bgc) * .23), 6px)); min-width:40px; box-sizing:border-box;
     font-size:13px; line-height:1.1; white-space:normal; background:var(--card); z-index:5; }
   .bg-stage.vert .bg-name-input{ width:110px; }
-  .bg-stage.vert .bg-label .bg-pen{ font-size:10px; }
+  .bg-label .bg-num{ font-family:'Fraunces', serif; font-weight:700; font-size:16px; color:#8A5A2B; min-width:12px; text-align:center; cursor:pointer; }
+  .bg-stage.vert .bg-label{ gap:3px; align-items:center; min-width:40px; }
+  .bg-bed-btn{ flex:none; width:22px; height:22px; padding:0; border-radius:7px; border:1px solid #E3CFB2; background:#FBF6EF;
+    font-size:12px; line-height:1; color:#8A5A2B; font-weight:700; cursor:pointer; box-shadow:none !important; background-image:none !important; }
+  .bg-bed-btn.on{ background:#FBE3DF !important; border-color:#C0392B; }
+  .bg-bed.erase-on{ outline:2px dashed #C0392B; outline-offset:2px; }
+  .bg-stage.vert .bg-name-input{ width:96px; font-size:13px; padding:2px 4px; }
   .bg-stage.vert .bg-bed{ grid-template-columns:repeat(5, var(--bgc)); grid-template-rows:repeat(44, var(--bgc)); }
   .bg-stage.vert .bg-cell:nth-child(44n){ border-right:1px solid rgba(122,82,54,.22); }
   .bg-stage.vert .bg-cell[data-k^="4-"]{ border-right:none; }
@@ -2883,7 +2891,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.17-8</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.17-10</div>
   </main>
 
   <nav class="tabbar">
@@ -10496,6 +10504,7 @@ const BG_BEDS = 4, BG_ROWS = 5, BG_COLS = 44;
 let bgNames = {};
 const bgName = b => (bgNames[b] && bgNames[b].trim()) || `Bed ${b}`;
 let bgData = {}, bgTool = null, bgDirty = false, bgLockedHit = false;
+let bgEraseBed = null;   // set when a bed's own 🧽 button is on: erase only inside that bed
 let bgCustom = [];
 let bgHidden = [];  // crops hidden from the crops box (not deleted anywhere)
 async function bgSaveHidden(){ try{ await window.storage.set("bedgridHidden", JSON.stringify(bgHidden), false); }catch(e){} }
@@ -10813,6 +10822,7 @@ function bgRenderBigIn(container, allData){
 function bgApply(el, tool){
   if(READ_ONLY || !el || !tool) return;
   const b = el.dataset.b, k = el.dataset.k;
+  if(tool === "erase" && bgEraseBed && b !== bgEraseBed) return;
   bgData[b] = bgData[b] || {};
   const cur = bgData[b][k];
   if(cur && isEntryLocked(cur.at)){ bgLockedHit = true; return; }
@@ -10898,9 +10908,12 @@ async function bgSaveGarden(){
     bgSaves = bgSaves.filter(x => x.at !== now); await bgStoreSaves(); bgRenderSaves();
   }, "Undo");
 }
-function bgSetTool(t){
+function bgSetTool(t, eraseBed){
   bgTool = t;
-  document.querySelectorAll("#bgTools .bg-tool").forEach(x => x.classList.toggle("on", !!t && x.dataset.s === (t === "erase" ? "__erase" : t.s)));
+  bgEraseBed = t === "erase" && eraseBed ? String(eraseBed) : null;
+  document.querySelectorAll("#bgInner [data-bed-erase]").forEach(x => x.classList.toggle("on", !!bgEraseBed && x.dataset.bedErase === bgEraseBed));
+  document.querySelectorAll("#bgInner .bg-bed").forEach((x, i) => x.classList.toggle("erase-on", !!bgEraseBed && String(i + 1) === bgEraseBed));
+  document.querySelectorAll("#bgTools .bg-tool").forEach(x => x.classList.toggle("on", !!t && !bgEraseBed && x.dataset.s === (t === "erase" ? "__erase" : t.s)));
   document.getElementById("bgScroll").classList.toggle("painting", !!t);
   document.getElementById("bgHint").innerHTML = !t
     ? "✋ Drag the beds to move around. Drag a crop onto a bed, hold still a moment, then keep holding and drag to cover an area."
@@ -10909,7 +10922,7 @@ function bgSetTool(t){
   const bar = document.getElementById("bgStopbar");
   if(bar){
     bar.classList.toggle("show", !!t);
-    document.getElementById("bgStopText").innerHTML = !t ? "" : t === "erase" ? "🧽 Erasing" : `${bgIc(t.emoji)} Planting ${fertEsc(t.n)}`;
+    document.getElementById("bgStopText").innerHTML = !t ? "" : t === "erase" ? (bgEraseBed ? `🧽 Erasing bed ${bgEraseBed}` : "🧽 Erasing") : `${bgIc(t.emoji)} Planting ${fertEsc(t.n)}`;
   }
 }
 async function renderBedGrid(){
@@ -10931,14 +10944,24 @@ async function renderBedGrid(){
   for(let c = 0; c < BG_COLS; c++) ruler += c === 22 ? `<span class="mid" style="margin-left:-6px;">22</span>` : `<span>${c % 4 === 0 && c !== 24 ? c : ""}</span>`;
   let html = `<div class="bg-ruler">${ruler}</div>`;
   for(let b = 1; b <= BG_BEDS; b++){
-    html += `<button type="button" class="bg-label" data-bed-name="${b}">${fertEsc(bgName(b))}${READ_ONLY ? "" : ' <span class="bg-pen">✏️</span>'}</button><div class="bg-bed">`;
+    html += `<div class="bg-label" data-bed="${b}"><span class="bg-num" data-bed-name="${b}" title="${fertEsc(bgName(b))}">${b}</span>`
+      + (READ_ONLY ? "" : `<button type="button" class="bg-bed-btn" data-bed-erase="${b}" aria-label="Eraser for bed ${b}" title="Eraser — bed ${b} only">🧽</button>`)
+      + `</div><div class="bg-bed">`;
     for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++) html += `<div class="bg-cell" data-b="${b}" data-k="${r}-${c}"></div>`;
     html += `</div>`;
   }
   inner.innerHTML = html;
   inner.querySelectorAll(".bg-cell").forEach(bgPaintCell);
+  if(!READ_ONLY) inner.querySelectorAll("[data-bed-erase]").forEach(btn => btn.addEventListener("click", e => {
+    e.stopPropagation();
+    const b = btn.dataset.bedErase;
+    if(bgTool === "erase" && bgEraseBed === b){ bgSetTool(null); return; }
+    bgSetTool("erase", b);
+  }));
   if(!READ_ONLY) inner.querySelectorAll("[data-bed-name]").forEach(btn => btn.addEventListener("click", () => {
     const b = btn.dataset.bedName;
+    // Bed names can only be changed while editing is unlocked.
+    if(!GLOBAL_UNLOCK){ showUndoToast(`${bgName(b)}. To rename a bed, unlock editing (🔒 in Save a copy), then tap its number.`, null, "OK"); return; }
     const inp = document.createElement("input");
     inp.type = "text"; inp.className = "bg-name-input"; inp.maxLength = 40;
     inp.value = (bgNames[b] || ""); inp.placeholder = `Bed ${b}`;
@@ -11022,7 +11045,8 @@ async function renderBedGrid(){
     if(now){ if(viewFrame){ cancelAnimationFrame(viewFrame); } applyView(); }
     else if(!viewFrame) viewFrame = requestAnimationFrame(applyView);
   }
-  window.bgApplyView = () => { layoutStage(); setView(vx, vy, true); };
+  let refit = null;   // set once the sizing code below is ready
+  window.bgApplyView = () => { layoutStage(); if(refit) refit(); else setView(vx, vy, true); };
   window.addEventListener("resize", () => setView(vx, vy));
   // Square size (zoom), remembered on this phone. Buttons step through set
   // sizes; pinching can land anywhere between the smallest ("fit": a whole
@@ -11034,10 +11058,13 @@ async function renderBedGrid(){
     // Upright: smallest size where all four beds, top to bottom, fit the window.
     // Width = 20 squares + fixed parts (a); height = 44 squares + fixed parts (b).
     const c0 = curC || 26, a = inner.offsetWidth - BG_BEDS * BG_ROWS * c0, b = inner.offsetHeight - BG_COLS * c0;
-    const c = Math.min((scroll.clientWidth - 4 - a) / (BG_BEDS * BG_ROWS), (scroll.clientHeight - 4 - b) / BG_COLS);
+    const availH = lastH || scroll.clientHeight;
+    const c = Math.min((scroll.clientWidth - 4 - a) / (BG_BEDS * BG_ROWS), (availH - 6 - b) / BG_COLS);
     return Math.max(4, Math.floor(c * 10) / 10);
   };
-  const sizeOf = z => z === "fit" ? fitCell() : Math.max(fitCell(), Math.min(MAXC, z));
+  // The whole layout is always shown, sized to fit: no zooming, no scrolling up and down.
+  const FIXED_VIEW = true;
+  const sizeOf = z => (FIXED_VIEW || z === "fit") ? fitCell() : Math.max(fitCell(), Math.min(MAXC, z));
   let zoom = 26, curC = 26;
   try{ const v = localStorage.getItem("bedgridZoom"); if(v === "fit") zoom = "fit"; else if(Number(v) >= 5 && Number(v) <= MAXC) zoom = Number(v); }catch(e){}
   const updateZoomButtons = c => {
@@ -11054,12 +11081,15 @@ async function renderBedGrid(){
     const px = (vx + mx) / oldC, py = (vy + my) / oldC;
     if(c !== curC || scroll.style.getPropertyValue("--bgc") !== c + "px"){ scroll.style.setProperty("--bgc", c + "px"); curC = c; }
     layoutStage();
+    if(FIXED_VIEW){ const want = Math.min(lastH || 9999, stage.offsetHeight + 4); scroll.style.setProperty("--bg-win-h", want + "px"); }
     updateZoomButtons(c);
     setView(px * c - mx, py * c - my, true);
     try{ localStorage.setItem("bedgridZoom", String(z)); }catch(e){}
   };
   const setZoom = z => zoomAt(z);
+  refit = () => { if(FIXED_VIEW){ setZoom("fit"); setZoom("fit"); } else setView(vx, vy, true); };
   const stepZoom = d => {
+    if(FIXED_VIEW) return;
     const f = fitCell(), L = [f, ...STEPS.filter(v => v > f + 0.05)];
     let next;
     if(d > 0) next = L.find(v => v > curC + 0.05);
@@ -11078,7 +11108,7 @@ async function renderBedGrid(){
   scroll.addEventListener("wheel", e => {
     e.preventDefault();
     const r = scroll.getBoundingClientRect();
-    if(e.ctrlKey){ zoomAt(Math.max(fitCell(), Math.min(MAXC, curC * Math.exp(-e.deltaY * 0.01))), e.clientX - r.left, e.clientY - r.top); return; }
+    if(e.ctrlKey){ if(FIXED_VIEW) return; zoomAt(Math.max(fitCell(), Math.min(MAXC, curC * Math.exp(-e.deltaY * 0.01))), e.clientX - r.left, e.clientY - r.top); return; }
     let dx = e.deltaX, dy = e.deltaY;
     if(e.shiftKey && !dx){ dx = dy; dy = 0; }
     setView(vx + dx, vy + dy);
@@ -11233,6 +11263,7 @@ async function renderBedGrid(){
   scroll.addEventListener("pointerdown", e => {
     if(e.pointerType !== "touch") return;
     touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(touches.size === 2 && FIXED_VIEW){ clearPress(); pan = null; if(painting || fill) stop(); pinchDone = true; return; }
     if(touches.size === 2){
       // Second finger down: stop whatever the first finger started.
       clearPress(); pan = null; cancelAnimationFrame(glide);
@@ -11421,7 +11452,7 @@ async function renderBedGrid(){
       if(d.anchor){ d.anchor.cell.classList.remove("anchor"); bgDirty = true; bgFinish(); return; }
       bgApply(cellAt(e.clientX, e.clientY), tool); bgFinish();
     } else {
-      const same = bgTool && (bgTool === "erase" ? s === "__erase" : bgTool.s === s);
+      const same = bgTool && (bgTool === "erase" ? s === "__erase" && !bgEraseBed : bgTool.s === s);
       bgSetTool(same ? null : tool);
     }
   });
