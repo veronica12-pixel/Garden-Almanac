@@ -2311,6 +2311,7 @@
 
   /* ---------- tomorrow planting reminder popup ---------- */
   .crop-confetti-layer{ position:fixed; inset:0; pointer-events:none; z-index:9999; overflow:hidden; }
+  .crop-confetti.is-svg svg{ width:1em; height:1em; display:block; }
   .crop-confetti{
     position:absolute; top:-50px; line-height:1; will-change:transform;
     animation-name:cropFall, cropSway; animation-timing-function:cubic-bezier(.3,.1,.5,1), ease-in-out;
@@ -3016,7 +3017,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.18-12</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.18-13</div>
   </main>
 
   <nav class="tabbar">
@@ -13076,7 +13077,8 @@ function cropConfetti(emojis, opts){
   for(let i = 0; i < count; i++){
     const piece = document.createElement("span");
     piece.className = "crop-confetti";
-    piece.textContent = list[i % list.length];
+    const it = list[i % list.length];
+    if(String(it).trim().startsWith("<svg")){ piece.innerHTML = it; piece.classList.add("is-svg"); } else piece.textContent = it;
     const size = 20 + Math.random() * 18;
     const dur = 2.6 + Math.random() * 1.8;
     piece.style.left = (Math.random() * 100) + "vw";
@@ -13141,10 +13143,10 @@ function playGardenJingle(){
     return ctx.resume().then(() => ctx.state === "running" ? go() : false).catch(() => false);
   }catch(e){ return Promise.resolve(false); }
 }
-function celebratePlantingDay(items, card){
-  const emojis = [...new Set((items || []).map(it => it.emoji).filter(Boolean))];
+function celebratePlantingDay(items, card, withSound){
+  const emojis = [...new Set((items || []).map(it => it.icon || it.emoji).filter(Boolean))];
   cropConfetti(emojis, { host: card });
-  playGardenJingle().then(played => {
+  if(withSound !== false) playGardenJingle().then(played => {
     if(played) return;
     // Blocked until the first tap: play it then (once).
     const once = () => { document.removeEventListener("pointerdown", once, true); playGardenJingle(); };
@@ -13152,7 +13154,7 @@ function celebratePlantingDay(items, card){
   });
   if(card){
     // Tap a crop's icon to rain it again.
-    card.querySelectorAll(".tomorrow-icon").forEach(ic => ic.addEventListener("click", () => cropConfetti([ic.dataset.e || ic.textContent.trim()], { count: 24, host: card })));
+    card.querySelectorAll(".tomorrow-icon").forEach(ic => ic.addEventListener("click", () => cropConfetti([ic.querySelector("svg") ? ic.innerHTML : (ic.dataset.e || ic.textContent.trim())], { count: 24, host: card })));
   }
 }
 function showPlantingModal(id, title, items){
@@ -13177,6 +13179,8 @@ function showPlantingModal(id, title, items){
       </div>
     `;
     document.body.appendChild(wrap);
+    // Every planting alert rains its crops; only "Plant today!" plays the jingle.
+    if(id !== "todayModal") celebratePlantingDay(items, wrap, false);
     if(id === "todayModal"){
       celebratePlantingDay(items, wrap);
       const jt = wrap.querySelector(".jingle-toggle");
