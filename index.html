@@ -719,6 +719,25 @@
   #journalList .note-entry.jk-veg .note-date{ color:#3E7A3A; }
   #journalList .note-entry.jk-flower{ background:#FCEEF6; border-color:#EFC9E1; }
   #journalList .note-entry.jk-flower .note-date{ color:#A0457E; }
+  /* Journal entries: header line (log icon · date · photo · edit · delete),
+     then the text across the full width of the card underneath. */
+  #journalList .journal-month-group{ padding:10px 8px; }
+  #journalList .note-entry{
+    display:grid; grid-template-columns:auto 1fr auto auto auto;
+    grid-template-areas:"badge date photo edit remove" "text text text text text";
+    align-items:center; column-gap:8px; row-gap:8px;
+    padding:10px 12px 12px; border-radius:12px; border:1px solid var(--line); border-left-width:4px;
+    font-size:14.5px; line-height:1.55; box-shadow:0 1px 2px rgba(60,40,80,.06);
+  }
+  #journalList .note-entry.jk-fruit{ border-left-color:#E59A5C; }
+  #journalList .note-entry.jk-veg{ border-left-color:#6FAF5E; }
+  #journalList .note-entry.jk-flower{ border-left-color:#D07AAE; }
+  #journalList .note-entry .jk-badge{ grid-area:badge; }
+  #journalList .note-entry .note-date{ grid-area:date; font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; letter-spacing:.01em; padding:0; }
+  #journalList .note-entry .note-photo-badge{ grid-area:photo; width:32px; height:32px; }
+  #journalList .note-entry .n-edit{ grid-area:edit; width:34px; height:34px; font-size:16px; }
+  #journalList .note-entry .n-remove{ grid-area:remove; width:34px; height:34px; font-size:18px; }
+  #journalList .note-entry .note-text{ grid-area:text; color:var(--ink); padding:8px 2px 0; border-top:1px solid rgba(0,0,0,.06); hyphens:auto; -webkit-hyphens:auto; }
   .note-entry .jk-badge{ flex:none; width:28px; height:28px; border-radius:8px; border:none; background:rgba(255,255,255,0.75); font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; }
   .home-tab-btn.tab-germtemp{ background:linear-gradient(160deg, #ECEEFD 0%, #D5DAF8 100%); color:#4B55A8; border-color:#C6CCF1; }
   .home-tab-btn.tab-germtemp.active{ background:#7580D4; color:#fff; border-color:#7580D4; }
@@ -1787,6 +1806,39 @@
     display:flex; align-items:center; justify-content:center;
     background:var(--card); color:var(--evergreen); padding:0;
   }
+  /* Tomato fruiting log */
+  .fruit-field{ margin-top:10px; }
+  .fruit-toggle{ display:flex; align-items:center; gap:8px; width:100%; min-height:42px; padding:0 12px; border-radius:10px;
+    border:1px solid #F0C9C2; background:#FFF4F1; color:#9E3B2C; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; cursor:pointer; text-align:left; }
+  .fruit-toggle .fruit-count{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:#9E3B2C; background:#fff; border-radius:999px; padding:1px 7px; }
+  .fruit-toggle .fruit-count:empty{ display:none; }
+  .fruit-toggle .fruit-caret{ margin-left:auto; transition:transform .2s; }
+  .fruit-toggle[aria-expanded="true"] .fruit-caret{ transform:rotate(180deg); }
+  .fruit-body{ margin-top:6px; padding:10px; border:1px solid #F0C9C2; border-radius:10px; background:#FFFBFA; }
+  .fruit-body[hidden]{ display:none; }
+  .fruit-form{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .fruit-form select, .fruit-form input[type=date]{ grid-column:1 / -1; width:100%; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:16px;
+    color:var(--entry-text); background:#fff; border:1px solid var(--line); border-radius:8px; padding:7px 8px; }
+  .fruit-stage{ display:flex; gap:6px; grid-column:1 / -1; }
+  .fruit-add-btn{ grid-column:1 / -1; }
+  .fruit-stage button{ white-space:nowrap; }
+  .fruit-stage button{ flex:1; min-height:38px; border-radius:9px; border:1px solid var(--line); background:#fff; font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:700; color:var(--ink-soft); cursor:pointer; }
+  .fruit-stage button[data-stage="green"].on{ background:#E7F4E1; border-color:#8FC27A; color:#2F6B2A; }
+  .fruit-stage button[data-stage="ripe"].on{ background:#FCE3DF; border-color:#E08A7D; color:#A3281B; }
+  .fruit-add-btn{ min-height:38px; border-radius:9px; border:1px solid #9E3B2C; background:#C0392B; color:#fff; font-family:'Inter',sans-serif;
+    font-size:13.5px; font-weight:700; cursor:pointer; }
+  .fruit-list{ margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+  .fruit-empty{ font-size:12.5px; color:var(--ink-soft); }
+  .fruit-var{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .fruit-var-name{ font-weight:700; font-size:13.5px; color:var(--ink); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .fruit-span{ font-size:11.5px; font-weight:600; color:#7A5236; background:#FBF3E6; border-radius:999px; padding:1px 8px; }
+  .fruit-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .fruit-chip{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; border-radius:999px; padding:3px 4px 3px 10px; }
+  .fruit-chip.green{ background:#E7F4E1; color:#2F6B2A; }
+  .fruit-chip.ripe{ background:#FCE3DF; color:#A3281B; }
+  .fruit-chip:not(:has(.fruit-del)){ padding-right:10px; }
+  .fruit-del{ width:22px; height:22px; border-radius:999px; border:none; background:rgba(255,255,255,.8); color:inherit; font-size:15px; line-height:1; cursor:pointer; padding:0; }
   /* Finished Seed Packets: a short structured log (what ran out, and
      when) separate from freeform Notes below it. */
   .seedpacket-field{ margin-top:10px; }
@@ -2917,7 +2969,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.17-17</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.18-2</div>
   </main>
 
   <nav class="tabbar">
@@ -6023,7 +6075,8 @@ async function renderJournal(){
         const isOpen = openMonths.has(key);
         const rows = idxs.map(i => {
           const n = entries[i];
-          const dateLabel = n.date;
+          const dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(n.date || ""));
+          const dateLabel = dm ? new Date(+dm[1], +dm[2] - 1, +dm[3]).toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric", year:"numeric" }) : n.date;
           const locked = isPastSeason || isEntryLocked(n.addedAt);
           return `
             <div class="note-entry jk-${journalEntryKind(n)}${i === editingIndex ? " editing" : ""}${locked ? " locked" : ""}"${!locked ? ` data-i="${i}"` : ""}>
@@ -6499,6 +6552,26 @@ async function renderGrid(sectionKey, containerId){
     // next season (or mid-season, if they need to reorder) they can see at
     // a glance what to restock — separate from Notes since it's a
     // short, structured log rather than freeform observations.
+    // Tomatoes only: log when each seeded variety has green fruit and when it ripens.
+    const fruitFieldHTML = p.slug !== "tomatoes" ? "" : `
+      <div class="fruit-field">
+        <button type="button" class="fruit-toggle" id="fruit-toggle-${p.slug}" aria-expanded="false">
+          <span>🍅 Fruiting — green &amp; ripe</span><span class="fruit-count" id="fruit-count-${p.slug}"></span><span class="fruit-caret">▾</span>
+        </button>
+        <div class="fruit-body" id="fruit-body-${p.slug}" hidden>
+          <div class="fruit-form">
+            <select id="fruit-variety-${p.slug}" class="fruit-variety" aria-label="Tomato variety"></select>
+            <input id="fruit-date-${p.slug}" type="date" class="fruit-date" aria-label="Date">
+            <div class="fruit-stage" id="fruit-stage-${p.slug}" role="group" aria-label="Green or ripe">
+              <button type="button" data-stage="green" class="on">🟢 Green</button>
+              <button type="button" data-stage="ripe">🔴 Ripe</button>
+            </div>
+            <button type="button" class="fruit-add-btn" id="fruit-add-${p.slug}">+ Add</button>
+          </div>
+          <div class="fruit-list" id="fruit-list-${p.slug}"></div>
+        </div>
+      </div>
+    `;
     const seedPacketsFieldHTML = `
       <div class="seedpacket-field">
         <label for="seedpacket-${p.slug}">Finished Seed Packets</label>
@@ -6630,6 +6703,7 @@ async function renderGrid(sectionKey, containerId){
             </div>`}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
+          ${fruitFieldHTML}
           ${plantCountFieldHTML}
           ${fertFieldHTML}
           ${bugFieldHTML}
@@ -8118,6 +8192,85 @@ async function renderGrid(sectionKey, containerId){
       // once a crop's season is marked done (see seedPacketsFieldHTML
       // above), so every element here is guarded — there's nothing left
       // to reorder for a season that's already finished.
+      // Fruiting log (tomatoes): which seeded variety has green or ripe fruit, and when.
+      const fruitBody = card.querySelector(`#fruit-body-${p.slug}`);
+      if(fruitBody){
+        const fKey = `fruiting:${activeSeason}:${p.slug}`;
+        const fToggle = card.querySelector(`#fruit-toggle-${p.slug}`);
+        const fCount = card.querySelector(`#fruit-count-${p.slug}`);
+        const fSel = card.querySelector(`#fruit-variety-${p.slug}`);
+        const fDate = card.querySelector(`#fruit-date-${p.slug}`);
+        const fStageEl = card.querySelector(`#fruit-stage-${p.slug}`);
+        const fAdd = card.querySelector(`#fruit-add-${p.slug}`);
+        const fList = card.querySelector(`#fruit-list-${p.slug}`);
+        let fLog = [], fStage = "green", fVarieties = [];
+        try{ const r = await window.storage.get(fKey, false); fLog = r ? (JSON.parse(r.value) || []) : []; }catch(e){ fLog = []; }
+        const fSave = async () => { try{ await window.storage.set(fKey, JSON.stringify(fLog), false); }catch(e){} };
+        const cleanV = v => String(varietyName(v) || "").replace(/<[^>]*>/g, "").trim();
+        const fIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        const fFmt = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { month:"short", day:"numeric" }) : (iso || ""); };
+        const fDays = (a, b) => Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
+        // Every variety seeded this season: the variety list plus the varieties on each sow entry.
+        const loadVarieties = async () => {
+          const seen = new Map();
+          const add = v => { const n = cleanV(v); const k = n.toLowerCase().replace(/[^a-z0-9]/g, ""); if(n && !seen.has(k)) seen.set(k, n); };
+          try{ (await getActualDatesFor(activeSeason, p.slug, "sow")).forEach(d => entryVarieties(d).forEach(add)); }catch(e){}
+          try{ (await getVarieties(p.slug)).forEach(add); }catch(e){}
+          fVarieties = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity:"base" }));
+          const keep = fSel.value;
+          fSel.innerHTML = fVarieties.length
+            ? `<option value="">Pick a variety…</option>` + fVarieties.map(v => `<option value="${fertEsc(v)}">${fertEsc(v)}</option>`).join("")
+            : `<option value="">No varieties seeded yet — add them in Actual sow</option>`;
+          if(keep && fVarieties.includes(keep)) fSel.value = keep;
+          fSel.disabled = !fVarieties.length;
+        };
+        const renderFruit = () => {
+          fCount.textContent = fLog.length ? `${fLog.length}` : "";
+          if(!fLog.length){ fList.innerHTML = `<div class="fruit-empty">No fruit logged yet.</div>`; return; }
+          const byVar = new Map();
+          fLog.forEach((e, i) => { if(!byVar.has(e.variety)) byVar.set(e.variety, []); byVar.get(e.variety).push(i); });
+          fList.innerHTML = [...byVar.keys()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity:"base" })).map(v => {
+            const idxs = byVar.get(v).sort((a, b) => String(fLog[a].date).localeCompare(String(fLog[b].date)));
+            const g = idxs.find(i => fLog[i].stage === "green"), r = idxs.find(i => fLog[i].stage === "ripe");
+            const span = (g !== undefined && r !== undefined) ? fDays(fLog[g].date, fLog[r].date) : null;
+            return `<div class="fruit-var">
+              <div class="fruit-var-name">${fertEsc(v)}${span !== null && span >= 0 ? `<span class="fruit-span">🟢→🔴 ${span} day${span === 1 ? "" : "s"}</span>` : ""}</div>
+              <div class="fruit-chips">${idxs.map(i => {
+                const e = fLog[i], locked = READ_ONLY || isEntryLocked(e.addedAt);
+                return `<span class="fruit-chip ${e.stage}">${e.stage === "ripe" ? "🔴 Ripe" : "🟢 Green"} · ${fFmt(e.date)}${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
+              }).join("")}</div></div>`;
+          }).join("");
+          fList.querySelectorAll(".fruit-del").forEach(btn => btn.addEventListener("click", async ev => {
+            ev.stopPropagation();
+            const i = Number(btn.dataset.i), removed = fLog[i];
+            fLog.splice(i, 1); await fSave(); renderFruit();
+            showUndoToast(`Removed ${removed.variety} — ${removed.stage === "ripe" ? "ripe" : "green"} ${fFmt(removed.date)}`, async () => { fLog.splice(i, 0, removed); await fSave(); renderFruit(); });
+          }));
+        };
+        fToggle.addEventListener("click", async () => {
+          fBodyOpen(!(fToggle.getAttribute("aria-expanded") === "true"));
+        });
+        const fBodyOpen = async open => {
+          fToggle.setAttribute("aria-expanded", open ? "true" : "false");
+          fBody.hidden = !open;
+          if(open){ await loadVarieties(); if(!fDate.value) fDate.value = fIso(new Date()); }
+        };
+        const fBody = fruitBody;
+        fSel.addEventListener("focus", loadVarieties);
+        fStageEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+          fStage = b.dataset.stage;
+          fStageEl.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+        }));
+        fAdd.addEventListener("click", async () => {
+          if(READ_ONLY) return;
+          if(!fSel.value){ showUndoToast("Pick a tomato variety first.", null, "OK"); return; }
+          if(!fDate.value){ showUndoToast("Pick the date.", null, "OK"); return; }
+          fLog.push({ variety: fSel.value, date: fDate.value, stage: fStage, addedAt: Date.now() });
+          await fSave(); renderFruit();
+          showUndoToast(`🍅 ${fSel.value}: ${fStage === "ripe" ? "ripe" : "green"} fruit on ${fFmt(fDate.value)}`, null, "OK");
+        });
+        renderFruit();
+      }
       const seedPacketInput = card.querySelector(`#seedpacket-${p.slug}`);
       const seedPacketAddBtn = card.querySelector(`#seedpacket-add-${p.slug}`);
       const seedPacketListEl = card.querySelector(`#seedpacket-list-${p.slug}`);
