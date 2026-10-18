@@ -2065,12 +2065,13 @@
     border:1px solid #E3CFB2; background:#FBF6EF; color:#8A5A2B; font-family:'Inter',sans-serif; font-weight:700; cursor:pointer; white-space:nowrap; }
   .bg-box.collapsed .bg-head{ margin-bottom:0 !important; }
   /* Map-style zoom buttons in the corner of the beds window */
-  .bg-zoomctl{ position:absolute; right:6px; bottom:6px; z-index:20; display:flex; flex-direction:column; align-items:center;
+  .bg-zoomctl{ position:relative; width:max-content; margin:6px auto 0; display:flex; flex-direction:row; align-items:center;
     background:rgba(255,253,248,.92); border:1px solid #E3CFB2; border-radius:12px; box-shadow:0 2px 8px rgba(60,40,20,.18); overflow:hidden; }
-  .bg-zoomctl button{ width:36px; height:34px; border:none; background:none !important; box-shadow:none !important; background-image:none !important;
+  .bg-zoomctl button{ width:44px; height:32px; border:none; background:none !important; box-shadow:none !important; background-image:none !important;
     font-size:20px; font-weight:700; color:#8A5A2B; cursor:pointer; padding:0; line-height:1; }
   .bg-zoomctl button:disabled{ opacity:.3; }
-  .bg-zoomctl span{ font-family:'Inter',sans-serif; font-size:9.5px; font-weight:700; color:var(--ink-soft); padding:1px 0; border-top:1px solid #EFE2D0; border-bottom:1px solid #EFE2D0; width:100%; text-align:center; }
+  .bg-zoomctl span{ font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:var(--ink-soft); padding:0 8px; min-width:40px; text-align:center;
+    border-left:1px solid #EFE2D0; border-right:1px solid #EFE2D0; line-height:32px; }
   .bg-stage{ margin:0 auto; }
   /* Solid strip behind the pinned bed numbers, so beds never show above or between them */
   .bg-topband{ position:absolute; left:-40px; right:-40px; top:0; height:0; background:var(--card); z-index:4; pointer-events:none;
@@ -2102,19 +2103,26 @@
   .bg-stage.vert .bg-ruler span{ text-shadow:0 0 3px #fff, 0 0 3px #fff, 0 0 2px #fff; font-weight:600; }
   .bg-stage.vert .bg-ruler span{ margin:0 !important; text-align:right; line-height:1; transform:translateY(50%); }
   .bg-stage.vert .bg-label, .bg-stage.vert .bg-name-input{ display:flex; justify-content:center; text-align:center; margin:0; padding:6px 0 3px; position:relative;
-    width:calc(var(--bgc) * 5 + 2 * clamp(3px, calc(var(--bgc) * .23), 6px)); min-width:40px; box-sizing:border-box;
+    width:calc(var(--bgcw, var(--bgc)) * 5 + 2 * clamp(3px, calc(var(--bgc) * .23), 6px)); min-width:40px; box-sizing:border-box;
     font-size:13px; line-height:1.1; white-space:normal; background:var(--card); z-index:5; }
   .bg-stage.vert .bg-name-input{ width:110px; }
   .bg-label .bg-num{ font-family:'Fraunces', serif; font-weight:700; font-size:16px; color:#8A5A2B; min-width:12px; text-align:center; cursor:pointer; }
   .bg-stage.vert .bg-label{ gap:3px; align-items:center; min-width:62px; }
   .bg-bed-btn{ flex:none; width:22px; height:22px; padding:0; border-radius:7px; border:1px solid #E3CFB2; background:#FBF6EF;
     font-size:12px; line-height:1; color:#8A5A2B; font-weight:700; cursor:pointer; box-shadow:none !important; background-image:none !important; }
-  .bg-bed-btn.bg-bed-undo{ font-size:15px; font-weight:800; }
-  .bg-bed-btn:disabled{ opacity:.35; cursor:default; }
+  /* Undo: its own clear color so it stands out next to the eraser */
+  .bg-bed-btn.bg-bed-undo{ display:inline-flex; align-items:center; justify-content:center;
+    color:#1F5A96 !important; background:#D8E9FB !important; border-color:#7FAEE0 !important; }
+  .bg-bed-btn.bg-bed-undo svg{ width:16px; height:16px; }
+  .bg-bed-btn.bg-bed-undo:disabled{ color:#8FA6BF !important; background:#EEF3F8 !important; border-color:#C9D6E4 !important; opacity:1; cursor:default; }
   .bg-bed-btn.on{ background:#FBE3DF !important; border-color:#C0392B; }
   .bg-bed.erase-on{ outline:2px dashed #C0392B; outline-offset:2px; }
   .bg-stage.vert .bg-name-input{ width:96px; font-size:13px; padding:2px 4px; }
-  .bg-stage.vert .bg-bed{ grid-template-columns:repeat(5, var(--bgc)); grid-template-rows:repeat(44, var(--bgc)); }
+  .bg-stage.vert .bg-bed{ grid-template-columns:repeat(5, var(--bgcw, var(--bgc))); grid-template-rows:repeat(44, var(--bgc)); justify-self:center; width:max-content; }
+  .bg-stage.vert .bg-label{ justify-self:center; }
+  /* No foot numbers down the left side */
+  .bg-stage.vert .bg-ruler{ display:none !important; }
+  .bg-stage.vert .bg-inner{ grid-template-columns:0 repeat(4, auto) !important; padding:0 4px 6px !important; column-gap:8px !important; }
   .bg-stage.vert .bg-cell:nth-child(44n){ border-right:1px solid rgba(122,82,54,.22); }
   .bg-stage.vert .bg-cell[data-k^="4-"]{ border-right:none; }
   .bg-stage.vert .bg-cell[data-k$="-21"]::after{ top:-2px; bottom:auto; left:-1px; right:-1px; width:auto; height:3px; }
@@ -2719,7 +2727,8 @@
       </div>
       <div class="bg-stopbar" id="bgStopbar"><span id="bgStopText"></span><button type="button" id="bgStopBtn">✋ Done</button></div>
       <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-stage" id="bgStage"><div class="bg-topband" id="bgTopband"></div><div class="bg-inner" id="bgInner"></div></div>
-        <div class="bg-zoomctl" id="bgZoomCtl"><button type="button" id="bgZoomIn" aria-label="Zoom in">+</button><span id="bgZoomVal">100%</span><button type="button" id="bgZoomOut" aria-label="Zoom out">−</button></div></div>
+</div>
+      <div class="bg-zoomctl" id="bgZoomCtl"><button type="button" id="bgZoomOut" aria-label="Zoom out">−</button><span id="bgZoomVal">100%</span><button type="button" id="bgZoomIn" aria-label="Zoom in">+</button></div>
       <div id="bgSummary" class="bg-summary-under"></div>
       <div class="bg-actions">
         <button type="button" class="bg-act bg-act-all" id="bgAllBtn">🖼️<span>See all 4 beds</span></button>
@@ -2908,7 +2917,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.17-13</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.17-17</div>
   </main>
 
   <nav class="tabbar">
@@ -10842,9 +10851,9 @@ function bgRenderBigIn(container, allData){
       const big = document.createElement("div");
       big.className = "bg-big";
       if(vert){
-        big.style.left = `calc(var(--bgc) * ${best.r0})`;
+        big.style.left = `calc(var(--bgcw, var(--bgc)) * ${best.r0})`;
         big.style.top = `calc(var(--bgc) * ${BG_COLS - best.c0 - best.w})`;
-        big.style.width = `calc(var(--bgc) * ${best.h})`;
+        big.style.width = `calc(var(--bgcw, var(--bgc)) * ${best.h})`;
         big.style.height = `calc(var(--bgc) * ${best.w})`;
       } else {
         big.style.left = `calc(var(--bgc) * ${best.c0})`;
@@ -10986,7 +10995,7 @@ async function renderBedGrid(){
   let html = `<div class="bg-ruler">${ruler}</div>`;
   for(let b = 1; b <= BG_BEDS; b++){
     html += `<div class="bg-label" data-bed="${b}"><span class="bg-num" data-bed-name="${b}" title="${fertEsc(bgName(b))}">${b}</span>`
-      + (READ_ONLY ? "" : `<button type="button" class="bg-bed-btn" data-bed-erase="${b}" aria-label="Eraser for bed ${b}" title="Eraser — bed ${b} only">🧽</button><button type="button" class="bg-bed-btn bg-bed-undo" data-bed-undo="${b}" aria-label="Undo last change in bed ${b}" title="Undo — bed ${b}">↶</button>`)
+      + (READ_ONLY ? "" : `<button type="button" class="bg-bed-btn" data-bed-erase="${b}" aria-label="Eraser for bed ${b}" title="Eraser — bed ${b} only">🧽</button><button type="button" class="bg-bed-btn bg-bed-undo" data-bed-undo="${b}" aria-label="Undo last change in bed ${b}" title="Undo — bed ${b}"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></button>`)
       + `</div><div class="bg-bed">`;
     for(let r = 0; r < BG_ROWS; r++) for(let c = 0; c < BG_COLS; c++) html += `<div class="bg-cell" data-b="${b}" data-k="${r}-${c}"></div>`;
     html += `</div>`;
@@ -11045,7 +11054,8 @@ async function renderBedGrid(){
     const vh = probe.offsetHeight || window.innerHeight;
     const top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--topbar-h")) || 112;
     const tab = document.querySelector("nav.tabbar");
-    const h = Math.max(220, Math.round(vh - top - (box ? boxH + 12 : 0) - (tab ? tab.offsetHeight : 70) - 14));
+    const zc = document.getElementById("bgZoomCtl");
+    const h = Math.max(220, Math.round(vh - top - (box ? boxH + 12 : 0) - (tab ? tab.offsetHeight : 70) - 14 - (zc ? zc.offsetHeight + 6 : 0)));
     if(Math.abs(h - lastH) < 2) return;
     lastH = h;
     scroll.style.setProperty("--bg-win-h", h + "px");
@@ -11111,13 +11121,13 @@ async function renderBedGrid(){
     // Width = 20 squares + fixed parts (a); height = 44 squares + fixed parts (b).
     const c0 = curC || 26, a = inner.offsetWidth - BG_BEDS * BG_ROWS * c0, b = inner.offsetHeight - BG_COLS * c0;
     const availH = lastH || scroll.clientHeight;
-    const c = Math.min((scroll.clientWidth - 4 - a) / (BG_BEDS * BG_ROWS), (availH - 6 - b) / BG_COLS);
+    const c = (availH - 6 - b) / BG_COLS;
     return Math.max(4, Math.floor(c * 10) / 10);
   };
   // The whole layout is always shown, sized to fit: no zooming, no scrolling up and down.
   const FIXED_VIEW = false;
   const sizeOf = z => (FIXED_VIEW || z === "fit") ? fitCell() : Math.max(fitCell(), Math.min(MAXC, z));
-  let zoom = 26, curC = 26;
+  let zoom = 26, curC = 26, bgStretch = 1;
   zoom = "fit";   // always opens showing all four beds whole
   const updateZoomButtons = c => {
     document.getElementById("bgZoomVal").textContent = Math.round(c / 26 * 100) + "%";
@@ -11132,6 +11142,8 @@ async function renderBedGrid(){
     if(mx === undefined){ mx = scroll.clientWidth / 2; my = scroll.clientHeight / 2; }
     const px = (vx + mx) / oldC, py = (vy + my) / oldC;
     if(c !== curC || scroll.style.getPropertyValue("--bgc") !== c + "px"){ scroll.style.setProperty("--bgc", c + "px"); curC = c; }
+    // Squares stay square; the whole bed fits on screen top to bottom.
+    if(vertical) scroll.style.setProperty("--bgcw", c + "px");
     layoutStage();
     // Whole-beds view: window hugs the beds (nothing to scroll). Zoomed in: full window, drag to move around.
     { const want = zoom === "fit" ? Math.min(lastH || 9999, stage.offsetHeight + 4) : (lastH || 9999); scroll.style.setProperty("--bg-win-h", want + "px"); }
