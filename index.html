@@ -1806,6 +1806,35 @@
     display:flex; align-items:center; justify-content:center;
     background:var(--card); color:var(--evergreen); padding:0;
   }
+  /* Bug Alert pop-up: same type sizes as the rest of the app (Inter 13.5px forms, 14px buttons). */
+  #bugSheet, #bugSheet input, #bugSheet button, #bugSheet label{ font-family:'Inter',sans-serif; }
+  #bugSheetTitle{ font-size:18px !important; }
+  #bugSheet label{ font-size:12px !important; }
+  #bugSheet input{ font-size:13.5px !important; min-height:40px !important; padding:7px 10px !important; box-sizing:border-box; }
+  #bugSheet #bugQuick button{ font-size:12.5px !important; min-height:32px !important; padding:4px 11px !important; }
+  #bugSheet .modal-close{ font-size:14px !important; min-height:42px !important; font-family:'Inter',sans-serif !important; }
+  #bugSheet .bug-row{ font-size:13.5px !important; padding:8px 10px !important; }
+  #bugSheet .bug-row-name{ font-size:13.5px !important; }
+  #bugSheet .bug-row-note{ font-size:12.5px !important; }
+  #bugSheet .bug-row-date{ font-size:11px !important; }
+  /* Bug alerts live only in the bug button's pop-up (its own history list), not repeated at the bottom of each crop window. */
+  .plant-card .bug-field{ display:none !important; }
+  /* Crop-window sub-sections: Fruiting, Fertilizer, Organic pest control share one
+     button style, and the same title font as "Plants in the garden" (Inter 15px, 600). */
+  .plantcount-field .pc-main > label{ font-size:15px !important; font-weight:600 !important; font-family:'Inter',sans-serif !important; }
+  .fruit-toggle, .sub-dd > summary{ font-size:15px !important; font-weight:600 !important; font-family:'Inter',sans-serif !important; min-height:44px !important; }
+  .sub-dd{ margin-top:10px; }
+  .sub-dd > summary{ list-style:none; display:flex; align-items:center; gap:8px; padding:0 12px; border-radius:10px; cursor:pointer;
+    border:1px solid var(--line); -webkit-user-select:none; user-select:none; }
+  .sub-dd > summary::-webkit-details-marker{ display:none; }
+  .sub-dd .sub-count{ font-family:'IBM Plex Mono', monospace; font-size:11px; background:#fff; border-radius:999px; padding:1px 7px; }
+  .sub-dd .sub-caret{ margin-left:auto; transition:transform .2s; }
+  .sub-dd[open] .sub-caret{ transform:rotate(180deg); }
+  .sub-dd .sub-body{ margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .sub-fert > summary{ background:#FBF3E6; border-color:#E8D3B0; color:#8A5A2B; }
+  .sub-fert .sub-count{ color:#8A5A2B; }
+  .sub-opc > summary{ background:#EEF6E8; border-color:#C9E0B8; color:#3E6B2A; }
+  .sub-opc .sub-count{ color:#3E6B2A; }
   /* Tomato fruiting log */
   .fruit-field{ margin-top:10px; }
   .fruit-toggle{ display:flex; align-items:center; gap:8px; width:100%; min-height:42px; padding:0 12px; border-radius:10px;
@@ -1838,11 +1867,18 @@
   .fruit-chip.green{ background:#4E9A3A; color:#fff; }
   .fruit-chip.ripe{ background:#C0392B; color:#fff; }
   .fruit-list{ gap:0 !important; margin-top:8px !important; }
-  .fruit-day{ display:flex; align-items:flex-start; gap:8px; padding:6px 2px; border-bottom:1px solid #F3DCD7; }
+  .fruit-field, .fruit-field button, .fruit-field select, .fruit-field input{ font-family:'Inter',sans-serif !important; }
+  .fruit-form select, .fruit-form input[type=date], .fruit-stage button, .fruit-add-btn{ font-size:13.5px !important; min-height:40px !important; }
+  .fruit-stage button, .fruit-add-btn{ font-weight:600 !important; }
+  .fruit-form select, .fruit-form input[type=date]{ font-weight:400 !important; }
+  /* Each date: small date line, then the varieties in an even grid that fills the width */
+  .fruit-day{ display:block; padding:7px 0; border-bottom:1px solid #F3DCD7; }
   .fruit-day:last-of-type{ border-bottom:none; }
-  .fruit-day-date{ flex:none; width:52px; font-size:12.5px; font-weight:700; color:#7A5236; padding-top:4px; }
-  .fruit-day-chips{ display:flex; flex-wrap:wrap; gap:5px; }
-  .fruit-day .fruit-chip{ font-size:12.5px; padding:4px 10px; }
+  .fruit-day-date{ font-size:12px; font-weight:700; color:#7A5236; letter-spacing:.02em; margin:0 2px 5px; }
+  .fruit-day-chips{ display:grid; grid-template-columns:repeat(auto-fill, minmax(132px, 1fr)); gap:5px; }
+  .fruit-day .fruit-chip{ display:flex; align-items:center; justify-content:space-between; gap:4px; min-width:0;
+    font-size:13px; font-weight:600; padding:5px 10px; border-radius:10px; min-height:30px; box-sizing:border-box; }
+  .fruit-chip-name{ min-width:0; white-space:normal; overflow-wrap:anywhere; line-height:1.2; }
   .fruit-day .fruit-chip:has(.fruit-del){ padding-right:3px; }
   .fruit-del{ background:rgba(255,255,255,.4) !important; background-image:none !important; box-shadow:none !important; border:none !important; color:inherit !important; text-shadow:none !important; width:20px !important; height:20px !important; transform:none !important; }
   .fruit-key{ display:flex; gap:6px; justify-content:flex-end; margin-top:6px; }
@@ -2980,7 +3016,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.18-6</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.18-12</div>
   </main>
 
   <nav class="tabbar">
@@ -5562,7 +5598,7 @@ function cropFertFieldHTML(p, allFeedings){
     const bits = [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · ");
     return `<div class="cropfert-row">${fertFmtDate(e.date)}${bits ? ` — <span>${bits}</span>` : ""}</div>`;
   }).join("");
-  return `<div class="cropfert-field"><label>🧪 Fertilizer</label>${nextHTML}${rows}</div>`;
+  return `<details class="cropfert-field sub-dd sub-fert"><summary><span>🧪 Fertilizer</span><span class="sub-count">${mine.length}</span><span class="sub-caret">▾</span></summary><div class="sub-body">${rows}</div></details>`;
 }
 function fertEsc(v){ return String(v == null ? "" : v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function fertFmtDate(iso){
@@ -5803,7 +5839,7 @@ function cropOpcFieldHTML(p, allTreatments){
     const bits = opcBits(e).map(fertEsc).join(" · ");
     return `<div class="cropfert-row">${fertFmtDate(e.date)}${bits ? ` — <span>${bits}</span>` : ""}</div>`;
   }).join("");
-  return `<div class="cropfert-field"><label>🐞 Organic pest control</label>${nextHTML}${rows}</div>`;
+  return `<details class="cropfert-field sub-dd sub-opc"><summary><span>🐞 Organic pest control</span><span class="sub-count">${mine.length}</span><span class="sub-caret">▾</span></summary><div class="sub-body">${rows}</div></details>`;
 }
 function opcResetForm(){
   opcEditingIds = [];
@@ -6538,12 +6574,8 @@ async function renderGrid(sectionKey, containerId){
     `;
     const fertFieldHTML = cropFertFieldHTML(p, seasonFeedings) + cropOpcFieldHTML(p, seasonTreatments);
     const cropBugs = isPastSeason ? [] : await getBugs(p.slug);
-    const bugFieldHTML = `
-      <div class="bug-field" id="bug-field-${p.slug}"${cropBugs.length ? "" : ` style="display:none;"`}>
-        <label>🐛 Bug alerts</label>
-        <div class="bug-list" id="bug-list-${p.slug}">${bugRowsHTML(cropBugs)}</div>
-      </div>
-    `;
+    // Bug alerts are shown only in the bug button's pop-up, not in the crop window.
+    const bugFieldHTML = "";
     const notesFieldHTML = `
       <div class="notes-field">
         <label for="notes-${p.slug}">Notes</label>
@@ -6714,8 +6746,8 @@ async function renderGrid(sectionKey, containerId){
             </div>`}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
-          ${fruitFieldHTML}
           ${plantCountFieldHTML}
+          ${fruitFieldHTML}
           ${fertFieldHTML}
           ${bugFieldHTML}
           <div class="af-stack" hidden></div>
@@ -8271,10 +8303,10 @@ async function renderGrid(sectionKey, containerId){
           fLog.forEach((e, i) => { if(!byDate.has(e.date)) byDate.set(e.date, []); byDate.get(e.date).push(i); });
           fList.innerHTML = [...byDate.keys()].sort((a, b) => String(b).localeCompare(String(a))).map(d => {
             const idxs = byDate.get(d).sort((a, b) => fLog[a].variety.localeCompare(fLog[b].variety, undefined, { sensitivity:"base" }));
-            return `<div class="fruit-day"><span class="fruit-day-date">${fFmt(d)}</span><span class="fruit-day-chips">${idxs.map(i => {
+            return `<div class="fruit-day"><div class="fruit-day-date">${fFmt(d)}</div><div class="fruit-day-chips">${idxs.map(i => {
               const e = fLog[i], locked = READ_ONLY || isEntryLocked(e.addedAt);
-              return `<span class="fruit-chip ${e.stage}"${e.stage === "ripe" ? ripeStyle(e.variety) : ""} title="${e.stage === "ripe" ? "Ripe" : "Green"}">${fertEsc(e.variety)}${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
-            }).join("")}</span></div>`;
+              return `<span class="fruit-chip ${e.stage}"${e.stage === "ripe" ? ripeStyle(e.variety) : ""} title="${fertEsc(e.variety)} — ${e.stage === "ripe" ? "Ripe" : "Green"}"><span class="fruit-chip-name">${fertEsc(e.variety)}</span>${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
+            }).join("")}</div></div>`;
           }).join("") + `<div class="fruit-key"><span class="fruit-chip green">Green</span><span class="fruit-chip fruit-key-ripe">Ripe = color of the ${({ tomatoes:"tomato", peppers:"pepper", eggplants:"eggplant" })[p.slug] || "fruit"}</span></div>`;
           fList.querySelectorAll(".fruit-del").forEach(btn => btn.addEventListener("click", async ev => {
             ev.stopPropagation();
