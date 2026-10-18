@@ -1835,8 +1835,19 @@
   .fruit-span{ font-size:11.5px; font-weight:600; color:#7A5236; background:#FBF3E6; border-radius:999px; padding:1px 8px; }
   .fruit-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
   .fruit-chip{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; border-radius:999px; padding:3px 4px 3px 10px; }
-  .fruit-chip.green{ background:#E7F4E1; color:#2F6B2A; }
-  .fruit-chip.ripe{ background:#FCE3DF; color:#A3281B; }
+  .fruit-chip.green{ background:#4E9A3A; color:#fff; }
+  .fruit-chip.ripe{ background:#C0392B; color:#fff; }
+  .fruit-list{ gap:0 !important; margin-top:8px !important; }
+  .fruit-day{ display:flex; align-items:flex-start; gap:8px; padding:6px 2px; border-bottom:1px solid #F3DCD7; }
+  .fruit-day:last-of-type{ border-bottom:none; }
+  .fruit-day-date{ flex:none; width:52px; font-size:12.5px; font-weight:700; color:#7A5236; padding-top:4px; }
+  .fruit-day-chips{ display:flex; flex-wrap:wrap; gap:5px; }
+  .fruit-day .fruit-chip{ font-size:12.5px; padding:4px 10px; }
+  .fruit-day .fruit-chip:has(.fruit-del){ padding-right:3px; }
+  .fruit-del{ background:rgba(255,255,255,.4) !important; background-image:none !important; box-shadow:none !important; border:none !important; color:inherit !important; text-shadow:none !important; width:20px !important; height:20px !important; transform:none !important; }
+  .fruit-key{ display:flex; gap:6px; justify-content:flex-end; margin-top:6px; }
+  .fruit-key .fruit-key-ripe{ background:#fff; color:#7A5236; border:1px solid #E3CFB2; }
+  .fruit-key .fruit-chip{ font-size:10.5px; padding:2px 8px; opacity:.9; }
   .fruit-chip:not(:has(.fruit-del)){ padding-right:10px; }
   .fruit-del{ width:22px; height:22px; border-radius:999px; border:none; background:rgba(255,255,255,.8); color:inherit; font-size:15px; line-height:1; cursor:pointer; padding:0; }
   /* Finished Seed Packets: a short structured log (what ran out, and
@@ -2969,7 +2980,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.18-2</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.18-6</div>
   </main>
 
   <nav class="tabbar">
@@ -6553,14 +6564,14 @@ async function renderGrid(sectionKey, containerId){
     // a glance what to restock — separate from Notes since it's a
     // short, structured log rather than freeform observations.
     // Tomatoes only: log when each seeded variety has green fruit and when it ripens.
-    const fruitFieldHTML = p.slug !== "tomatoes" ? "" : `
+    const fruitFieldHTML = !["tomatoes", "peppers", "eggplants"].includes(p.slug) ? "" : `
       <div class="fruit-field">
         <button type="button" class="fruit-toggle" id="fruit-toggle-${p.slug}" aria-expanded="false">
-          <span>🍅 Fruiting — green &amp; ripe</span><span class="fruit-count" id="fruit-count-${p.slug}"></span><span class="fruit-caret">▾</span>
+          <span>${({ tomatoes:"🍅", peppers:"🫑", eggplants:"🍆" })[p.slug]} Fruiting — green &amp; ripe</span><span class="fruit-count" id="fruit-count-${p.slug}"></span><span class="fruit-caret">▾</span>
         </button>
         <div class="fruit-body" id="fruit-body-${p.slug}" hidden>
           <div class="fruit-form">
-            <select id="fruit-variety-${p.slug}" class="fruit-variety" aria-label="Tomato variety"></select>
+            <select id="fruit-variety-${p.slug}" class="fruit-variety" aria-label="Variety"></select>
             <input id="fruit-date-${p.slug}" type="date" class="fruit-date" aria-label="Date">
             <div class="fruit-stage" id="fruit-stage-${p.slug}" role="group" aria-label="Green or ripe">
               <button type="button" data-stage="green" class="on">🟢 Green</button>
@@ -8204,6 +8215,9 @@ async function renderGrid(sectionKey, containerId){
         const fAdd = card.querySelector(`#fruit-add-${p.slug}`);
         const fList = card.querySelector(`#fruit-list-${p.slug}`);
         let fLog = [], fStage = "green", fVarieties = [];
+        const fColors = new Map();   // variety key -> fruit colors chosen when it was seeded
+        const fHex = CROP_COLOR_HEX[p.slug] || TOMATO_COLOR_HEX;
+        const fKeyOf = n => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "");
         try{ const r = await window.storage.get(fKey, false); fLog = r ? (JSON.parse(r.value) || []) : []; }catch(e){ fLog = []; }
         const fSave = async () => { try{ await window.storage.set(fKey, JSON.stringify(fLog), false); }catch(e){} };
         const cleanV = v => String(varietyName(v) || "").replace(/<[^>]*>/g, "").trim();
@@ -8213,7 +8227,12 @@ async function renderGrid(sectionKey, containerId){
         // Every variety seeded this season: the variety list plus the varieties on each sow entry.
         const loadVarieties = async () => {
           const seen = new Map();
-          const add = v => { const n = cleanV(v); const k = n.toLowerCase().replace(/[^a-z0-9]/g, ""); if(n && !seen.has(k)) seen.set(k, n); };
+          const add = v => {
+            const n = cleanV(v); const k = fKeyOf(n); if(!n) return;
+            if(!seen.has(k)) seen.set(k, n);
+            const cols = (v && typeof v === "object" && Array.isArray(v.colors)) ? v.colors.filter(c => fHex[c]) : [];
+            if(cols.length && !(fColors.get(k) || []).length) fColors.set(k, cols);
+          };
           try{ (await getActualDatesFor(activeSeason, p.slug, "sow")).forEach(d => entryVarieties(d).forEach(add)); }catch(e){}
           try{ (await getVarieties(p.slug)).forEach(add); }catch(e){}
           fVarieties = [...seen.values()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity:"base" }));
@@ -8224,22 +8243,39 @@ async function renderGrid(sectionKey, containerId){
           if(keep && fVarieties.includes(keep)) fSel.value = keep;
           fSel.disabled = !fVarieties.length;
         };
+        // Ripe chips take the variety's own fruit color (e.g. Gold Nugget = yellow);
+        // two colors = split chip. No color saved: built-in tomato list, then red.
+        const ripeStyle = name => {
+          const k = fKeyOf(name);
+          let cols = fColors.get(k) || [];
+          if(!cols.length){
+            const plain = String(name).replace(/[\u2764\uFE0F]/g, "").replace(/\(.*?\)/g, "").trim().toLowerCase();
+            const info = p.slug === "tomatoes" && (typeof COMMON_TOMATO_VARIETIES !== "undefined") && (COMMON_TOMATO_VARIETIES[plain] || Object.entries(COMMON_TOMATO_VARIETIES).find(([nm]) => fKeyOf(nm) === k)?.[1]);
+            if(info && info.colors) cols = info.colors.filter(c => fHex[c]);
+          }
+          if(!cols.length && p.slug === "eggplants") cols = ["Dark Purple"];
+          if(!cols.length) return "";
+          const hex = cols.map(c => fHex[c]);
+          const light = cols.every(c => ["Yellow", "Orange", "White", "Lavender", "Light Purple", "Pink"].includes(c));
+          const bg = hex.length > 1 ? `linear-gradient(90deg, ${hex[0]} 0 50%, ${hex[1]} 50% 100%)` : hex[0];
+          // Green-when-ripe varieties get a gold ring so they can't be mistaken for unripe green fruit.
+          const ring = cols.includes("Green") ? ";box-shadow:inset 0 0 0 2px #E8C93A" : "";
+          const shadow = hex.length > 1 && !light ? ";text-shadow:0 0 3px rgba(0,0,0,.6),0 0 1px rgba(0,0,0,.8)" : "";
+          return ` style="background:${bg};color:${light ? "#4A3410" : "#fff"}${ring}${shadow}"`;
+        };
         const renderFruit = () => {
           fCount.textContent = fLog.length ? `${fLog.length}` : "";
           if(!fLog.length){ fList.innerHTML = `<div class="fruit-empty">No fruit logged yet.</div>`; return; }
-          const byVar = new Map();
-          fLog.forEach((e, i) => { if(!byVar.has(e.variety)) byVar.set(e.variety, []); byVar.get(e.variety).push(i); });
-          fList.innerHTML = [...byVar.keys()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity:"base" })).map(v => {
-            const idxs = byVar.get(v).sort((a, b) => String(fLog[a].date).localeCompare(String(fLog[b].date)));
-            const g = idxs.find(i => fLog[i].stage === "green"), r = idxs.find(i => fLog[i].stage === "ripe");
-            const span = (g !== undefined && r !== undefined) ? fDays(fLog[g].date, fLog[r].date) : null;
-            return `<div class="fruit-var">
-              <div class="fruit-var-name">${fertEsc(v)}${span !== null && span >= 0 ? `<span class="fruit-span">🟢→🔴 ${span} day${span === 1 ? "" : "s"}</span>` : ""}</div>
-              <div class="fruit-chips">${idxs.map(i => {
-                const e = fLog[i], locked = READ_ONLY || isEntryLocked(e.addedAt);
-                return `<span class="fruit-chip ${e.stage}">${e.stage === "ripe" ? "🔴 Ripe" : "🟢 Green"} · ${fFmt(e.date)}${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
-              }).join("")}</div></div>`;
-          }).join("");
+          // One line per date (newest first); each variety is a chip: green background = green fruit, red = ripe.
+          const byDate = new Map();
+          fLog.forEach((e, i) => { if(!byDate.has(e.date)) byDate.set(e.date, []); byDate.get(e.date).push(i); });
+          fList.innerHTML = [...byDate.keys()].sort((a, b) => String(b).localeCompare(String(a))).map(d => {
+            const idxs = byDate.get(d).sort((a, b) => fLog[a].variety.localeCompare(fLog[b].variety, undefined, { sensitivity:"base" }));
+            return `<div class="fruit-day"><span class="fruit-day-date">${fFmt(d)}</span><span class="fruit-day-chips">${idxs.map(i => {
+              const e = fLog[i], locked = READ_ONLY || isEntryLocked(e.addedAt);
+              return `<span class="fruit-chip ${e.stage}"${e.stage === "ripe" ? ripeStyle(e.variety) : ""} title="${e.stage === "ripe" ? "Ripe" : "Green"}">${fertEsc(e.variety)}${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
+            }).join("")}</span></div>`;
+          }).join("") + `<div class="fruit-key"><span class="fruit-chip green">Green</span><span class="fruit-chip fruit-key-ripe">Ripe = color of the ${({ tomatoes:"tomato", peppers:"pepper", eggplants:"eggplant" })[p.slug] || "fruit"}</span></div>`;
           fList.querySelectorAll(".fruit-del").forEach(btn => btn.addEventListener("click", async ev => {
             ev.stopPropagation();
             const i = Number(btn.dataset.i), removed = fLog[i];
@@ -8263,12 +8299,13 @@ async function renderGrid(sectionKey, containerId){
         }));
         fAdd.addEventListener("click", async () => {
           if(READ_ONLY) return;
-          if(!fSel.value){ showUndoToast("Pick a tomato variety first.", null, "OK"); return; }
+          if(!fSel.value){ showUndoToast("Pick a variety first.", null, "OK"); return; }
           if(!fDate.value){ showUndoToast("Pick the date.", null, "OK"); return; }
           fLog.push({ variety: fSel.value, date: fDate.value, stage: fStage, addedAt: Date.now() });
           await fSave(); renderFruit();
-          showUndoToast(`🍅 ${fSel.value}: ${fStage === "ripe" ? "ripe" : "green"} fruit on ${fFmt(fDate.value)}`, null, "OK");
+          showUndoToast(`${({ tomatoes:"🍅", peppers:"🫑", eggplants:"🍆" })[p.slug]} ${fSel.value}: ${fStage === "ripe" ? "ripe" : "green"} fruit on ${fFmt(fDate.value)}`, null, "OK");
         });
+        await loadVarieties();
         renderFruit();
       }
       const seedPacketInput = card.querySelector(`#seedpacket-${p.slug}`);
@@ -9559,11 +9596,13 @@ async function renderGerminationTempChart(){
           <div class="gtemp-row-val" data-label="Temp">${g.optMin}–${g.optMax}°F</div>
           <div class="gtemp-row-days" data-label="Sprouts">${daysText}</div>
           <div class="gtemp-row-dtm" data-label="Maturity">${dtmText}</div>
-          <div class="gtemp-row-tw" data-label="Transplant">${(() => {
+          <div class="gtemp-row-tw" data-label="${DIRECT_SOW_CROPS.includes(p.slug) ? "Germinated" : "Transplant"}">${(() => {
             const tw = twMap[p.slug];
-            const unit = (tw && tw.u === "d") ? "d" : "w";
+            // Direct-sown crops are never transplanted: this column is their own days to germinate.
+            const direct = DIRECT_SOW_CROPS.includes(p.slug);
+            const unit = (tw && tw.u === "d") || (direct && !(tw && tw.u === "w")) ? "d" : "w";
             if(tw && tw.w && isEntryLocked(tw.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(tw.w)}${unit === "d" ? " days" : "w"}</span>`;
-            return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="${unit === "d" ? "days" : "wks"}" aria-label="Time from seed start to transplant for ${escAttr(p.name)}">`
+            return `<input type="text" inputmode="decimal" maxlength="5" data-tw-slug="${p.slug}" value="${tw && tw.w ? escAttr(tw.w) : ""}" placeholder="${unit === "d" ? "days" : "wks"}" aria-label="${direct ? `Days to germinate for ${escAttr(p.name)}` : `Time from seed start to transplant for ${escAttr(p.name)}`}">`
               + `<div class="gtemp-tw-unit" role="group" aria-label="Weeks or days"><button type="button" data-tw-unit="w" data-tw-for="${p.slug}" class="${unit === "w" ? "on" : ""}">wk</button><button type="button" data-tw-unit="d" data-tw-for="${p.slug}" class="${unit === "d" ? "on" : ""}">day</button></div>`;
           })()}</div>
         </div>`;
@@ -9574,7 +9613,7 @@ async function renderGerminationTempChart(){
     el.innerHTML = `<div class="harvest-empty">No crops entered for ${SEASONS[activeSeason].label} yet.</div>`;
     return;
   }
-  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest; "Transplant" is your own time from starting seeds to moving them outside — tap wk or day to pick weeks (e.g. 6 or 6-8) or days (e.g. 42) — it stays the same every season and locks 48h after you enter it. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
+  html += `<div class="gtemp-legend">"Germ" is typical days to sprout; "Maturity" is typical days from planting to first harvest; "Transplant" is your own time from starting seeds to moving them outside; for crops sown straight in the garden it reads "Germinated" — your own days from sowing to sprouting. Tap wk or day to pick weeks (e.g. 6 or 6-8) or days (e.g. 42) — it stays the same every season and locks 48h after you enter it. ${anyApprox ? '<span class="gtemp-approx">*</span> Limited published data for this crop — treat as an approximate guide, and use a soil thermometer 2–3" deep and your own notes to confirm.' : 'Use a soil thermometer 2–3" deep to confirm before sowing.'}</div>`;
   el.innerHTML = html;
   el.querySelectorAll("input[data-tw-slug]").forEach(inp => {
     inp.addEventListener("change", async () => {
