@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Odessa Garden</title>
+<title>Alessandra Garden</title>
 
 <!-- Prevents the browser (especially iOS's standalone home-screen mode)
      from serving a stale cached copy of this file after it's updated. -->
@@ -13,7 +13,7 @@
 <!-- iOS "Add to Home Screen" app behavior -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Odessa Garden">
+<meta name="apple-mobile-web-app-title" content="Alessandra Garden">
 <meta name="theme-color" content="#F6F0E2">
 <link rel="apple-touch-icon" id="appleTouchIconLink">
 <link rel="icon" id="faviconLink">
@@ -137,7 +137,7 @@
     background:var(--card); border:1px solid var(--line);
     color:var(--evergreen); padding:6px; overflow:hidden;
   }
-  /* Day number matches the "Odessa Garden" title's font size exactly —
+  /* Day number matches the "Alessandra Garden" title's font size exactly —
      the month name underneath is the full word ("August") when it fits
      the 84px box, falling back to the short form ("Aug") only if it
      doesn't. */
@@ -495,6 +495,20 @@
     padding:12px 14px; border-bottom:1px solid var(--line); cursor:pointer;
   }
   .ledger-row:last-child{border-bottom:none;}
+  .ledger-row.bio-fruit{ background:#F8C9C0; } .ledger-row.bio-leaf{ background:#D6EABF; }
+  .ledger-row.bio-root{ background:#E2CBAB; } .ledger-row.bio-flower{ background:#FBE6A2; }
+  .ledger-row[class*="bio-"] .ledger-date{ background:rgba(255,255,255,.7); }
+  .ledger-row[class*="bio-"] .ledger-mid .action{ color:#222; }
+  .ledger-row[class*="bio-"] .ledger-when{ color:#222; }
+  /* Coming Up: each crop is its own rounded card with a gap between them. */
+  #ledger{ background:none; border:none; box-shadow:none; overflow:visible; display:flex; flex-direction:column; gap:8px; }
+  #ledger .ledger-row{ background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
+  #ledger .ledger-row:last-child{ border-bottom:1px solid var(--line); }
+  #ledger .ledger-row.bio-fruit{ background:#F8C9C0; border-color:#E39A8C; }
+  #ledger .ledger-row.bio-leaf{ background:#D6EABF; border-color:#A9CC85; }
+  #ledger .ledger-row.bio-root{ background:#E2CBAB; border-color:#C4A07A; }
+  #ledger .ledger-row.bio-flower{ background:#FBE6A2; border-color:#E8C55C; }
+  #ledger .empty-note{ background:var(--card); border:1px solid var(--line); border-radius:14px; }
   .ledger-row:active{background:var(--paper-2);}
   .ledger-date{
     font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--clay-dark);
@@ -1011,6 +1025,38 @@
   #stickyCropBar .name{ flex:1; font-weight:600; font-size:17px; color:var(--evergreen); }
   #stickyCropBar .scb-hint{ font-size:11.5px; color:var(--ink-soft); }
   .plant-card{ scroll-margin-top:calc(var(--topbar-h, 112px) + 8px); }
+  /* Crop windows tinted by their biodynamic day type (same colors as the
+     Biodynamic Calendar): Fruit red, Leaf green, Root brown, Flower gold. */
+  /* 3D crop icons: a raised, glossy bubble with a bigger picture inside. */
+  .plant-head .plant-icon, .ledger-icon .plant-icon, #stickyCropBar .plant-icon{
+    width:42px; height:42px; border-radius:12px; font-size:27px; position:relative;
+    background-image:linear-gradient(160deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.25) 45%, rgba(0,0,0,.08) 100%) !important;
+    box-shadow:0 3px 0 rgba(0,0,0,.18), 0 5px 10px rgba(60,40,30,.22), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.10);
+    border:1px solid rgba(255,255,255,.7);
+  }
+  .plant-head .plant-icon, .ledger-icon .plant-icon, #stickyCropBar .plant-icon{ filter:none; }
+  .plant-head .plant-icon > *, .ledger-icon .plant-icon > *{ filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.35)); }
+  .plant-head .plant-icon, .ledger-icon .plant-icon{ text-shadow:0 2px 2px rgba(0,0,0,.3); }
+  .plant-head .plant-icon .crop-svg, .ledger-icon .plant-icon .crop-svg{ width:1.05em; height:1.05em; filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.35)); }
+  /* Header logo and date box: same raised 3D look as the crop icons. */
+  .header-icon-box, .header-date-box{
+    border:1px solid rgba(255,255,255,.85);
+    box-shadow:0 4px 0 rgba(0,0,0,.14), 0 7px 14px rgba(60,40,30,.20), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -3px 4px rgba(0,0,0,.08);
+  }
+  .header-date-box{
+    background:linear-gradient(160deg, #FFFFFF 0%, #F7F3EA 55%, #EDE6D8 100%);
+  }
+  .header-date-num, .header-date-month{ text-shadow:0 1px 0 rgba(255,255,255,.9), 0 2px 3px rgba(0,0,0,.12); }
+  .plant-card.bio-fruit{ background:#F8C9C0; border-color:#E39A8C; }
+  .plant-card.bio-leaf{ background:#D6EABF; border-color:#A9CC85; }
+  .plant-card.bio-root{ background:#E2CBAB; border-color:#C4A07A; }
+  .plant-card.bio-flower{ background:#FBE6A2; border-color:#E8C55C; }
+  .bio-tag{ flex:none; font-family:'Inter',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:.03em;
+    text-transform:uppercase; border-radius:999px; padding:2px 8px; line-height:1.4; color:#fff; }
+  .bio-tag.bio-fruit{ background:#a6362c; } .bio-tag.bio-leaf{ background:#4a6b2a; }
+  .bio-tag.bio-root{ background:#8a5a2e; } .bio-tag.bio-flower{ background:#c08a1f; }
+  body.night-mode .plant-card[class*="bio-"]{ background:var(--card); }
+  body:not(.night-mode) .plant-card[class*="bio-"] .plant-head .name{ color:#222; }
   .plant-head{
     display:flex; align-items:center; gap:9px; margin-bottom:0; min-width:0; width:100%;
     background:none; border:none; padding:0; cursor:pointer; text-align:left; font:inherit;
@@ -2227,7 +2273,7 @@
   .bg-all-inner .bg-pen{ display:none; }
   .bg-all-inner .bg-bed{ border-width:3px; border-radius:7px; }
   .bg-all-inner .bg-cell{ cursor:default; }
-  @media (orientation:landscape){ .bg-all-tip{ display:none; } }
+  
   @media (max-width:520px){ .bg-all-top{ flex-wrap:wrap; row-gap:2px; } .bg-all-tip{ order:5; flex-basis:100%; } }
   #tab-beds .bg-hint{ display:none !important; }
   .bg-box{ padding:8px 8px 6px; }
@@ -2451,10 +2497,10 @@
   .bc-cal{
     --bc-paper:var(--card); --bc-paper-2:var(--paper-2); --bc-ink:var(--ink); --bc-ink-soft:var(--ink-soft);
     --bc-line:var(--line); --bc-line-soft:var(--line);
-    --bc-fruit:#a6362c; --bc-fruit-bg:#f4dcd6; --bc-fruit-ink:#6e2018;
-    --bc-leaf:#4a6b2a; --bc-leaf-bg:#e2e9cd; --bc-leaf-ink:#33491c;
-    --bc-root:#8a5a2e; --bc-root-bg:#ecdcc4; --bc-root-ink:#5c3a19;
-    --bc-flower:#c08a1f; --bc-flower-bg:#f6e6bd; --bc-flower-ink:#7a5510;
+    --bc-fruit:#a6362c; --bc-fruit-bg:#F8C9C0; --bc-fruit-ink:#6e2018;
+    --bc-leaf:#4a6b2a; --bc-leaf-bg:#D6EABF; --bc-leaf-ink:#33491c;
+    --bc-root:#8a5a2e; --bc-root-bg:#E2CBAB; --bc-root-ink:#5c3a19;
+    --bc-flower:#c08a1f; --bc-flower-bg:#FBE6A2; --bc-flower-ink:#7a5510;
     background:var(--bc-paper); color:var(--bc-ink); font-family:'Inter',sans-serif;
     border-radius:16px; overflow:hidden; box-shadow:var(--shadow);
   }
@@ -2487,11 +2533,12 @@
      day cells themselves (BC_COLORS.bg in the JS), and matches every other
      Fruit/Leaf/Root/Flower dot in the app (home-page legend, this tab's
      own footer key). */
-  nav.bc-tabs button .bc-dot{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; }
-  nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ background:#e9beb6; }
-  nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ background:#c3d3ab; }
-  nav.bc-tabs button[data-bctype="root"] .bc-dot{ background:#dcc4a3; }
-  nav.bc-tabs button[data-bctype="flower"] .bc-dot{ background:#edd497; }
+  nav.bc-tabs button .bc-dot{ width:20px; height:20px; border-radius:50%; display:inline-block; flex:none; box-sizing:border-box; border:1px solid transparent; }
+  nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ border-color:#E39A8C; } nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ border-color:#A9CC85; } nav.bc-tabs button[data-bctype="root"] .bc-dot{ border-color:#C4A07A; } nav.bc-tabs button[data-bctype="flower"] .bc-dot{ border-color:#E8C55C; }
+  nav.bc-tabs button[data-bctype="fruit"] .bc-dot{ background:#F8C9C0; }
+  nav.bc-tabs button[data-bctype="leaf"] .bc-dot{ background:#D6EABF; }
+  nav.bc-tabs button[data-bctype="root"] .bc-dot{ background:#E2CBAB; }
+  nav.bc-tabs button[data-bctype="flower"] .bc-dot{ background:#FBE6A2; }
   nav.bc-tabs button::after{
     content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:transparent;
   }
@@ -2531,13 +2578,13 @@
   }
   .bc-entries{ display:flex; flex-direction:column; gap:4px; }
   .bc-entry{ font-size:12.5px; line-height:1.5; color:var(--bc-ink); }
-  .bc-row-fruit{ background:var(--bc-fruit-bg); border-color:var(--bc-fruit); }
+  .bc-row-fruit{ background:var(--bc-fruit-bg); border-color:#E39A8C; }
   .bc-row-fruit .bc-date, .bc-row-fruit .bc-entry{ color:var(--bc-fruit-ink); }
-  .bc-row-leaf{ background:var(--bc-leaf-bg); border-color:var(--bc-leaf); }
+  .bc-row-leaf{ background:var(--bc-leaf-bg); border-color:#A9CC85; }
   .bc-row-leaf .bc-date, .bc-row-leaf .bc-entry{ color:var(--bc-leaf-ink); }
-  .bc-row-root{ background:var(--bc-root-bg); border-color:var(--bc-root); }
+  .bc-row-root{ background:var(--bc-root-bg); border-color:#C4A07A; }
   .bc-row-root .bc-date, .bc-row-root .bc-entry{ color:var(--bc-root-ink); }
-  .bc-row-flower{ background:var(--bc-flower-bg); border-color:var(--bc-flower); }
+  .bc-row-flower{ background:var(--bc-flower-bg); border-color:#E8C55C; }
   .bc-row-flower .bc-date, .bc-row-flower .bc-entry{ color:var(--bc-flower-ink); }
   .bc-footer{
     padding:1rem 1.1rem 0; border-top:1px solid var(--bc-line); font-size:11px;
@@ -2652,8 +2699,8 @@
     <div class="topbar-row">
       <img id="brandLogo" class="header-icon-box" alt="">
       <div class="brand-text-center">
-        <h1>Odessa Garden</h1>
-        <div class="loc-line">Zone 9B</div>
+        <h1>Alessandra Garden</h1>
+        <div class="loc-line">Zone 9B, Odessa, FL</div>
         <div class="header-season-label" id="headerSeasonLabel"></div>
       </div>
       <div class="header-date-box">
@@ -2930,7 +2977,7 @@
       </div>
       <div id="bgSaves" class="bg-saves" hidden></div>
       <div class="bg-all" id="bgAll" hidden>
-        <div class="bg-all-top"><b>All beds</b><span class="bg-all-season" id="bgAllSeason"></span><span class="bg-all-tip" id="bgAllTip">↻ Turn sideways to enlarge</span><span style="flex:1"></span><button type="button" id="bgAllClose" aria-label="Close">✕</button></div>
+        <div class="bg-all-top"><b>All beds</b><span class="bg-all-season" id="bgAllSeason"></span><span class="bg-all-tip" id="bgAllTip">🤏 Pinch to zoom · double-tap to reset</span><span style="flex:1"></span><button type="button" id="bgAllClose" aria-label="Close">✕</button></div>
         <div class="bg-all-body" id="bgAllBody"><div class="bg-all-inner" id="bgAllInner"></div></div>
       </div>
     </section>
@@ -3110,7 +3157,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.21-28</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.21-44</div>
   </main>
 
   <nav class="tabbar">
@@ -3167,10 +3214,10 @@
       <button type="button" id="calNextBtn" class="cal-nav" aria-label="Next month">›</button>
     </div>
     <div class="cal-bio-legend">
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#e9beb6;"></span>Fruit</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#c3d3ab;"></span>Leaf</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#dcc4a3;"></span>Root</span>
-      <span class="bc-key-item"><span class="bc-key-dot" style="background:#edd497;"></span>Flower</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#F8C9C0;"></span>Fruit</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#D6EABF;"></span>Leaf</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#E2CBAB;"></span>Root</span>
+      <span class="bc-key-item"><span class="bc-key-dot" style="background:#FBE6A2;"></span>Flower</span>
       <div class="cal-bio-note">Biodynamic coloring covers August – December 2026 only.</div>
     </div>
     <div class="cal-dow-row">
@@ -3929,7 +3976,8 @@ const SEASONS = {
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"fennel", name:"Fennel", shape:"leaf", color:C.yellowGreen,
-      dates:[[{a:"Start (direct)", m:10, d:29}]]},
+      dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
+      note:"Fennel is a Leaf crop — moved from Oct 29 (a Root day) to the Oct 23-25 Leaf window."},
     {slug:"garlic", name:"Garlic", shape:"bulb", color:C.cream,
       dates:[[{a:"Start (direct)", m:10, d:19, m2:10, d2:20, exact:true}]],
       note:"Moved from Oct 27 & 29 to Oct 19–20."},
@@ -6749,7 +6797,8 @@ async function renderGrid(sectionKey, containerId){
   for(const p of plants){
     const bugIcon = BUG_ICONS[bugIconIdx++ % BUG_ICONS.length];
     const card = document.createElement("div");
-    card.className = "plant-card";
+    const bioType = CROP_BIO_TYPE[p.slug];
+    card.className = "plant-card" + (bioType ? ` bio-${bioType}` : "");
     card.id = `plant-card-${p.slug}`;
     // Which planned windows did you actually use? An Actual sow (or
     // transplant, for Transplant lines) logged within 2 days of a planned
@@ -9162,7 +9211,7 @@ function renderLedger(){
     const target = new Date(now); target.setDate(now.getDate() + x.diff);
     const when = x.diff === 0 ? "Today" : x.diff === 1 ? "Tomorrow" : `in ${x.diff}d`;
     return `
-      <div class="ledger-row" data-section="${x.sectionKey}" data-slug="${x.slug}">
+      <div class="ledger-row${CROP_BIO_TYPE[x.slug] ? ` bio-${CROP_BIO_TYPE[x.slug]}` : ""}" data-section="${x.sectionKey}" data-slug="${x.slug}">
         <div class="ledger-date">${fmtDateLedger(x)}<span class="dow">${DOW[target.getDay()]}</span></div>
         <div class="ledger-icon">${cropIcon(x, x.sectionKey)}</div>
         <div class="ledger-mid">
@@ -9660,7 +9709,7 @@ async function generateSeasonPDF(seasonKey){
   doc.setFont("helvetica", "italic"); doc.setFontSize(8); doc.setTextColor(0);
   doc.text("© 2026 Thor", margin, y);
 
-  doc.save(`Odessa Garden ${season.label}.pdf`);
+  doc.save(`Alessandra Garden ${season.label}.pdf`);
 }
 
 /* ---------------- season switcher ---------------- */
@@ -10741,7 +10790,7 @@ function icsEscape(text){
 // them into a single .ics file any calendar app can import. Crops marked
 // "Season DONE" are skipped since there's nothing left to be reminded of.
 async function buildPlantingICS(){
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Odessa Garden//Planting Reminders//EN", "CALSCALE:GREGORIAN"];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Alessandra Garden//Planting Reminders//EN", "CALSCALE:GREGORIAN"];
   const now = new Date();
   const dtstamp = `${now.getUTCFullYear()}${icsPad2(now.getUTCMonth() + 1)}${icsPad2(now.getUTCDate())}T${icsPad2(now.getUTCHours())}${icsPad2(now.getUTCMinutes())}${icsPad2(now.getUTCSeconds())}Z`;
   let count = 0;
@@ -10801,7 +10850,7 @@ document.getElementById("calendarExportBtn").addEventListener("click", async () 
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Odessa Garden Reminders ${fullSeasonLabel(activeSeason)}.ics`;
+      a.download = `Alessandra Garden Reminders ${fullSeasonLabel(activeSeason)}.ics`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -10941,10 +10990,10 @@ function getDayBioTypes(year, month, day){
    read via var() because those custom properties are scoped to .bc-cal and
    wouldn't resolve inside the calendar modal. */
 const BC_COLORS = {
-  fruit: { strong:"#a6362c", bg:"#e9beb6" },
-  leaf: { strong:"#4a6b2a", bg:"#c3d3ab" },
-  root: { strong:"#8a5a2e", bg:"#dcc4a3" },
-  flower: { strong:"#c08a1f", bg:"#edd497" }
+  fruit: { strong:"#a6362c", bg:"#F8C9C0" },
+  leaf: { strong:"#4a6b2a", bg:"#D6EABF" },
+  root: { strong:"#8a5a2e", bg:"#E2CBAB" },
+  flower: { strong:"#c08a1f", bg:"#FBE6A2" }
 };
 
 /* Builds a CSS background for a calendar day cell: a solid color for a
@@ -11842,7 +11891,68 @@ async function renderBedGrid(){
     const byH = (H - 14 - BG_BEDS * (21 + 6)) / (BG_BEDS * BG_ROWS);
     const c = Math.max(4, Math.floor(Math.min(byW, byH) * 10) / 10);
     allInner.style.setProperty("--bgc", c + "px");
+    zReset();
   };
+  // Pinch with two fingers to zoom in (up to 6x), drag with one finger to
+  // move around while zoomed, double-tap to go back to the whole picture.
+  let zs = 1, ztx = 0, zty = 0, zPinch = null, zPan = null, zLastTap = 0;
+  const zPts = new Map();
+  allInner.style.transformOrigin = "0 0";
+  function zApply(){ allInner.style.transform = zs === 1 && !ztx && !zty ? "" : `translate3d(${ztx}px,${zty}px,0) scale(${zs})`; }
+  function zReset(){ zs = 1; ztx = 0; zty = 0; zPinch = null; zPan = null; zPts.clear(); zApply(); }
+  // Layout position of the picture (without the zoom), and the box it sits in.
+  function zBase(){ const r = allInner.getBoundingClientRect(); return { left: r.left - ztx, top: r.top - zty, w: allInner.offsetWidth, h: allInner.offsetHeight }; }
+  function zClamp(){
+    if(zs <= 1.001){ zs = 1; ztx = 0; zty = 0; return; }
+    const b = zBase(), B = allBody.getBoundingClientRect();
+    const W = b.w * zs, H = b.h * zs;
+    if(W <= B.width) ztx = (B.left + B.right) / 2 - W / 2 - b.left;
+    else ztx = Math.min(B.left - b.left, Math.max(B.right - b.left - W, ztx));
+    if(H <= B.height) zty = (B.top + B.bottom) / 2 - H / 2 - b.top;
+    else zty = Math.min(B.top - b.top, Math.max(B.bottom - b.top - H, zty));
+  }
+  const zMid = () => { const a = [...zPts.values()]; return { x: (a[0].x + a[1].x) / 2, y: (a[0].y + a[1].y) / 2, d: Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y) }; };
+  allBody.style.touchAction = "none";
+  allBody.addEventListener("pointerdown", e => {
+    zPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try{ allBody.setPointerCapture(e.pointerId); }catch(err){}
+    if(zPts.size === 2){
+      const m = zMid(), b = zBase();
+      zPan = null;
+      zPinch = { d0: Math.max(20, m.d), s0: zs, px: (m.x - b.left - ztx) / zs, py: (m.y - b.top - zty) / zs };
+    } else if(zPts.size === 1){
+      const now = Date.now();
+      if(now - zLastTap < 300){ zReset(); zLastTap = 0; return; }
+      zLastTap = now;
+      zPan = { x: e.clientX, y: e.clientY, tx: ztx, ty: zty };
+    }
+  });
+  allBody.addEventListener("pointermove", e => {
+    if(!zPts.has(e.pointerId)) return;
+    zPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(zPinch && zPts.size >= 2){
+      const m = zMid(), b = zBase();
+      zs = Math.max(1, Math.min(6, zPinch.s0 * m.d / zPinch.d0));
+      ztx = m.x - b.left - zPinch.px * zs;
+      zty = m.y - b.top - zPinch.py * zs;
+      zClamp(); zApply();
+    } else if(zPan && zs > 1){
+      ztx = zPan.tx + (e.clientX - zPan.x);
+      zty = zPan.ty + (e.clientY - zPan.y);
+      zClamp(); zApply();
+    }
+  });
+  const zUp = e => {
+    zPts.delete(e.pointerId);
+    if(zPts.size < 2) zPinch = null;
+    if(zPts.size === 1){ const p = [...zPts.values()][0]; zPan = { x: p.x, y: p.y, tx: ztx, ty: zty }; }
+    if(!zPts.size) zPan = null;
+  };
+  allBody.addEventListener("pointerup", zUp);
+  allBody.addEventListener("pointercancel", zUp);
+  // Stop iPhone Safari from zooming the whole page instead.
+  ["gesturestart", "gesturechange", "gestureend"].forEach(ev => all.addEventListener(ev, e => e.preventDefault()));
+  all.addEventListener("touchmove", e => { if(e.cancelable) e.preventDefault(); }, { passive:false });
   const openAll = (snap) => {
     const isSnap = snap && snap.data;
     const data = isSnap ? snap.data : bgData;
@@ -11854,7 +11964,7 @@ async function renderBedGrid(){
     document.documentElement.style.overflow = "hidden";
     requestAnimationFrame(fitAll);
   };
-  const closeAll = () => { all.hidden = true; allInner.innerHTML = ""; document.documentElement.style.overflow = ""; };
+  const closeAll = () => { zReset(); all.hidden = true; allInner.innerHTML = ""; document.documentElement.style.overflow = ""; };
   document.getElementById("bgAllBtn").addEventListener("click", () => openAll());
   document.getElementById("bgSaveBtn").addEventListener("click", bgSaveGarden);
   document.getElementById("bgLogBtn").addEventListener("click", () => {
@@ -12253,7 +12363,7 @@ async function exportData(){
   const status = document.getElementById("backupStatus");
   try{
     const { keys, bundle } = await gatherAllStorage();
-    const filename = `Odessa Garden Backup ${new Date().toISOString().slice(0,10)}.json`;
+    const filename = `Alessandra Garden Backup ${new Date().toISOString().slice(0,10)}.json`;
     const result = await downloadFile(filename, JSON.stringify(bundle, null, 2), "application/json");
     if(result === "picked") status.textContent = `Exported ${keys.length} item(s) to the folder you chose.`;
     else if(result === "cancelled") status.textContent = "Export cancelled.";
@@ -13211,7 +13321,7 @@ const CROP_BIO_TYPE = {
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
   lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", garlic:"root", onionslips:"root",
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
-  nigerianspinach:"leaf", fennel:"root", sweetpotatoslips:"root", pigeonpeas:"fruit",
+  nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
   nasturtium:"flower", roselle:"flower",
   sunnhemp:"leaf", puertoricanblackbeans:"fruit", peanuts:"root"
