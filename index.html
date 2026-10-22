@@ -1071,9 +1071,9 @@
   .plant-chevron{font-size:48px; line-height:0.5; color:var(--clay-dark); flex:none; transition:transform .2s;}
   .plant-head.open .plant-chevron{transform:rotate(180deg);}
   .logged-check{
-    flex:none; width:20px; height:20px; border-radius:50%; background:var(--evergreen);
-    color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center;
-    justify-content:center; line-height:1;
+    flex:none; width:28px; height:28px; border-radius:50%; background:#fff; box-sizing:border-box;
+    border:2px solid #7FBF6A; font-size:16px; display:flex; align-items:center;
+    justify-content:center; line-height:1; box-shadow:0 2px 0 rgba(0,0,0,.12), 0 3px 7px rgba(0,0,0,.18);
   }
   .card-body{margin-top:9px;}
   /* "Skip season" pill next to the crop name. Shown when the card is open,
@@ -2761,7 +2761,7 @@
             <span class="spb-title">Almanac 2026–2027</span>
             <span class="spb-sub">Currently viewing</span>
           </span>
-          <span class="spb-check">✓</span>
+          <span class="spb-check">🌱</span>
         </button></div>
         </div>
         <div id="rainBody" class="home-tab-body" style="display:none;">
@@ -3157,7 +3157,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.21-44</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.22-45</div>
   </main>
 
   <nav class="tabbar">
@@ -5836,7 +5836,7 @@ function tidyCard(card){
     const trimTags = () => box.querySelectorAll(".tag-green, .date-chips > *").forEach(el => {
       const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       let n; while((n = w.nextNode())){
-        const v = n.data.replace(/^(\s*✓\s*)(seeded|potted|transplanted|sprouted|germinated|sown)\s+/i, "$1");
+        const v = n.data.replace(/^(\s*(?:✓|🌱)\s*)(seeded|potted|transplanted|sprouted|germinated|sown)\s+/i, "$1");
         if(v !== n.data) n.data = v;
         break;
       }
@@ -6851,7 +6851,7 @@ async function renderGrid(sectionKey, containerId){
           : where === "direct" ? "sown direct"
           : where === "indoor" ? "started indoors"
           : (DIRECT_SOW_CROPS.includes(p.slug) || /direct/i.test(t.a)) ? "sown" : "started";
-        return `<div class="wave-line wave-done"><span class="lbl">${lbl} :</span> ${fmtDate(t)} <span class="wave-done-tag">✓ ${verb} ${MONTHS[hit.getMonth()]} ${hit.getDate()}</span>${note}</div>`;
+        return `<div class="wave-line wave-done"><span class="lbl">${lbl} :</span> ${fmtDate(t)} <span class="wave-done-tag">🌱 ${verb} ${MONTHS[hit.getMonth()]} ${hit.getDate()}</span>${note}</div>`;
       }
       if(passed) return `<div class="wave-line wave-passed"><span class="lbl">${t.a} :</span> ${fmtDate(t)} <span class="wave-passed-tag">passed</span>${note}</div>`;
       return `<div class="wave-line"><span class="lbl">${t.a} :</span> ${fmtDate(t)}${note}</div>`;
@@ -7064,7 +7064,7 @@ async function renderGrid(sectionKey, containerId){
           ${isSkipped(p.slug) ? `<div class="season-done-banner season-skip-banner">
             <span>⏭ Skipping this season — no new planting</span>
           </div>` : `<div class="season-done-banner">
-            <span>✓ Season marked done</span>
+            <span>🌱 Season marked done</span>
           </div>`}
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
@@ -7175,7 +7175,7 @@ async function renderGrid(sectionKey, containerId){
         <button type="button" class="plant-head" data-body="card-body-${p.slug}">
           ${cropIcon(p, sectionKey)}<span class="name">${p.name}</span>
           ${(isPastSeason || (!isSkipped(p.slug) && ((sowActualCheck.length && (transplantActualCheck.length || p.slug === "garlic" || DIRECT_SOW_CROPS.includes(p.slug))) || (NOT_FROM_SEED.includes(p.slug) && transplantActualCheck.length)))) ? "" : `<span class="skip-season-btn${isSkipped(p.slug) ? " on" : ""}" role="button" tabindex="0" aria-pressed="${isSkipped(p.slug)}" title="${isSkipped(p.slug) ? "Tap to plant this crop again this season" : "Not planting this crop this season"}">${isSkipped(p.slug) ? "⏭ Skipped" : "⏭ Skip season"}</span>`}
-          <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">✓</span>
+          <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">🌱</span>
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
       </div>
@@ -8146,7 +8146,7 @@ async function renderGrid(sectionKey, containerId){
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}${varietyNoGermReason(v) ? " no-germ-temp" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}${varietyNoGermReason(v) ? " 🌡️" : ""}<span class="variety-meta-badge">${varietyMetaText(v, p.slug)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
               return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
-                <div class="sow-card-head"><span class="tag-green">✓ ${p.slug === "garlic" ? "planted" : "seeded"} ${fmtTagDate(entryDate(d))}${fmtTagTemp(entryTemp(d))}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}</div>
+                <div class="sow-card-head"><span class="tag-green">🌱 ${p.slug === "garlic" ? "planted" : "seeded"} ${fmtTagDate(entryDate(d))}${fmtTagTemp(entryTemp(d))}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}</div>
                 ${varietiesLine}
               </div>`;
             }).join("");
@@ -8160,7 +8160,7 @@ async function renderGrid(sectionKey, containerId){
               const tp = entryTemp(d);
               const tempTxt = tp ? ` · ${String(tp).trim().replace(/f$/i, "").trim()}°F` : "";
               const locked = isPastSeason || isEntryLocked(entryAddedAt(d));
-              return `<span class="date-chip done-tag${locked ? " locked" : ""}" data-i="${i}" title="${prefix}: ${fmtActualEntry(d)}">✓ ${verb} ${when}${tempTxt}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>`;
+              return `<span class="date-chip done-tag${locked ? " locked" : ""}" data-i="${i}" title="${prefix}: ${fmtActualEntry(d)}">🌱 ${verb} ${when}${tempTxt}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>`;
             }).join("");
           }
           chipsContainer.querySelectorAll(".variety-search-link").forEach(a => {
@@ -8781,7 +8781,7 @@ async function renderGrid(sectionKey, containerId){
         seedPacketListEl.innerHTML = `<div class="sow-cards">${groups.map(g => {
           const groupLocked = g.indexes.every(i => isEntryLocked(finishedSeeds[i].addedAt));
           return `<div class="sow-card${groupLocked ? " locked" : ""}">
-            <div class="sow-card-head"><span class="tag-green">✓ finished packets ${fmtTagDate(g.date)}${groupLocked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span></div>
+            <div class="sow-card-head"><span class="tag-green">🌱 finished packets ${fmtTagDate(g.date)}${groupLocked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span></div>
             <div class="sow-card-varieties">${g.indexes.map(i => {
               const locked = isEntryLocked(finishedSeeds[i].addedAt);
               return `<span class="variety-chip${locked ? " locked" : ""}" data-i="${i}">${finishedSeeds[i].name}</span>`;
@@ -8949,7 +8949,7 @@ async function renderGrid(sectionKey, containerId){
             if(fridgeSourceRow) fridgeSourceRow.style.display = fridgeLog.length ? "none" : "";
             fridgeListEl.innerHTML = fridgeLog.map((f, i) => {
               const locked = isEntryLocked(f.addedAt);
-              const label = `✓ in fridge ${fmtTagDate(f.date)}${f.source ? ` · cloves from ${f.source}` : ""}`;
+              const label = `🌱 in fridge ${fmtTagDate(f.date)}${f.source ? ` · cloves from ${f.source}` : ""}`;
               return `<span class="date-chip done-tag${locked ? " locked" : ""}" data-i="${i}">${label}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>`;
             }).join("");
             fridgeListEl.querySelectorAll(".date-chip:not(.locked)").forEach(chip => {
@@ -9738,7 +9738,7 @@ function renderSeasonUI(){
             <span class="spb-title">Almanac ${fullSeasonLabel(key)}</span>
             <span class="spb-sub">${isCurrent ? "Currently viewing" : "Tap to switch"}</span>
           </span>
-          <span class="spb-check">${isCurrent ? "✓" : ""}</span>
+          <span class="spb-check">${isCurrent ? "🌱" : ""}</span>
         </button>`;
     }).join("");
     seasonButtonsEl.querySelectorAll("button[data-season]").forEach(btn => {
