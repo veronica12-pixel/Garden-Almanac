@@ -500,6 +500,8 @@
   .ledger-row[class*="bio-"] .ledger-date{ background:rgba(255,255,255,.7); }
   .ledger-row[class*="bio-"] .ledger-mid .action{ color:#222; }
   .ledger-row[class*="bio-"] .ledger-when{ color:#222; }
+  /* "Today / in 2d" in the same font as "Start (direct)" */
+  #ledger .ledger-when, #ledger .ledger-mid .action{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:400; line-height:1.3; }
   /* Coming Up: each crop is its own rounded card with a gap between them. */
   #ledger{ background:none; border:none; box-shadow:none; overflow:visible; display:flex; flex-direction:column; gap:8px; }
   #ledger .ledger-row{ background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); }
@@ -508,6 +510,18 @@
   #ledger .ledger-row.bio-leaf{ background:#D6EABF; border-color:#A9CC85; }
   #ledger .ledger-row.bio-root{ background:#E2CBAB; border-color:#C4A07A; }
   #ledger .ledger-row.bio-flower{ background:#FBE6A2; border-color:#E8C55C; }
+  /* Compact rows: less empty space above and below, so more fit on a phone. */
+  #ledger{ gap:5px !important; }
+  #ledger .ledger-row{ padding:5px 12px !important; gap:10px; min-height:0; }
+  #ledger .ledger-date{ padding:3px 4px; }
+  #ledger .ledger-icon .plant-icon{ width:36px; height:36px; font-size:23px; border-radius:10px; }
+  #ledger .ledger-mid{ line-height:1.2; }
+  .grid{ gap:7px !important; }
+  .plant-card{ padding:8px 12px 9px !important; border-radius:14px !important; }
+  .plant-head .plant-icon{ width:36px; height:36px; font-size:23px; border-radius:10px; }
+  .plant-card .card-status, .plant-card .overdue-flag{ margin-top:3px !important; }
+  .nb-card{ padding:8px 12px !important; }
+  .nb-card-ico{ width:44px !important; height:44px !important; }
   #ledger .empty-note{ background:var(--card); border:1px solid var(--line); border-radius:14px; }
   .ledger-row:active{background:var(--paper-2);}
   .ledger-date{
@@ -1882,6 +1896,11 @@
   .sub-dd{ margin-top:10px; }
   /* Tidy crop window */
   .dose.tidy-moon-hidden .bc-task-note{ display:none; }
+  /* Moon in a small night-blue circle so it shows on every crop color. */
+  .moon-badge{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; margin-right:6px;
+    border-radius:50%; background:radial-gradient(circle at 35% 30%,#4B5C9E,#24305E); font-size:13px; line-height:1;
+    vertical-align:-5px; box-shadow:0 1px 0 rgba(0,0,0,.25), 0 2px 4px rgba(36,48,94,.3), inset 0 1px 0 rgba(255,255,255,.25); }
+  .tidy-moon-toggle{ display:inline-flex !important; align-items:center; color:#24543C !important; font-weight:700 !important; }
   .tidy-moon-toggle{ display:block; margin:2px 0 6px; padding:2px 0; border:none; background:none; cursor:pointer;
     font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#5E8F6E; box-shadow:none !important; text-decoration:none; min-height:0; }
   .sow-card.tidy-folded > .sow-card-varieties{ display:none; }
@@ -2240,6 +2259,86 @@
   .bg-logbtn #bgLogCount{ color:var(--ink-soft); font-weight:600; font-size:13px; }
   .bg-logbtn .bg-logcaret{ margin-left:auto; font-size:12px; color:var(--ink-soft); transition:transform .2s; }
   .bg-logbtn[aria-expanded="true"] .bg-logcaret{ transform:rotate(180deg); }
+  /* Up / down buttons that float on the right of the Garden Beds tab, so the
+     page can always be moved even when a finger drag is busy with the beds. */
+  .bg-pagenav{ position:fixed; right:4px; z-index:30; display:none; flex-direction:column; overflow:hidden;
+    bottom:calc(var(--tabbar-h, 78px) + 14px + env(safe-area-inset-bottom));
+    border-radius:999px; border:1px solid #B5DEC4; background:rgba(234,247,239,.82);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); box-shadow:0 2px 8px rgba(47,107,78,.22); }
+  body.on-beds .bg-pagenav{ display:flex; }
+  .bg-pagenav button{ width:32px; height:38px; padding:0; margin:0; cursor:pointer; border:none; border-radius:0;
+    font-size:11px; line-height:1; color:#2F6B4E; display:flex; align-items:center; justify-content:center;
+    background:none !important; background-image:none !important; box-shadow:none !important;
+    touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  .bg-pagenav button + button{ border-top:1px solid #C9E6D3; }
+  .bg-pagenav button:active{ background:rgba(47,107,78,.14) !important; transform:none; }
+  .bg-pagenav button[disabled]{ opacity:.3; }
+  /* ---------- My Garden Beds (custom beds with size, soil, direction) ---------- */
+  .nb-wrap{ margin:18px 0 6px; }
+  .nb-h{ font-family:'Fraunces',serif; color:var(--evergreen); font-size:21px; margin:0 0 10px; }
+  .nb-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  .nb-list:empty{ display:none; }
+  .nb-card{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; cursor:pointer; padding:12px 14px; border-radius:16px;
+    background:#E2CBAB; border:1px solid #C4A07A; color:#222; font-family:'Inter',sans-serif; box-shadow:0 3px 8px rgba(90,60,30,.12); }
+  .nb-card-ico{ flex:none; width:52px; height:52px; border-radius:50%; background:#FFFDF8; border:1.5px solid #8A5A2B; position:relative;
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.2), inset 0 1px 0 #fff; }
+  .nb-card-ico b{ position:absolute; left:50%; top:3px; transform:translateX(-50%); font:700 9px Georgia,serif; color:#B03A2E; }
+  .nb-card-ico i{ position:absolute; left:50%; top:50%; width:12px; height:30px; margin:-15px 0 0 -6px; border-radius:3px;
+    background:linear-gradient(#9B6A3A,#6E4622); border:1px solid #5A3A1C; transform:rotate(var(--a,0deg)); }
+  .nb-card-txt{ flex:1; min-width:0; }
+  .nb-card-name{ font-weight:800; font-size:17px; display:flex; align-items:center; gap:6px; }
+  .nb-card-dims{ font-size:14px; font-weight:600; margin-top:2px; }
+  .nb-card-dir{ font-size:13px; color:#5A4636; margin-top:1px; }
+  .nb-card-soil{ font-size:13px; color:#3d3128; margin-top:5px; background:rgba(255,255,255,.55); border-radius:8px; padding:4px 8px;
+    white-space:pre-wrap; overflow-wrap:anywhere; }
+  .nb-add{ width:100%; min-height:56px; border-radius:16px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(180deg,#6FB08F,#4E8E6E); color:#fff; font-family:'Inter',sans-serif; font-size:17px; font-weight:800;
+    box-shadow:0 4px 0 #3A6E54, 0 6px 12px rgba(47,107,78,.25); transition:transform .08s, box-shadow .08s; }
+  .nb-add:active{ transform:translateY(3px); box-shadow:0 1px 0 #3A6E54, 0 2px 4px rgba(47,107,78,.25); }
+  .nb-add-plus{ width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.25); display:inline-flex; align-items:center; justify-content:center; font-size:18px; }
+  .nb-title-row{ display:flex; align-items:center; gap:10px; padding-right:40px; }
+  .nb-title-row h3{ margin:0; }
+  .nb-lock{ width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--card); font-size:19px; cursor:pointer;
+    box-shadow:0 2px 0 rgba(0,0,0,.1); }
+  .nb-lock.unlocked{ background:#F9D7E6; border-color:#E7A3C2; }
+  .nb-locknote{ margin:10px 0 0; font-size:13.5px; color:#6C4AB0; background:#F3ECFD; border-radius:10px; padding:8px 10px; line-height:1.45; }
+  .nb-locknote[hidden]{ display:none; }
+  .nb-fields{ border:none; padding:0; margin:12px 0 0; min-width:0; }
+  .nb-fields:disabled{ opacity:.6; }
+  .nb-lbl{ display:block; font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:var(--ink); margin:0 0 10px; }
+  .nb-lbl small{ font-weight:500; color:var(--ink-soft); }
+  .nb-in{ display:block; width:100%; box-sizing:border-box; margin-top:4px; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    background:#fff; color:#222; font-family:'Inter',sans-serif; font-size:16px; }
+  .nb-ta{ resize:vertical; line-height:1.4; }
+  .nb-dims{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .nb-dims .nb-lbl{ margin-bottom:4px; }
+  .nb-unit{ position:relative; display:block; }
+  .nb-unit .nb-in{ padding-right:30px; }
+  .nb-unit i{ position:absolute; right:10px; top:50%; transform:translateY(-35%); font-style:normal; font-size:13px; color:var(--ink-soft); pointer-events:none; }
+  .nb-size{ font-size:13px; color:#5A4636; margin:2px 0 14px; min-height:16px; }
+  .nb-compass{ position:relative; width:220px; height:220px; margin:6px auto 4px; }
+  .nb-rose{ position:absolute; inset:22px; pointer-events:none; z-index:1; border-radius:50%; background:radial-gradient(circle,#FFFDF8 0 60%,#F4EADB 61% 100%);
+    border:2px solid #8A5A2B; box-shadow:0 4px 0 rgba(0,0,0,.12), 0 6px 14px rgba(60,40,30,.2), inset 0 1px 0 #fff; }
+  .nb-rose::before, .nb-rose::after{ content:""; position:absolute; left:50%; top:10%; bottom:10%; width:1px; background:#E3CFB2; }
+  .nb-rose::after{ transform:rotate(90deg); }
+  .nb-bed{ position:absolute; pointer-events:none; z-index:2; left:50%; top:50%; width:30px; height:96px; margin:-48px 0 0 -15px; border-radius:6px;
+    background:repeating-linear-gradient(0deg,#8B5E34 0 6px,#7A5029 6px 12px); border:2px solid #5A3A1C;
+    box-shadow:0 3px 6px rgba(0,0,0,.25); transform:rotate(var(--a,0deg)); transition:transform .25s; opacity:.35; }
+  .nb-bed.on{ opacity:1; }
+  .nb-dir{ position:absolute; z-index:3; width:44px; height:44px; padding:0; margin:0; border-radius:50%; cursor:pointer;
+    -webkit-appearance:none; appearance:none; touch-action:manipulation; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
+    border:1px solid #C4A07A; background:#FBF6EF; color:#5A4636; font:700 13px Georgia,serif; box-shadow:0 2px 0 rgba(0,0,0,.12); }
+  .nb-dir[data-dir="N"]{ color:#B03A2E; }
+  .nb-dir:active{ transform:scale(.92); }
+  .nb-dir.on{ background:#8A5A2B; color:#fff; border-color:#5A3A1C; }
+  .nb-dir.on2{ background:#E2CBAB; border-color:#8A5A2B; }
+  .nb-dirtxt{ text-align:center; font-size:14px; font-weight:700; color:#5A4636; margin:0 0 14px; }
+  .nb-btns{ display:flex; gap:10px; margin-top:6px; }
+  .nb-save{ flex:1; padding:13px; border-radius:12px; border:none; background:var(--evergreen); color:#fff; font-weight:700; font-size:16px; cursor:pointer; }
+  .nb-del{ flex:none; padding:13px 16px; border-radius:12px; border:1px solid #E7B0A8; background:#FBE9E6; color:#A93226; font-weight:700; font-size:15px; cursor:pointer; }
+  .nb-del[hidden]{ display:none; }
+  .nb-save:disabled{ opacity:.5; }
+  body.night-mode .nb-card{ background:var(--card); color:var(--ink); }
   .bg-saves{ margin:0 0 10px; padding:8px; border:1px solid var(--line); border-radius:12px; background:var(--card); }
   .bg-saves[hidden]{ display:none; }
   .bg-save{ display:flex; gap:6px; margin-bottom:6px; }
@@ -2658,6 +2757,28 @@
     transform:translateY(2px);
     box-shadow:0 1px 0 var(--b3d-edge, rgba(74,64,88,.22)), inset 0 2px 3px rgba(74,64,88,.15) !important;
   }
+  /* Green buttons — style "G · Soft pastel": light green top to mint
+     bottom, dark green text, raised with a soft green shadow. */
+  button.add-crop-btn, button.sow-add-btn, button.h-add-btn, button.nb-add, button.nb-save, button.save-btn, button.season-done-btn, button.variety-edit-confirm-btn, .date-chip-menu button.edit, button.note-edit-save, button.tomorrow-modal-close, #seasonDoneConfirmBtn, button.modal-close:not([style*="background"]):not(#bugDeleteBtn), #bugSaveBtn{
+    background:linear-gradient(180deg,#EAF7EF,#C4E8D2) !important; color:#2F6B4E !important;
+    border:1px solid #B5DEC4 !important; font-weight:800 !important;
+    box-shadow:0 4px 0 #A8D6B9, 0 6px 12px rgba(47,107,78,.18) !important;
+    text-shadow:none; transition:transform .08s, box-shadow .08s;
+  }
+  button.add-crop-btn:active, button.sow-add-btn:active, button.h-add-btn:active, button.nb-add:active, button.nb-save:active, button.save-btn:active, button.season-done-btn:active, button.variety-edit-confirm-btn:active, .date-chip-menu button.edit:active, button.note-edit-save:active, button.tomorrow-modal-close:active, #seasonDoneConfirmBtn:active, button.modal-close:not([style*="background"]):not(#bugDeleteBtn):active, #bugSaveBtn:active{
+    transform:translateY(3px); box-shadow:0 1px 0 #A8D6B9, 0 2px 4px rgba(47,107,78,.18) !important;
+  }
+  button.add-crop-btn:disabled, button.sow-add-btn:disabled, button.h-add-btn:disabled, button.nb-add:disabled, button.nb-save:disabled, button.save-btn:disabled, button.season-done-btn:disabled, button.variety-edit-confirm-btn:disabled, .date-chip-menu button.edit:disabled, button.note-edit-save:disabled, button.tomorrow-modal-close:disabled, #seasonDoneConfirmBtn:disabled, button.modal-close:not([style*="background"]):not(#bugDeleteBtn):disabled, #bugSaveBtn:disabled{ opacity:.55; }
+  button.add-crop-btn, button.sow-add-btn, button.h-add-btn{ display:flex !important; align-items:center; justify-content:center; gap:8px; cursor:pointer; }
+  button.add-crop-btn{ width:100%; min-height:56px; border-radius:16px; font-size:17px !important; padding:8px 14px; margin-bottom:16px; }
+  button.sow-add-btn, button.h-add-btn{ min-height:46px; border-radius:13px; font-size:15px !important; padding:8px 12px; }
+  button.sow-add-btn{ margin-top:10px; margin-bottom:4px; }
+  .nb-add-plus{ background:#4E8E6E !important; color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:18px; }
+  /* Harvests "+ Add" keeps its red, with the same raised shape. */
+  button.fruit-add-btn{ display:flex !important; align-items:center; justify-content:center; min-height:46px !important; border-radius:13px; font-size:15px !important;
+    border:none !important; color:#fff !important; font-weight:800 !important;
+    background:linear-gradient(180deg,#DE6455,#B5392B) !important; box-shadow:0 4px 0 #8A2A1F, 0 6px 12px rgba(165,50,35,.25) !important; }
+  button.fruit-add-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #8A2A1F, 0 2px 4px rgba(165,50,35,.25) !important; }
   /* Edge colors that match each button family */
   .sow-add-btn, .h-add-btn, .season-done-btn, .modal-close, .tomorrow-modal-close, .add-crop-btn,
   .date-chip-menu button.edit, .variety-edit-confirm-btn, .unit-pick button.on, .hyr-years button.on,
@@ -2913,7 +3034,7 @@
         </div>
         <div id="search-vegetables-status" class="backup-status"></div>
       </div>
-      <button type="button" class="add-crop-btn" data-section="vegetables">+ Add Vegetable</button>
+      <button type="button" class="add-crop-btn" data-section="vegetables"><span class="nb-add-plus">＋</span> Add Vegetable</button>
       <div class="grid" id="grid-vegetables"></div>
     </section>
 
@@ -2926,7 +3047,7 @@
         </div>
         <div id="search-herbs-status" class="backup-status"></div>
       </div>
-      <button type="button" class="add-crop-btn" data-section="herbs">+ Add Herb</button>
+      <button type="button" class="add-crop-btn" data-section="herbs"><span class="nb-add-plus">＋</span> Add Herb</button>
       <div class="grid" id="grid-herbs"></div>
     </section>
 
@@ -2939,7 +3060,7 @@
         </div>
         <div id="search-flowers-status" class="backup-status"></div>
       </div>
-      <button type="button" class="add-crop-btn" data-section="flowers">+ Add Flower</button>
+      <button type="button" class="add-crop-btn" data-section="flowers"><span class="nb-add-plus">＋</span> Add Flower</button>
       <div class="grid" id="grid-flowers"></div>
     </section>
 
@@ -2952,7 +3073,7 @@
         </div>
         <div id="search-coverCrops-status" class="backup-status"></div>
       </div>
-      <button type="button" class="add-crop-btn" data-section="coverCrops">+ Add Cover Crop</button>
+      <button type="button" class="add-crop-btn" data-section="coverCrops"><span class="nb-add-plus">＋</span> Add Cover Crop</button>
       <div class="grid" id="grid-coverCrops"></div>
     </section>
 
@@ -2979,6 +3100,15 @@
       <div class="bg-all" id="bgAll" hidden>
         <div class="bg-all-top"><b>All beds</b><span class="bg-all-season" id="bgAllSeason"></span><span class="bg-all-tip" id="bgAllTip">🤏 Pinch to zoom · double-tap to reset</span><span style="flex:1"></span><button type="button" id="bgAllClose" aria-label="Close">✕</button></div>
         <div class="bg-all-body" id="bgAllBody"><div class="bg-all-inner" id="bgAllInner"></div></div>
+      </div>
+      <div class="bg-pagenav" id="bgPageNav" aria-label="Scroll the page">
+        <button type="button" id="bgPageUp" aria-label="Scroll up">▲</button>
+        <button type="button" id="bgPageDown" aria-label="Scroll down">▼</button>
+      </div>
+      <div class="nb-wrap">
+        <h3 class="nb-h">My Garden Beds</h3>
+        <div id="nbList" class="nb-list"></div>
+        <button type="button" class="nb-add" id="nbAddBtn"><span class="nb-add-plus">＋</span> Add a new garden</button>
       </div>
     </section>
 
@@ -3157,7 +3287,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.22-45</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.23-57</div>
   </main>
 
   <nav class="tabbar">
@@ -3196,6 +3326,37 @@
   </nav>
 </div>
 
+<div class="modal-backdrop" id="nbModalBackdrop">
+  <div class="modal nb-modal" role="dialog" aria-modal="true" aria-labelledby="nbTitle">
+    <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="nbClose" aria-label="Close">✕</button></div>
+    <div class="nb-title-row">
+      <h3 id="nbTitle">Add a new garden</h3>
+      <button type="button" class="nb-lock" id="nbLock" aria-pressed="false" title="Lock / unlock editing" hidden>🔒</button>
+    </div>
+    <div class="nb-locknote" id="nbLockNote" hidden>This bed was added more than 48 hours ago, so it's locked. Tap 🔒 to unlock, make your changes, then tap 🔓 to lock it again.</div>
+    <fieldset class="nb-fields" id="nbFields">
+      <label class="nb-lbl">Name<input type="text" id="nbName" class="nb-in" placeholder="e.g. Bed 5 – by the fence" maxlength="40"></label>
+      <div class="nb-dims">
+        <label class="nb-lbl">Width<span class="nb-unit"><input type="number" inputmode="decimal" min="0" step="0.5" id="nbW" class="nb-in" placeholder="4"><i>ft</i></span></label>
+        <label class="nb-lbl">Length<span class="nb-unit"><input type="number" inputmode="decimal" min="0" step="0.5" id="nbL" class="nb-in" placeholder="8"><i>ft</i></span></label>
+        <label class="nb-lbl">Height<span class="nb-unit"><input type="number" inputmode="decimal" min="0" step="1" id="nbH" class="nb-in" placeholder="12"><i>in</i></span></label>
+      </div>
+      <div class="nb-size" id="nbSize"></div>
+      <div class="nb-lbl">Direction <small>— tap which way the long side of the bed runs</small></div>
+      <div class="nb-compass" id="nbCompass">
+        <div class="nb-rose"></div>
+        <div class="nb-bed" id="nbBedShape"></div>
+        <button type="button" class="nb-dir" data-dir="N" style="left:88.0px;top:-2.0px" aria-label="N">N</button><button type="button" class="nb-dir" data-dir="NE" style="left:151.6px;top:24.4px" aria-label="NE">NE</button><button type="button" class="nb-dir" data-dir="E" style="left:178.0px;top:88.0px" aria-label="E">E</button><button type="button" class="nb-dir" data-dir="SE" style="left:151.6px;top:151.6px" aria-label="SE">SE</button><button type="button" class="nb-dir" data-dir="S" style="left:88.0px;top:178.0px" aria-label="S">S</button><button type="button" class="nb-dir" data-dir="SW" style="left:24.4px;top:151.6px" aria-label="SW">SW</button><button type="button" class="nb-dir" data-dir="W" style="left:-2.0px;top:88.0px" aria-label="W">W</button><button type="button" class="nb-dir" data-dir="NW" style="left:24.4px;top:24.4px" aria-label="NW">NW</button>
+      </div>
+      <div class="nb-dirtxt" id="nbDirTxt">No direction picked yet</div>
+      <label class="nb-lbl">Soil note<textarea id="nbSoil" class="nb-in nb-ta" rows="3" placeholder="e.g. 60% topsoil, 30% compost, 10% perlite. Mel's Mix."></textarea></label>
+    </fieldset>
+    <div class="nb-btns">
+      <button type="button" class="nb-del" id="nbDel" hidden>🗑️ Delete</button>
+      <button type="button" class="nb-save" id="nbSave">💾 Save</button>
+    </div>
+  </div>
+</div>
 <div class="modal-backdrop" id="compareModalBackdrop">
   <div class="modal">
     <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="compareModalTopClose" aria-label="Close">✕</button></div>
@@ -3852,7 +4013,7 @@ const CROP_EMOJI = {
   longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
   basil:"🌿", parsley:"🌿", dill:"🌿", cilantro:"🌿",
-  nasturtium:"🌼", roselle:"🌺"
+  nasturtium:"🌼", roselle:"🌺", zinnia:"🏵️", cosmos:"🌸"
 };
 const SECTION_EMOJI_FALLBACK = { vegetables:"🥕", herbs:"🌿", flowers:"🌸", coverCrops:"🌱" };
 // Crops drawn as a small picture instead of an emoji.
@@ -4014,6 +4175,12 @@ const SEASONS = {
       dates:[[{a:"Start (indoor)", m:10, d:12, m2:10, d2:13},{a:"Start (direct)", m:10, d:31},{a:"Transplant", m:10, d:30, m2:10, d2:31}]]},
     {slug:"roselle", name:"Roselle", shape:"flower", color:C.magenta,
       dates:[[{a:"Start seeds", m:2, d:16, m2:2, d2:17}]]},
+    {slug:"zinnia", name:"Zinnia", shape:"flower", color:C.pinkRed,
+      dates:[[{a:"Start (indoor)", m:2, d:25, m2:2, d2:26},{a:"Transplant", m:3, d:15, m2:3, d2:17}],[{a:"Start (direct)", m:4, d:21, m2:4, d2:22}]],
+      note:"Warm-season annual: start after the last frost (late Feb in Odessa). Second sowing in April keeps blooms going into summer. Full sun; water at the base to avoid powdery mildew."},
+    {slug:"cosmos", name:"Cosmos", shape:"flower", color:C.lavender,
+      dates:[[{a:"Start (direct)", m:3, d:6, m2:3, d2:8}],[{a:"Start (direct)", m:4, d:12, m2:4, d2:13}]],
+      note:"Sow straight in the bed, barely covered; seeds sprout in about a week. Don't fertilize much — rich soil means lots of leaves and fewer flowers. Second sowing in April for summer blooms."},
   ],
   coverCrops: [
     {slug:"sunnhemp", name:"Sunn Hemp", shape:"leaf", color:C.greenMed,
@@ -5885,10 +6052,10 @@ function tidyCard(card){
   if(dose && dose.querySelector(".wave-line:not(.tidy-wave-hide) .bc-task-note")){
     dose.classList.add("tidy-moon-hidden");
     const t = document.createElement("button");
-    t.type = "button"; t.className = "tidy-moon-toggle"; t.textContent = "🌙 Show biodynamic calendar days ▾";
+    t.type = "button"; t.className = "tidy-moon-toggle"; t.innerHTML = '<span class="moon-badge" aria-hidden="true">🌙</span>Show biodynamic calendar days ▾';
     t.addEventListener("click", () => {
       const hid = dose.classList.toggle("tidy-moon-hidden");
-      t.textContent = hid ? "🌙 Show biodynamic calendar days ▾" : "🌙 Hide biodynamic calendar days ▴";
+      t.innerHTML = '<span class="moon-badge" aria-hidden="true">🌙</span>' + (hid ? "Show biodynamic calendar days ▾" : "Hide biodynamic calendar days ▴");
     });
     dose.after(t);
   }
@@ -9966,6 +10133,8 @@ const GERM_TEMP_DATA = {
   cilantro:{min:40,optMin:50,optMax:75,max:85,days:[7,14],dtm:[40,55]},
   nasturtium:{min:55,optMin:65,optMax:70,max:85,days:[7,14],dtm:[35,65]},
   roselle:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
+  zinnia:{min:60,optMin:70,optMax:85,max:95,days:[5,10],dtm:[60,75]},
+  cosmos:{min:60,optMin:70,optMax:85,max:95,days:[7,14],dtm:[60,80]},
   sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true,days:[5,10],daysApprox:true,dtm:[60,90],dtmApprox:true},
   puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[90,120],dtmApprox:true},
   peanuts:{min:60,optMin:70,optMax:95,max:100,days:[7,14],dtm:[100,140]},
@@ -12041,7 +12210,7 @@ async function renderBedGrid(){
   function startPan(e){
     cancelAnimationFrame(glide); glide = 0;
     panMoved = false;
-    pan = { id: e.pointerId, x: e.clientX, y: e.clientY, sl: vx, st: vy,
+    pan = { id: e.pointerId, x: e.clientX, y: e.clientY, sl: vx, st: vy, page0: window.scrollY,
       lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
   }
   function endPan(withGlide){
@@ -12054,9 +12223,10 @@ async function renderBedGrid(){
       const dt = Math.min(32, now - last); last = now;
       gx *= Math.pow(0.92, dt / 16); gy *= Math.pow(0.92, dt / 16);
       if(Math.abs(gx) < 0.03 && Math.abs(gy) < 0.03){ glide = 0; return; }
-      const ox = vx, oy = vy;
-      setView(vx - gx * dt, vy - gy * dt, true);
-      if(ox === vx && oy === vy){ glide = 0; return; }
+      const ox = vx, oy = vy, wy = vy - gy * dt, sy = window.scrollY;
+      setView(vx - gx * dt, wy, true);
+      if(Math.abs(wy - vy) >= 0.5) window.scrollBy(0, wy - vy);
+      if(ox === vx && oy === vy && Math.abs(window.scrollY - sy) < 0.5){ glide = 0; return; }
       glide = requestAnimationFrame(step);
     };
     glide = requestAnimationFrame(step);
@@ -12066,7 +12236,13 @@ async function renderBedGrid(){
     const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
     if(!panMoved && Math.hypot(dx, dy) < 6) return;
     if(!panMoved){ panMoved = true; clearPress(); }
-    setView(pan.sl - dx, pan.st - dy);
+    const wantY = pan.st - dy;
+    setView(pan.sl - dx, wantY, true);
+    // Beds already at their top or bottom (or showing whole): the rest of
+    // the swipe scrolls the page, so you can always move up and down.
+    const over = wantY - vy;
+    const pageY = Math.max(0, pan.page0 + over);
+    if(Math.abs(window.scrollY - pageY) >= 1) window.scrollTo(0, pageY);
     const now = performance.now(), dt = Math.max(1, now - pan.lt);
     pan.vx = (e.clientX - pan.lx) / dt; pan.vy = (e.clientY - pan.ly) / dt;
     pan.lx = e.clientX; pan.ly = e.clientY; pan.lt = now;
@@ -13323,7 +13499,7 @@ const CROP_BIO_TYPE = {
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
   nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
-  nasturtium:"flower", roselle:"flower",
+  nasturtium:"flower", roselle:"flower", zinnia:"flower", cosmos:"flower",
   sunnhemp:"leaf", puertoricanblackbeans:"fruit", peanuts:"root"
 };
 const BC_MONTH_NAMES_BY_YEAR = {
@@ -13776,6 +13952,158 @@ async function checkTomorrowReminder(){
   if(!READ_ONLY){
     checkTomorrowReminder();
   }
+})();
+</script>
+
+<script>
+/* ---------------- My Garden Beds: add a new garden ----------------
+   Each bed: name, width (ft), length (ft), height (in), soil note and the
+   compass direction its long side runs. Saved under "myGardenBeds" (synced
+   like everything else). Beds stay editable for 48 hours; after that the
+   window opens locked and the 🔒 button unlocks it (or the app-wide unlock). */
+(function(){
+  const KEY = "myGardenBeds";
+  const DIR_A = { N:0, NE:45, E:90, SE:135, S:180, SW:225, W:270, NW:315 };
+  const OPP = { N:"S", NE:"SW", E:"W", SE:"NW", S:"N", SW:"NE", W:"E", NW:"SE" };
+  const DIR_NAME = { N:"North", NE:"Northeast", E:"East", SE:"Southeast", S:"South", SW:"Southwest", W:"West", NW:"Northwest" };
+  let beds = [], editing = null, pickedDir = "", unlockedHere = false;
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+  const num = v => { const n = parseFloat(v); return isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : ""; };
+  const dirLabel = d => d ? `Runs ${DIR_NAME[d]}–${DIR_NAME[OPP[d]]} (${d}–${OPP[d]})` : "";
+  function dimsText(b){
+    const parts = [];
+    if(b.w) parts.push(`${b.w}′ wide`); if(b.l) parts.push(`${b.l}′ long`); if(b.h) parts.push(`${b.h}″ high`);
+    return parts.join(" × ");
+  }
+  function sizeText(w, l, h){
+    if(!(w && l)) return "";
+    const area = Math.round(w * l * 10) / 10;
+    let t = `${area} sq ft of growing space`;
+    if(h){ const cuft = w * l * (h / 12); t += ` · about ${Math.round(cuft * 10) / 10} cu ft of soil (${Math.round(cuft / 27 * 100) / 100} cu yd)`; }
+    return t;
+  }
+  async function load(){
+    try{ const r = await window.storage.get(KEY, false); beds = r && r.value ? JSON.parse(r.value) : []; }catch(e){ beds = []; }
+    if(!Array.isArray(beds)) beds = [];
+  }
+  async function persist(){ try{ await window.storage.set(KEY, JSON.stringify(beds), false); }catch(e){} }
+  function render(){
+    const list = $("nbList"); if(!list) return;
+    list.innerHTML = beds.map(b => {
+      const locked = isEntryLocked(b.addedAt);
+      return `<button type="button" class="nb-card" data-id="${esc(b.id)}">
+        <span class="nb-card-ico"><b>N</b><i style="--a:${DIR_A[b.dir] || 0}deg;${b.dir ? "" : "opacity:.3"}"></i></span>
+        <span class="nb-card-txt">
+          <span class="nb-card-name">${esc(b.name || "Garden bed")}${locked ? ' <span title="Locked">🔒</span>' : ""}</span>
+          ${dimsText(b) ? `<span class="nb-card-dims" style="display:block">${dimsText(b)}</span>` : ""}
+          ${b.dir ? `<span class="nb-card-dir" style="display:block">🧭 ${dirLabel(b.dir)}</span>` : ""}
+          ${b.soil ? `<span class="nb-card-soil" style="display:block">🪴 ${esc(b.soil)}</span>` : ""}
+        </span></button>`;
+    }).join("");
+  }
+  function setDir(d){
+    pickedDir = d || "";
+    document.querySelectorAll("#nbCompass .nb-dir").forEach(btn => {
+      btn.classList.toggle("on", btn.dataset.dir === pickedDir);
+      btn.classList.toggle("on2", !!pickedDir && btn.dataset.dir === OPP[pickedDir]);
+    });
+    const shape = $("nbBedShape");
+    shape.style.setProperty("--a", (DIR_A[pickedDir] || 0) + "deg");
+    shape.classList.toggle("on", !!pickedDir);
+    $("nbDirTxt").textContent = pickedDir ? dirLabel(pickedDir) : "No direction picked yet";
+  }
+  function updateSize(){ $("nbSize").textContent = sizeText(num($("nbW").value), num($("nbL").value), num($("nbH").value)); }
+  function applyLockUI(){
+    const ageLocked = editing && isEntryLocked(editing.addedAt);
+    const locked = ageLocked && !unlockedHere;
+    const lockBtn = $("nbLock");
+    lockBtn.hidden = !ageLocked;
+    lockBtn.textContent = unlockedHere ? "🔓" : "🔒";
+    lockBtn.classList.toggle("unlocked", unlockedHere);
+    lockBtn.setAttribute("aria-pressed", unlockedHere ? "true" : "false");
+    $("nbLockNote").hidden = !ageLocked;
+    $("nbFields").disabled = locked;
+    $("nbSave").disabled = locked;
+    $("nbDel").hidden = !editing || locked;
+  }
+  function open(bed){
+    editing = bed || null; unlockedHere = false;
+    $("nbTitle").textContent = bed ? (bed.name || "Garden bed") : "Add a new garden";
+    $("nbName").value = bed ? bed.name || "" : "";
+    $("nbW").value = bed ? bed.w || "" : "";
+    $("nbL").value = bed ? bed.l || "" : "";
+    $("nbH").value = bed ? bed.h || "" : "";
+    $("nbSoil").value = bed ? bed.soil || "" : "";
+    setDir(bed ? bed.dir : ""); updateSize(); applyLockUI();
+    $("nbModalBackdrop").classList.add("show");
+  }
+  function close(){ $("nbModalBackdrop").classList.remove("show"); editing = null; unlockedHere = false; }
+  async function save(){
+    const data = { name: $("nbName").value.trim(), w: num($("nbW").value), l: num($("nbL").value), h: num($("nbH").value),
+      soil: $("nbSoil").value.trim(), dir: pickedDir };
+    if(!data.name) data.name = `Garden bed ${beds.length + (editing ? 0 : 1)}`;
+    if(editing){ Object.assign(editing, data); editing.updatedAt = Date.now(); }
+    else beds.push(Object.assign({ id: "nb" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), addedAt: Date.now() }, data));
+    await persist(); render(); close();
+  }
+  async function del(){
+    if(!editing) return;
+    const gone = editing, idx = beds.indexOf(gone);
+    beds.splice(idx, 1); await persist(); render(); close();
+    if(typeof showUndoToast === "function") showUndoToast(`Deleted “${gone.name || "Garden bed"}”`, async () => { beds.splice(idx, 0, gone); await persist(); render(); });
+  }
+  $("nbAddBtn").addEventListener("click", () => open(null));
+  $("nbList").addEventListener("click", e => { const c = e.target.closest(".nb-card"); if(c) open(beds.find(b => b.id === c.dataset.id)); });
+  $("nbClose").addEventListener("click", close);
+  $("nbModalBackdrop").addEventListener("click", e => { if(e.target.id === "nbModalBackdrop") close(); });
+  $("nbSave").addEventListener("click", save);
+  $("nbDel").addEventListener("click", del);
+  $("nbLock").addEventListener("click", () => { unlockedHere = !unlockedHere; applyLockUI(); });
+  document.querySelectorAll("#nbCompass .nb-dir").forEach(btn => {
+    const pick = e => { if(e && e.cancelable) e.preventDefault(); if(!$("nbFields").disabled) setDir(btn.dataset.dir); };
+    btn.addEventListener("pointerup", pick);
+    btn.addEventListener("touchend", pick, { passive:false });
+    btn.addEventListener("click", pick);
+  });
+  ["nbW", "nbL", "nbH"].forEach(id => $(id).addEventListener("input", updateSize));
+  // Re-render when the app-wide unlock changes, so the 🔒 marks update.
+  const ug = document.getElementById("globalUnlockToggle");
+  if(ug) ug.addEventListener("click", () => setTimeout(render, 0));
+  window.nbReload = async () => { await load(); render(); };
+  load().then(render);
+})();
+</script>
+
+<script>
+/* Garden Beds page ▲ ▼ buttons: show only on that tab, move the page about
+   two-thirds of a screen per tap, and grey out at the very top/bottom. */
+(function(){
+  const nav = document.getElementById("bgPageNav"); if(!nav) return;
+  const up = document.getElementById("bgPageUp"), down = document.getElementById("bgPageDown");
+  const tabbar = document.querySelector("nav.tabbar");
+  const onBeds = () => { const t = document.getElementById("tab-beds"); return !!(t && t.classList.contains("active")); };
+  const refresh = () => {
+    document.body.classList.toggle("on-beds", onBeds());
+    if(tabbar) document.documentElement.style.setProperty("--tabbar-h", tabbar.offsetHeight + "px");
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    up.disabled = window.scrollY < 4; down.disabled = window.scrollY > maxY - 4;
+  };
+  const step = dir => window.scrollBy({ top: dir * Math.round(window.innerHeight * 0.66), behavior: "smooth" });
+  // Tap = one step. Press and hold = keeps moving until you let go.
+  [[up, -1], [down, 1]].forEach(([b, d]) => {
+    let wait = null, run = null, held = false;
+    const stopHold = () => { clearTimeout(wait); clearInterval(run); wait = run = null; };
+    b.addEventListener("pointerdown", () => { stopHold(); held = false;
+      wait = setTimeout(() => { held = true; run = setInterval(() => window.scrollBy(0, d * 24), 30); }, 350); });
+    ["pointerup", "pointercancel", "pointerleave"].forEach(ev => b.addEventListener(ev, stopHold));
+    b.addEventListener("click", () => { if(held){ held = false; return; } step(d); });
+  });
+  window.addEventListener("scroll", refresh, { passive:true });
+  window.addEventListener("resize", refresh);
+  document.querySelectorAll(".tabbtn").forEach(t => t.addEventListener("click", () => setTimeout(refresh, 50)));
+  new MutationObserver(refresh).observe(document.getElementById("tab-beds"), { attributes:true, attributeFilter:["class"] });
+  refresh();
 })();
 </script>
 </body></html>
