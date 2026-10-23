@@ -501,6 +501,8 @@
   .ledger-row[class*="bio-"] .ledger-mid .action{ color:#222; }
   .ledger-row[class*="bio-"] .ledger-when{ color:#222; }
   /* "Today / in 2d" in the same font as "Start (direct)" */
+  #ledger .ledger-done{ flex:none; margin-left:auto; }
+  #ledger .is-done .ledger-when{ margin-left:0; }
   #ledger .ledger-when, #ledger .ledger-mid .action{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:400; line-height:1.3; }
   /* Coming Up: each crop is its own rounded card with a gap between them. */
   #ledger{ background:none; border:none; box-shadow:none; overflow:visible; display:flex; flex-direction:column; gap:8px; }
@@ -3424,7 +3426,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.23-70</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.23-71</div>
   </main>
 
   <nav class="tabbar">
@@ -9479,6 +9481,35 @@ if(document.getElementById("search-home")){
   });
 }
 
+// Coming Up: once a sow / transplant is logged for a row's planned window
+// (within 2 days, same rule as the crop cards), show the 🌱 badge on it.
+async function markLedgerDone(ledger){
+  const cache = {};
+  const dates = async (slug, kind) => {
+    const k = slug + ":" + kind;
+    if(!cache[k]) cache[k] = (await getActualDates(slug, kind)).map(entryDate).filter(Boolean);
+    return cache[k];
+  };
+  for(const row of ledger.querySelectorAll(".ledger-row[data-t]")){
+    let t; try{ t = JSON.parse(row.dataset.t); }catch(e){ continue; }
+    const kind = /^Transplant/.test(t.a) ? "transplant" : "sow";
+    const pool = await dates(row.dataset.slug, kind);
+    const start = plannedDateObj(activeSeason, t);
+    const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
+    const lo = start.getTime() - 2 * 86400000, hi = end.getTime() + 2 * 86400000;
+    const hit = pool.map(iso => { const q = String(iso).split("-").map(Number); return new Date(q[0], q[1] - 1, q[2]); })
+      .find(d => d.getTime() >= lo && d.getTime() <= hi);
+    if(hit && !row.querySelector(".ledger-done")){
+      row.classList.add("is-done");
+      const b = document.createElement("span");
+      b.className = "logged-check ledger-done";
+      b.title = `Done — ${kind === "transplant" ? "transplanted" : "sown"} ${MONTHS[hit.getMonth()]} ${hit.getDate()}`;
+      b.textContent = "🌱";
+      row.querySelector(".ledger-when").before(b);
+      const w = row.querySelector(".ledger-when"); if(w) w.textContent = "Done";
+    }
+  }
+}
 function renderLedger(){
   const now = new Date();
   document.getElementById("todayDayLabel").textContent = now.getDate();
@@ -9515,7 +9546,7 @@ function renderLedger(){
     const target = new Date(now); target.setDate(now.getDate() + x.diff);
     const when = x.diff === 0 ? "Today" : x.diff === 1 ? "Tomorrow" : `in ${x.diff}d`;
     return `
-      <div class="ledger-row${CROP_BIO_TYPE[x.slug] ? ` bio-${CROP_BIO_TYPE[x.slug]}` : ""}" data-section="${x.sectionKey}" data-slug="${x.slug}">
+      <div class="ledger-row${CROP_BIO_TYPE[x.slug] ? ` bio-${CROP_BIO_TYPE[x.slug]}` : ""}" data-section="${x.sectionKey}" data-slug="${x.slug}" data-t='${JSON.stringify({a:x.action, m:x.m, d:x.d, m2:x.m2, d2:x.d2}).replace(/'/g, "&#39;")}'>
         <div class="ledger-date">${fmtDateLedger(x)}<span class="dow">${DOW[target.getDay()]}</span></div>
         <div class="ledger-icon">${cropIcon(x, x.sectionKey)}</div>
         <div class="ledger-mid">
@@ -9525,6 +9556,7 @@ function renderLedger(){
         <div class="ledger-when">${when}</div>
       </div>`;
   }).join("");
+  markLedgerDone(ledger);
   ledger.querySelectorAll(".ledger-row").forEach(row => {
     row.addEventListener("click", () => goToCropDirect(row.dataset.section, row.dataset.slug));
   });
