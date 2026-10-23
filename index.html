@@ -769,6 +769,45 @@
   .note-entry .jk-badge{ flex:none; width:28px; height:28px; border-radius:8px; border:none; background:rgba(255,255,255,0.75); font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; }
   .home-tab-btn.tab-germtemp{ background:linear-gradient(160deg, #ECEEFD 0%, #D5DAF8 100%); color:#4B55A8; border-color:#C6CCF1; }
   .home-tab-btn.tab-germtemp.active{ background:#7580D4; color:#fff; border-color:#7580D4; }
+  /* Home buttons: same look as the crop cards and Coming Up rows —
+     solid pastel, thin darker outline, soft shadow, 3D icon, dark text. */
+  .home-tabs-card .home-tab-btn{ border-radius:14px !important; padding:8px 12px !important; min-height:58px; gap:10px !important;
+    font-family:'Inter',sans-serif; font-size:15px !important; font-weight:600 !important; color:#222 !important;
+    background-image:none !important; box-shadow:var(--shadow) !important; transform:none; }
+  .home-tabs-card .home-tab-btn:active{ transform:translateY(1px); filter:brightness(.97); }
+  .home-tabs-card .home-tab-icon{ width:40px; height:40px; border-radius:12px; font-size:24px; text-shadow:0 2px 2px rgba(0,0,0,.3);
+    background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%) !important;
+    border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
+  .home-tabs-card .home-tab-btn.tab-almanac:not(.active){ background:#F9D3E0 !important; border:1px solid #E8A9BF !important; }
+  .home-tabs-card .home-tab-btn.tab-calendar:not(.active){ background:#FCDCC4 !important; border:1px solid #EBB48B !important; }
+  .home-tabs-card .home-tab-btn.tab-journal:not(.active){ background:#FBEDB5 !important; border:1px solid #E3CC75 !important; }
+  .home-tabs-card .home-tab-btn.tab-germination:not(.active){ background:#DDEFC0 !important; border:1px solid #B5D489 !important; }
+  .home-tabs-card .home-tab-btn.tab-compare:not(.active){ background:#C8ECE3 !important; border:1px solid #93CFBF !important; }
+  .home-tabs-card .home-tab-btn.tab-reorder:not(.active){ background:#CBE2F7 !important; border:1px solid #96C0E6 !important; }
+  .home-tabs-card .home-tab-btn.tab-germtemp:not(.active){ background:#D5DAF8 !important; border:1px solid #A9B2EA !important; }
+  .home-tabs-card .home-tab-btn.tab-rain:not(.active){ background:#E2D3F8 !important; border:1px solid #BFA6EA !important; }
+  .home-tabs-card .home-tab-btn.tab-fert:not(.active){ background:#F2D3EE !important; border:1px solid #D9A6D1 !important; }
+  .home-tabs-card .home-tab-btn.tab-opc:not(.active){ background:#CFE8D6 !important; border:1px solid #9DCBAA !important; }
+  /* The open button keeps its pastel card look; a bold outline shows it's selected. */
+  .home-tabs-card .home-tab-btn.active{ color:#222 !important; }
+  .home-tabs-card .home-tab-btn.active .home-tab-icon{ background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%) !important; }
+  .home-tabs-card .home-tab-btn.tab-almanac.active{ background:#F9D3E0 !important; border:1px solid #C9668C !important; box-shadow:inset 0 0 0 2px #C9668C, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-calendar.active{ background:#FCDCC4 !important; border:1px solid #C97A3E !important; box-shadow:inset 0 0 0 2px #C97A3E, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-journal.active{ background:#FBEDB5 !important; border:1px solid #B8962C !important; box-shadow:inset 0 0 0 2px #B8962C, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-germination.active{ background:#DDEFC0 !important; border:1px solid #7FA544 !important; box-shadow:inset 0 0 0 2px #7FA544, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-compare.active{ background:#C8ECE3 !important; border:1px solid #3F9C86 !important; box-shadow:inset 0 0 0 2px #3F9C86, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-reorder.active{ background:#CBE2F7 !important; border:1px solid #4F86BD !important; box-shadow:inset 0 0 0 2px #4F86BD, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-germtemp.active{ background:#D5DAF8 !important; border:1px solid #6670C4 !important; box-shadow:inset 0 0 0 2px #6670C4, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-rain.active{ background:#E2D3F8 !important; border:1px solid #8562C6 !important; box-shadow:inset 0 0 0 2px #8562C6, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-fert.active{ background:#F2D3EE !important; border:1px solid #AE5BA0 !important; box-shadow:inset 0 0 0 2px #AE5BA0, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-opc.active{ background:#CFE8D6 !important; border:1px solid #448C60 !important; box-shadow:inset 0 0 0 2px #448C60, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tab-btn.tab-how.active{ background:#E3F0E6 !important; border:1px solid #5F9874 !important; box-shadow:inset 0 0 0 2px #5F9874, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .home-tabs-card .home-tabs-row{ display:grid !important; grid-template-columns:repeat(2, minmax(0, 1fr)) !important; grid-auto-rows:1fr; gap:8px !important; }
+  .home-tabs-card .home-tabs-row + .home-tabs-row{ margin-top:8px; }
+  .home-tabs-card .home-tab-btn{ width:100%; min-width:0; height:100%; min-height:60px !important; font-size:14px !important; line-height:1.2 !important;
+    padding:8px 10px !important; gap:8px !important; flex-direction:row !important; justify-content:flex-start !important; text-align:left !important; }
+  .home-tabs-card .home-tab-icon{ width:36px; height:36px; font-size:21px; }
   .gtemp-section-header-row{ display:flex; align-items:center; gap:8px; margin:16px 0 8px; }
   .gtemp-section-header-row:first-child{ margin-top:0; }
   .gtemp-section-title{ flex:1 1 0; min-width:0; font-size:14px; font-weight:700; color:var(--evergreen); text-transform:uppercase; letter-spacing:.03em; margin-left:30px; }
@@ -865,8 +904,77 @@
   .reorder-row:last-child{border-bottom:none;}
   .reorder-row-top{ display:flex; align-items:center; gap:8px; }
   .reorder-check-wrap{
-    display:flex; align-items:center; gap:9px; flex:1; min-width:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex:none; width:30px; height:36px; cursor:pointer;
   }
+  .reorder-line{ flex:1; min-width:0; font-size:14px; line-height:1.35; overflow-wrap:anywhere; }
+  .reorder-line .reorder-text{ font-size:14px; }
+  .reorder-src-inline{ color:inherit; font-weight:inherit; font-family:'Inter',sans-serif; font-size:14px; cursor:pointer; }
+  .reorder-src-inline[aria-disabled="true"]{ cursor:default; }
+  .reorder-line .reorder-src-inline{ color:var(--ink); font-size:14px; font-weight:400; }
+  .reorder-checked + .reorder-src-inline{ color:var(--ink-soft); }
+  .reorder-src-add{ margin-left:6px !important; padding:0 7px !important; font-size:11.5px !important; vertical-align:1px; }
+  .reorder-text.editable{ cursor:text; }
+  .reorder-pen{ font-style:normal; font-size:11px; opacity:.45; margin-left:3px; }
+  .reorder-row input.reorder-source-input{ width:calc(100% - 38px); max-width:calc(100% - 38px); box-sizing:border-box; margin-left:38px; align-self:flex-start; }
+  .reorder-row .reorder-row-edit{ margin-left:38px; width:calc(100% - 38px); box-sizing:border-box; }
+  .reorder-row .reorder-row-edit select{ width:100%; }
+  /* Seeds to Reorder edit box (opens when you tap an item) */
+  .reorder-line.editable{ cursor:pointer; }
+  .reorder-row.editing{ background:rgba(185,163,227,.10); border-radius:12px; }
+  .reorder-edit{ margin:4px 0 4px 38px; display:flex; flex-direction:column; gap:6px; }
+  .reorder-edit .reorder-from-lbl{ margin-top:2px; }
+  .reorder-edit .reorder-in[hidden]{ display:none; }
+  .reorder-edit-btns{ display:flex; gap:8px; margin-top:4px; }
+  .reorder-edit-btns button{ min-height:42px; border-radius:11px; font-family:'Inter',sans-serif; font-size:14.5px; font-weight:700; cursor:pointer; padding:0 12px; }
+  .reorder-edit-btns .re-del{ background:#FBE9E6; color:#A93226; border:1px solid #E7B0A8; --b3d-edge:#E2A9A3; }
+  .reorder-edit-btns .re-cancel{ background:var(--card); color:var(--ink-soft); border:1px solid var(--line); }
+  .reorder-edit-btns .re-save{ flex:1; }
+  /* Seeds to Reorder items look like the crop tiles (Planted, Notes…):
+     pastel, rounded, raised. Still to order = lavender, ordered = mint. */
+  #reorderList{ display:flex; flex-direction:column; gap:8px; }
+  #reorderList .reorder-row{ border:1px solid #DCCFEC; border-bottom:1px solid #DCCFEC !important; border-radius:10px; padding:4px 10px 4px 4px;
+    background:#F3EEF9; box-shadow:0 2px 0 rgba(120,90,160,.18); gap:2px; }
+  #reorderList .reorder-row:has(.reorder-checkbox:checked){ background:linear-gradient(160deg,#E5F7F3 0%,#C8ECE3 100%); border-color:#B3E0D5 !important; box-shadow:0 2px 0 rgba(45,126,110,.18); }
+  #reorderList .reorder-row.editing{ background:#F3EEF9; box-shadow:inset 0 0 0 2px #B9A3E3, 0 2px 0 rgba(120,90,160,.18); }
+  #reorderList .reorder-row-top{ min-height:36px; }
+  #reorderList .reorder-line, #reorderList .reorder-text{ font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#4E3A70; }
+  #reorderList .reorder-checked{ color:#2D7E6E; font-weight:600; }
+  #reorderList .reorder-checkbox{ accent-color:#2D7E6E; }
+  #reorderList .reorder-edit{ margin:4px 4px 6px 34px; }
+  .reorder-edit-btns button{ min-height:44px !important; border-radius:10px !important; font-size:14px !important; font-weight:600 !important;
+    box-shadow:0 2px 0 rgba(120,90,160,.18) !important; background-image:none !important; }
+  .reorder-edit-btns .re-del{ background:#FFF4F1 !important; border:1px solid #F0C9C2 !important; color:#9E3B2C !important; box-shadow:0 2px 0 rgba(158,59,44,.18) !important; }
+  .reorder-edit-btns .re-cancel{ background:#FBF3E6 !important; border:1px solid #E8D3B0 !important; color:#8A5A2B !important; box-shadow:0 2px 0 rgba(138,90,43,.18) !important; }
+  .reorder-edit-btns .re-save{ background:linear-gradient(160deg,#E5F7F3 0%,#C8ECE3 100%) !important; border:1px solid #B3E0D5 !important; color:#2D7E6E !important; box-shadow:0 2px 0 rgba(45,126,110,.2) !important; }
+  .reorder-edit-btns button:active{ transform:translateY(2px); box-shadow:none !important; }
+  /* ===== Seeds to Reorder: same sizes and fonts as a crop's "Your season" box ===== */
+  #reorderBody .reorder-form.tidy-season{ gap:0; margin-top:0; }
+  #reorderBody .tidy-season-title{ margin-bottom:2px; }
+  #reorderBody .reorder-from-lbl{ display:block; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:#4A4058; padding-top:3px; margin:6px 0 4px; }
+  #reorderBody .reorder-in{ width:100%; box-sizing:border-box; height:32px; min-height:32px !important; padding:6px 8px !important;
+    font-family:'Inter',sans-serif; font-size:13px !important; font-weight:400; color:#6A3FA8; background:#EFE5F6 !important;
+    border:1px solid #E4D9F0 !important; border-radius:8px !important; box-shadow:none !important; line-height:1.2; }
+  #reorderBody .reorder-in::placeholder{ color:var(--entry-placeholder); }
+  #reorderBody .reorder-in:focus{ border-color:#B9A3E3 !important; box-shadow:0 0 0 2px rgba(185,163,227,.25) !important; }
+  #reorderBody .reorder-select{ padding-right:28px !important; }
+  #reorderBody .reorder-select.empty{ color:var(--entry-placeholder); }
+  #reorderBody .reorder-select-wrap::after{ right:10px; font-size:13px; }
+  #reorderBody #reorderSrcOther{ margin-top:6px; }
+  #reorderBody button.reorder-add-btn{ margin-top:10px !important; margin-bottom:0 !important; }
+  /* list */
+  #reorderList{ gap:6px !important; }
+  #reorderList .reorder-row{ padding:2px 8px 2px 2px !important; border-radius:8px !important; }
+  #reorderList .reorder-row-top{ min-height:32px !important; }
+  #reorderList .reorder-line, #reorderList .reorder-text{ font-size:13.5px !important; font-weight:600 !important; }
+  #reorderList .reorder-checkbox{ width:16px !important; height:16px !important; }
+  #reorderList .reorder-check-wrap{ width:28px !important; height:32px !important; }
+  #reorderList .reorder-edit{ margin:2px 4px 8px 30px !important; gap:0 !important; }
+  /* edit buttons: same pills as Indoors / Direct outside */
+  .reorder-edit-btns{ margin-top:10px !important; gap:6px !important; }
+  .reorder-edit-btns button{ min-height:36px !important; height:36px; border-radius:999px !important; padding:6px 13px !important;
+    font-size:13.5px !important; font-weight:600 !important; }
+  .reorder-name-input{ flex:1; min-width:0; min-height:38px; padding:6px 10px; }
+  .reorder-checkbox{ width:20px !important; height:20px !important; }
   .reorder-checkbox{ width:18px; height:18px; flex:none; accent-color:var(--evergreen); }
   .reorder-text{ font-size:14px; color:var(--ink); word-break:break-word; }
   .reorder-checked{ color:var(--ink-soft); text-decoration:line-through; }
@@ -878,8 +986,30 @@
   .reorder-lock{
     flex:none; font-size:14px; padding:4px 6px; opacity:.6;
   }
+  /* Seeds to Reorder: entry box matches the app's other lavender boxes. */
+  .reorder-form{ display:flex; flex-direction:column; gap:8px; }
+  .reorder-in{ width:100%; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:16px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-height:44px; outline:none; }
+  .reorder-in::placeholder{ color:var(--entry-placeholder); }
+  .reorder-in:focus{ border-color:#B9A3E3; box-shadow:0 0 0 3px rgba(185,163,227,.25); }
+  .reorder-in[hidden]{ display:none; }
+  .reorder-from-lbl{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-top:2px; }
+  .reorder-select-wrap{ position:relative; }
+  .reorder-select-wrap::after{ content:"▾"; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#7A5FB0; font-size:16px; pointer-events:none; }
+  .reorder-select{ -webkit-appearance:none; appearance:none; padding-right:36px; cursor:pointer; }
+  .reorder-select.empty{ color:var(--entry-placeholder); }
+  .reorder-select option{ color:#222; }
+  .reorder-src-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+  .reorder-src-chips button{ font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:6px 11px; min-height:34px; border-radius:999px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+  .reorder-src-chips button.on{ background:#4E8E6E !important; color:#fff; border-color:#3A6E54; }
+  button.reorder-add-btn{ margin-top:4px; width:100%; }
+  .reorder-src-tag{ margin-left:0; display:inline-flex; align-items:center; gap:4px; align-self:flex-start; font-family:'Inter',sans-serif;
+    font-size:12px; font-weight:600; color:#2F6B4E; background:#E6F4EA; border:1px solid #C4E3CF; border-radius:999px; padding:2px 9px; cursor:pointer; }
+  .reorder-src-tag.empty{ color:var(--ink-soft); background:transparent; border-style:dashed; border-color:var(--line); }
+  .reorder-src-tag[aria-disabled="true"]{ cursor:default; }
   .reorder-source-input{
-    margin-left:27px; font-size:12.5px; padding:6px 8px;
+    margin-left:38px; font-size:12.5px; padding:6px 8px;
     border:1px solid var(--line); border-radius:7px;
     background:var(--paper-2); color:var(--ink); font-family:'Inter',sans-serif;
   }
@@ -3010,8 +3140,15 @@
         <div id="germtempBody" class="home-tab-body" style="display:none;"></div>
         <div id="reorderBody" class="home-tab-body" style="display:none;">
         <p class="backup-hint" style="margin:0 0 12px;">Add a variety here when you're running low — check it off once it's ordered.</p>
-        <div class="harvest-add-row" style="margin-bottom:0;">
-          <input type="text" id="reorderInput" placeholder="Variety name, press Enter" autocomplete="off">
+        <div class="reorder-form tidy-season">
+          <div class="tidy-season-title">🛒 Add a variety</div>
+          <label class="reorder-from-lbl" for="reorderInput">Variety</label>
+          <input type="text" id="reorderInput" class="reorder-in" placeholder="Variety name, press Enter" autocomplete="off">
+          <label class="reorder-from-lbl" for="reorderSrcSelect">Seed company</label>
+          <div class="reorder-select-wrap"><select id="reorderSrcSelect" class="reorder-in reorder-select" aria-label="Seed company"></select></div>
+          <input type="text" id="reorderSrcOther" class="reorder-in" placeholder="Type the new seed company" autocomplete="off" hidden>
+          <datalist id="reorderSrcList"></datalist>
+          <button type="button" class="sow-add-btn reorder-add-btn" id="reorderAddBtn">+ Add to list</button>
         </div>
         <div id="reorderList" style="margin-top:10px;"></div>
         </div>
@@ -3287,7 +3424,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.23-57</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.23-70</div>
   </main>
 
   <nav class="tabbar">
@@ -11061,33 +11198,21 @@ async function renderReorderList(){
     container.innerHTML = `<p class="backup-hint" style="margin:2px 0 0;">Nothing on the list yet.</p>`;
     return;
   }
-  container.innerHTML = sorted.map(item => `
-    <div class="reorder-row" data-id="${item.id}">
+  // Each row: checkbox + "Variety, Seed company". Tap the words (when not
+  // locked) to open the edit box: rename, change company, Save or Delete.
+  container.innerHTML = sorted.map(item => {
+    const locked = isEntryLocked(item.addedAt);
+    return `<div class="reorder-row" data-id="${item.id}">
       <div class="reorder-row-top">
-        <label class="reorder-check-wrap">
+        <label class="reorder-check-wrap" aria-label="Mark as ordered">
           <input type="checkbox" class="reorder-checkbox" ${item.checked ? "checked" : ""}>
-          <span class="reorder-text${item.checked ? " reorder-checked" : ""}">${item.text}</span>
         </label>
-        ${isEntryLocked(item.addedAt) ? `<span class="reorder-lock" title="Locked — unlock in Save a copy to delete">🔒</span>` : `<button type="button" class="reorder-delete" aria-label="Remove">×</button>`}
+        <span class="reorder-line${locked ? "" : " editable"}"${locked ? "" : ' role="button" tabindex="0"'}><span class="reorder-text${item.checked ? " reorder-checked" : ""}">${escReorder(item.text)}${item.source ? `, ${escReorder(item.source)}` : ""}</span>${locked ? "" : '<i class="reorder-pen">✏️</i>'}</span>
       </div>
-      ${item.checked ? `<input type="text" class="reorder-source-input" placeholder="Ordered from (optional)" value="${(item.source || "").replace(/"/g, "&quot;")}">` : ""}
-    </div>
-  `).join("");
-  container.querySelectorAll(".reorder-source-input").forEach(input => {
-    let saved = false;
-    const commitSource = async () => {
-      if(saved) return;
-      saved = true;
-      const id = input.closest(".reorder-row").dataset.id;
-      const list2 = await getReorderList();
-      const item = list2.find(x => String(x.id) === id);
-      if(item) item.source = input.value.trim();
-      await setReorderList(list2);
-    };
-    input.addEventListener("blur", commitSource);
-    input.addEventListener("keydown", (e) => {
-      if(e.key === "Enter"){ e.preventDefault(); input.blur(); }
-    });
+    </div>`;
+  }).join("");
+  container.querySelectorAll(".reorder-line.editable").forEach(el => {
+    el.addEventListener("click", () => openReorderEditor(el.closest(".reorder-row")));
   });
   container.querySelectorAll(".reorder-checkbox").forEach(cb => {
     cb.addEventListener("change", async (e) => {
@@ -11099,28 +11224,112 @@ async function renderReorderList(){
       renderReorderList();
     });
   });
-  container.querySelectorAll(".reorder-delete").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
-      const id = e.target.closest(".reorder-row").dataset.id;
-      const list2 = await getReorderList();
-      await setReorderList(list2.filter(x => String(x.id) !== id));
-      renderReorderList();
-    });
+}
+async function openReorderEditor(row){
+  const container = document.getElementById("reorderList");
+  container.querySelectorAll(".reorder-edit").forEach(x => x.remove());
+  container.querySelectorAll(".reorder-row.editing").forEach(x => x.classList.remove("editing"));
+  const id = row.dataset.id;
+  const list = await getReorderList();
+  const item = list.find(x => String(x.id) === id);
+  if(!item) return;
+  const cur = item.source || "";
+  const names = [...reorderSources()].sort((x, y) => x.localeCompare(y));
+  if(cur && !names.includes(cur)) names.unshift(cur);
+  const box = document.createElement("div");
+  box.className = "reorder-edit";
+  box.innerHTML = `
+    <label class="reorder-from-lbl">Variety</label>
+    <input type="text" class="reorder-in re-name" value="${escReorder(item.text)}" autocomplete="off">
+    <label class="reorder-from-lbl">Seed company</label>
+    <div class="reorder-select-wrap"><select class="reorder-in reorder-select re-src" aria-label="Seed company">
+      <option value="">— No company —</option>
+      ${names.map(n => `<option value="${escReorder(n)}"${n === cur ? " selected" : ""}>${escReorder(n)}</option>`).join("")}
+      <option value="__other">Other… (add a new company)</option>
+    </select></div>
+    <input type="text" class="reorder-in re-other" placeholder="Type the new seed company" autocomplete="off" hidden>
+    <div class="reorder-edit-btns">
+      <button type="button" class="re-del">🗑️ Delete</button>
+      <button type="button" class="re-cancel">Cancel</button>
+      <button type="button" class="re-save note-edit-save">Save</button>
+    </div>`;
+  row.classList.add("editing");
+  row.appendChild(box);
+  const nameIn = box.querySelector(".re-name"), sel = box.querySelector(".re-src"), other = box.querySelector(".re-other");
+  nameIn.focus();
+  sel.addEventListener("change", () => { other.hidden = sel.value !== "__other"; if(!other.hidden) other.focus(); });
+  const save = async () => {
+    const text = nameIn.value.trim();
+    if(!text){ nameIn.focus(); return; }
+    const src = sel.value === "__other" ? other.value.trim() : sel.value;
+    const list2 = await getReorderList();
+    const it = list2.find(x => String(x.id) === id);
+    if(it){ it.text = text; it.source = src; it.editedAt = Date.now(); }
+    await setReorderList(list2);
+    if(src && typeof rememberCustomSeedSource === "function") await rememberCustomSeedSource(src);
+    if(typeof renderReorderChips === "function") renderReorderChips();
+    renderReorderList();
+  };
+  [nameIn, other].forEach(i => i.addEventListener("keydown", e => {
+    if(e.key === "Enter"){ e.preventDefault(); save(); } else if(e.key === "Escape"){ renderReorderList(); }
+  }));
+  box.querySelector(".re-save").addEventListener("click", save);
+  box.querySelector(".re-cancel").addEventListener("click", () => renderReorderList());
+  box.querySelector(".re-del").addEventListener("click", async () => {
+    const list2 = await getReorderList();
+    const idx = list2.findIndex(x => String(x.id) === id);
+    if(idx < 0) return;
+    const gone = list2[idx];
+    list2.splice(idx, 1);
+    await setReorderList(list2); renderReorderList();
+    if(typeof showUndoToast === "function") showUndoToast(`Deleted “${gone.text}”`, async () => {
+      const l3 = await getReorderList(); l3.splice(Math.min(idx, l3.length), 0, gone); await setReorderList(l3); renderReorderList();
+    }, "Undo");
   });
 }
+function escReorder(t){ return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
 const reorderInput = document.getElementById("reorderInput");
+let reorderPickedSrc = "";
+function reorderSources(){
+  const extra = (typeof CUSTOM_SEED_SOURCES !== "undefined" ? CUSTOM_SEED_SOURCES : []).filter(x => !SEED_SOURCES.includes(x));
+  return [...SEED_SOURCES, ...extra];
+}
+function renderReorderChips(){
+  const box = document.getElementById("reorderSrcSelect"); if(!box) return;
+  const list = [...reorderSources()].sort((a, b) => a.localeCompare(b));
+  box.innerHTML = `<option value="">Choose a seed company…</option>`
+    + list.map(n => `<option value="${escReorder(n)}">${escReorder(n)}</option>`).join("")
+    + `<option value="__other">Other… (add a new company)</option>`;
+  box.value = reorderPickedSrc;
+  box.classList.toggle("empty", !reorderPickedSrc);
+  const dl = document.getElementById("reorderSrcList");
+  if(dl) dl.innerHTML = list.map(n => `<option value="${escReorder(n)}">`).join("");
+  document.getElementById("reorderSrcOther").hidden = reorderPickedSrc !== "__other";
+}
+async function addReorderItem(){
+  const text = reorderInput.value.trim();
+  if(!text){ reorderInput.focus(); return; }
+  let source = reorderPickedSrc === "__other" ? document.getElementById("reorderSrcOther").value.trim() : reorderPickedSrc;
+  const list = await getReorderList();
+  list.push({ id: Date.now() + Math.random(), text, source, checked: false, addedAt: Date.now() });
+  await setReorderList(list);
+  if(source && reorderPickedSrc === "__other" && typeof rememberCustomSeedSource === "function") await rememberCustomSeedSource(source);
+  reorderInput.value = ""; document.getElementById("reorderSrcOther").value = ""; reorderPickedSrc = "";
+  renderReorderChips(); renderReorderList();
+}
 if(reorderInput){
-  reorderInput.addEventListener("keydown", async (e) => {
-    if(e.key !== "Enter") return;
-    e.preventDefault();
-    const text = reorderInput.value.trim();
-    if(!text) return;
-    const list = await getReorderList();
-    list.push({ id: Date.now() + Math.random(), text, checked: false, addedAt: Date.now() });
-    await setReorderList(list);
-    reorderInput.value = "";
-    renderReorderList();
+  reorderInput.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); addReorderItem(); } });
+  document.getElementById("reorderSrcOther").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); addReorderItem(); } });
+  document.getElementById("reorderAddBtn").addEventListener("click", addReorderItem);
+  document.getElementById("reorderSrcSelect").addEventListener("change", e => {
+    reorderPickedSrc = e.target.value;
+    renderReorderChips();
+    if(reorderPickedSrc === "__other") document.getElementById("reorderSrcOther").focus();
   });
+  // Custom sellers load from storage a moment after start-up.
+  renderReorderChips();
+  setTimeout(renderReorderChips, 1500);
+  document.querySelector('[data-hometab="reorder"]')?.addEventListener("click", () => setTimeout(renderReorderChips, 50));
 }
 renderReorderList();
 
