@@ -1448,6 +1448,9 @@
   }
   .sow-card:hover{ background:var(--paper-2); }
   .sow-card.locked{ cursor:default; border-color:var(--line); }
+  /* A date with nothing else under it looks like every other green date tag: no box. */
+  .sow-card.bare{ border:none !important; padding:0 !important; background:none !important; }
+  .sow-card.bare:hover{ background:none; }
   .sow-card-head{
     font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#000;
     display:flex; align-items:center; flex-wrap:wrap; gap:6px;
@@ -2073,7 +2076,7 @@
   .tidy-season .actual-input-row > input{ min-width:0 !important; flex:1 1 0; width:auto !important; }
   .tidy-season .sow-card-head{ flex-wrap:wrap; gap:4px; }
   .tidy-season .tag-green{ white-space:nowrap; }
-  .tidy-season .sow-card-head .done-tag-lock{ display:none; }
+  .tidy-season .done-tag-lock{ display:none; }
   /* While adding a new entry, that row uses the full width so the boxes fit. */
   .tidy-season .actual-row > .actual-field:not(.af-collapsed), .tidy-season .actual-row > .actual-field.tidy-wide{ display:block !important; }
   .tidy-season .actual-row > .actual-field.tidy-wide > label,
@@ -3426,7 +3429,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.23-71</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.24-75</div>
   </main>
 
   <nav class="tabbar">
@@ -4766,7 +4769,8 @@ const GERM_TRACKED_CROPS = DIRECT_SOW_CROPS.concat(["squash", "cucumbers", "wate
 // Every crop grown from seed gets the "Germinated — days after sowing" section
 // (cloves, slips and bare-root plants don't germinate, so they're left out).
 const NOT_FROM_SEED = ["garlic", "onionslips", "strawberries", "sweetpotatoslips"];
-const hasGermSection = slug => !NOT_FROM_SEED.includes(slug);
+// Garlic is planted as cloves, but you still note when the shoots come up.
+const hasGermSection = slug => slug === "garlic" || !NOT_FROM_SEED.includes(slug);
 async function getPlantCountFor(season, slug){
   try{
     const r = await window.storage.get(`plants:${season}:${slug}`, false);
@@ -7434,13 +7438,13 @@ async function renderGrid(sectionKey, containerId){
             </div>
             ${showGerm ? `
             <div class="actual-field germ-field">
-              <label for="sprouted-${p.slug}">🌱 Germinated — days after ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"}</label>
+              <label for="sprouted-${p.slug}">${p.slug === "garlic" ? "🌱 Emerged" : `🌱 Germinated — days after ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"}`}</label>
               <div class="actual-input-row">
                 <input id="sprouted-${p.slug}" type="date" aria-label="Date the seedlings came up">
                 <input id="sprouted-temp-${p.slug}" class="temp-select" type="text" placeholder="Temperature" autocomplete="off" aria-label="Temperature when the seedlings came up">
               </div>
               <div class="date-chips" id="sprouted-chips-${p.slug}"></div>
-              <div class="germ-days" id="germdays-${p.slug}"><span class="germ-days-empty">Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.</span></div>
+              <div class="germ-days" id="germdays-${p.slug}"><span class="germ-days-empty">${p.slug === "garlic" ? "Pick the day the first green shoots came up through the soil — the days since planting are counted for you." : `Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.`}</span></div>
             </div>` : ""}
             ${["tomatoes", "peppers", "eggplants", "leafygreens", "broccoli", "squash", "cucumbers", "luffa", "muskmelon", "watermelon", "sweetpotatoslips"].includes(p.slug) ? `
             <div class="actual-field">
@@ -8451,14 +8455,14 @@ async function renderGrid(sectionKey, containerId){
               // always matches what's on screen.
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}${varietyNoGermReason(v) ? " no-germ-temp" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}${varietyNoGermReason(v) ? " 🌡️" : ""}<span class="variety-meta-badge">${varietyMetaText(v, p.slug)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
-              return `<div class="sow-card${locked ? " locked" : ""}" data-i="${i}">
+              return `<div class="sow-card${locked ? " locked" : ""}${varietiesLine ? "" : " bare"}" data-i="${i}">
                 <div class="sow-card-head"><span class="tag-green">🌱 ${p.slug === "garlic" ? "planted" : "seeded"} ${fmtTagDate(entryDate(d))}${fmtTagTemp(entryTemp(d))}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}</div>
                 ${varietiesLine}
               </div>`;
             }).join("");
           } else {
             // Same look as the green "✓ started Aug 5" tags up top.
-            const verb = kind === "pottedUp" ? "potted" : kind === "sprouted" ? "germinated" : kind === "sow" ? "seeded" : "transplanted";
+            const verb = kind === "pottedUp" ? "potted" : kind === "sprouted" ? (p.slug === "garlic" ? "emerged" : "germinated") : kind === "sow" ? "seeded" : "transplanted";
             chipsContainer.innerHTML = dates.map((d, i) => {
               const iso = entryDate(d);
               const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
@@ -8771,15 +8775,16 @@ async function renderGrid(sectionKey, containerId){
           const sows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean).sort();
           const ups = (await getActualDates(p.slug, "sprouted")).map(entryDate).filter(Boolean).sort();
           if(!ups.length){
-            germOut.innerHTML = `<span class="germ-days-empty">Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.</span>`;
+            germOut.innerHTML = p.slug === "garlic" ? `<span class="germ-days-empty">Pick the day the first green shoots came up through the soil — the days since planting are counted for you.</span>` : `<span class="germ-days-empty">Pick the day the first seedlings came up — the days since ${DIRECT_SOW_CROPS.includes(p.slug) ? "direct sow" : "sowing"} are counted for you.</span>`;
             return;
           }
           germOut.innerHTML = ups.map(up => {
             const sow = sows.filter(d => d <= up).pop();
-            if(!sow && sows.length) return `<div class="germ-days-line germ-days-bad"><span class="germ-days-icon">⚠️</span><span class="germ-days-text"><span>${fmtGermDay(up)} is before you seeded (${fmtGermDay(sows[0])})</span><span class="germ-days-range">Tap the date to fix it</span></span></div>`;
-            if(!sow) return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span>Came up ${fmtGermDay(up)}</span><span class="germ-days-range"><i>Add the sow date above to count the days</i></span></span></div>`;
+            const isG = p.slug === "garlic";
+            if(!sow && sows.length) return `<div class="germ-days-line germ-days-bad"><span class="germ-days-icon">⚠️</span><span class="germ-days-text"><span>${fmtGermDay(up)} is before you ${isG ? "planted" : "seeded"} (${fmtGermDay(sows[0])})</span><span class="germ-days-range">Tap the date to fix it</span></span></div>`;
+            if(!sow) return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span>Came up ${fmtGermDay(up)}</span><span class="germ-days-range"><i>Add the ${isG ? "planting" : "sow"} date above to count the days</i></span></span></div>`;
             const n = daysBetweenISO(sow, up);
-            return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to germinate</span><span class="germ-days-range">Sown ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></span></div>`;
+            return `<div class="germ-days-line"><span class="germ-days-icon">🌿</span><span class="germ-days-text"><span><span class="germ-days-num">${n}</span> day${n === 1 ? "" : "s"} to ${isG ? "emerge" : "germinate"}</span><span class="germ-days-range">${isG ? "Planted" : "Sown"} ${fmtGermDay(sow)} → up ${fmtGermDay(up)}</span></span></div>`;
           }).join("");
         };
         await updateGermDays();
@@ -9481,36 +9486,34 @@ if(document.getElementById("search-home")){
   });
 }
 
-// Coming Up: once a sow / transplant is logged for a row's planned window
-// (within 2 days, same rule as the crop cards), show the 🌱 badge on it.
-async function markLedgerDone(ledger){
-  const cache = {};
-  const dates = async (slug, kind) => {
-    const k = slug + ":" + kind;
-    if(!cache[k]) cache[k] = (await getActualDates(slug, kind)).map(entryDate).filter(Boolean);
-    return cache[k];
-  };
-  for(const row of ledger.querySelectorAll(".ledger-row[data-t]")){
-    let t; try{ t = JSON.parse(row.dataset.t); }catch(e){ continue; }
-    const kind = /^Transplant/.test(t.a) ? "transplant" : "sow";
-    const pool = await dates(row.dataset.slug, kind);
-    const start = plannedDateObj(activeSeason, t);
-    const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
-    const lo = start.getTime() - 2 * 86400000, hi = end.getTime() + 2 * 86400000;
-    const hit = pool.map(iso => { const q = String(iso).split("-").map(Number); return new Date(q[0], q[1] - 1, q[2]); })
-      .find(d => d.getTime() >= lo && d.getTime() <= hi);
-    if(hit && !row.querySelector(".ledger-done")){
-      row.classList.add("is-done");
-      const b = document.createElement("span");
-      b.className = "logged-check ledger-done";
-      b.title = `Done — ${kind === "transplant" ? "transplanted" : "sown"} ${MONTHS[hit.getMonth()]} ${hit.getDate()}`;
-      b.textContent = "🌱";
-      row.querySelector(".ledger-when").before(b);
-      const w = row.querySelector(".ledger-when"); if(w) w.textContent = "Done";
-    }
-  }
+// Has this planned sow / transplant been logged? Same rule as the crop
+// cards: a logged date within 2 days of the planned window. Returns the
+// logged date (Date) or null.
+async function taskLoggedHit(slug, t, cache){
+  cache = cache || {};
+  const kind = /^Transplant/.test(t.a) ? "transplant" : "sow";
+  const ck = slug + ":" + kind;
+  if(!cache[ck]) cache[ck] = (await getActualDates(slug, kind)).map(entryDate).filter(Boolean);
+  const start = plannedDateObj(activeSeason, t);
+  const end = (t.d2 != null) ? new Date(seasonYearForMonth(activeSeason, t.m2 || t.m), (t.m2 || t.m) - 1, t.d2) : start;
+  const lo = start.getTime() - 2 * 86400000, hi = end.getTime() + 2 * 86400000;
+  return cache[ck].map(iso => { const q = String(iso).split("-").map(Number); return new Date(q[0], q[1] - 1, q[2]); })
+    .find(d => d.getTime() >= lo && d.getTime() <= hi) || null;
 }
-function renderLedger(){
+// Coming Up: logged today → 🌱 Done; logged before today → off the list.
+const LEDGER_DONE = new Map();   // "slug|action|m-d" -> logged Date
+const ledgerKey = x => `${x.slug}|${x.action}|${x.m}-${x.d}`;
+let ledgerDoneSig = "";
+async function refreshLedgerDone(candidates){
+  const cache = {};
+  for(const x of candidates){
+    const hit = await taskLoggedHit(x.slug, { a:x.action, m:x.m, d:x.d, m2:x.m2, d2:x.d2 }, cache);
+    if(hit) LEDGER_DONE.set(ledgerKey(x), hit); else LEDGER_DONE.delete(ledgerKey(x));
+  }
+  const sig = [...LEDGER_DONE.entries()].map(([k, d]) => k + "@" + d.getTime()).sort().join(";");
+  if(sig !== ledgerDoneSig){ ledgerDoneSig = sig; renderLedger(true); }
+}
+function renderLedger(fromRefresh){
   const now = new Date();
   document.getElementById("todayDayLabel").textContent = now.getDate();
   const monthEl = document.getElementById("todayMonthLabel");
@@ -9535,7 +9538,11 @@ function renderLedger(){
     }
   }
   all.sort((a,b)=>a.diff-b.diff);
-  const upcoming = all.filter(x => x.diff <= 45).slice(0, 12);
+  const today0 = new Date(now); today0.setHours(0, 0, 0, 0);
+  const near = all.filter(x => x.diff <= 45);
+  // Done before today: drop it. Done today: keep it with a 🌱 Done badge.
+  const upcoming = near.filter(x => { const h = LEDGER_DONE.get(ledgerKey(x)); return !h || h.getTime() >= today0.getTime(); }).slice(0, 12);
+  if(!fromRefresh) refreshLedgerDone(near);
 
   const ledger = document.getElementById("ledger");
   if(upcoming.length === 0){
@@ -9544,19 +9551,19 @@ function renderLedger(){
   }
   ledger.innerHTML = upcoming.map(x => {
     const target = new Date(now); target.setDate(now.getDate() + x.diff);
-    const when = x.diff === 0 ? "Today" : x.diff === 1 ? "Tomorrow" : `in ${x.diff}d`;
+    const doneHit = LEDGER_DONE.get(ledgerKey(x));
+    const when = doneHit ? "Done" : x.diff === 0 ? "Today" : x.diff === 1 ? "Tomorrow" : `in ${x.diff}d`;
     return `
-      <div class="ledger-row${CROP_BIO_TYPE[x.slug] ? ` bio-${CROP_BIO_TYPE[x.slug]}` : ""}" data-section="${x.sectionKey}" data-slug="${x.slug}" data-t='${JSON.stringify({a:x.action, m:x.m, d:x.d, m2:x.m2, d2:x.d2}).replace(/'/g, "&#39;")}'>
+      <div class="ledger-row${CROP_BIO_TYPE[x.slug] ? ` bio-${CROP_BIO_TYPE[x.slug]}` : ""}${doneHit ? " is-done" : ""}" data-section="${x.sectionKey}" data-slug="${x.slug}">
         <div class="ledger-date">${fmtDateLedger(x)}<span class="dow">${DOW[target.getDay()]}</span></div>
         <div class="ledger-icon">${cropIcon(x, x.sectionKey)}</div>
         <div class="ledger-mid">
           <div class="name">${x.name}</div>
           <div class="action">${x.action}</div>
         </div>
-        <div class="ledger-when">${when}</div>
+        ${doneHit ? `<span class="logged-check ledger-done" title="Done — ${MONTHS[doneHit.getMonth()]} ${doneHit.getDate()}">🌱</span>` : ""}<div class="ledger-when">${when}</div>
       </div>`;
   }).join("");
-  markLedgerDone(ledger);
   ledger.querySelectorAll(".ledger-row").forEach(row => {
     row.addEventListener("click", () => goToCropDirect(row.dataset.section, row.dataset.slug));
   });
@@ -13984,6 +13991,8 @@ async function getPlantingTasksForOffset(offsetDays){
             d.setHours(0, 0, 0, 0);
             return d.getTime() === target.getTime();
           });
+          // Already planted / transplanted for this window? Then no reminder.
+          if(matches && await taskLoggedHit(p.slug, t)) continue;
           if(matches){
             const emoji = CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
             results.push({
