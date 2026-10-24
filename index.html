@@ -2174,7 +2174,53 @@
   .fruit-chip-name{ min-width:0; white-space:normal; overflow-wrap:anywhere; line-height:1.2; }
   .fruit-day .fruit-chip:has(.fruit-del){ padding-right:3px; }
   .fruit-del{ background:rgba(255,255,255,.4) !important; background-image:none !important; box-shadow:none !important; border:none !important; color:inherit !important; text-shadow:none !important; width:20px !important; height:20px !important; transform:none !important; }
+  /* Fruiting log: varieties as small pills sized to the words, same font as
+     the variety box (13px), so many fit on a line. Green = light green pill
+     with dark green text; ripe keeps the color of the fruit. */
+  .fruit-day .fruit-day-chips{ display:flex !important; flex-wrap:wrap; gap:4px 5px; }
+  .fruit-day .fruit-chip{ display:inline-flex !important; width:auto !important; min-height:0 !important; justify-content:flex-start !important;
+    font-size:13px !important; font-weight:500 !important; line-height:1.25; padding:2px 9px !important; border-radius:999px !important; }
+  .fruit-day .fruit-chip.green{ background:#E4F2D9 !important; color:#2E6B1F !important; border:1px solid #A9D18E; }
+  .fruit-day .fruit-chip.ripe{ border:1px solid rgba(0,0,0,.12); }
+  .fruit-day .fruit-chip:has(.fruit-del){ padding-right:3px !important; }
+  .fruit-day .fruit-del{ width:17px !important; height:17px !important; font-size:12px !important; background:rgba(0,0,0,.08) !important; }
+  .fruit-chip-name{ white-space:nowrap; }
+  .fruit-key .fruit-chip.green{ background:#E4F2D9; color:#2E6B1F; border:1px solid #A9D18E; }
+  /* Green · + Add · Ripe on one row, smaller buttons, same text size. */
+  .fruit-stage{ display:flex !important; gap:6px; align-items:stretch; }
+  .fruit-stage > button{ flex:1 1 0; min-width:0; min-height:32px !important; height:32px; padding:0 6px !important; border-radius:8px !important; white-space:nowrap; }
+  .fruit-stage > button.fruit-add-btn{ flex:0.9 1 0; min-height:32px !important; height:32px !important; font-size:13.5px !important; border-radius:8px !important;
+    box-shadow:0 3px 0 #8A2A1F, 0 4px 8px rgba(165,50,35,.2) !important; }
+  /* Use the full width: date sits at the start of its row, names fill the rest. */
+  .fruit-body{ padding:8px 6px !important; }
+  .fruit-day .fruit-day-chips{ gap:3px 3px !important; }
+  .fruit-tint{ padding:0 3px !important; }
+  /* Names stretch to fill each full row (no empty gap at the end);
+     the filler keeps the last row from stretching. */
+  .fruit-day .fruit-tint{ flex:1 0 auto; justify-content:center; }
+  .fruit-day .fruit-day-chips::after{ content:""; flex:100 0 0; }
   .fruit-key{ display:flex; gap:6px; justify-content:flex-end; margin-top:6px; }
+  /* Highlight hugs the letters: small font, almost no padding. */
+  .fruit-tint{ display:inline-flex; align-items:center; gap:2px; font-family:'Inter',sans-serif; font-size:11.5px; font-weight:500; color:#2B2233;
+    line-height:1.15; padding:0 3px; border-radius:3px; border:none !important; }
+  .fruit-day .fruit-day-chips{ gap:3px 4px !important; }
+  .fruit-day{ padding:4px 0 !important; }
+  .fruit-day-date{ margin-bottom:3px !important; font-size:11px !important; }
+  .fruit-tint:has(.fruit-del){ padding-right:1px; }
+  .fruit-tint .fruit-del{ width:12px !important; height:12px !important; font-size:9px !important; line-height:1 !important; background:rgba(255,255,255,.6) !important; }
+  .fruit-key .fruit-tint{ font-size:10.5px; }
+
+  /* Fruiting log list: same style as the sow-entry variety list. */
+  .fruit-vlist{ margin-top:2px !important; }
+  .fruit-vlist .fruit-vchip{ cursor:default; }
+  .fruit-vlist .fruit-vchip .variety-search-link{ text-decoration:none; }
+  .fruit-stage-tag{ display:inline-block; font-size:10.5px; font-weight:700; line-height:1.3; padding:0 6px; border-radius:999px; margin-left:3px; vertical-align:1px; text-transform:lowercase; }
+  .fruit-stage-tag.green{ background:#E4F2D9; color:#2E6B1F; border:1px solid #A9D18E; }
+  .fruit-stage-tag.ripe{ border:1px solid rgba(0,0,0,.15); }
+  .fruit-vlist .fruit-del{ width:16px !important; height:16px !important; font-size:11px !important; margin-left:4px; vertical-align:middle; background:rgba(0,0,0,.08) !important; }
+  .fruit-key{ align-items:center; flex-wrap:wrap; gap:4px !important; }
+  .fruit-key-txt{ font-size:11px; color:var(--ink-soft); margin-right:6px; }
+
   .fruit-key .fruit-key-ripe{ background:#fff; color:#7A5236; border:1px solid #E3CFB2; }
   .fruit-key .fruit-chip{ font-size:10.5px; padding:2px 8px; opacity:.9; }
   .fruit-chip:not(:has(.fruit-del)){ padding-right:10px; }
@@ -3429,7 +3475,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.24-76</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.24-82</div>
   </main>
 
   <nav class="tabbar">
@@ -7328,9 +7374,9 @@ async function renderGrid(sectionKey, containerId){
             <input id="fruit-date-${p.slug}" type="date" class="fruit-date" aria-label="Date">
             <div class="fruit-stage" id="fruit-stage-${p.slug}" role="group" aria-label="Green or ripe">
               <button type="button" data-stage="green" class="on">🟢 Green</button>
+              <button type="button" class="fruit-add-btn" id="fruit-add-${p.slug}">+ Add</button>
               <button type="button" data-stage="ripe">🔴 Ripe</button>
             </div>
-            <button type="button" class="fruit-add-btn" id="fruit-add-${p.slug}">+ Add</button>
           </div>
           <div class="fruit-list" id="fruit-list-${p.slug}"></div>
         </div>
@@ -8982,6 +9028,7 @@ async function renderGrid(sectionKey, containerId){
         const fList = card.querySelector(`#fruit-list-${p.slug}`);
         let fLog = [], fStage = "green", fVarieties = [];
         const fColors = new Map();   // variety key -> fruit colors chosen when it was seeded
+        const fObjs = new Map();     // variety key -> full variety details (type, days, F1/OP, source, colors, score)
         const fHex = CROP_COLOR_HEX[p.slug] || TOMATO_COLOR_HEX;
         const fKeyOf = n => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "");
         try{ const r = await window.storage.get(fKey, false); fLog = r ? (JSON.parse(r.value) || []) : []; }catch(e){ fLog = []; }
@@ -8996,6 +9043,7 @@ async function renderGrid(sectionKey, containerId){
           const add = v => {
             const n = cleanV(v); const k = fKeyOf(n); if(!n) return;
             if(!seen.has(k)) seen.set(k, n);
+            if(v && typeof v === "object" && !fObjs.has(k)) fObjs.set(k, v);
             const cols = (v && typeof v === "object" && Array.isArray(v.colors)) ? v.colors.filter(c => fHex[c]) : [];
             if(cols.length && !(fColors.get(k) || []).length) fColors.set(k, cols);
           };
@@ -9029,6 +9077,23 @@ async function renderGrid(sectionKey, containerId){
           const shadow = hex.length > 1 && !light ? ";text-shadow:0 0 3px rgba(0,0,0,.6),0 0 1px rgba(0,0,0,.8)" : "";
           return ` style="background:${bg};color:${light ? "#4A3410" : "#fff"}${ring}${shadow}"`;
         };
+        // See-through highlight: green fruit = translucent green; ripe = the
+        // variety's own color(s), translucent. Dark text so it always reads.
+        const tint = (hex, a) => { const h = String(hex).replace("#", ""); const n = parseInt(h.length === 3 ? h.split("").map(c => c + c).join("") : h, 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+        const fruitTint = e => {
+          if(e.stage !== "ripe") return `background:rgba(90,170,70,.25);border-color:rgba(70,140,50,.45)`;
+          const k = fKeyOf(e.variety);
+          let cols = fColors.get(k) || [];
+          if(!cols.length){
+            const plain = String(e.variety).replace(/[\u2764\uFE0F]/g, "").replace(/\(.*?\)/g, "").trim().toLowerCase();
+            const info = p.slug === "tomatoes" && (typeof COMMON_TOMATO_VARIETIES !== "undefined") && (COMMON_TOMATO_VARIETIES[plain] || Object.entries(COMMON_TOMATO_VARIETIES).find(([nm]) => fKeyOf(nm) === k)?.[1]);
+            if(info && info.colors) cols = info.colors.filter(c => fHex[c]);
+          }
+          if(!cols.length) cols = [p.slug === "eggplants" ? "Dark Purple" : "Red"];
+          const hex = cols.map(c => fHex[c] || "#C0392B");
+          const bg = hex.length > 1 ? `linear-gradient(90deg, ${tint(hex[0], .35)} 0 50%, ${tint(hex[1], .35)} 50% 100%)` : tint(hex[0], .35);
+          return `background:${bg};border-color:${tint(hex[0], .6)}`;
+        };
         const renderFruit = () => {
           fCount.textContent = fLog.length ? `${fLog.length}` : "";
           if(!fLog.length){ fList.innerHTML = `<div class="fruit-empty">No fruit logged yet.</div>`; return; }
@@ -9039,9 +9104,9 @@ async function renderGrid(sectionKey, containerId){
             const idxs = byDate.get(d).sort((a, b) => fLog[a].variety.localeCompare(fLog[b].variety, undefined, { sensitivity:"base" }));
             return `<div class="fruit-day"><div class="fruit-day-date">${fFmt(d)}</div><div class="fruit-day-chips">${idxs.map(i => {
               const e = fLog[i], locked = READ_ONLY || isEntryLocked(e.addedAt);
-              return `<span class="fruit-chip ${e.stage}"${e.stage === "ripe" ? ripeStyle(e.variety) : ""} title="${fertEsc(e.variety)} — ${e.stage === "ripe" ? "Ripe" : "Green"}"><span class="fruit-chip-name">${fertEsc(e.variety)}</span>${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
+              return `<span class="fruit-tint" style="${fruitTint(e)}" title="${fertEsc(e.variety)} — ${e.stage === "ripe" ? "Ripe" : "Green"}">${fertEsc(e.variety)}${locked ? "" : `<button type="button" class="fruit-del" data-i="${i}" aria-label="Delete">×</button>`}</span>`;
             }).join("")}</div></div>`;
-          }).join("") + `<div class="fruit-key"><span class="fruit-chip green">Green</span><span class="fruit-chip fruit-key-ripe">Ripe = color of the ${({ tomatoes:"tomato", peppers:"pepper", eggplants:"eggplant" })[p.slug] || "fruit"}</span></div>`;
+          }).join("") + `<div class="fruit-key"><span class="fruit-tint" style="background:rgba(90,170,70,.25);border-color:rgba(70,140,50,.45)">Green</span><span class="fruit-tint" style="background:rgba(192,57,43,.35);border-color:rgba(192,57,43,.6)">Ripe = color of the ${({ tomatoes:"tomato", peppers:"pepper", eggplants:"eggplant" })[p.slug] || "fruit"}</span></div>`;
           fList.querySelectorAll(".fruit-del").forEach(btn => btn.addEventListener("click", async ev => {
             ev.stopPropagation();
             const i = Number(btn.dataset.i), removed = fLog[i];
@@ -9059,9 +9124,9 @@ async function renderGrid(sectionKey, containerId){
         };
         const fBody = fruitBody;
         fSel.addEventListener("focus", loadVarieties);
-        fStageEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+        fStageEl.querySelectorAll("button[data-stage]").forEach(b => b.addEventListener("click", () => {
           fStage = b.dataset.stage;
-          fStageEl.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+          fStageEl.querySelectorAll("button[data-stage]").forEach(x => x.classList.toggle("on", x === b));
         }));
         fAdd.addEventListener("click", async () => {
           if(READ_ONLY) return;
