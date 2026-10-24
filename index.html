@@ -3429,7 +3429,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.24-75</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.24-76</div>
   </main>
 
   <nav class="tabbar">
@@ -9612,6 +9612,9 @@ function applyGlobalUnlock(on){
     btn.setAttribute("aria-label", on ? "Editing unlocked app-wide — tap to re-lock" : "Unlock all locked entries app-wide for editing");
   }
   if(typeof bgRenderSaves === "function") bgRenderSaves();
+  // Redraw the logs that show locked numbers, so unlocking makes them editable right away.
+  if(typeof renderGerminationTempChart === "function") renderGerminationTempChart();
+  if(typeof renderReorderList === "function") renderReorderList();
 }
 document.getElementById("globalUnlockToggle").addEventListener("click", async () => {
   applyGlobalUnlock(!GLOBAL_UNLOCK);
