@@ -805,6 +805,16 @@
   .home-tabs-card .home-tab-btn.tab-fert.active{ background:#F2D3EE !important; border:1px solid #AE5BA0 !important; box-shadow:inset 0 0 0 2px #AE5BA0, 0 2px 8px rgba(0,0,0,.12) !important; }
   .home-tabs-card .home-tab-btn.tab-opc.active{ background:#CFE8D6 !important; border:1px solid #448C60 !important; box-shadow:inset 0 0 0 2px #448C60, 0 2px 8px rgba(0,0,0,.12) !important; }
   .home-tabs-card .home-tab-btn.tab-how.active{ background:#E3F0E6 !important; border:1px solid #5F9874 !important; box-shadow:inset 0 0 0 2px #5F9874, 0 2px 8px rgba(0,0,0,.12) !important; }
+  /* Home buttons: a rainbow that starts next to the Biodynamic Calendar's night blue and walks the color wheel; same light-to-deep shading on each. */
+  .home-tabs-card .home-tab-btn.tab-journal:not(.active), .home-tabs-card .home-tab-btn.tab-journal.active{ background:linear-gradient(180deg,#E9F1FC 0%,#BAD1F3 48%,#94B6E6 100%) !important; border:1px solid #7297CA !important; }
+  .home-tabs-card .home-tab-btn.tab-germination:not(.active), .home-tabs-card .home-tab-btn.tab-germination.active{ background:linear-gradient(180deg,#E9F7FC 0%,#BAE4F3 48%,#94D1E6 100%) !important; border:1px solid #72B4CA !important; }
+  .home-tabs-card .home-tab-btn.tab-compare:not(.active), .home-tabs-card .home-tab-btn.tab-compare.active{ background:linear-gradient(180deg,#E9FCF9 0%,#BAF3E9 48%,#94E6D8 100%) !important; border:1px solid #72CABB !important; }
+  .home-tabs-card .home-tab-btn.tab-reorder:not(.active), .home-tabs-card .home-tab-btn.tab-reorder.active{ background:linear-gradient(180deg,#E9FCEF 0%,#BAF3CD 48%,#94E6AF 100%) !important; border:1px solid #72CA90 !important; }
+  .home-tabs-card .home-tab-btn.tab-germtemp:not(.active), .home-tabs-card .home-tab-btn.tab-germtemp.active{ background:linear-gradient(180deg,#F1FCE9 0%,#D1F3BA 48%,#B6E694 100%) !important; border:1px solid #97CA72 !important; }
+  .home-tabs-card .home-tab-btn.tab-rain:not(.active), .home-tabs-card .home-tab-btn.tab-rain.active{ background:linear-gradient(180deg,#FCF9E9 0%,#F3EBBA 48%,#E6DB94 100%) !important; border:1px solid #CABE72 !important; }
+  .home-tabs-card .home-tab-btn.tab-fert:not(.active), .home-tabs-card .home-tab-btn.tab-fert.active{ background:linear-gradient(180deg,#FCF3E9 0%,#F3D8BA 48%,#E6BF94 100%) !important; border:1px solid #CAA172 !important; }
+  .home-tabs-card .home-tab-btn.tab-opc:not(.active), .home-tabs-card .home-tab-btn.tab-opc.active{ background:linear-gradient(180deg,#FCECE9 0%,#F3C3BA 48%,#E6A194 100%) !important; border:1px solid #CA8172 !important; }
+  .home-tabs-card .home-tab-btn.tab-almanac:not(.active), .home-tabs-card .home-tab-btn.tab-almanac.active{ background:linear-gradient(180deg,#F5E9FC 0%,#E0BAF3 48%,#CA94E6 100%) !important; border:1px solid #AD72CA !important; }
   .home-tabs-card .home-tabs-row{ display:grid !important; grid-template-columns:repeat(2, minmax(0, 1fr)) !important; grid-auto-rows:1fr; gap:8px !important; }
   .home-tabs-card .home-tabs-row + .home-tabs-row{ margin-top:8px; }
   .home-tabs-card .home-tab-btn{ width:100%; min-width:0; height:100%; min-height:60px !important; font-size:14px !important; line-height:1.2 !important;
@@ -1281,8 +1291,16 @@
   .plant-cross-note-btn .plant-icon{ width:22px; height:22px; border-radius:7px; font-size:13px; }
   .plant-cross-note-btn:hover{ background:#EEF9F0; }
   .bc-task-note{
-    font-size:11px; color:var(--evergreen); font-style:italic; margin-top:2px;
+    font-size:14px; color:#222; font-style:italic; margin-top:3px; line-height:1.35;
   }
+  body.night-mode .bc-task-note{ color:var(--ink); }
+  /* Biodynamic day text in a deep shade of its type's color. */
+  body:not(.night-mode) .bc-task-note.bc-note-fruit{ color:#8E1B12; }
+  body:not(.night-mode) .bc-task-note.bc-note-leaf{ color:#245A16; }
+  body:not(.night-mode) .bc-task-note.bc-note-flower{ color:#7A5600; }
+  body:not(.night-mode) .bc-task-note.bc-note-root{ color:#5A3412; }
+  /* Upcoming planned dates in black too (passed ones stay faded). */
+  body:not(.night-mode) .dose .wave-line:not(.wave-passed):not(.wave-notneeded){ color:#222; }
   .overdue-flag{
     display:inline-block; margin-bottom:8px; font-size:11px; font-weight:600;
     color:#A15A2E; background:#F3E2CF; border-radius:20px; padding:3px 10px;
@@ -2031,10 +2049,94 @@
   .sub-dd{ margin-top:10px; }
   /* Tidy crop window */
   .dose.tidy-moon-hidden .bc-task-note{ display:none; }
+
+  /* ===== Night-sky look shared by the biodynamic calendar buttons and headers ===== */
+  .home-tabs-card .home-tab-btn.tab-calendar.sky, .home-tabs-card .home-tab-btn.tab-calendar.sky.active{
+    background:radial-gradient(1.5px 1.5px at 12% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 55% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 80%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 35%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 45%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 95% 75%,#fff 99%,transparent),radial-gradient(1px 1px at 20% 90%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important; color:#fff !important; border:1px solid #1A2347 !important; position:relative; overflow:hidden; }
+  .home-tabs-card .home-tab-btn.tab-calendar.sky.active{ box-shadow:inset 0 0 0 2px #E8C93A, 0 2px 8px rgba(0,0,0,.2) !important; }
+  .home-tab-btn.tab-calendar.sky .home-tab-icon{ background:rgba(255,255,255,.14) !important; border-color:rgba(255,255,255,.35) !important; }
+  .home-tab-btn.sky > span{ position:relative; z-index:1; }
+  .sky-deco{ position:absolute; inset:0; pointer-events:none; }
+  .sky-deco b{ position:absolute; line-height:1; font-weight:400; filter:drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+  /* Bottom bar icons: same raised 3D bubble as the crop icons. */
+  nav.tabbar .tabbtn-icon{ width:36px !important; height:36px !important; border-radius:11px !important; font-size:21px !important; position:relative;
+    background-image:linear-gradient(160deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.25) 45%, rgba(0,0,0,.07) 100%);
+    border:1px solid rgba(255,255,255,.75);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 4px 8px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
+  nav.tabbar .tabbtn-icon > *, nav.tabbar .tabbtn-icon{ text-shadow:0 2px 2px rgba(0,0,0,.25); }
+  nav.tabbar .tabbtn-icon svg, nav.tabbar .tabbtn-icon img{ filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.3)); }
+  nav.tabbar .tabbtn-icon{ margin-bottom:4px !important; }
+  nav.tabbar .tabbtn:active .tabbtn-icon{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.9) !important; }
+  /* bottom bar */
+  .tabbtn.tab-bio .tabbtn-icon{ box-shadow:0 3px 0 #141C3A, 0 4px 8px rgba(31,42,85,.3), inset 0 1px 0 rgba(255,255,255,.35) !important; background:radial-gradient(1.5px 1.5px at 12% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 55% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 80%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 35%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 45%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 95% 75%,#fff 99%,transparent),radial-gradient(1px 1px at 20% 90%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important; border:1px solid #1A2347; box-shadow:0 2px 4px rgba(31,42,85,.3); }
+  .tabbtn.tab-bio.active{ color:#2B3A78 !important; background:#DCE1F5 !important; }
+  /* calendar window header */
+  #calendarModalBackdrop .cal-header, .bc-cal .bc-search{ position:relative; }
+  #calendarModalBackdrop .cal-header .cal-nav, #calendarModalBackdrop .cal-header h3{ position:relative; z-index:1; }
+  #calendarModalBackdrop .cal-header{ background:radial-gradient(1.5px 1.5px at 12% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 55% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 80%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 35%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 45%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 95% 75%,#fff 99%,transparent),radial-gradient(1px 1px at 20% 90%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%); border-radius:14px; padding:8px 10px; box-shadow:0 3px 8px rgba(31,42,85,.25); }
+  #calendarModalBackdrop .cal-header h3{ color:#fff !important; margin:0; }
+  #calendarModalBackdrop .cal-header .cal-nav{ background:rgba(255,255,255,.14) !important; color:#fff !important; border:1px solid rgba(255,255,255,.35) !important; box-shadow:none !important; }
+
+  /* Calendar window: night sky at the top fading down to white. */
+  #calendarModalBackdrop .modal{
+    background:radial-gradient(1.5px 1.5px at 8% 6%,#fff 99%,transparent),radial-gradient(1px 1px at 22% 14%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 40% 4%,#fff 99%,transparent),radial-gradient(1px 1px at 58% 12%,#fff 99%,transparent),radial-gradient(1px 1px at 74% 7%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 90% 15%,#fff 99%,transparent),radial-gradient(1px 1px at 15% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 66% 20%,#fff 99%,transparent),radial-gradient(1px 1px at 85% 26%,#fff 99%,transparent),radial-gradient(1px 1px at 33% 28%,rgba(255,255,255,.8) 99%,transparent),
+      linear-gradient(180deg,#1F2A55 0%,#2E3F80 12%,#4B5C9E 24%,#8D99CF 38%,#C9CFEC 50%,#EEF0FA 62%,#FFFFFF 74%) !important; }
+  #calendarModalBackdrop .cal-header{ background:rgba(255,255,255,.06) !important; box-shadow:none !important; border:1px solid rgba(255,255,255,.18); }
+  #calendarModalBackdrop .cal-bio-legend .bc-key-item, #calendarModalBackdrop .cal-bio-note{ color:#FFFFFF !important; font-weight:700 !important; text-shadow:0 1px 2px rgba(0,0,0,.45); }
+  #calendarModalBackdrop .cal-bio-legend .bc-key-item{ font-size:13px !important; }
+  #calendarModalBackdrop .cal-bio-note{ font-size:10.5px !important; letter-spacing:-.01em; }
+  #calendarModalBackdrop .cal-dow-row span{ color:#F3F5FF !important; font-weight:700; }
+  #calendarModalBackdrop .modal-top-close{ background:rgba(255,255,255,.18) !important; color:#fff !important; border-color:rgba(255,255,255,.35) !important; }
+
+  /* Biodynamic Calendar tab: night sky at the top fading to white behind the day list. */
+  .bc-cal{ background:url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22360%22%20height%3D%22420%22%20viewBox%3D%220%200%20360%20420%22%3E%0A%3Cg%20fill%3D%22%23fff%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2230%22%20r%3D%221.2%22/%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2212%22%20r%3D%220.8%22/%3E%3Ccircle%20cx%3D%22160%22%20cy%3D%2258%22%20r%3D%221.1%22/%3E%3Ccircle%20cx%3D%22240%22%20cy%3D%2222%22%20r%3D%220.8%22/%3E%3Ccircle%20cx%3D%22330%22%20cy%3D%2270%22%20r%3D%221.2%22/%3E%0A%3Ccircle%20cx%3D%2250%22%20cy%3D%22140%22%20r%3D%220.9%22/%3E%3Ccircle%20cx%3D%22130%22%20cy%3D%22190%22%20r%3D%221.2%22/%3E%3Ccircle%20cx%3D%22210%22%20cy%3D%22150%22%20r%3D%220.8%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22200%22%20r%3D%221%22/%3E%3Ccircle%20cx%3D%22345%22%20cy%3D%22130%22%20r%3D%220.7%22/%3E%0A%3Ccircle%20cx%3D%2215%22%20cy%3D%22260%22%20r%3D%221%22/%3E%3Ccircle%20cx%3D%2285%22%20cy%3D%22310%22%20r%3D%220.8%22/%3E%3Ccircle%20cx%3D%22175%22%20cy%3D%22280%22%20r%3D%221.2%22/%3E%3Ccircle%20cx%3D%22255%22%20cy%3D%22330%22%20r%3D%220.9%22/%3E%3Ccircle%20cx%3D%22320%22%20cy%3D%22290%22%20r%3D%221.1%22/%3E%0A%3Ccircle%20cx%3D%2240%22%20cy%3D%22395%22%20r%3D%220.8%22/%3E%3Ccircle%20cx%3D%22140%22%20cy%3D%22410%22%20r%3D%221%22/%3E%3Ccircle%20cx%3D%22230%22%20cy%3D%22390%22%20r%3D%220.7%22/%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22405%22%20r%3D%221.2%22/%3E%3C/g%3E%0A%3Cg%20font-size%3D%2216%22%20opacity%3D%22.9%22%3E%3Ctext%20x%3D%226%22%20y%3D%2290%22%3E%F0%9F%AA%90%3C/text%3E%3Ctext%20x%3D%22330%22%20y%3D%2240%22%3E%F0%9F%8C%99%3C/text%3E%3Ctext%20x%3D%22334%22%20y%3D%22250%22%20font-size%3D%2212%22%3E%E2%AD%90%3C/text%3E%0A%3Ctext%20x%3D%224%22%20y%3D%22225%22%20font-size%3D%2211%22%3E%E2%9C%A8%3C/text%3E%3Ctext%20x%3D%222%22%20y%3D%22360%22%20font-size%3D%2214%22%3E%E2%98%84%EF%B8%8F%3C/text%3E%3Ctext%20x%3D%22332%22%20y%3D%22380%22%20font-size%3D%2215%22%3E%F0%9F%AA%90%3C/text%3E%3Ctext%20x%3D%22336%22%20y%3D%22170%22%20font-size%3D%2210%22%3E%E2%9C%A8%3C/text%3E%3Ctext%20x%3D%228%22%20y%3D%22300%22%20font-size%3D%2210%22%3E%E2%AD%90%3C/text%3E%3C/g%3E%3C/svg%3E") 0 0 / 360px 420px repeat,
+      linear-gradient(180deg,#1A2350 0%,#2A3A78 14%,#3E5099 32%,#6676BC 50%,#9FAADD 66%,#CDD3EF 80%,#EEF0FA 91%,#FFFFFF 100%) !important;
+    background-color:#FFFFFF !important; }
+  /* text that sits directly on the sky */
+  /* Month titles sit on a small night-blue band so they read on dark or light sky. */
+  .bc-cal .bc-month h4{ color:#fff !important; background:rgba(31,42,85,.78); border:none !important; border-radius:10px; padding:6px 12px !important;
+    text-shadow:0 1px 2px rgba(0,0,0,.4); box-shadow:0 2px 6px rgba(31,42,85,.25); }
+  .bc-cal .bc-month h4 .bc-count{ color:#DCE2FF !important; }
+  .bc-cal .bc-empty, .bc-cal .bc-footnote, .bc-cal .bc-key{ color:#E6EAFF !important; }
+  .bc-cal .bc-search{ background:transparent !important; border-bottom:none !important; }
+  .bc-cal nav.bc-tabs{ background:transparent !important; border-bottom:1px solid rgba(255,255,255,.25) !important; }
+  .bc-cal nav.bc-tabs button{ color:#E6EAFF !important; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.4); }
+  .bc-cal nav.bc-tabs button.bc-active{ color:#fff !important; }
+  .bc-cal nav.bc-tabs button.bc-active::after{ height:3px; }
+  .bc-cal .bc-intro{ background:rgba(255,255,255,.82) !important; color:#4A4058 !important; border-left-color:rgba(255,255,255,.9) !important; border-radius:8px; }
+  /* Biodynamic Calendar tab: search panel */
+  .bc-cal .bc-search label{ color:#E6EAFF !important; }
+  .bc-cal #bcSearchResult{ color:#fff; }
+  /* Biodynamic days: its own big night-sky button. */
+  button.tidy-moon-toggle{ display:flex !important; align-items:center; gap:10px; width:100%; min-height:36px; margin:8px 0 10px !important;
+    padding:3px 12px !important; border-radius:12px !important; cursor:pointer; text-align:left;
+    background:linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important; color:#fff !important;
+    border:1px solid #1A2347 !important; font-family:'Inter',sans-serif; font-size:14.5px !important; font-weight:700 !important;
+    box-shadow:0 4px 0 #141C3A, 0 6px 12px rgba(31,42,85,.3) !important; position:relative; overflow:hidden; }
+  button.tidy-moon-toggle::before{ content:""; position:absolute; inset:0; pointer-events:none; opacity:.55;
+    background:radial-gradient(1.5px 1.5px at 18% 30%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 75%,#fff 99%,transparent),
+      radial-gradient(1.5px 1.5px at 63% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 80% 65%,#fff 99%,transparent),
+      radial-gradient(1px 1px at 92% 28%,#fff 99%,transparent),radial-gradient(1px 1px at 33% 15%,#fff 99%,transparent); }
+  button.tidy-moon-toggle:active{ transform:translateY(3px); box-shadow:0 1px 0 #141C3A, 0 2px 4px rgba(31,42,85,.3) !important; }
+  /* Sun, moon, stars, planet and comet scattered across the night sky. */
+  .tidy-moon-toggle .sky-icons{ position:absolute; inset:0; pointer-events:none; }
+  .tidy-moon-toggle .sky-icons i{ position:absolute; font-style:normal; line-height:1; filter:drop-shadow(0 1px 1px rgba(0,0,0,.35)); }
+  .tidy-moon-toggle .sk-sun{ left:8px; top:50%; transform:translateY(-50%); font-size:16px; }
+  .tidy-moon-toggle .sk-star2{ left:22%; top:0; font-size:7px; }
+  .tidy-moon-toggle .sk-moon{ left:47%; top:1px; font-size:9px; transform:rotate(-15deg); }
+  .tidy-moon-toggle .sk-comet{ left:35%; bottom:1px; font-size:9px; transform:rotate(10deg); }
+  .tidy-moon-toggle .sk-star1{ left:66%; bottom:0; font-size:7px; }
+  .tidy-moon-toggle .sk-spark{ left:74%; top:0; font-size:8px; }
+  .tidy-moon-toggle .sk-planet{ right:28px; top:50%; transform:translateY(-50%); font-size:14px; }
+  button.tidy-moon-toggle{ padding-left:32px !important; padding-right:46px !important; }
+  .tidy-moon-toggle .sky-caret{ position:absolute !important; right:10px; top:50%; transform:translateY(-50%); }
+  .tidy-moon-toggle .sky-label{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tidy-moon-toggle .sky-label{ flex:1; position:relative; }
+  .tidy-moon-toggle .sky-caret{ flex:none; font-size:13px; opacity:.85; position:relative; }
   /* Moon in a small night-blue circle so it shows on every crop color. */
-  .moon-badge{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; margin-right:6px;
-    border-radius:50%; background:radial-gradient(circle at 35% 30%,#4B5C9E,#24305E); font-size:13px; line-height:1;
-    vertical-align:-5px; box-shadow:0 1px 0 rgba(0,0,0,.25), 0 2px 4px rgba(36,48,94,.3), inset 0 1px 0 rgba(255,255,255,.25); }
+  .moon-badge{ display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; margin-right:8px;
+    border-radius:50%; background:radial-gradient(circle at 35% 30%,#4B5C9E,#24305E); font-size:18px; line-height:1;
+    vertical-align:-8px; box-shadow:0 1px 0 rgba(0,0,0,.25), 0 2px 4px rgba(36,48,94,.3), inset 0 1px 0 rgba(255,255,255,.25); }
   .tidy-moon-toggle{ display:inline-flex !important; align-items:center; color:#24543C !important; font-weight:700 !important; }
   .tidy-moon-toggle{ display:block; margin:2px 0 6px; padding:2px 0; border:none; background:none; cursor:pointer;
     font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#5E8F6E; box-shadow:none !important; text-decoration:none; min-height:0; }
@@ -3037,7 +3139,7 @@
       <div class="legend-card home-tabs-card" style="margin-top:22px;">
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
-          <button type="button" class="home-tab-btn tab-calendar" id="calendarBtn"><span class="home-tab-icon">🍑</span><span>Biodynamic Calendar</span></button>
+          <button type="button" class="home-tab-btn tab-calendar sky" id="calendarBtn"><span class="home-tab-icon">🌙</span><span>Biodynamic Calendar</span><i class="sky-deco" aria-hidden="true"><b style="right:10px;top:5px;font-size:9px">✨</b><b style="right:26px;bottom:6px;font-size:8px">⭐</b><b style="right:8px;bottom:5px;font-size:12px">🪐</b><b style="left:52%;top:3px;font-size:7px">⭐</b><b style="left:47%;bottom:3px;font-size:9px;transform:rotate(10deg)">☄️</b></i></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">📖</span><span>Daily Journal</span></button>
           <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
@@ -3439,6 +3541,7 @@
       <div class="sub">Fruit, Leaf, Root &amp; Flower days from your printed almanac</div>
       <div class="bc-cal">
         <div class="bc-search">
+          <i class="sky-deco" aria-hidden="true"><b style="right:44px;top:8px;font-size:9px">✨</b><b style="left:46%;top:9px;font-size:8px">⭐</b><b style="right:80px;top:14px;font-size:10px;transform:rotate(10deg)">☄️</b><b style="left:62%;top:6px;font-size:13px">🪐</b></i>
           <label for="bcSearchDate">Search by date</label>
           <div class="bc-search-row">
             <input type="date" id="bcSearchDate" min="2026-08-01" max="2026-12-31">
@@ -3475,7 +3578,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.24-82</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.25-103</div>
   </main>
 
   <nav class="tabbar">
@@ -3561,13 +3664,13 @@
       <button type="button" id="calPrevBtn" class="cal-nav" aria-label="Previous month">‹</button>
       <h3 id="calMonthLabel">Month Year</h3>
       <button type="button" id="calNextBtn" class="cal-nav" aria-label="Next month">›</button>
+      <i class="sky-deco" aria-hidden="true"><b style="left:24%;top:6px;font-size:9px">✨</b><b style="left:30%;bottom:6px;font-size:10px;transform:rotate(10deg)">☄️</b><b style="right:24%;top:5px;font-size:12px">🌙</b><b style="right:27%;bottom:6px;font-size:8px">⭐</b><b style="right:19%;top:50%;transform:translateY(-50%);font-size:13px">🪐</b><b style="left:19%;top:50%;transform:translateY(-50%);font-size:13px">☀️</b></i>
     </div>
     <div class="cal-bio-legend">
       <span class="bc-key-item"><span class="bc-key-dot" style="background:#F8C9C0;"></span>Fruit</span>
       <span class="bc-key-item"><span class="bc-key-dot" style="background:#D6EABF;"></span>Leaf</span>
       <span class="bc-key-item"><span class="bc-key-dot" style="background:#E2CBAB;"></span>Root</span>
       <span class="bc-key-item"><span class="bc-key-dot" style="background:#FBE6A2;"></span>Flower</span>
-      <div class="cal-bio-note">Biodynamic coloring covers August – December 2026 only.</div>
     </div>
     <div class="cal-dow-row">
       <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
@@ -6241,10 +6344,11 @@ function tidyCard(card){
   if(dose && dose.querySelector(".wave-line:not(.tidy-wave-hide) .bc-task-note")){
     dose.classList.add("tidy-moon-hidden");
     const t = document.createElement("button");
-    t.type = "button"; t.className = "tidy-moon-toggle"; t.innerHTML = '<span class="moon-badge" aria-hidden="true">🌙</span>Show biodynamic calendar days ▾';
+    t.type = "button"; t.className = "tidy-moon-toggle"; t.innerHTML = '<span class="sky-icons" aria-hidden="true"><i class="sk-sun">☀️</i><i class="sk-moon">🌙</i><i class="sk-star1">⭐</i><i class="sk-planet">🪐</i><i class="sk-comet">☄️</i><i class="sk-star2">⭐</i><i class="sk-spark">✨</i></span><span class="sky-label">Show Biodynamic Calendar Days</span><span class="sky-caret">▾</span>';
     t.addEventListener("click", () => {
       const hid = dose.classList.toggle("tidy-moon-hidden");
-      t.innerHTML = '<span class="moon-badge" aria-hidden="true">🌙</span>' + (hid ? "Show biodynamic calendar days ▾" : "Hide biodynamic calendar days ▴");
+      t.innerHTML = '<span class="sky-icons" aria-hidden="true"><i class="sk-sun">☀️</i><i class="sk-moon">🌙</i><i class="sk-star1">⭐</i><i class="sk-planet">🪐</i><i class="sk-comet">☄️</i><i class="sk-star2">⭐</i><i class="sk-spark">✨</i></span><span class="sky-label">' + (hid ? "Show Biodynamic Calendar Days" : "Hide Biodynamic Calendar Days") + '</span><span class="sky-caret">' + (hid ? "▾" : "▴") + '</span>';
+      t.classList.toggle("open", !hid);
     });
     dose.after(t);
   }
@@ -13933,7 +14037,7 @@ function bcNoteFor(slug, seasonKey, m, d){
   const run = bcRunFor(type, year, m, d);
   if(!run.length) return "";
   const parts = run.map(r => `${MONTHS[r.m - 1]} ${r.d} ${r.time}`);
-  return `<div class="bc-task-note">${BC_TYPE_LABEL[type]} day — ${parts.join(", ")}</div>`;
+  return `<div class="bc-task-note bc-note-${type}">${BC_TYPE_LABEL[type]} day — ${parts.join(", ")}</div>`;
 }
 
 // Trims each Fruit/Leaf/Root/Flower month list down to the current month
