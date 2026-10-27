@@ -1469,6 +1469,9 @@
   .sow-card.locked{ cursor:default; border-color:var(--line); }
   /* A date with nothing else under it looks like every other green date tag: no box. */
   .sow-card.bare{ border:none !important; padding:0 !important; background:none !important; }
+  /* A sowing that didn't come up: crossed out in red on the crop window. */
+  .sow-card.sow-failed .tag-green{ text-decoration:line-through; text-decoration-color:#D62828; text-decoration-thickness:2px; }
+  .date-chip-menu button.nogerm{ background:#FBE9E7; color:#A93226; border-color:#E7B0A8; }
   .sow-card.bare:hover{ background:none; }
   .sow-card-head{
     font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#000;
@@ -1773,6 +1776,35 @@
   }
   .unit-pick button + button{ border-left:1px solid var(--line); }
   .unit-pick button.on{ background:var(--evergreen); color:#fff; }
+  /* ---------- Harvest "From planting" + Best Planting Report ---------- */
+  .harvest-from-wrap{ margin:0 0 10px; }
+  .harvest-from-lbl{ display:block; font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:var(--ink-soft); margin:0 0 4px; }
+  .harvest-from-select{ width:100%; box-sizing:border-box; font-family:'Inter',sans-serif; font-size:13.5px; color:var(--entry-text);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:8px 9px; outline:none; }
+  .harvest-from-hint{ font-size:11.5px; color:var(--ink-soft); margin-top:3px; min-height:14px; }
+  .harvest-from-hint:empty{ display:none; }
+  .h-from{ flex:none; font-size:10.5px; font-weight:600; color:#2F6B35; background:#DDF3DC; border-radius:8px; padding:2px 7px; white-space:nowrap; }
+  .h-from.guess{ color:var(--ink-soft); background:var(--paper-2); font-style:italic; }
+  .harvest-entry{ flex-wrap:wrap; }
+  .bp-crop{ border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-bottom:12px; background:var(--card); }
+  .bp-head{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:16px; color:var(--ink); margin-bottom:6px; }
+  .bp-head .plant-icon{ width:32px; height:32px; font-size:19px; }
+  .bp-unit{ margin-left:auto; font-size:11px; font-weight:600; color:var(--ink-soft); }
+  .bp-insight{ font-size:13px; line-height:1.45; color:#2F6B35; background:#EAF7EF; border:1px solid #C4E8D2; border-radius:10px; padding:7px 10px; margin:0 0 6px; }
+  .bp-insight.wait{ color:var(--ink-soft); background:var(--paper-2); border-color:var(--line); }
+  .bp-row{ display:grid; grid-template-columns:22px 1fr auto; gap:4px 8px; align-items:start; padding:8px 0; border-top:1px dashed var(--line); }
+  .bp-rank{ font-weight:800; font-size:13px; color:var(--clay-dark); padding-top:1px; }
+  .bp-main{ min-width:0; }
+  .bp-date{ font-weight:700; font-size:13.5px; color:var(--ink); }
+  .bp-meta{ font-size:11.5px; color:var(--ink-soft); line-height:1.4; margin-top:1px; }
+  .bp-vars{ font-size:11.5px; color:#6A3FA8; margin-top:2px; }
+  .bp-total{ text-align:right; font-weight:800; font-size:15px; color:var(--evergreen); white-space:nowrap; }
+  .bp-total small{ display:block; font-size:10.5px; font-weight:600; color:var(--ink-soft); }
+  .bp-bar{ grid-column:2 / 4; height:6px; border-radius:3px; background:var(--evergreen-2); }
+  .bp-sub{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin:10px 0 4px; }
+  .bp-var{ font-size:12.5px; color:var(--ink); padding:3px 0; }
+  .bp-var b{ color:#6A3FA8; }
+  .bp-review{ font-size:12px; color:var(--ink-soft); margin-top:8px; font-style:italic; }
   /* ---------- Harvest Year in Review ---------- */
   #harvestYearBody{ --hyr-fruit:#B565A7; --hyr-veg:#4E9A55; }
   body.night-mode #harvestYearBody{ --hyr-fruit:#D48BC6; --hyr-veg:#6DBA73; }
@@ -1824,6 +1856,9 @@
   .hyr-note:empty{ display:none; }
   /* Indoors / Direct outside choice in the Actual sow box */
   .sow-where{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:6px 0 4px; }
+  .variety-edit-where{ flex-basis:100%; width:100%; flex-wrap:nowrap !important; margin:6px 0 4px !important; gap:5px !important; }
+  .variety-edit-where button{ flex:1 1 0; min-width:0; min-height:32px !important; padding:4px 8px !important; font-size:12.5px !important; white-space:nowrap; }
+  .variety-edit-where .sow-where-label{ flex:none; font-size:12.5px; }
   .sow-where-label{ font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--ink-soft); margin-right:2px; }
   .sow-where button{
     font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; min-height:36px; padding:6px 13px;
@@ -2051,6 +2086,31 @@
   /* Tidy crop window */
   .dose.tidy-moon-hidden .bc-task-note{ display:none; }
 
+
+  /* ===== Editing unlocked: rainbow-blinking date box + reminder ===== */
+  .unlock-hint{ display:none; font-family:'Inter',sans-serif; font-size:9.5px; font-weight:800; color:#6C4AB0; margin-top:2px; white-space:nowrap; }
+  body.edit-unlocked .unlock-hint{ display:block; animation:unlockBlink 1.2s ease-in-out infinite; }
+  body.edit-unlocked .header-date-box{ cursor:pointer; animation:rainbowGlow 2.4s linear infinite; border-width:2px !important; }
+  @keyframes rainbowGlow{
+    0%  { border-color:#FF4D4D; box-shadow:0 0 0 3px #FF4D4D, 0 0 18px 6px rgba(255,77,77,.65); }
+    16% { border-color:#FF9F1C; box-shadow:0 0 0 3px #FF9F1C, 0 0 18px 6px rgba(255,159,28,.65); }
+    33% { border-color:#FFD60A; box-shadow:0 0 0 3px #FFD60A, 0 0 18px 6px rgba(255,214,10,.65); }
+    50% { border-color:#2EC27E; box-shadow:0 0 0 3px #2EC27E, 0 0 18px 6px rgba(46,194,126,.65); }
+    66% { border-color:#3A86FF; box-shadow:0 0 0 3px #3A86FF, 0 0 18px 6px rgba(58,134,255,.65); }
+    83% { border-color:#8B5CF6; box-shadow:0 0 0 3px #8B5CF6, 0 0 18px 6px rgba(139,92,246,.65); }
+    100%{ border-color:#FF4D4D; box-shadow:0 0 0 3px #FF4D4D, 0 0 18px 6px rgba(255,77,77,.65); } }
+  .unlock-edit{ display:none; }
+  body.edit-unlocked .header-date-num, body.edit-unlocked .header-date-month{ display:none !important; }
+  body.edit-unlocked .unlock-edit{ display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1; gap:2px; }
+  .unlock-edit .ue-pen{ font-size:24px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.25)); animation:penWiggle 1.6s ease-in-out infinite; }
+  .unlock-edit .ue-word{ font-family:'Fraunces',Georgia,serif; font-weight:800; font-size:21px; letter-spacing:.06em;
+    background:linear-gradient(90deg,#FF4D4D,#FF9F1C,#E0B800,#2EC27E,#3A86FF,#8B5CF6,#FF4D4D); background-size:200% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent; animation:rainbowText 2.4s linear infinite; }
+  body.edit-unlocked .unlock-hint{ font-size:10px; margin-top:4px; }
+  @keyframes penWiggle{ 0%,100%{ transform:rotate(0); } 25%{ transform:rotate(-12deg); } 75%{ transform:rotate(10deg); } }
+  @keyframes rainbowText{ 0%{ background-position:0% 0; } 100%{ background-position:200% 0; } }
+  @keyframes unlockBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+  .undo-toast{ min-width:min(330px, calc(100vw - 32px)); bottom:calc(var(--tabbar-h, 84px) + 14px + env(safe-area-inset-bottom)) !important; }
   /* ===== Night-sky look shared by the biodynamic calendar buttons and headers ===== */
   .home-tabs-card .home-tab-btn.tab-calendar.sky, .home-tabs-card .home-tab-btn.tab-calendar.sky.active{
     background:radial-gradient(1.5px 1.5px at 12% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 55% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 80%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 35%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 45%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 95% 75%,#fff 99%,transparent),radial-gradient(1px 1px at 20% 90%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important; color:#fff !important; border:1px solid #1A2347 !important; position:relative; overflow:hidden; }
@@ -3127,9 +3187,11 @@
         <div class="loc-line">Zone 9B, Odessa, FL</div>
         <div class="header-season-label" id="headerSeasonLabel"></div>
       </div>
-      <div class="header-date-box">
+      <div class="header-date-box" id="headerDateBox">
         <div class="header-date-num" id="todayDayLabel"></div>
         <div class="header-date-month" id="todayMonthLabel"></div>
+        <div class="unlock-edit" aria-hidden="true"><span class="ue-pen">✏️</span><span class="ue-word">EDIT</span></div>
+        <div class="unlock-hint" aria-hidden="true">🔓 Tap to lock</div>
       </div>
       <script>
         /* Fill in today's date the instant the header appears, so the box
@@ -3451,6 +3513,11 @@
               <input id="harvest-qty-input" type="text" inputmode="decimal" class="qty-input-inline" placeholder="Amount (optional)" autocomplete="off">
               <div class="unit-pick" id="harvest-unit-pick" role="group" aria-label="Unit"><button type="button" data-u="lb">lbs</button><button type="button" data-u="oz">oz</button><button type="button" data-u="count">count</button></div>
             </div>
+            <div class="harvest-from-wrap">
+              <label for="harvest-from" class="harvest-from-lbl">🌱 From planting</label>
+              <select id="harvest-from" class="harvest-from-select"></select>
+              <div class="harvest-from-hint" id="harvest-from-hint"></div>
+            </div>
             <div class="harvest-add-actions">
               <button id="harvest-add-btn" class="h-add-btn">Add to harvest log</button>
               <button id="harvest-cancel-btn" type="button" class="h-cancel-btn" style="display:none;">Cancel</button>
@@ -3488,6 +3555,11 @@
             <div class="harvest-add-row harvest-size-wrap" id="harvest-veg-size-wrap">
               <input id="harvest-veg-size-input" type="text" class="qty-input-inline" placeholder="Size/Length (e.g. 6 in)" autocomplete="off">
             </div>
+            <div class="harvest-from-wrap">
+              <label for="harvest-veg-from" class="harvest-from-lbl">🌱 From planting</label>
+              <select id="harvest-veg-from" class="harvest-from-select"></select>
+              <div class="harvest-from-hint" id="harvest-veg-from-hint"></div>
+            </div>
             <div class="harvest-add-actions">
               <button id="harvest-veg-add-btn" class="h-add-btn">Add to harvest log</button>
               <button id="harvest-veg-cancel-btn" type="button" class="h-cancel-btn" style="display:none;">Cancel</button>
@@ -3507,6 +3579,19 @@
         <div id="harvestChartBodyWrap" style="display:none; margin-top:10px;">
           <p class="backup-hint" style="margin:0 0 12px;">One box per month — every crop harvested then, fruits and vegetables together.</p>
           <div id="harvestChartBody"></div>
+        </div>
+      </div>
+
+      <div class="legend-card">
+        <button type="button" id="harvestBestToggle" class="rain-toggle">
+          <span class="legend-title" style="margin-bottom:0; color:var(--clay-dark);">🏆 Best Planting Report</span>
+          <span class="rain-toggle-right">
+            <span id="harvestBestChevron" class="rain-chevron">▾</span>
+          </span>
+        </button>
+        <div id="harvestBestBodyWrap" style="display:none; margin-top:10px;">
+          <p class="backup-hint" style="margin:0 0 12px;">Which sowings gave you the most — by sowing date, temperature and variety. Each harvest counts toward the planting it came from.</p>
+          <div id="harvestBestBody"></div>
         </div>
       </div>
 
@@ -3598,7 +3683,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.27-108</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.27-115</div>
   </main>
 
   <nav class="tabbar">
@@ -4126,11 +4211,13 @@ const RADISH_COLORS = ["White", "Red", "Pink", "Purple"];
 const RADISH_COLOR_HEX = { White:"#F1EEE4", Red:"#C0392B", Pink:"#E07B9E", Purple:"#6B3FA0" };
 const BEET_COLORS = ["Red", "Golden", "Chioggia", "White"];
 const BEET_COLOR_HEX = { Red:"#8E1F4A", Golden:"#E8A93B", Chioggia:"#E07B9E", White:"#F1EEE4" };
+const TURNIP_COLORS = ["Purple top", "White", "Golden", "Red"];
+const TURNIP_COLOR_HEX = { "Purple top":"#8E3FA6", White:"#F1EEE4", Golden:"#E8A93B", Red:"#C0392B" };
 // Which crops get a color-tagging checkbox row at all, and which palette
 // each one offers. Add a crop here to give it the same color-checkbox
 // feature tomatoes and carrots have.
-const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS, peppers: PEPPER_COLORS, eggplants: EGGPLANT_COLORS, radishes: RADISH_COLORS, beets: BEET_COLORS };
-const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX, peppers: PEPPER_COLOR_HEX, eggplants: EGGPLANT_COLOR_HEX, radishes: RADISH_COLOR_HEX, beets: BEET_COLOR_HEX };
+const CROP_COLOR_OPTIONS = { tomatoes: TOMATO_COLORS, carrots: CARROT_COLORS, peppers: PEPPER_COLORS, eggplants: EGGPLANT_COLORS, radishes: RADISH_COLORS, beets: BEET_COLORS, turnips: TURNIP_COLORS };
+const CROP_COLOR_HEX = { tomatoes: TOMATO_COLOR_HEX, carrots: CARROT_COLOR_HEX, peppers: PEPPER_COLOR_HEX, eggplants: EGGPLANT_COLOR_HEX, radishes: RADISH_COLOR_HEX, beets: BEET_COLOR_HEX, turnips: TURNIP_COLOR_HEX };
 function varietyColorCheckboxesHTML(slug){
   return (CROP_COLOR_OPTIONS[slug] || []).map(c => `<label class="variety-color-check"><input type="checkbox" class="variety-color-input" value="${c}"> ${c}</label>`).join("");
 }
@@ -4319,7 +4406,7 @@ const CROP_EMOJI = {
   tomatoes:"🍅", peppers:"🫑", eggplants:"🍆", squash:"🎃", cucumbers:"🥒", luffa:"🥒",
   leafygreens:"🥬", broccoli:"🥦", bushbeans:"🫘", snappeas:"🫛", rattlesnake:"🫘",
   lettuce:"🥬", kale:"🥬", collards:"🥬", kalethousandheads:"🥬", treecollards:"🥬",
-  radishes:"🔴", beets:"🔴", carrots:"🥕", fennel:"🌿", garlic:"🧄",
+  radishes:"🔴", beets:"🔴", carrots:"🥕", turnips:"🥕", fennel:"🌿", garlic:"🧄",
   onionslips:"🧅", strawberries:"🍓", muskmelon:"🍈", watermelon:"🍉",
   longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
@@ -4328,7 +4415,7 @@ const CROP_EMOJI = {
 };
 const SECTION_EMOJI_FALLBACK = { vegetables:"🥕", herbs:"🌿", flowers:"🌸", coverCrops:"🌱" };
 // Crops drawn as a small picture instead of an emoji.
-const CROP_SVG_ICON = { beets: '<svg class="bg-svg crop-svg" viewBox="0 0 20 20"><path d="M9.2 9.2 6.6 2.4M10 9V1.6M10.8 9.2l2.8-6.4" stroke="#B0294F" stroke-width="1.1" stroke-linecap="round"/><path d="M6.6 2.4C3.6 2.6 2.6 5.6 4.4 7.2 6.2 7 7.4 4.8 6.6 2.4Z" fill="#4E9A3A"/><path d="M10 1.6C8 3 8.2 6.4 10 7.4 11.8 6.4 12 3 10 1.6Z" fill="#5FAE45"/><path d="M13.6 2.8C16.6 3 17.4 6 15.6 7.6 13.8 7.2 12.6 5 13.6 2.8Z" fill="#4E9A3A"/><path d="M10 8.6C6 8.6 4.4 11.4 5.2 14 6 16.4 8.4 17.2 10 19.4 11.6 17.2 14 16.4 14.8 14 15.6 11.4 14 8.6 10 8.6Z" fill="#8E1F4A"/><path d="M7.2 11.4C7.6 10.4 8.6 9.8 9.6 9.8" stroke="#C04A78" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M10 19.4V20" stroke="#8E1F4A" stroke-width=".8" stroke-linecap="round"/></svg>' };
+const CROP_SVG_ICON = { turnips: '<svg class="bg-svg crop-svg" viewBox="0 0 20 20"><path d="M9 7.6 6.4 2M10 7.4V1.2M11 7.6l2.8-5.4" stroke="#4E9A3A" stroke-width="1.1" stroke-linecap="round"/><path d="M6.4 2C3.4 2.2 2.6 5 4.4 6.6 6.2 6.4 7.2 4.4 6.4 2Z" fill="#5FAE45"/><path d="M10 1.2C8 2.6 8.2 5.6 10 6.6 11.8 5.6 12 2.6 10 1.2Z" fill="#4E9A3A"/><path d="M13.8 2.2C16.8 2.4 17.4 5.2 15.6 6.8 13.8 6.4 12.8 4.4 13.8 2.2Z" fill="#5FAE45"/><path d="M10 7.2C5.4 7.2 3.4 10.2 4.2 13 5 15.6 7.6 16.6 10 17.6 12.4 16.6 15 15.6 15.8 13 16.6 10.2 14.6 7.2 10 7.2Z" fill="#F4F0E6" stroke="#CFC6B2" stroke-width=".5"/><path d="M4.4 11.4C4.6 8.6 6.8 7.2 10 7.2 13.2 7.2 15.4 8.6 15.6 11.4 13.6 10.2 11.8 9.8 10 9.8 8.2 9.8 6.4 10.2 4.4 11.4Z" fill="#8E3FA6"/><path d="M10 17.6V19.6" stroke="#B9AF98" stroke-width=".8" stroke-linecap="round"/><path d="M7 13.4C7.4 14.6 8.4 15.4 9.4 15.8" stroke="#FFFFFF" stroke-width=".9" stroke-linecap="round" fill="none"/></svg>', beets: '<svg class="bg-svg crop-svg" viewBox="0 0 20 20"><path d="M9.2 9.2 6.6 2.4M10 9V1.6M10.8 9.2l2.8-6.4" stroke="#B0294F" stroke-width="1.1" stroke-linecap="round"/><path d="M6.6 2.4C3.6 2.6 2.6 5.6 4.4 7.2 6.2 7 7.4 4.8 6.6 2.4Z" fill="#4E9A3A"/><path d="M10 1.6C8 3 8.2 6.4 10 7.4 11.8 6.4 12 3 10 1.6Z" fill="#5FAE45"/><path d="M13.6 2.8C16.6 3 17.4 6 15.6 7.6 13.8 7.2 12.6 5 13.6 2.8Z" fill="#4E9A3A"/><path d="M10 8.6C6 8.6 4.4 11.4 5.2 14 6 16.4 8.4 17.2 10 19.4 11.6 17.2 14 16.4 14.8 14 15.6 11.4 14 8.6 10 8.6Z" fill="#8E1F4A"/><path d="M7.2 11.4C7.6 10.4 8.6 9.8 9.6 9.8" stroke="#C04A78" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M10 19.4V20" stroke="#8E1F4A" stroke-width=".8" stroke-linecap="round"/></svg>' };
 function cropIcon(p, sectionKey){
   const emoji = CROP_SVG_ICON[p.slug] || CROP_EMOJI[p.slug] || SECTION_EMOJI_FALLBACK[sectionKey] || "🌱";
   return `<span class="plant-icon" style="background:${p.color}">${emoji}</span>`;
@@ -4447,6 +4534,9 @@ const SEASONS = {
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"carrots", name:"Carrots", shape:"teardrop", color:C.orange,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
+    {slug:"turnips", name:"Turnips", shape:"circle", color:C.lavender,
+      dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:1, d:25, m2:1, d2:28}]],
+      note:"Cool-season root: sow straight in the bed, ½\" deep, and thin to 4\" apart. Greens are ready in about 4 weeks, roots in 6–8. Pull roots at 2–3\" across, before they turn woody."},
     {slug:"fennel", name:"Fennel", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
       note:"Fennel is a Leaf crop — moved from Oct 29 (a Root day) to the Oct 23-25 Leaf window."},
@@ -4752,32 +4842,28 @@ function entryAddedAt(d){ return typeof d === "string" ? null : (d.addedAt || nu
 // (applied at render time) work across that whole day's varieties
 // together instead of just within each separate entry.
 function mergeSameDaySowVarieties(entries){
-  const order = [];
-  const byDate = new Map();
+  // Every sowing on the same date goes in one box with all its varieties.
+  // The only exception: one marked Indoors and one marked Direct stay apart.
+  // A sowing with no Indoors/Direct set joins the box for that day.
+  const groups = [];
   entries.forEach(d => {
-    // Same day but one indoors and one direct outside stay separate cards.
-    const where = (typeof d === "object" && d && d.where) || "";
-    const key = `${entryDate(d)}|${where}`;
-    if(!byDate.has(key)){
-      byDate.set(key, {
-        date: entryDate(d),
-        where,
-        temp: entryTemp(d),
-        addedAt: entryAddedAt(d),
-        varieties: entryVarieties(d).slice()
-      });
-      order.push(key);
+    const date = entryDate(d), where = (typeof d === "object" && d && d.where) || "";
+    let g = groups.find(x => x.date === date && (!x.where || !where || x.where === where));
+    if(!g){
+      g = { date, where, temp: entryTemp(d), addedAt: entryAddedAt(d), varieties: entryVarieties(d).slice(), extra: {} };
+      if(typeof d === "object" && d) Object.keys(d).forEach(k => { if(!["date","where","temp","addedAt","varieties"].includes(k)) g.extra[k] = d[k]; });
+      groups.push(g);
     } else {
-      const g = byDate.get(key);
+      if(!g.where && where) g.where = where;
       if(!g.temp) g.temp = entryTemp(d);
       const at = entryAddedAt(d);
       if(at && (!g.addedAt || at < g.addedAt)) g.addedAt = at;
-      g.varieties = g.varieties.concat(entryVarieties(d));
+      const seen = new Set(g.varieties.map(v => String(varietyName(v)).toLowerCase()));
+      entryVarieties(d).forEach(v => { const k = String(varietyName(v)).toLowerCase(); if(!seen.has(k)){ seen.add(k); g.varieties.push(v); } });
     }
   });
-  return order.map(key => {
-    const g = byDate.get(key);
-    const out = { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties };
+  return groups.map(g => {
+    const out = Object.assign({}, g.extra, { date: g.date, temp: g.temp || "", addedAt: g.addedAt || Date.now(), varieties: g.varieties });
     if(g.where) out.where = g.where;
     return out;
   });
@@ -4924,7 +5010,7 @@ async function setTemp(slug, kind, val){
 // split crops (tomatoes/peppers/eggplants) and {count} for everything else.
 const PLANT_COUNT_SPLIT = ["tomatoes", "peppers", "eggplants"];
 // Crops that don't get the plant count box at all.
-const PLANT_COUNT_SKIP = ["lettuce", "radishes", "beets", "carrots"];
+const PLANT_COUNT_SKIP = ["lettuce", "radishes", "beets", "carrots", "turnips"];
 // Sown straight into the garden — no transplant step, so no "Actual transplant" field.
 function daysBetweenISO(a, b){
   const pa = String(a).split("-").map(Number), pb = String(b).split("-").map(Number);
@@ -4934,7 +5020,7 @@ function fmtGermDay(iso){
   const q = String(iso).split("-").map(Number);
   return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][q[1]-1] + " " + q[2];
 }
-const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "beets", "carrots", "fennel", "longbeans"];
+const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "beets", "carrots", "turnips", "fennel", "longbeans"];
 // Crops whose card has the "Germinated — days to germinate" section: every
 // direct-sown crop, plus squash, cucumbers and melons (often started in pots).
 const GERM_TRACKED_CROPS = DIRECT_SOW_CROPS.concat(["squash", "cucumbers", "watermelon", "muskmelon"]);
@@ -5444,12 +5530,100 @@ function wireRainChart(){
 // useful (e.g. "6 in" for a carrot or cucumber) — matched against whatever
 // the person types in the Vegetables harvest name field, substring/
 // case-insensitive, so "Peppers", "Bell Pepper", etc. all match.
-const SIZE_TRACKED_CROP_KEYWORDS = ["carrot", "radish", "beet", "cucumber", "eggplant", "pepper", "bean"];
+const SIZE_TRACKED_CROP_KEYWORDS = ["carrot", "radish", "beet", "turnip", "cucumber", "eggplant", "pepper", "bean"];
 function nameLooksSizeTracked(name){
   const q = (name || "").trim().toLowerCase();
   if(!q) return false;
   return SIZE_TRACKED_CROP_KEYWORDS.some(k => q.includes(k));
 }
+/* ---------------- Plantings ↔ harvests ----------------
+   Every harvest can point at the sowing it came from: entry.from =
+   "season|slug|YYYY-MM-DD", or "none" when it isn't from a logged sowing
+   (fruit trees, store-bought plants…). Harvests without .from get an
+   automatic best guess: same crop (and same variety when the name
+   includes one), the latest sowing that's old enough to be producing. */
+function hpNorm(t){ return String(t || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim(); }
+function hpStem(w){
+  w = hpNorm(w);
+  if(/ies$/.test(w)) return w.replace(/ies$/, "y");
+  if(/oes$/.test(w)) return w.replace(/es$/, "");
+  if(/(s|x|z|ch|sh)es$/.test(w)) return w.replace(/es$/, "");
+  if(/[^s]s$/.test(w)) return w.replace(/s$/, "");
+  return w;
+}
+function hpCropWords(p){
+  const words = new Set();
+  [p.name, p.slug].forEach(n => {
+    const full = hpNorm(n);
+    if(!full) return;
+    words.add(full); words.add(hpStem(full));
+    full.split(" ").filter(w => w.length > 3 && !["beans","peas","seeds"].includes(w)).forEach(w => { words.add(w); words.add(hpStem(w)); });
+  });
+  return [...words].filter(w => w.length > 2);
+}
+async function getAllSowings(){
+  const out = [];
+  for(const sk of Object.keys(SEASONS)){
+    const data = SEASONS[sk].data;
+    for(const sectionKey of Object.keys(data)){
+      for(const p of (data[sectionKey] || [])){
+        const sows = mergeSameDaySowVarieties(await getActualDatesFor(sk, p.slug, "sow"));
+        if(!sows.length) continue;
+        const trs = (await getActualDatesFor(sk, p.slug, "transplant")).map(entryDate).filter(Boolean).sort();
+        sows.forEach(d => {
+          const date = entryDate(d); if(!date) return;
+          const vs = entryVarieties(d);
+          const failed = !!(d && d.noGerm) || (vs.length > 0 && vs.every(varietyNoGerm));
+          out.push({ key: `${sk}|${p.slug}|${date}`, season: sk, slug: p.slug, name: p.name, sectionKey, crop: p,
+            date, temp: entryTemp(d), where: (d && d.where) || "", varieties: vs.filter(v => !varietyNoGerm(v)).map(varietyName).filter(Boolean),
+            transplant: trs.find(t => t >= date) || "", failed, words: hpCropWords(p) });
+        });
+      }
+    }
+  }
+  return out;
+}
+function hpMatchCrop(name, sowings){
+  const n = " " + hpNorm(name) + " ";
+  let best = null, bestLen = 0;
+  sowings.forEach(s => s.words.forEach(w => {
+    if(n.includes(" " + w + " ") || n.includes(" " + w + "s ") || n.includes(" " + w + "es ")){
+      if(w.length > bestLen){ bestLen = w.length; best = s.slug; }
+    }
+  }));
+  return best;
+}
+function hpVarietyIn(name, varieties){
+  const n = hpNorm(name);
+  return varieties.find(v => { const vn = hpNorm(v); return vn.length > 2 && n.includes(vn); }) || "";
+}
+function hpGuess(name, dateISO, sowings){
+  const slug = hpMatchCrop(name, sowings);
+  if(!slug || !dateISO) return null;
+  const g = GERM_TEMP_DATA[slug];
+  const minDays = Math.max(21, g && g.dtm ? Math.round(g.dtm[0] * 0.6) : 21);
+  let pool = sowings.filter(s => s.slug === slug && !s.failed && daysBetweenISO(s.date, dateISO) >= minDays);
+  if(!pool.length) pool = sowings.filter(s => s.slug === slug && !s.failed && s.date <= dateISO);
+  const withVar = pool.filter(s => hpVarietyIn(name, s.varieties));
+  const list = (withVar.length ? withVar : pool).sort((a, b) => b.date.localeCompare(a.date));
+  return list[0] || null;
+}
+function hpLabel(s, withCrop){
+  const d = fmtLogDateFull(s.date);
+  const bits = [withCrop ? s.name : "", `${d} sowing`, s.temp ? fmtTemp(s.temp).replace(/[()]/g, "") : "", s.where === "direct" ? "direct" : s.where === "indoor" ? "indoors" : ""].filter(Boolean);
+  return bits.join(" · ");
+}
+function fmtLogDateFull(iso){
+  const p = String(iso || "").split("-").map(Number);
+  return p.length === 3 ? `${MONTHS[p[1]-1]} ${p[2]}, ${p[0]}` : String(iso || "");
+}
+// Which planting a saved harvest belongs to: its own choice, else the guess.
+function hpLinkFor(entry, sowings){
+  if(entry.from === "none") return { sow: null, guessed: false };
+  if(entry.from){ const s = sowings.find(x => x.key === entry.from); if(s) return { sow: s, guessed: false }; }
+  return { sow: hpGuess(entry.fruit, entry.date, sowings), guessed: true };
+}
+
 async function wireHarvestSection(kind, ids){
   const el = document.getElementById(ids.log);
   let log = await getHarvestLogFor(activeSeason, kind);
@@ -5461,6 +5635,42 @@ async function wireHarvestSection(kind, ids){
   const addBtn = document.getElementById(ids.addBtn);
   const cancelBtn = document.getElementById(ids.cancelBtn);
   const qtyInput = document.getElementById(ids.qtyInput);
+  const fromSel = ids.fromSel ? document.getElementById(ids.fromSel) : null;
+  const fromHint = ids.fromHint ? document.getElementById(ids.fromHint) : null;
+  let sowings = [];
+  let fromTouched = false;
+  // Fills the "From planting" box: this crop's sowings first (newest
+  // first), then everything else. Leaves your own pick alone once you've
+  // changed it by hand.
+  function refreshFrom(keepValue){
+    if(!fromSel) return;
+    const name = nameInput.value.trim(), date = dateInput.value;
+    const slug = name ? hpMatchCrop(name, sowings) : null;
+    const guess = (name && date) ? hpGuess(name, date, sowings) : null;
+    const mine = sowings.filter(s => s.slug === slug).sort((a, b) => b.date.localeCompare(a.date));
+    const others = sowings.filter(s => s.slug !== slug).sort((a, b) => a.name.localeCompare(b.name) || b.date.localeCompare(a.date));
+    const opt = s => `<option value="${fertEsc(s.key)}">${fertEsc(hpLabel(s, !slug || s.slug !== slug))}${s.failed ? " (didn't germinate)" : ""}</option>`;
+    const prev = fromSel.value;
+    fromSel.innerHTML = `<option value="none">— Not from a logged sowing —</option>`
+      + (mine.length ? `<optgroup label="${fertEsc(mine[0].name)}">${mine.map(opt).join("")}</optgroup>` : "")
+      + (others.length ? `<optgroup label="Other crops">${others.map(opt).join("")}</optgroup>` : "");
+    if(keepValue !== undefined) fromSel.value = keepValue;
+    else if(fromTouched && [...fromSel.options].some(o => o.value === prev)) fromSel.value = prev;
+    else fromSel.value = guess ? guess.key : "none";
+    if(fromHint){
+      const picked = sowings.find(s => s.key === fromSel.value);
+      fromHint.textContent = !name ? "" : (guess && picked && picked.key === guess.key && !fromTouched) ? "Picked automatically — change it if it came from another sowing." : (!guess && !fromTouched ? "No matching sowing found for this crop." : "");
+    }
+  }
+  if(fromSel){
+    sowings = await getAllSowings();
+    fromSel.addEventListener("change", () => { fromTouched = true; refreshFrom(fromSel.value); });
+    nameInput.addEventListener("input", () => refreshFrom());
+    nameInput.addEventListener("blur", () => setTimeout(() => refreshFrom(), 50));
+    dateInput.addEventListener("change", () => refreshFrom());
+    nameInput.addEventListener("focus", async () => { sowings = await getAllSowings(); });
+    refreshFrom();
+  }
   // lbs / oz / count picker beside the amount. The last one you used is
   // remembered (per log) so you don't have to re-pick it every time.
   const unitPick = ids.unitPick ? document.getElementById(ids.unitPick) : null;
@@ -5598,6 +5808,7 @@ async function wireHarvestSection(kind, ids){
     hideQtyWrap();
     if(sizeInput) sizeInput.value = "";
     updateSizeVisibility();
+    fromTouched = false; refreshFrom();
     addBtn.textContent = "Add to harvest log";
     cancelBtn.style.display = "none";
   }
@@ -5644,6 +5855,7 @@ async function wireHarvestSection(kind, ids){
           <span class="h-fruit">${entry.fruit}</span>
           ${entry.qty ? `<span class="h-qty">${harvestQtyLabel(entry)}</span>` : ""}
           ${entry.size ? `<span class="h-size">${entry.size}</span>` : ""}
+          ${(() => { if(!fromSel) return ""; const l = hpLinkFor(entry, sowings); return l.sow ? `<span class="h-from${l.guessed ? " guess" : ""}" title="${l.guessed ? "Best guess — tap the entry to confirm or change" : "From this sowing"}">🌱 ${fmtLogDate(l.sow.date)}${l.sow.season !== activeSeason ? " '" + l.sow.date.slice(2,4) : ""}${l.guessed ? "?" : ""}</span>` : ""; })()}
           ${locked ? "" : `
             <button type="button" class="h-edit" data-i="${i}" aria-label="Edit">✎</button>
             <button type="button" class="h-remove" data-i="${i}" aria-label="Remove">×</button>
@@ -5685,6 +5897,8 @@ async function wireHarvestSection(kind, ids){
       setUnit(log[i].unit || (harvestAmount(log[i]).type === "weight" ? "lb" : "count"));
       if(sizeInput) sizeInput.value = log[i].size || "";
       updateSizeVisibility();
+      fromTouched = !!log[i].from;
+      refreshFrom(log[i].from || undefined);
       addBtn.textContent = "Update entry";
       cancelBtn.style.display = "";
       nameInput.focus();
@@ -5736,6 +5950,7 @@ async function wireHarvestSection(kind, ids){
     const entry = { date, fruit: val };
     if(qty){ entry.qty = qty; entry.unit = currentUnit; }
     if(size) entry.size = size;
+    if(fromSel){ refreshFrom(fromTouched ? fromSel.value : undefined); entry.from = fromSel.value || "none"; }
     if(editingIndex !== null){
       entry.addedAt = log[editingIndex].addedAt || Date.now();
       log[editingIndex] = entry;
@@ -5747,6 +5962,7 @@ async function wireHarvestSection(kind, ids){
     draw();
     await setHarvestLogFor(activeSeason, log, kind);
     renderHarvestChart();
+    renderBestPlanting();
   }
   addBtn.onclick = addEntry;
   nameInput.onkeydown = (e) => { if(e.key === "Enter"){ e.preventDefault(); addEntry(); } };
@@ -5781,6 +5997,131 @@ function harvestQtyLabel(e){
   return e.unit === "lb" ? `${e.qty} lbs` : e.unit === "oz" ? `${e.qty} oz` : `×${e.qty}`;
 }
 function fmtLbs(v){ return v >= 10 ? Math.round(v).toLocaleString() : (Math.round(v * 10) / 10).toLocaleString(); }
+
+/* ---------------- Best Planting Report ----------------
+   For each crop: every sowing, what it produced, and — once there are at
+   least 3 sowings with harvests — the sowing window and temperature that
+   produced most. Weather for the 2 weeks after each sowing comes from the
+   free Open-Meteo archive (cached, so it's only fetched once per date). */
+async function bpWeather(dateISO){
+  const key = `sowWeather:${dateISO}`;
+  try{ const r = await window.storage.get(key, false); if(r) return JSON.parse(r.value); }catch(e){}
+  const start = new Date(dateISO + "T12:00:00"), end = new Date(start); end.setDate(end.getDate() + 13);
+  if(end > new Date(Date.now() - 6 * 86400000)) return null;   // archive isn't ready yet
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  try{
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=28.1723&longitude=-82.5507&start_date=${iso(start)}&end_date=${iso(end)}&daily=temperature_2m_mean,precipitation_sum&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=America%2FNew_York`;
+    const res = await fetch(url); if(!res.ok) return null;
+    const j = await res.json();
+    const t = (j.daily && j.daily.temperature_2m_mean || []).filter(v => v != null);
+    const r = (j.daily && j.daily.precipitation_sum || []).filter(v => v != null);
+    if(!t.length) return null;
+    const w = { t: Math.round(t.reduce((a, b) => a + b, 0) / t.length), rain: Math.round(r.reduce((a, b) => a + b, 0) * 100) / 100 };
+    try{ await window.storage.set(key, JSON.stringify(w), false); }catch(e){}
+    return w;
+  }catch(e){ return null; }
+}
+function bpTempOf(pl){ const n = parseFloat(String(pl.temp || "").replace(/[^0-9.]/g, "")); return isNaN(n) ? null : n; }
+async function renderBestPlanting(){
+  const el = document.getElementById("harvestBestBody");
+  if(!el || document.getElementById("harvestBestBodyWrap").style.display === "none") return;
+  el.innerHTML = `<div class="harvest-empty">Working it out…</div>`;
+  const sowings = await getAllSowings();
+  const harvests = await getAllHarvestEntries();
+  const byKey = {};
+  sowings.forEach(s => { byKey[s.key] = { sow: s, lbs: 0, n: 0, pick: 0, dates: [], guessed: 0, items: [] }; });
+  let guessedCount = 0;
+  harvests.forEach(h => {
+    const l = hpLinkFor(h, sowings);
+    if(!l.sow) return;
+    const b = byKey[l.sow.key]; if(!b) return;
+    const a = harvestAmount(h);
+    if(a.type === "weight") b.lbs += a.lbs; else if(a.type === "count") b.n += a.n; else b.pick++;
+    b.dates.push(h.date); b.items.push({ h, a });
+    if(l.guessed){ b.guessed++; guessedCount++; }
+  });
+  const crops = {};
+  Object.values(byKey).forEach(b => { (crops[b.sow.slug] = crops[b.sow.slug] || []).push(b); });
+  const withHarvest = Object.entries(crops).filter(([, list]) => list.some(b => b.dates.length));
+  if(!withHarvest.length){
+    el.innerHTML = `<div class="harvest-empty">Nothing to compare yet. As you log harvests, pick the sowing they came from in "From planting" — this report fills in from there.</div>`;
+    return;
+  }
+  // weather for every sowing that produced something (in parallel, cached)
+  const prod = withHarvest.flatMap(([, l]) => l.filter(b => b.dates.length));
+  await Promise.all(prod.map(async b => { b.w = await bpWeather(b.sow.date); }));
+  const fmtAmt = (v, mode) => mode === "lbs" ? `${fmtLbs(v)} ${Math.abs(v - 1) < 0.05 ? "lb" : "lbs"}` : `${Math.round(v).toLocaleString()}`;
+  const html = withHarvest.sort((a, b) => a[1][0].sow.name.localeCompare(b[1][0].sow.name)).map(([slug, list]) => {
+    const p = list[0].sow.crop;
+    const mode = list.some(b => b.lbs > 0) ? "lbs" : "n";
+    const val = b => mode === "lbs" ? b.lbs : b.n + b.pick;
+    const unitWord = mode === "lbs" ? "lbs" : (list.some(b => b.n > 0) ? "pieces" : "pickings");
+    const done = list.filter(b => b.dates.length).sort((a, b) => val(b) - val(a));
+    const max = Math.max(1e-9, ...done.map(val));
+    // Insights need at least 3 sowings that produced.
+    let insight = "";
+    if(done.length < 3){
+      insight = `<div class="bp-insight wait">${done.length} sowing${done.length === 1 ? "" : "s"} with harvests so far. Best date and temperature show up once there are at least 3 to compare.</div>`;
+    } else {
+      const top = done.slice(0, Math.max(1, Math.round(done.length / 3)));
+      const rest = done.slice(top.length);
+      const avg = arr => arr.reduce((a, b) => a + val(b), 0) / arr.length;
+      const md = b => { const q = b.sow.date.split("-").map(Number); return [q[1], q[2]]; };
+      const sortMd = [...top].sort((a, b) => { const x = md(a), y = md(b); return x[0] - y[0] || x[1] - y[1]; });
+      const f = md(sortMd[0]), l = md(sortMd[sortMd.length - 1]);
+      const win = (f[0] === l[0] && f[1] === l[1]) ? `${MONTHS[f[0]-1]} ${f[1]}` : `${MONTHS[f[0]-1]} ${f[1]} – ${MONTHS[l[0]-1]} ${l[1]}`;
+      let lines = [`📅 <b>Best sowing window: ${win}</b> — about ${fmtAmt(avg(top), mode)} ${mode === "lbs" ? "" : unitWord + " "}per sowing${rest.length ? `, vs ${fmtAmt(avg(rest), mode)} for the others` : ""}.`];
+      // temperature: the 2-week average after sowing when known, else the temp you logged
+      const tOf = b => (b.w && b.w.t != null) ? b.w.t : bpTempOf(b.sow);
+      const temped = done.filter(b => tOf(b) != null);
+      if(temped.length >= 3){
+        const buckets = {};
+        temped.forEach(b => { const k = Math.floor(tOf(b) / 5) * 5; (buckets[k] = buckets[k] || []).push(b); });
+        const ranked = Object.entries(buckets).map(([k, arr]) => ({ k: Number(k), avg: avg(arr), n: arr.length })).sort((a, b) => b.avg - a.avg);
+        const bt = ranked[0], wt = ranked[ranked.length - 1];
+        const src = temped.some(b => b.w) ? "average in the 2 weeks after sowing" : "temperature when sown";
+        lines.push(`🌡️ <b>Best temperature: ${bt.k}–${bt.k + 4}°F</b> (${src}) — about ${fmtAmt(bt.avg, mode)} per sowing${ranked.length > 1 ? `, vs ${fmtAmt(wt.avg, mode)} at ${wt.k}–${wt.k + 4}°F` : ""}.`);
+      }
+      insight = `<div class="bp-insight">${lines.join("<br>")}</div>`;
+    }
+    const rows = done.map((b, i) => {
+      const s = b.sow, sorted = [...b.dates].sort();
+      const first = daysBetweenISO(s.date, sorted[0]), span = daysBetweenISO(sorted[0], sorted[sorted.length - 1]);
+      const meta = [s.temp ? `sown at ${fmtTemp(s.temp).replace(/[()]/g, "")}` : "", s.where === "direct" ? "direct" : s.where === "indoor" ? "indoors" : "",
+        s.transplant ? `out ${fmtLogDate(s.transplant)}` : "",
+        b.w ? `next 2 wks avg ${b.w.t}°F, ${b.w.rain}" rain` : ""].filter(Boolean).join(" · ");
+      const timing = `first harvest after ${first} days · ${b.dates.length > 1 ? `picked for ${span} day${span === 1 ? "" : "s"} · ` : ""}${b.dates.length} harvest${b.dates.length === 1 ? "" : "s"}${b.guessed ? ` (${b.guessed} guessed)` : ""}`;
+      return `<div class="bp-row">
+        <span class="bp-rank">${i + 1}</span>
+        <div class="bp-main"><div class="bp-date">${fmtLogDateFull(s.date)}</div>
+          ${meta ? `<div class="bp-meta">${meta}</div>` : ""}<div class="bp-meta">${timing}</div>
+          ${s.varieties.length ? `<div class="bp-vars">${s.varieties.map(fertEsc).join(", ")}</div>` : ""}</div>
+        <div class="bp-total">${fmtAmt(val(b), mode)}${mode === "lbs" ? "" : `<small>${unitWord}</small>`}</div>
+        <div class="bp-bar" style="width:${Math.max(3, val(b) / max * 100)}%"></div>
+      </div>`;
+    }).join("");
+    // Same variety across different sowings (only when the harvest name says the variety).
+    const vmap = {};
+    done.forEach(b => b.items.forEach(({ h, a }) => {
+      const v = hpVarietyIn(h.fruit, b.sow.varieties); if(!v) return;
+      const k = hpNorm(v); vmap[k] = vmap[k] || { name: v, per: {} };
+      const per = vmap[k].per[b.sow.key] = vmap[k].per[b.sow.key] || { date: b.sow.date, v: 0 };
+      per.v += mode === "lbs" ? (a.type === "weight" ? a.lbs : 0) : (a.type === "count" ? a.n : a.type === "picking" ? 1 : 0);
+    }));
+    const vRows = Object.values(vmap).filter(x => Object.keys(x.per).length >= 2).map(x => {
+      const arr = Object.values(x.per).sort((a, b) => b.v - a.v);
+      return `<div class="bp-var"><b>${fertEsc(x.name)}:</b> ${arr.map(r => `${fmtLogDateFull(r.date)} → ${fmtAmt(r.v, mode)}`).join(" · ")}</div>`;
+    }).join("");
+    const noYield = list.filter(b => !b.dates.length && !b.sow.failed).length;
+    return `<div class="bp-crop">
+      <div class="bp-head">${cropIcon(p, list[0].sow.sectionKey)}<span>${fertEsc(p.name)}</span><span class="bp-unit">by ${mode === "lbs" ? "weight" : unitWord}</span></div>
+      ${insight}${rows}
+      ${vRows ? `<div class="bp-sub">Same variety, different sowings</div>${vRows}` : ""}
+      ${noYield ? `<div class="bp-meta" style="margin-top:6px;">${noYield} other sowing${noYield === 1 ? "" : "s"} with nothing harvested yet.</div>` : ""}
+    </div>`;
+  }).join("");
+  el.innerHTML = html + (guessedCount ? `<div class="bp-review">${guessedCount} harvest${guessedCount === 1 ? " is" : "s are"} linked by a best guess (the 🌱 date with a "?" in the harvest log). Tap one there to confirm or change its sowing.</div>` : "");
+}
 
 let hyrYear = null, hyrMode = null, hyrTip = null;
 async function renderHarvestYear(){
@@ -7228,14 +7569,15 @@ async function renderHarvestLog(){
   await wireHarvestSection("fruit", {
     log: "harvest-log", input: "harvest-fruit-input", date: "harvest-date-input",
     addBtn: "harvest-add-btn", cancelBtn: "harvest-cancel-btn",
-    qtyInput: "harvest-qty-input", unitPick: "harvest-unit-pick", suggest: "harvest-fruit-suggest"
+    qtyInput: "harvest-qty-input", unitPick: "harvest-unit-pick", suggest: "harvest-fruit-suggest",
+    fromSel: "harvest-from", fromHint: "harvest-from-hint"
   });
   await wireHarvestSection("vegetable", {
     log: "harvest-log-veg", input: "harvest-veg-input", date: "harvest-veg-date-input",
     addBtn: "harvest-veg-add-btn", cancelBtn: "harvest-veg-cancel-btn",
     qtyInput: "harvest-veg-qty-input", unitPick: "harvest-veg-unit-pick",
     sizeInput: "harvest-veg-size-input", sizeWrap: "harvest-veg-size-wrap",
-    suggest: "harvest-veg-suggest"
+    suggest: "harvest-veg-suggest", fromSel: "harvest-veg-from", fromHint: "harvest-veg-from-hint"
   });
   await renderHarvestChart();
 }
@@ -8379,6 +8721,10 @@ async function renderGrid(sectionKey, containerId){
           return { commit, cancel };
         }
         let dates = await getActualDates(p.slug, kind);
+        if(kind === "sow" && dates.length > 1){
+          const merged = mergeSameDaySowVarieties(dates);
+          if(merged.length < dates.length){ dates = merged; await setActualDates(p.slug, kind, dates); }
+        }
         if(kind === "sow"){
           const merged = mergeSameDaySowVarieties(dates);
           if(merged.length !== dates.length){
@@ -8629,7 +8975,8 @@ async function renderGrid(sectionKey, containerId){
               // always matches what's on screen.
               if(p.slug === "tomatoes") vs.sort(varietyDtmCompare);
               const varietiesLine = vs.length ? `<div class="sow-card-varieties">${vs.map((v, vi) => `<span class="variety-chip${locked ? " locked" : ""}${varietyNoGerm(v) ? " no-germ" : ""}${varietyNoGermReason(v) ? " no-germ-temp" : ""}" data-i="${i}" data-vi="${vi}">${varietyName(v)}${varietyNoGermReason(v) ? " 🌡️" : ""}<span class="variety-meta-badge">${varietyMetaText(v, p.slug)}</span><a class="variety-search-link" href="${varietySearchUrl(varietyName(v), p.name)}" target="_blank" rel="noopener" title="Search for this variety online">🌐</a></span>`).join("")}</div>` : "";
-              return `<div class="sow-card${locked ? " locked" : ""}${varietiesLine ? "" : " bare"}" data-i="${i}">
+              const failed = !!(d && typeof d === "object" && d.noGerm) || (vs.length > 0 && vs.every(varietyNoGerm));
+              return `<div class="sow-card${locked ? " locked" : ""}${varietiesLine ? "" : " bare"}${failed ? " sow-failed" : ""}" data-i="${i}">
                 <div class="sow-card-head"><span class="tag-green">🌱 ${p.slug === "garlic" ? "planted" : "seeded"} ${fmtTagDate(entryDate(d))}${fmtTagTemp(entryTemp(d))}${locked ? ' <span class="done-tag-lock">🔒</span>' : ""}</span>${d && d.where ? ` <span class="sow-where-badge ${d.where}">${d.where === "indoor" ? "🏠 Indoors" : "🌤️ Direct"}</span>` : ""}</div>
                 ${varietiesLine}
               </div>`;
@@ -8665,14 +9012,38 @@ async function renderGrid(sectionKey, containerId){
                 document.querySelectorAll(".date-chip-menu").forEach(m => m.remove());
                 if(already) return; // clicking an already-open item just closes it
                 const i = Number(item.dataset.i);
+                const itemLocked = item.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
                 // Delete now lives on the "Delete this entry" link that
                 // appears below the date/temp fields once Edit is open —
-                // not as its own button here.
-                menu.innerHTML = `<button type="button" class="edit">✏️ Edit</button><button type="button" class="cancel">Cancel</button>`;
+                // not as its own button here. "Didn't germinate" works even
+                // after the entry has locked, since you only find out later.
+                const isFailed = kind === "sow" && dates[i] && typeof dates[i] === "object" && dates[i].noGerm;
+                const germBtn = "";
+                menu.innerHTML = `${itemLocked ? "" : `<button type="button" class="edit">✏️ Edit</button>`}${germBtn}<button type="button" class="cancel">Cancel</button>`;
                 item.appendChild(menu);
-                menu.querySelector(".edit").addEventListener("click", async (ev) => {
+                const ngBtn = menu.querySelector(".nogerm");
+                if(ngBtn) ngBtn.addEventListener("click", async (ev) => {
+                  ev.stopPropagation();
+                  menu.remove();
+                  const cur = dates[i];
+                  const obj = (typeof cur === "object" && cur) ? { ...cur } : { date: cur };
+                  const nowFailed = !obj.noGerm;
+                  if(nowFailed) obj.noGerm = true; else delete obj.noGerm;
+                  dates[i] = obj;
+                  renderDateChips();
+                  await setActualDates(p.slug, kind, dates);
+                  showUndoToast(nowFailed ? `${fmtTagDate(entryDate(obj))} sowing marked as didn't germinate.` : `${fmtTagDate(entryDate(obj))} sowing un-marked.`, async () => {
+                    const o2 = { ...dates[i] };
+                    if(nowFailed) delete o2.noGerm; else o2.noGerm = true;
+                    dates[i] = o2;
+                    renderDateChips();
+                    await setActualDates(p.slug, kind, dates);
+                  });
+                });
+                const editBtnEl = menu.querySelector(".edit");
+                if(editBtnEl) editBtnEl.addEventListener("click", async (ev) => {
                   ev.stopPropagation();
                   const entry = dates[i];
                   dateEl.value = entryDate(entry);
@@ -8722,7 +9093,24 @@ async function renderGrid(sectionKey, containerId){
                 const chipLocked = chip.classList.contains("locked");
                 const menu = document.createElement("div");
                 menu.className = "date-chip-menu";
-                menu.innerHTML = `${chipLocked ? "" : `<button type="button" class="edit">✏️ Edit</button>`}<button type="button" class="score">⭐ Score</button><button type="button" class="cancel">Cancel</button>`;
+                const vNoGerm = varietyNoGerm(dates[i].varieties[vi]);
+                menu.innerHTML = `${chipLocked ? "" : `<button type="button" class="edit">✏️ Edit</button>`}${chipLocked ? `<button type="button" class="nogerm">${vNoGerm ? "🌱 It came up after all" : "🚫 Didn't germinate"}</button>` : ""}<button type="button" class="score">⭐ Score</button><button type="button" class="cancel">Cancel</button>`;
+                const ngV = menu.querySelector(".nogerm");
+                if(ngV) ngV.addEventListener("click", async (ev) => {
+                  ev.stopPropagation();
+                  menu.remove();
+                  const flip = async () => {
+                    const cur = dates[i].varieties[vi];
+                    const obj = (typeof cur === "object" && cur) ? { ...cur } : { name: cur };
+                    if(obj.noGerm){ delete obj.noGerm; delete obj.noGermReason; } else obj.noGerm = true;
+                    dates[i].varieties[vi] = obj;
+                    renderDateChips();
+                    await setActualDates(p.slug, kind, dates);
+                    return obj;
+                  };
+                  const obj = await flip();
+                  showUndoToast(obj.noGerm ? `${varietyName(obj)}: didn't germinate.` : `${varietyName(obj)}: un-marked.`, flip);
+                });
                 chip.appendChild(menu);
                 menu.querySelector(".score").addEventListener("click", (ev) => {
                   ev.stopPropagation();
@@ -8744,14 +9132,23 @@ async function renderGrid(sectionKey, containerId){
                     activeVarietyCommit = null;
                     if(addBtn) addBtn.textContent = ADD_LABEL;
                   };
+                  let pickedWhere = (dates[i] && dates[i].where) || "";
+                  const applyWhere = () => {
+                    if(kind !== "sow" || !dates[i]) return;
+                    if(pickedWhere) dates[i].where = pickedWhere; else delete dates[i].where;
+                  };
                   const editor = openVarietyEditor(chip, current, async (composed) => {
+                    applyWhere();
                     if(composed !== null){
                       dates[i].varieties[vi] = composed;
+                      dates = mergeSameDaySowVarieties(dates);
                       renderDateChips();
                       await setActualDates(p.slug, kind, dates);
                       await renderCombo();
                     } else {
+                      dates = mergeSameDaySowVarieties(dates);
                       renderDateChips();
+                      await setActualDates(p.slug, kind, dates);
                     }
                     endVarietyEdit();
                   }, () => {
@@ -8775,6 +9172,20 @@ async function renderGrid(sectionKey, containerId){
                   });
                   activeVarietyCommit = editor.commit;
                   if(addBtn) addBtn.textContent = CONFIRM_LABEL;
+                  // "Started: Indoors / Direct outside" for the whole sowing, right in the edit box.
+                  if(kind === "sow" && p.slug !== "garlic"){
+                    const grp = chip.querySelector(".variety-edit-group");
+                    if(grp){
+                      const row = document.createElement("div");
+                      row.className = "sow-where variety-edit-where";
+                      row.innerHTML = `<span class="sow-where-label">Started:</span><button type="button" data-w="indoor">🏠 Indoors</button><button type="button" data-w="direct">🌤️ Direct</button>`;
+                      const paint = () => row.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.w === pickedWhere));
+                      row.querySelectorAll("button").forEach(b => b.addEventListener("click", ev => { ev.stopPropagation(); pickedWhere = pickedWhere === b.dataset.w ? "" : b.dataset.w; paint(); }));
+                      paint();
+                      const nameIn = grp.querySelector(".variety-edit-input");
+                      if(nameIn && nameIn.nextSibling) grp.insertBefore(row, nameIn.nextSibling); else grp.appendChild(row);
+                    }
+                  }
                 });
               });
             });
@@ -8878,6 +9289,7 @@ async function renderGrid(sectionKey, containerId){
           }
           const temp = withF(tempEl.value);
           const entry = { date: dateEl.value, temp: temp || "", addedAt: Date.now() };
+          if(editingRemovedEntry && typeof editingRemovedEntry === "object" && editingRemovedEntry.noGerm) entry.noGerm = true;
           if(whereEl && whereEl.dataset.w) entry.where = whereEl.dataset.w;
           if(whereEl) setWhere("");
           if(kind === "sow"){
@@ -9803,8 +10215,34 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
 // "Save a copy" modal (opened via the © footer). Deliberately not
 // persisted — it's a per-session toggle that resets to locked (🔒) on
 // reload, rather than a setting that could be silently left open.
+// While editing is unlocked: rainbow date box (tap it to lock) and a
+// reminder chime + buzz every 5 minutes until it's locked again.
+let unlockNagTimer = null;
+function unlockChime(){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
+    if(!jingleCtx) jingleCtx = new AC();
+    const ctx = jingleCtx; const go = () => {
+      const t0 = ctx.currentTime + .02, g = ctx.createGain(); g.gain.value = .18; g.connect(ctx.destination);
+      [[0, 880], [.18, 660], [.36, 880]].forEach(([at, f]) => { const o = ctx.createOscillator(), e = ctx.createGain();
+        o.type = "sine"; o.frequency.value = f; e.gain.setValueAtTime(.0001, t0 + at); e.gain.exponentialRampToValueAtTime(1, t0 + at + .01);
+        e.gain.setTargetAtTime(.0001, t0 + at + .02, .06); o.connect(e); e.connect(g); o.start(t0 + at); o.stop(t0 + at + .3); });
+    };
+    if(ctx.state === "running") go(); else ctx.resume().then(go).catch(() => {});
+  }catch(e){}
+  try{ if(navigator.vibrate) navigator.vibrate([200, 100, 200]); }catch(e){}
+}
+function lockEditingNow(){ const b = document.getElementById("globalUnlockToggle"); if(b && GLOBAL_UNLOCK) b.click(); }
+function unlockNag(){
+  if(!GLOBAL_UNLOCK) return;
+  unlockChime();
+  if(typeof showUndoToast === "function") showUndoToast("🔓 Editing is still unlocked", lockEditingNow, "🔒 Lock now");
+}
 function applyGlobalUnlock(on){
   GLOBAL_UNLOCK = on;
+  document.body.classList.toggle("edit-unlocked", on);
+  clearInterval(unlockNagTimer); unlockNagTimer = null;
+  if(on){ unlockChime(); unlockNagTimer = setInterval(unlockNag, 5 * 60 * 1000); }
   const btn = document.getElementById("globalUnlockToggle");
   if(btn){
     btn.setAttribute("aria-pressed", on ? "true" : "false");
@@ -10497,6 +10935,7 @@ const GERM_TEMP_DATA = {
   radishes:{min:40,optMin:55,optMax:75,max:95,days:[3,7],dtm:[21,35]},
   beets:{min:40,optMin:50,optMax:85,max:90,days:[5,10],dtm:[50,70]},
   carrots:{min:40,optMin:45,optMax:85,max:95,days:[14,21],dtm:[60,80]},
+  turnips:{min:40,optMin:60,optMax:85,max:105,days:[3,10],dtm:[40,60]},
   fennel:{min:40,optMin:60,optMax:85,max:85,days:[7,14],dtm:[65,90]},
   garlic:{special:"Grown from cloves, not seed — plant once soil is 40–60°F; cloves sprout rather than germinate.", days:[14,21], dtm:[150,270], dtmApprox:true},
   onionslips:{special:"Grown from slips/sets, not seed — set out once soil is at least 50°F. (Onion seed itself germinates 35–95°F, optimal 50–95°F.)", days:[7,14], dtm:[90,120]},
@@ -11769,6 +12208,8 @@ wireSimpleToggle("harvestFruitToggle", "harvestFruitBody");
 wireSimpleToggle("harvestVegToggle", "harvestVegBody");
 wireSimpleToggle("harvestChartToggle", "harvestChartBodyWrap");
 wireSimpleToggle("harvestYearToggle", "harvestYearBodyWrap");
+wireSimpleToggle("harvestBestToggle", "harvestBestBodyWrap");
+document.getElementById("harvestBestToggle").addEventListener("click", () => renderBestPlanting());
 wireSimpleToggle("harvestPicsToggle", "harvestPicsBodyWrap");
 document.getElementById("calPrevBtn").addEventListener("click", () => {
   calMonth--; if(calMonth < 1){ calMonth = 12; calYear--; }
@@ -11826,6 +12267,7 @@ function goToCropInSection(sectionKey){
 
 // Hand-drawn icons for crops that have no emoji of their own.
 const BG_SVG = {
+  turnips: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M9 7.6 6.4 2M10 7.4V1.2M11 7.6l2.8-5.4" stroke="#4E9A3A" stroke-width="1.1" stroke-linecap="round"/><path d="M6.4 2C3.4 2.2 2.6 5 4.4 6.6 6.2 6.4 7.2 4.4 6.4 2Z" fill="#5FAE45"/><path d="M10 1.2C8 2.6 8.2 5.6 10 6.6 11.8 5.6 12 2.6 10 1.2Z" fill="#4E9A3A"/><path d="M13.8 2.2C16.8 2.4 17.4 5.2 15.6 6.8 13.8 6.4 12.8 4.4 13.8 2.2Z" fill="#5FAE45"/><path d="M10 7.2C5.4 7.2 3.4 10.2 4.2 13 5 15.6 7.6 16.6 10 17.6 12.4 16.6 15 15.6 15.8 13 16.6 10.2 14.6 7.2 10 7.2Z" fill="#F4F0E6" stroke="#CFC6B2" stroke-width=".5"/><path d="M4.4 11.4C4.6 8.6 6.8 7.2 10 7.2 13.2 7.2 15.4 8.6 15.6 11.4 13.6 10.2 11.8 9.8 10 9.8 8.2 9.8 6.4 10.2 4.4 11.4Z" fill="#8E3FA6"/><path d="M10 17.6V19.6" stroke="#B9AF98" stroke-width=".8" stroke-linecap="round"/><path d="M7 13.4C7.4 14.6 8.4 15.4 9.4 15.8" stroke="#FFFFFF" stroke-width=".9" stroke-linecap="round" fill="none"/></svg>',
   beets: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M9.2 9.2 6.6 2.4M10 9V1.6M10.8 9.2l2.8-6.4" stroke="#B0294F" stroke-width="1.1" stroke-linecap="round"/><path d="M6.6 2.4C3.6 2.6 2.6 5.6 4.4 7.2 6.2 7 7.4 4.8 6.6 2.4Z" fill="#4E9A3A"/><path d="M10 1.6C8 3 8.2 6.4 10 7.4 11.8 6.4 12 3 10 1.6Z" fill="#5FAE45"/><path d="M13.6 2.8C16.6 3 17.4 6 15.6 7.6 13.8 7.2 12.6 5 13.6 2.8Z" fill="#4E9A3A"/><path d="M10 8.6C6 8.6 4.4 11.4 5.2 14 6 16.4 8.4 17.2 10 19.4 11.6 17.2 14 16.4 14.8 14 15.6 11.4 14 8.6 10 8.6Z" fill="#8E1F4A"/><path d="M7.2 11.4C7.6 10.4 8.6 9.8 9.6 9.8" stroke="#C04A78" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M10 19.4V20" stroke="#8E1F4A" stroke-width=".8" stroke-linecap="round"/></svg>',
   basil: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 18.6V9.4" stroke="#3E7A2E" stroke-width="1.4" stroke-linecap="round"/><path d="M10 10C4 10 2 5 4.5 2.4 8 2.4 10.6 6 10 10Z" fill="#52AE3F"/><path d="M10 10C16 10 18 5 15.5 2.4 12 2.4 9.4 6 10 10Z" fill="#3F9832"/><path d="M10 15.2C6 15.7 3.4 13.2 4 11 7 10.4 9.6 12.6 10 15.2Z" fill="#5FBA4A"/><path d="M10 15.2C14 15.7 16.6 13.2 16 11 13 10.4 10.4 12.6 10 15.2Z" fill="#4CA63B"/><path d="M9.6 9.4 5.3 3.4M10.4 9.4l4.3-6" stroke="#C6EAB0" stroke-width=".6"/></svg>',
   parsley: '<svg class="bg-svg" viewBox="0 0 20 20"><path d="M10 19v-8M10 13.5 5.4 8.6M10 13.5l4.6-4.9" stroke="#3B7A2A" stroke-width="1.2" stroke-linecap="round" fill="none"/><g fill="#2F8A3C"><circle cx="10" cy="4.4" r="2.2"/><circle cx="8" cy="6.9" r="2.2"/><circle cx="12" cy="6.9" r="2.2"/><circle cx="5" cy="4.9" r="2"/><circle cx="3.3" cy="7.3" r="2"/><circle cx="6.6" cy="7.6" r="1.8"/><circle cx="15" cy="4.9" r="2"/><circle cx="16.7" cy="7.3" r="2"/><circle cx="13.4" cy="7.6" r="1.8"/></g><g fill="#4DB05A"><circle cx="9.4" cy="3.8" r=".9"/><circle cx="4.5" cy="4.4" r=".8"/><circle cx="14.5" cy="4.4" r=".8"/></g></svg>',
@@ -11857,7 +12299,7 @@ const BG_EXTRA_CROPS = [
 const BG_SHORT_HTML = { puertoricanblackbeans: 'Beans<br><span class="bgt-sm">Puerto Rican</span>' };
 const BG_SHORT = { longbeans: "Beans Red Noodle", butterflypeawhite: "Butterfly Pea", snappeas: "Peas" };
 const BG_CUSTOM_COLORS = ["#F2C6AC","#CBB9EA","#A9CB94","#EDA3C0","#8FBF9F","#EEB49B","#B49CDA","#F2D98C"];
-const BG_EMOJIS = ["🌱","🌿","svg:basil","svg:parsley","svg:dill","svg:fennel","svg:asparagus","svg:walkingonion","svg:butterflypeablue","svg:butterflypeawhite","🍅","🌽","🥔","🍠","🌶️","🫑","🥒","🍆","🎃","🥕","🔴","🧅","🧄","🥬","🥦","🫛","🫘","🥜","🍉","🍈","🍓","🫐","🍋","🍌","🍍","🥭","🥑","🫚","🌻","🌼","🌸","🍀","🌾","🪴","🍄","🌳"];
+const BG_EMOJIS = ["🌱","🌿","svg:turnips","svg:basil","svg:parsley","svg:dill","svg:fennel","svg:asparagus","svg:walkingonion","svg:butterflypeablue","svg:butterflypeawhite","🍅","🌽","🥔","🍠","🌶️","🫑","🥒","🍆","🎃","🥕","🔴","🧅","🧄","🥬","🥦","🫛","🫘","🥜","🍉","🍈","🍓","🫐","🍋","🍌","🍍","🥭","🥑","🫚","🌻","🌼","🌸","🍀","🌾","🪴","🍄","🌳"];
 // Picks an icon from the crop's name: first any crop already in the app
 // with the same name, then common words (basil -> 🌿, corn -> 🌽 ...).
 const BG_EMOJI_WORDS = [
@@ -11865,7 +12307,7 @@ const BG_EMOJI_WORDS = [
   [/sweet ?potato|yam/, "🍠"], [/potato/, "🥔"], [/tomato/, "🍅"], [/corn|maize/, "🌽"],
   [/basil|mint|oregano|thyme|sage|rosemary|parsley|cilantro|coriander|dill|herb|chive|lemongrass|moringa|tarragon|fennel|lavender/, "🌿"],
   [/bell pepper|sweet pepper/, "🫑"], [/pepper|chil|jalape|habanero|cayenne/, "🌶️"], [/cucumber|zucchini|okra|luffa|gourd/, "🥒"],
-  [/eggplant|aubergine/, "🍆"], [/squash|pumpkin/, "🎃"], [/carrot/, "🥕"], [/radish|beet|turnip/, "🔴"],
+  [/eggplant|aubergine/, "🍆"], [/squash|pumpkin/, "🎃"], [/carrot/, "🥕"], [/turnip|rutabaga/, "svg:turnips"], [/radish|beet/, "🔴"],
   [/onion|leek|shallot|scallion/, "🧅"], [/garlic/, "🧄"], [/broccoli|cauliflower/, "🥦"],
   [/lettuce|kale|spinach|chard|collard|cabbage|bok|arugula|green|mustard|endive/, "🥬"],
   [/peanut/, "🥜"], [/\bpeas?\b|snap|snow pea/, "🫛"], [/bean|lentil|cowpea/, "🫘"],
@@ -13948,7 +14390,7 @@ const BC_DATA = {
 const CROP_BIO_TYPE = {
   tomatoes:"fruit", peppers:"fruit", eggplants:"fruit", squash:"fruit", cucumbers:"fruit", luffa:"fruit",
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
-  lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", garlic:"root", onionslips:"root",
+  lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", turnips:"root", garlic:"root", onionslips:"root",
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
   nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
@@ -14559,6 +15001,14 @@ async function checkTomorrowReminder(){
   document.querySelectorAll(".tabbtn").forEach(t => t.addEventListener("click", () => setTimeout(refresh, 50)));
   new MutationObserver(refresh).observe(document.getElementById("tab-beds"), { attributes:true, attributeFilter:["class"] });
   refresh();
+})();
+</script>
+
+<script>
+// Tap the rainbow date box to lock editing again.
+(function(){
+  const box = document.getElementById("headerDateBox");
+  if(box) box.addEventListener("click", () => { if(typeof GLOBAL_UNLOCK !== "undefined" && GLOBAL_UNLOCK) lockEditingNow(); });
 })();
 </script>
 </body></html>
