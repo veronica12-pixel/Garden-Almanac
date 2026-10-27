@@ -1232,6 +1232,7 @@
     justify-content:center; line-height:1; box-shadow:0 2px 0 rgba(0,0,0,.12), 0 3px 7px rgba(0,0,0,.18);
   }
   .card-body{margin-top:9px;}
+  .logged-checks{ display:inline-flex; align-items:center; gap:4px; flex:none; }
   /* "Skip season" pill next to the crop name. Shown when the card is open,
      or always once the crop is skipped. */
   .skip-season-btn{
@@ -3597,7 +3598,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.25-106</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.27-108</div>
   </main>
 
   <nav class="tabbar">
@@ -4323,7 +4324,7 @@ const CROP_EMOJI = {
   longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
   basil:"🌿", parsley:"🌿", dill:"🌿", cilantro:"🌿",
-  nasturtium:"🌼", roselle:"🌺", zinnia:"🏵️", cosmos:"🌸"
+  nasturtium:"🌼", roselle:"🌺", zinnia:"🏵️", cosmos:"🌸", marigold:"🌻"
 };
 const SECTION_EMOJI_FALLBACK = { vegetables:"🥕", herbs:"🌿", flowers:"🌸", coverCrops:"🌱" };
 // Crops drawn as a small picture instead of an emoji.
@@ -4488,6 +4489,9 @@ const SEASONS = {
     {slug:"zinnia", name:"Zinnia", shape:"flower", color:C.pinkRed,
       dates:[[{a:"Start (indoor)", m:2, d:25, m2:2, d2:26},{a:"Transplant", m:3, d:15, m2:3, d2:17}],[{a:"Start (direct)", m:4, d:21, m2:4, d2:22}]],
       note:"Warm-season annual: start after the last frost (late Feb in Odessa). Second sowing in April keeps blooms going into summer. Full sun; water at the base to avoid powdery mildew."},
+    {slug:"marigold", name:"Marigold", shape:"flower", color:C.orange,
+      dates:[[{a:"Start (indoor)", m:2, d:16, m2:2, d2:17},{a:"Transplant", m:3, d:16, m2:3, d2:17}],[{a:"Start (direct)", m:4, d:12, m2:4, d2:13}]],
+      note:"Easy warm-season flower and a great companion for tomatoes and peppers. Start after the last frost; the April sowing keeps blooms coming into summer. Deadhead spent flowers for more blooms."},
     {slug:"cosmos", name:"Cosmos", shape:"flower", color:C.lavender,
       dates:[[{a:"Start (direct)", m:3, d:6, m2:3, d2:8}],[{a:"Start (direct)", m:4, d:12, m2:4, d2:13}]],
       note:"Sow straight in the bed, barely covered; seeds sprout in about a week. Don't fertilize much — rich soil means lots of leaves and fewer flowers. Second sowing in April for summer blooms."},
@@ -7435,6 +7439,7 @@ async function renderGrid(sectionKey, containerId){
       const sowDates = await getActualDates(p.slug, "sow");
       const transplantDates = await getActualDates(p.slug, "transplant");
       badge.style.display = (sowDates.length || transplantDates.length) ? "" : "none";
+      badge.innerHTML = loggedSproutsHTML(sowDates, transplantDates);
     }
 
     const pcVal = v => (v === undefined || v === null) ? "" : v;
@@ -7654,7 +7659,7 @@ async function renderGrid(sectionKey, containerId){
         <button type="button" class="plant-head" data-body="card-body-${p.slug}">
           ${cropIcon(p, sectionKey)}<span class="name">${p.name}</span>
           ${(isPastSeason || (!isSkipped(p.slug) && ((sowActualCheck.length && (transplantActualCheck.length || p.slug === "garlic" || DIRECT_SOW_CROPS.includes(p.slug))) || (NOT_FROM_SEED.includes(p.slug) && transplantActualCheck.length)))) ? "" : `<span class="skip-season-btn${isSkipped(p.slug) ? " on" : ""}" role="button" tabindex="0" aria-pressed="${isSkipped(p.slug)}" title="${isSkipped(p.slug) ? "Tap to plant this crop again this season" : "Not planting this crop this season"}">${isSkipped(p.slug) ? "⏭ Skipped" : "⏭ Skip season"}</span>`}
-          <span class="logged-check" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`} title="Sow or transplant already logged">🌱</span>
+          <span class="logged-checks" id="logged-check-${p.slug}"${(sowActualCheck.length || transplantActualCheck.length) ? "" : ` style="display:none;"`}>${loggedSproutsHTML(sowActualCheck, transplantActualCheck)}</span>
           <span class="rain-chevron plant-chevron">▾</span>
         </button>
       </div>
@@ -9677,6 +9682,14 @@ if(document.getElementById("search-home")){
 // Has this planned sow / transplant been logged? Same rule as the crop
 // cards: a logged date within 2 days of the planned window. Returns the
 // logged date (Date) or null.
+// One 🌱 per sowing logged this season (two sowings = two sprouts), up to 4.
+// A crop with only a transplant logged shows one.
+function loggedSproutsHTML(sows, transplants){
+  const n = new Set((sows || []).map(d => entryDate(d)).filter(Boolean)).size || ((transplants || []).length ? 1 : 0);
+  const shown = Math.min(n, 4);
+  const title = n ? `${n} sowing${n === 1 ? "" : "s"} logged this season` : "";
+  return Array.from({ length: shown }, () => `<span class="logged-check" title="${title}">🌱</span>`).join("");
+}
 async function taskLoggedHit(slug, t, cache){
   cache = cache || {};
   const kind = /^Transplant/.test(t.a) ? "transplant" : "sow";
@@ -10501,6 +10514,7 @@ const GERM_TEMP_DATA = {
   nasturtium:{min:55,optMin:65,optMax:70,max:85,days:[7,14],dtm:[35,65]},
   roselle:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
   zinnia:{min:60,optMin:70,optMax:85,max:95,days:[5,10],dtm:[60,75]},
+  marigold:{min:60,optMin:70,optMax:80,max:90,days:[5,8],dtm:[50,60]},
   cosmos:{min:60,optMin:70,optMax:85,max:95,days:[7,14],dtm:[60,80]},
   sunnhemp:{min:60,optMin:65,optMax:95,max:105,approx:true,days:[5,10],daysApprox:true,dtm:[60,90],dtmApprox:true},
   puertoricanblackbeans:{min:60,optMin:60,optMax:85,max:95,days:[6,10],dtm:[90,120],dtmApprox:true},
@@ -13938,7 +13952,7 @@ const CROP_BIO_TYPE = {
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
   nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
-  nasturtium:"flower", roselle:"flower", zinnia:"flower", cosmos:"flower",
+  nasturtium:"flower", roselle:"flower", zinnia:"flower", cosmos:"flower", marigold:"flower",
   sunnhemp:"leaf", puertoricanblackbeans:"fruit", peanuts:"root"
 };
 const BC_MONTH_NAMES_BY_YEAR = {
