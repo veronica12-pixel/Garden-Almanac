@@ -3568,6 +3568,9 @@
   .bc-cal #bc-panel-leaf .bc-intro{ background:linear-gradient(180deg,#EAF5DD 0%,#D6EABF 100%) !important; color:#245A16 !important; border:1px solid #A9CC85 !important; }
   .bc-cal #bc-panel-root .bc-intro{ background:linear-gradient(180deg,#F1E4D1 0%,#E2CBAB 100%) !important; color:#5A3412 !important; border:1px solid #C4A07A !important; }
   .bc-cal #bc-panel-flower .bc-intro{ background:linear-gradient(180deg,#FEF3CF 0%,#FBE6A2 100%) !important; color:#7A5600 !important; border:1px solid #E8C55C !important; }
+
+  /* 🌱 Germ. filled in automatically from the crop card's dates */
+  .gtemp-row-gd input.gd-auto{ background:#EAF7EF !important; border-color:#9FD3B4 !important; color:#2F7D6B !important; }
 </style>
 </head>
 <body>
@@ -4138,7 +4141,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.28-159</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.28-160</div>
   </main>
 
   <nav class="tabbar">
@@ -11546,6 +11549,23 @@ async function renderGerminationTempChart(){
   if(gdMoved) await setGermDays(gdMap);
   const escAttr = v => String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   const data = DATA_now();
+  // Days to germinate, worked out from the crop card: the latest "Sprouted"
+  // date minus the seeding just before it. Shown in the 🌱 Germ. column
+  // unless you've typed your own number there.
+  const autoGD = {};
+  for(const section of GTEMP_SECTIONS){
+    for(const p of (data[section.key] || [])){
+      if(!GERM_TEMP_DATA[p.slug]) continue;
+      try{
+        const sprouts = (await getActualDates(p.slug, "sprouted")).map(entryDate).filter(Boolean).sort();
+        const sows = (await getActualDates(p.slug, "sow")).map(entryDate).filter(Boolean).sort();
+        const sp = sprouts[sprouts.length - 1]; if(!sp) continue;
+        const sw = sows.filter(d => d <= sp).pop(); if(!sw) continue;
+        const days = Math.round((new Date(sp + "T12:00") - new Date(sw + "T12:00")) / 864e5);
+        if(days >= 0 && days <= 120) autoGD[p.slug] = days;
+      }catch(e){}
+    }
+  }
   let hasAny = false;
   let anyApprox = false;
   let html = `<p class="backup-hint">Recommended soil temperature, typical time to sprout, and days to maturity, for every crop currently entered for ${SEASONS[activeSeason].label} — based on Odessa, FL (Zone 9B) growing conditions.</p>`;
@@ -11578,7 +11598,8 @@ async function renderGerminationTempChart(){
           <div class="gtemp-row-gd" data-label="🌱 Germ.">${(() => {
             const gd = gdMap[p.slug];
             if(gd && gd.v && isEntryLocked(gd.at)) return `<span class="gtemp-row-tw-locked" title="Locked — use the unlock in Save a copy to change">${escAttr(gd.v)} days</span>`;
-            return `<input type="text" inputmode="decimal" maxlength="5" data-gd-slug="${p.slug}" value="${gd && gd.v ? escAttr(gd.v) : ""}" placeholder="days" aria-label="Days it took ${escAttr(p.name)} to germinate"><span class="gtemp-gd-unit">days</span>`;
+            const auto = !(gd && gd.v) && autoGD[p.slug] !== undefined;
+            return `<input type="text" inputmode="decimal" maxlength="5" data-gd-slug="${p.slug}"${auto ? ` class="gd-auto" title="Worked out from your Seeded and Sprouted dates — type to change"` : ""} value="${gd && gd.v ? escAttr(gd.v) : auto ? autoGD[p.slug] : ""}" placeholder="days" aria-label="Days it took ${escAttr(p.name)} to germinate"><span class="gtemp-gd-unit">${auto ? "days ✓" : "days"}</span>`;
           })()}</div>
           <div class="gtemp-row-tw" data-label="🪴 Transp.">${(() => {
             if(DIRECT_SOW_CROPS.includes(p.slug)) return `<span class="gtemp-row-none" title="Sown straight in the garden — no transplant">—</span>`;
