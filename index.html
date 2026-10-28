@@ -3172,6 +3172,12 @@
   .tidy-season .sow-card-head .sow-where-badge{ flex:none; margin-left:0; white-space:nowrap; }
   .tidy-season .sow-card-head .tidy-fold{ flex:none; margin-left:auto; white-space:nowrap; padding:2px 9px; font-size:12px; }
   .tidy-season .sow-cards{ gap:4px !important; }
+
+  /* Garden Beds: crop name label that follows the mouse over a planted square. */
+  .bg-hover-tip{ position:fixed; z-index:10000; pointer-events:none; padding:5px 10px; border-radius:10px;
+    background:#3E5C4A; color:#fff; font:600 13px/1.2 system-ui, -apple-system, sans-serif; white-space:nowrap;
+    box-shadow:0 3px 10px rgba(0,0,0,.18); opacity:0; transition:opacity .08s; }
+  .bg-hover-tip.on{ opacity:1; }
 </style>
 </head>
 <body>
@@ -3698,7 +3704,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.27-116</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.27-118</div>
   </main>
 
   <nav class="tabbar">
@@ -10053,7 +10059,7 @@ function renderMonthDropdowns(){
     return `
       <div class="legend-card month-card">
         <button type="button" class="rain-toggle month-toggle" data-body="${bodyId}">
-          <span class="legend-title" style="margin-bottom:0;">${MONTHS[m-1]}</span>
+          <span class="legend-title" style="margin-bottom:0;">${MONTHS_FULL[m-1]}</span>
           <span class="rain-toggle-right"><span class="rain-chevron">▾</span></span>
         </button>
         <div id="${bodyId}" style="display:none; margin-top:8px;">${rows}</div>
@@ -15024,6 +15030,39 @@ async function checkTomorrowReminder(){
 (function(){
   const box = document.getElementById("headerDateBox");
   if(box) box.addEventListener("click", () => { if(typeof GLOBAL_UNLOCK !== "undefined" && GLOBAL_UNLOCK) lockEditingNow(); });
+})();
+</script>
+<script>
+/* Garden Beds: hover over any planted square (main beds, "See all 4 beds",
+   saved gardens) and a label with the crop's name follows the mouse.
+   The name comes from the square's title; the title is moved aside on
+   hover so the browser's own slow tooltip doesn't show up as well.
+   Phones have no hover: a quick tap on a square already shows its name. */
+(function(){
+  const tip = document.createElement("div");
+  tip.className = "bg-hover-tip"; tip.setAttribute("aria-hidden", "true");
+  document.body.appendChild(tip);
+  let cur = null;
+  const hide = () => { tip.classList.remove("on"); cur = null; };
+  document.addEventListener("pointermove", e => {
+    if(e.pointerType !== "mouse"){ return; }
+    const cell = e.target && e.target.closest ? e.target.closest(".bg-cell.has") : null;
+    if(!cell){ if(cur) hide(); return; }
+    if(cell.title){ cell.dataset.tip = cell.title; cell.removeAttribute("title"); }
+    const name = cell.dataset.tip;
+    if(!name){ if(cur) hide(); return; }
+    if(cur !== cell){ cur = cell; tip.textContent = name; }
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = e.clientX + 14, y = e.clientY - h - 10;
+    if(x + w > window.innerWidth - 6) x = e.clientX - w - 14;
+    if(y < 6) y = e.clientY + 18;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+    tip.classList.add("on");
+  }, { passive:true });
+  document.addEventListener("pointerdown", hide, true);
+  document.addEventListener("pointerleave", hide);
+  window.addEventListener("blur", hide);
+  window.addEventListener("scroll", hide, { passive:true, capture:true });
 })();
 </script>
 </body></html>
