@@ -2925,7 +2925,8 @@
   }
   @keyframes cropSway{ from{ margin-left:-14px; } to{ margin-left:14px; } }
   .tomorrow-modal-card{ position:relative; z-index:2; }
-  .crop-confetti-layer.in-modal{ z-index:1; }
+  .crop-confetti-layer.in-modal{ z-index:5; pointer-events:none; }
+  .tomorrow-modal-card{ position:relative; z-index:2; }
   .jingle-toggle{
     position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%;
     border:1px solid var(--line); background:var(--card); font-size:16px; line-height:1; cursor:pointer;
@@ -3429,9 +3430,7 @@
      room for it so nothing overlaps on a phone. */
   .away-plane{ width:42px !important; height:42px !important; right:4px !important; bottom:-16px !important; border-radius:13px !important; overflow:hidden !important;
     align-items:center !important; justify-content:center !important;
-    background:radial-gradient(9px 5px at 28% 76%, rgba(255,255,255,.9) 60%, transparent 62%),
-               radial-gradient(7px 4px at 76% 30%, rgba(255,255,255,.8) 60%, transparent 62%),
-               linear-gradient(180deg, #CFEAFE 0%, #8EC9F2 55%, #5AA6E0 100%) !important;
+    background:linear-gradient(180deg, #CFEAFE 0%, #8EC9F2 55%, #5AA6E0 100%) !important;
     border:1px solid #4A8FC7 !important;
     box-shadow:0 3px 0 #3E7DB3, 0 5px 10px rgba(30,70,120,.25), inset 0 1px 0 rgba(255,255,255,.85), inset 0 -2px 3px rgba(0,0,0,.08) !important; }
   .away-plane:active{ transform:translateY(2px) !important; box-shadow:0 1px 0 #3E7DB3, 0 2px 4px rgba(30,70,120,.25) !important; }
@@ -3498,6 +3497,77 @@
   .cs-nav button{ flex:1; min-height:46px; border-radius:14px !important; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; color:#222 !important; cursor:pointer; }
   .cs-back{ background:linear-gradient(180deg,#FCF9E9,#E6DB94) !important; border:1px solid #CABE72 !important; }
   .cs-next{ flex:1.6 !important; background:linear-gradient(180deg,#E9FCEF,#94E6AF) !important; border:1px solid #72CA90 !important; }
+
+  .cs-or{ text-align:center; font-size:12.5px; font-weight:700; color:#8C7E8C; margin:8px 0 2px; }
+  .cs-xl{ background:linear-gradient(180deg,#E9FCEF 0%,#BAF3CD 48%,#94E6AF 100%) !important; border:1px solid #72CA90 !important; margin-top:6px !important; }
+  .cs-xl small{ display:block; font-weight:500; font-size:12px; color:#2F6B4E; }
+  .cs-tpl{ display:block; margin:0 auto 6px; background:none !important; border:none !important; box-shadow:none !important; color:#2F6A9E; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; padding:6px; }
+  .cs-xlrow{ display:flex; gap:8px; padding:7px 0; border-top:1px dashed #E3D6C4; font-size:14px; }
+  .cs-xlrow:first-child{ border-top:none; } .cs-xlrow b{ flex:1; } .cs-xlrow span{ color:#6B5E57; font-size:13px; text-align:right; }
+
+  /* "Peek at a sample sheet" — a little spreadsheet showing the layout */
+  .cs-peek{ display:block; margin:2px auto 4px; padding:6px 14px !important; border-radius:999px !important; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; color:#222 !important; cursor:pointer;
+    background:linear-gradient(180deg,#FCF9E9 0%,#F3EBBA 48%,#E6DB94 100%) !important; border:1px solid #CABE72 !important; box-shadow:0 1px 2px rgba(90,70,110,.06), 0 4px 10px rgba(90,70,110,.08) !important; }
+  .cs-peek[aria-expanded="true"]{ box-shadow:inset 0 0 0 2px #B8962C !important; }
+  .cs-sample{ margin:8px 0 6px; border:1px solid #D4D4D4; border-radius:10px; overflow:hidden; background:#fff; }
+  .cs-sample[hidden]{ display:none; }
+  .cs-xlbar{ background:#217346; color:#fff; font:600 13px Arial,sans-serif; padding:6px 10px; }
+  .cs-xltab{ width:100%; border-collapse:collapse; font-family:Calibri,Carlito,Arial,sans-serif; font-size:14px; }
+  .cs-xltab td, .cs-xltab th{ border:1px solid #DCDCDC; padding:4px 8px; white-space:nowrap; }
+  .cs-xltab th{ background:#F3F3F3; color:#666; font-weight:400; font-size:12px; text-align:center; width:22px; }
+  .cs-xltab .x-h{ font-weight:700; background:#E2EFDA; }
+  .x-fr{ background:#FCE4DE; } .x-le{ background:#E7F2DA; } .x-ro{ background:#F1E6D6; } .x-fl{ background:#FDF3CF; }
+  .cs-rules{ margin:0; padding:8px 12px 10px 28px; font-size:13px; line-height:1.45; color:#3A3340; }
+  .cs-rules b{ color:#217346; }
+
+  /* Step 1: two big choices — the night-sky biodynamic button and Excel import */
+  .cs-snap{ position:relative; overflow:hidden; display:flex; align-items:center; gap:10px; width:100%; min-height:64px; margin:4px 0 0; padding:8px 12px !important; border-radius:14px !important; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:15px; font-weight:600; color:#fff !important; text-align:left;
+    background:radial-gradient(1.5px 1.5px at 12% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 55% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 80%,#fff 99%,transparent),radial-gradient(1px 1px at 88% 35%,#fff 99%,transparent),radial-gradient(1px 1px at 42% 45%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 95% 75%,#fff 99%,transparent),radial-gradient(1px 1px at 20% 90%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important;
+    border:1px solid #1A2347 !important; box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(30,40,90,.18) !important; }
+  .cs-snap:active{ transform:translateY(1px); filter:brightness(1.05); }
+  .cs-snap > span{ position:relative; z-index:1; }
+  .cs-snap small{ display:block; font-weight:500; font-size:12px; color:#D9E0FF; }
+  .cs-ic-sky{ background:rgba(255,255,255,.14) !important; border-color:rgba(255,255,255,.35) !important; }
+  #csModalBackdrop[data-step="1"] .cs-next{ display:none; }
+
+  /* Biodynamic Calendar: each month is a raised night-sky button that opens its days */
+  .bc-cal .bc-month{ margin-top:10px !important; }
+  .bc-cal .bc-month h4.bc-mbtn{ cursor:pointer; user-select:none; margin:0 !important; min-height:48px; align-items:center !important; padding:8px 14px !important; border-radius:14px !important;
+    background:radial-gradient(1.5px 1.5px at 12% 30%,#fff 99%,transparent),radial-gradient(1px 1px at 38% 72%,#fff 99%,transparent),radial-gradient(1.5px 1.5px at 63% 22%,#fff 99%,transparent),radial-gradient(1px 1px at 84% 70%,#fff 99%,transparent),linear-gradient(135deg,#1F2A55 0%,#34468C 60%,#4B5C9E 100%) !important;
+    border:1px solid #1A2347 !important; box-shadow:0 3px 0 #141B3A, 0 5px 10px rgba(30,40,90,.25) !important; transition:transform .08s, box-shadow .08s; }
+  .bc-cal .bc-month h4.bc-mbtn:active{ transform:translateY(2px); box-shadow:0 1px 0 #141B3A, 0 2px 4px rgba(30,40,90,.25) !important; }
+  .bc-cal .bc-month h4.bc-mbtn .bc-count{ display:flex; align-items:center; gap:8px; font-size:11px; }
+  .bc-car{ display:inline-block; font-family:'Inter',sans-serif; font-size:14px; color:#F2D06B; transition:transform .2s; }
+  .bc-mbtn[aria-expanded="true"] .bc-car{ transform:rotate(180deg); }
+  .bc-mbtn[aria-expanded="true"] + .bc-rows{ margin-top:8px; }
+  .bc-rows[hidden]{ display:none !important; }
+
+  /* Biodynamic page: Search and the Fruit/Leaf/Root/Flower buttons share one
+     right edge, and Search gets the same raised 3-D look as the tabs */
+  .bc-cal .bc-search{ padding-left:14px !important; padding-right:14px !important; }
+  .bc-cal nav.bc-tabs{ padding-left:14px !important; padding-right:14px !important; gap:7px !important; }
+  .bc-cal nav.bc-tabs button{ padding:4px 3px !important; gap:4px !important; font-size:13px !important; overflow:hidden; white-space:nowrap; }
+  .bc-cal nav.bc-tabs button .bc-tab-ic{ flex:none; }
+  .bc-cal .bc-search-row{ gap:8px; align-items:stretch; }
+  .bc-cal .bc-search-row input[type="date"]{ min-width:0; min-height:44px; border-radius:12px !important; }
+  .bc-cal #bcSearchBtn{ min-height:44px; padding:4px 18px !important; border-radius:12px !important; font-family:'Inter',sans-serif !important; font-size:14px !important; font-weight:700 !important; color:#fff !important;
+    background:linear-gradient(180deg,#A58AD0 0%,#7A5AA8 100%) !important; border:1px solid #5E4590 !important;
+    box-shadow:0 4px 0 #4A3577, 0 6px 10px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35) !important; transition:transform .08s, box-shadow .08s; }
+  .bc-cal #bcSearchBtn:active{ transform:translateY(3px); box-shadow:0 1px 0 #4A3577, 0 2px 4px rgba(0,0,0,.25) !important; }
+
+  @media (max-width:385px){ .bc-cal nav.bc-tabs button{ font-size:12px !important; gap:2px !important; } .bc-cal nav.bc-tabs button .bc-tab-ic{ font-size:15px !important; } .bc-cal nav.bc-tabs{ gap:5px !important; } }
+
+  /* Trip banner: some breathing room under the top bar, and a raised 3-D edge */
+  .away-banner{ margin:-1px 0 16px !important; box-shadow:0 4px 0 #5FAE7A, 0 6px 12px rgba(47,107,78,.22), inset 0 1px 0 rgba(255,255,255,.7) !important; }
+  .away-banner:active{ transform:translateY(3px) !important; box-shadow:0 1px 0 #5FAE7A, 0 2px 4px rgba(47,107,78,.22) !important; }
+
+  /* Each day-type explanation wears its button's colors and font */
+  .bc-cal .bc-intro{ font-family:'Inter',sans-serif !important; font-weight:700 !important; border-radius:12px !important; border-left:none !important; }
+  .bc-cal #bc-panel-fruit .bc-intro{ background:linear-gradient(180deg,#FDE3DE 0%,#F8C9C0 100%) !important; color:#8E1B12 !important; border:1px solid #E39A8C !important; }
+  .bc-cal #bc-panel-leaf .bc-intro{ background:linear-gradient(180deg,#EAF5DD 0%,#D6EABF 100%) !important; color:#245A16 !important; border:1px solid #A9CC85 !important; }
+  .bc-cal #bc-panel-root .bc-intro{ background:linear-gradient(180deg,#F1E4D1 0%,#E2CBAB 100%) !important; color:#5A3412 !important; border:1px solid #C4A07A !important; }
+  .bc-cal #bc-panel-flower .bc-intro{ background:linear-gradient(180deg,#FEF3CF 0%,#FBE6A2 100%) !important; color:#7A5600 !important; border:1px solid #E8C55C !important; }
 </style>
 </head>
 <body>
@@ -4068,7 +4138,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.28-146</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.28-159</div>
   </main>
 
   <nav class="tabbar">
@@ -4142,11 +4212,26 @@
   <div class="modal cs-modal">
     <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="csTopClose" aria-label="Close">✕</button></div>
     <h3>📷 Add snapshot of next year's calendar</h3>
-    <div class="cs-steps"><span data-s="1">1 · Calendar</span><span data-s="2">2 · Photo</span><span data-s="3">3 · Check</span><span data-s="4">4 · Save</span></div>
+    <div class="cs-steps"><span data-s="1">1 · Choose</span><span data-s="2">2 · Photo</span><span data-s="3">3 · Check</span><span data-s="4">4 · Save</span></div>
     <div class="cs-step" data-step="1">
-      <p class="cs-exp">Snap a photo of each month of your printed planting calendar, then mark each day's type. The app uses those days to set when to sow, transplant and harvest every crop. Your calendar stays in your app — nothing is shared.</p>
-      <div class="cs-q">Which calendar do you use?</div>
-      <div id="csSources"></div>
+      <p class="cs-exp">Add next year's Fruit, Leaf, Root and Flower days. The app uses them to set when to sow, transplant and harvest every crop. Your calendar stays in your app — nothing is shared.</p>
+      <button type="button" class="cs-snap" id="csSnap"><span class="cs-ic cs-ic-sky">🌙</span><span class="cs-snap-tx">Snap your biodynamic calendar<small>Take a photo of each month, then tap the days</small></span><i class="sky-deco" aria-hidden="true"><b style="right:12px;top:6px;font-size:10px">✨</b><b style="right:30px;bottom:7px;font-size:9px">⭐</b><b style="right:9px;bottom:6px;font-size:13px">🪐</b><b style="left:56%;top:4px;font-size:8px">⭐</b><b style="left:50%;bottom:4px;font-size:10px;transform:rotate(10deg)">☄️</b></i></button>
+      <div id="csSources" hidden></div>
+      <div class="cs-or">or</div>
+      <label class="cs-pick cs-xl"><input type="file" id="csXl" accept=".xlsx,.xls,.csv" hidden><span class="cs-ic">📊</span><span>Import dates from an Excel file<small>One row per day: Date · Type · Time (optional)</small></span></label>
+      <button type="button" class="cs-peek" id="csPeek" aria-expanded="false">👀 Peek at a sample sheet</button>
+      <div class="cs-sample" id="csSample" hidden>
+        <div class="cs-xlbar">📊 my-planting-calendar.xlsx</div>
+        <table class="cs-xltab"><tr><th></th><th>A</th><th>B</th><th>C</th></tr><tr><th>1</th><td class="x-h">Date</td><td class="x-h">Type</td><td class="x-h">Time</td></tr><tr><th>2</th><td>1/1/2028</td><td class="x-fr">Fruit</td><td>all day</td></tr><tr><th>3</th><td>1/2/2028</td><td class="x-fr">Fruit</td><td>until 3pm</td></tr><tr><th>4</th><td>1/2/2028</td><td class="x-ro">Root</td><td>from 3pm</td></tr><tr><th>5</th><td>1/3/2028</td><td class="x-ro">Root</td><td>all day</td></tr><tr><th>6</th><td>1/4/2028</td><td class="x-le">Leaf</td><td>from 10am</td></tr><tr><th>7</th><td>1/6/2028</td><td class="x-fl">Flower</td><td>until 8pm</td></tr><tr><th>8</th><td>1/9/2028</td><td class="x-fr">Fruit</td><td></td></tr><tr><th>9</th><td>…</td><td></td><td></td></tr></table>
+        <ul class="cs-rules">
+          <li><b>One row per day:</b> the date, then Fruit, Leaf, Root or Flower.</li>
+          <li><b>Time is optional:</b> "until 3pm", "from 10am" — blank means all day.</li>
+          <li><b>Type changes midday?</b> Use two rows (rows 3–4).</li>
+          <li><b>No planting window?</b> Just leave that day out.</li>
+          <li>Put as many months as you like in one file — the app sorts them.</li>
+        </ul>
+      </div>
+      <button type="button" class="cs-tpl" id="csTpl">⬇️ Download a blank template</button>
       <div id="csSaved"></div>
     </div>
     <div class="cs-step" data-step="2">
@@ -4169,6 +4254,11 @@
       <div class="cs-q" id="csSumTitle"></div>
       <div id="csSummary"></div>
       <div class="cs-hint">Saving replaces any days already listed for this month on the Biodynamic Calendar page.</div>
+    </div>
+    <div class="cs-step" data-step="5">
+      <div class="cs-q" id="csXlTitle"></div>
+      <div id="csXlSum"></div>
+      <div class="cs-hint" id="csXlNote"></div>
     </div>
     <div class="err cs-err" id="csErr"></div>
     <div class="cs-nav"><button type="button" class="cs-back" id="csBack">Back</button><button type="button" class="cs-next" id="csNext">Next</button></div>
@@ -15032,6 +15122,7 @@ function orderedBcMonthKeys(months){
   if(currentIdx < 0) return keys; // current month isn't in the transcribed range — show everything
   return keys.slice(currentIdx);
 }
+const BC_OPEN = new Set();
 function renderBiodynamic(type){
   const container = document.getElementById("bc-list-" + type);
   if(!container) return;
@@ -15043,9 +15134,16 @@ function renderBiodynamic(type){
     const monthEl = document.createElement("div");
     monthEl.className = "bc-month";
     monthEl.dataset.month = monthName;
-    monthEl.innerHTML = `<h4>${monthName}<span class="bc-count">${days.length} day${days.length===1?"":"s"}</span></h4>`;
+    // Each month is its own button: tap to open or close its days.
+    const openKey = type + "|" + monthName, isOpen = BC_OPEN.has(openKey);
+    monthEl.innerHTML = `<h4 class="bc-mbtn" role="button" tabindex="0" aria-expanded="${isOpen}">${monthName}<span class="bc-count">${days.length} day${days.length===1?"":"s"} <b class="bc-car">▾</b></span></h4>`;
     const rows = document.createElement("div");
     rows.className = "bc-rows";
+    rows.hidden = !isOpen;
+    const head = monthEl.firstElementChild;
+    const toggle = () => { const on = rows.hidden; rows.hidden = !on; head.setAttribute("aria-expanded", on); if(on) BC_OPEN.add(openKey); else BC_OPEN.delete(openKey); };
+    head.addEventListener("click", toggle);
+    head.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); } });
     days.forEach(([date, dow, time, note]) => {
       const row = document.createElement("div");
       row.className = "bc-row bc-row-" + type;
@@ -15188,11 +15286,11 @@ function cropConfetti(emojis, opts){
     piece.style.setProperty("--sway", `${(Math.random() * 2 - 1) * 40}px`);
     layer.appendChild(piece);
   }
-  // Inside the pop-up's dimmed backdrop, behind its white card, so the
-  // reminder text stays readable while the crops fall around it.
+  // Inside the pop-up, falling in front of its white card (taps still go
+  // through to the buttons underneath).
   const host = (opts && opts.host) || document.body;
   if(host !== document.body) layer.classList.add("in-modal");
-  host.insertBefore(layer, host.firstChild);
+  host.appendChild(layer);
   setTimeout(() => layer.remove(), 6500);
 }
 function jingleMuted(){ try{ return localStorage.getItem("jingleMuted") === "1"; }catch(e){ return false; } }
@@ -15239,17 +15337,44 @@ function playGardenJingle(){
       return true;
     };
     if(ctx.state === "running") return Promise.resolve(go());
-    return ctx.resume().then(() => ctx.state === "running" ? go() : false).catch(() => false);
+    // iPhone: resume() can wait forever until the first tap, so give up after
+    // a moment and let the first tap play it instead.
+    return Promise.race([
+      ctx.resume().then(() => ctx.state === "running" ? go() : false).catch(() => false),
+      new Promise(r => setTimeout(() => r(false), 400))
+    ]);
   }catch(e){ return Promise.resolve(false); }
 }
+// iPhone/iPad only allow sound after a tap, and keep web sounds quiet when the
+// ring/silent switch is on. On the first tap: start the sound engine inside
+// the tap (with a silent blip, which is what unlocks it), and ask the phone to
+// treat the jingle like media so it's heard even with the silent switch on
+// (the 🔊/🔇 button in the alert still mutes it).
+function unlockGardenAudio(){
+  try{
+    if(navigator.audioSession) navigator.audioSession.type = "playback";
+    const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
+    if(!jingleCtx) jingleCtx = new AC();
+    const ctx = jingleCtx;
+    if(ctx.state !== "running") ctx.resume();
+    const buf = ctx.createBuffer(1, 1, 22050), src = ctx.createBufferSource();
+    src.buffer = buf; src.connect(ctx.destination); src.start(0);
+  }catch(e){}
+}
+["touchend", "click", "keydown"].forEach(ev => document.addEventListener(ev, function first(){
+  unlockGardenAudio();
+  if(jingleCtx && jingleCtx.state === "running") ["touchend", "click", "keydown"].forEach(x => document.removeEventListener(x, first, true));
+}, true));
 function celebratePlantingDay(items, card, withSound){
   const emojis = [...new Set((items || []).map(it => it.icon || it.emoji).filter(Boolean))];
   cropConfetti(emojis, { host: card });
   if(withSound !== false) playGardenJingle().then(played => {
     if(played) return;
-    // Blocked until the first tap: play it then (once).
-    const once = () => { document.removeEventListener("pointerdown", once, true); playGardenJingle(); };
-    document.addEventListener("pointerdown", once, true);
+    // Blocked until the first tap: play it then (once). iPhone only counts a
+    // finished tap (touchend/click) as permission, not a finger landing.
+    const evs = ["touchend", "click", "keydown"];
+    const once = () => { evs.forEach(ev => document.removeEventListener(ev, once, true)); unlockGardenAudio(); playGardenJingle(); };
+    evs.forEach(ev => document.addEventListener(ev, once, true));
   });
   if(card){
     // Tap a crop's icon to rain it again.
@@ -15287,7 +15412,7 @@ function showPlantingModal(id, title, items){
         e.stopPropagation();
         const m = !jingleMuted(); setJingleMuted(m);
         jt.textContent = m ? "🔇" : "🔊"; jt.setAttribute("aria-label", m ? "Turn sound on" : "Mute sound");
-        if(!m) playGardenJingle();
+        if(!m){ unlockGardenAudio(); playGardenJingle(); }
       });
     }
     const done = () => { wrap.remove(); resolve(); };
@@ -15822,7 +15947,7 @@ function awayRenderBanner(){
   const tasks = awayTasksBetween(awayParse(tr.from), awayParse(tr.to)), plan = AWAY_PLAN[tr.id] || {};
   const open = tasks.filter(t => !plan[t.key]).length;
   const when = days > 1 ? `Leaving in ${days} days` : days === 1 ? "Leaving tomorrow" : days === 0 ? "Leaving today" : "You're away";
-  el.innerHTML = `<span class="ab-ic"><span class="bln" aria-hidden="true"></span></span><span class="ab-tx">${when} · ${awayFmt(tr).replace(/, \d{4}$/, "")}</span><span class="ab-n">${tasks.length ? (open ? `${open} to plan` : "✓ planned") : ""}</span>`;
+  el.innerHTML = `<span class="ab-ic"><span class="bln" aria-hidden="true"></span></span><span class="ab-tx">${when} · ${awayFmt(tr).replace(/, \d{4}$/, "")}</span>`;
   el.hidden = false;
 }
 function awayRenderNotes(){
@@ -15922,11 +16047,7 @@ function awayRenderPanel(){
 (function(){
   const $ = id => document.getElementById(id);
   const SOURCES = [
-    { id:"thun", name:"Maria Thun Biodynamic Calendar", sub:"Fruit, Leaf, Root & Flower days" },
-    { id:"stella", name:"Stella Natura", sub:"Biodynamic planting calendar for North America" },
-    { id:"ofa", name:"The Old Farmer's Almanac", sub:"Best days to plant by the Moon" },
-    { id:"fa", name:"Farmers' Almanac", sub:"Gardening by the Moon", tag:"2026 is the last" },
-    { id:"llew", name:"Llewellyn's Moon Sign Book", sub:"Planting by Moon sign" },
+    { id:"thun", name:"Biodynamic calendar", sub:"Fruit, Leaf, Root & Flower days" },
     { id:"other", name:"Other / my own calendar", sub:"Any calendar with planting days" }
   ];
   const TYPES = ["fruit","leaf","root","flower"], TL = { fruit:"🍅 Fruit", leaf:"🥬 Leaf", root:"🥕 Root", flower:"🌸 Flower", none:"Clear" };
@@ -15939,6 +16060,7 @@ function awayRenderPanel(){
 
   async function load(){
     try{ const r = await window.storage.get("myCalendar", false); if(r){ const v = JSON.parse(r.value); if(v && v.months) CAL = v; } }catch(e){}
+    if(!SOURCES.some(o => o.id === CAL.source)) CAL.source = "thun";
     apply();
   }
   async function store(){ try{ await window.storage.set("myCalendar", JSON.stringify(CAL), false); }catch(e){} }
@@ -15950,9 +16072,10 @@ function awayRenderPanel(){
     Object.entries(CAL.months).forEach(([k, mo]) => {
       const [y, m] = k.split("-").map(Number), name = keyName(k);
       (BC_MONTH_NAMES_BY_YEAR[y] = BC_MONTH_NAMES_BY_YEAR[y] || {})[m] = name;
+      const ents = mo.entries || Object.entries(mo.days || {}).map(([d, t]) => [Number(d), t, "all day"]);
       TYPES.forEach(t => {
-        all[t][name] = Object.entries(mo.days).filter(([, v]) => v === t).map(([d]) => Number(d)).sort((a, b) => a - b)
-          .map(d => [String(d), DOW3[new Date(y, m - 1, d).getDay()], "all day", ""]);
+        all[t][name] = ents.filter(e => e[1] === t).sort((a, b) => a[0] - b[0])
+          .map(([d, , time]) => [String(d), DOW3[new Date(y, m - 1, d).getDay()], time || "all day", ""]);
       });
     });
     const order = name => { const [mn, y] = name.split(" "); return Number(y) * 12 + MFULL.indexOf(mn); };
@@ -15967,11 +16090,12 @@ function awayRenderPanel(){
   }
 
   function show(n){
-    step = n; $("csErr").textContent = "";
+    step = n; $("csErr").textContent = ""; $("csModalBackdrop").dataset.step = n;
     document.querySelectorAll("#csModalBackdrop .cs-step").forEach(el => el.classList.toggle("on", Number(el.dataset.step) === n));
-    document.querySelectorAll("#csModalBackdrop .cs-steps span").forEach(el => { const k = Number(el.dataset.s); el.classList.toggle("on", k === n); el.classList.toggle("done", k < n); });
+    document.querySelectorAll("#csModalBackdrop .cs-steps span").forEach(el => { const k = Number(el.dataset.s); el.classList.toggle("on", k === n); el.classList.toggle("done", k < n && n < 5); });
+    document.querySelector("#csModalBackdrop .cs-steps").style.display = n === 5 ? "none" : "";
     $("csBack").textContent = n === 1 ? "Close" : "Back";
-    $("csNext").textContent = n === 1 ? "📷 Next: photo" : n === 2 ? (draft.photo ? "Next: mark days" : "Mark days by hand") : n === 3 ? "Next: review" : "✅ Save to my calendar";
+    $("csNext").textContent = n === 1 ? "📷 Next: photo" : n === 2 ? (draft.photo ? "Next: mark days" : "Mark days by hand") : n === 3 ? "Next: review" : n === 5 ? "✅ Save to my calendar" : "✅ Save to my calendar";
     if(n === 1) drawSources();
     if(n === 3) drawCheck();
     if(n === 4) drawSummary();
@@ -15982,7 +16106,7 @@ function awayRenderPanel(){
     $("csSources").querySelectorAll("[data-src]").forEach(b => b.addEventListener("click", () => { CAL.source = b.dataset.src; drawSources(); }));
     const ks = Object.keys(CAL.months).sort();
     $("csSaved").innerHTML = ks.length ? `<div class="cs-saved-h">Your saved months</div>` + ks.map(k => {
-      const mo = CAL.months[k], n = Object.keys(mo.days).length, locked = isEntryLocked(mo.at) && !GLOBAL_UNLOCK;
+      const mo = CAL.months[k], n = mo.entries ? new Set(mo.entries.map(e => e[0])).size : Object.keys(mo.days).length, locked = isEntryLocked(mo.at) && !GLOBAL_UNLOCK;
       return `<div class="cs-saved"><span>${keyName(k)}<br><small>${n} day${n === 1 ? "" : "s"} marked</small></span>${READ_ONLY ? "" : `<button type="button" data-edit="${k}" aria-label="Edit">${locked ? "🔒" : "✏️"}</button><button type="button" data-del="${k}" aria-label="Delete">🗑️</button>`}</div>`;
     }).join("") : "";
     const lockMsg = () => showUndoToast("This month is locked (saved over 48 hours ago). Unlock editing (🔒 in Save a copy) to change it.", null, "OK");
@@ -15990,7 +16114,8 @@ function awayRenderPanel(){
       const k = b.dataset.edit, mo = CAL.months[k];
       if(isEntryLocked(mo.at) && !GLOBAL_UNLOCK) return lockMsg();
       const [y, m] = k.split("-").map(Number);
-      draft = { y, m, days: { ...mo.days }, photo: null };
+      const dd = {}; if(mo.entries) mo.entries.forEach(([d, t]) => { if(!dd[d]) dd[d] = t; }); else Object.assign(dd, mo.days);
+      draft = { y, m, days: dd, photo: null };
       try{ const r = await window.storage.get(`myCalendarPhoto:${k}`, false); if(r) draft.photo = r.value; }catch(e){}
       setPhoto(draft.photo); fillMonthSelects(); show(3);
     }));
@@ -16063,12 +16188,22 @@ function awayRenderPanel(){
     if(step === 2){
       draft.m = Number($("csMonth").value); draft.y = Number($("csYear").value);
       const k = `${draft.y}-${String(draft.m).padStart(2, "0")}`;
-      if(CAL.months[k] && !Object.keys(draft.days).length) draft.days = { ...CAL.months[k].days };
+      if(CAL.months[k] && !Object.keys(draft.days).length){ const mo = CAL.months[k]; if(mo.entries) mo.entries.forEach(([d, t]) => { if(!draft.days[d]) draft.days[d] = t; }); else draft.days = { ...mo.days }; }
       show(3); return;
     }
     if(step === 3){
       if(!Object.keys(draft.days).length){ $("csErr").textContent = "Mark at least one day first."; return; }
       show(4); return;
+    }
+    if(step === 5){
+      const ks = Object.keys(xl || {});
+      const locked = ks.filter(k => CAL.months[k] && isEntryLocked(CAL.months[k].at) && !GLOBAL_UNLOCK);
+      if(locked.length){ $("csErr").textContent = `${locked.map(keyName).join(", ")} ${locked.length > 1 ? "are" : "is"} locked. Unlock editing (🔒 in Save a copy) to replace ${locked.length > 1 ? "them" : "it"}.`; return; }
+      const before = JSON.parse(JSON.stringify(CAL.months));
+      ks.forEach(k => { CAL.months[k] = { at: Date.now(), entries: xl[k] }; });
+      await store(); apply(); xl = null; show(1);
+      showUndoToast(`${ks.length} month${ks.length > 1 ? "s" : ""} imported`, async () => { CAL.months = before; await store(); apply(); drawSources(); }, "Undo");
+      return;
     }
     if(step === 4){
       const k = `${draft.y}-${String(draft.m).padStart(2, "0")}`;
@@ -16087,13 +16222,75 @@ function awayRenderPanel(){
   $("csOpen").addEventListener("click", open);
   $("csTopClose").addEventListener("click", close);
   $("csModalBackdrop").addEventListener("click", e => { if(e.target === $("csModalBackdrop")) close(); });
-  $("csBack").addEventListener("click", () => { if(step === 1) close(); else show(step - 1); });
+  $("csBack").addEventListener("click", () => { if(step === 1) close(); else if(step === 5) show(1); else show(step - 1); });
   $("csNext").addEventListener("click", next);
+  $("csSnap").addEventListener("click", () => { CAL.source = "thun"; next(); });
   $("csFile").addEventListener("change", async e => {
     const f = e.target.files && e.target.files[0]; if(!f) return;
     try{ draft.photo = await shrink(f); setPhoto(draft.photo); show(2); }catch(err){ $("csErr").textContent = "That photo couldn't be opened. Try another one."; }
   });
   $("csPhoto2").addEventListener("click", () => $("csPhoto2").classList.toggle("big"));
+  // ---------- Import from Excel / CSV ----------
+  // Reads a sheet with one row per day: Date, Type (Fruit/Leaf/Root/Flower),
+  // and an optional Time ("all day", "until 3pm", "from 10am"). Column order
+  // doesn't matter; headers are optional. A day can have two rows when the
+  // type changes partway through.
+  let xl = null;
+  function loadXLSX(){
+    if(window.XLSX) return Promise.resolve(window.XLSX);
+    return new Promise((res, rej) => { const sc = document.createElement("script");
+      sc.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"; sc.onload = () => res(window.XLSX); sc.onerror = rej; document.head.appendChild(sc); });
+  }
+  const typeOf = v => { const t = String(v || "").toLowerCase(); return TYPES.find(x => t.includes(x)) || (t.includes("blossom") ? "flower" : null); };
+  function dateOf(v, X){
+    if(v instanceof Date && !isNaN(v)) return v;
+    if(typeof v === "number" && v > 20000 && v < 80000){ const p = X.SSF.parse_date_code(v); return p ? new Date(p.y, p.m - 1, p.d) : null; }
+    const t = String(v || "").trim(); if(!t) return null;
+    let m = t.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/); if(m) return new Date(+m[1], +m[2] - 1, +m[3]);
+    m = t.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})/); if(m){ const y = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return new Date(y, +m[1] - 1, +m[2]); }
+    const d = new Date(t); return isNaN(d) || !/\d/.test(t) ? null : d;
+  }
+  async function readSheet(file){
+    const X = await loadXLSX();
+    const wb = X.read(await file.arrayBuffer(), { type:"array", cellDates:true });
+    const rows = X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1, raw:true, defval:"" });
+    const out = {}; let skipped = 0, n = 0;
+    rows.forEach(r => {
+      let d = null, t = null, time = "";
+      r.forEach(c => { if(!d){ const x = dateOf(c, X); if(x){ d = x; return; } } if(!t){ const y = typeOf(c); if(y){ t = y; return; } }
+        const s = String(c || "").trim().toLowerCase(); if(!time && /(all day|until|from|to|am|pm|\d:\d)/.test(s) && !dateOf(c, X)) time = s; });
+      if(!d || !t){ if(r.some(c => String(c).trim()) && !r.some(c => /^(date|type|time|day)$/i.test(String(c).trim()))) skipped++; return; }
+      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      (out[k] = out[k] || []).push([d.getDate(), t, time || "all day"]); n++;
+    });
+    return { out, skipped, n };
+  }
+  $("csXl").addEventListener("change", async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ""; if(!f) return;
+    $("csErr").textContent = "";
+    try{
+      const { out, skipped, n } = await readSheet(f);
+      const ks = Object.keys(out).sort();
+      if(!ks.length){ $("csErr").textContent = "No dates with Fruit, Leaf, Root or Flower were found. Check the file matches the template."; return; }
+      xl = out;
+      $("csXlTitle").textContent = `${f.name} · ${n} day${n > 1 ? "s" : ""} in ${ks.length} month${ks.length > 1 ? "s" : ""}`;
+      $("csXlSum").innerHTML = ks.map(k => { const c = { fruit:0, leaf:0, root:0, flower:0 }; out[k].forEach(e => c[e[1]]++);
+        return `<div class="cs-xlrow"><b>${keyName(k)}${CAL.months[k] || ORIG.fruit[keyName(k)] ? " · replaces" : ""}</b><span>🍅 ${c.fruit} · 🥬 ${c.leaf} · 🥕 ${c.root} · 🌸 ${c.flower}</span></div>`; }).join("");
+      $("csXlNote").textContent = (skipped ? `${skipped} row${skipped > 1 ? "s" : ""} without a date or type ${skipped > 1 ? "were" : "was"} skipped. ` : "") + "Saving replaces any days already listed for these months.";
+      show(5);
+    }catch(err){ $("csErr").textContent = "That file couldn't be read. Save it as .xlsx or .csv and try again (an internet connection is needed the first time)."; }
+  });
+  $("csPeek").addEventListener("click", () => {
+    const open = $("csSample").hidden; $("csSample").hidden = !open; $("csPeek").setAttribute("aria-expanded", open ? "true" : "false");
+    $("csPeek").textContent = open ? "🙈 Hide the sample" : "👀 Peek at a sample sheet";
+    if(open) setTimeout(() => $("csSample").scrollIntoView({ behavior:"smooth", block:"nearest" }), 30);
+  });
+  $("csTpl").addEventListener("click", () => {
+    const y = new Date().getFullYear() + 1;
+    const csv = "Date,Type,Time\n" + `${y}-01-01,Fruit,all day\n${y}-01-02,Fruit,until 3pm\n${y}-01-02,Root,from 3pm\n${y}-01-03,Leaf,all day\n${y}-01-04,Flower,from 10am\n`;
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type:"text/csv" })); a.download = "planting-calendar-template.csv";
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  });
   load();
 })();
 </script>
