@@ -3651,6 +3651,15 @@
     box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
   #monthDropdowns .mo-btn + div{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-top:10px !important; box-shadow:var(--shadow); }
   #monthDropdowns .mo-ic svg{ width:26px; height:26px; filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.25)); }
+  /* By Month: compact rows, same size and spacing as the crop cards */
+  #monthDropdowns .legend-card.month-card{ margin:0 0 7px !important; }
+  #monthDropdowns .mo-btn{ min-height:0 !important; padding:6px 12px !important; gap:9px !important; }
+  #monthDropdowns .mo-ic{ width:34px !important; height:34px !important; border-radius:10px !important; font-size:20px !important; }
+  #monthDropdowns .mo-ic svg{ width:22px !important; height:22px !important; }
+  #monthDropdowns .mo-btn + div{ margin-top:6px !important; }
+  /* Month names in the same type as the crop names in Coming Up */
+  #monthDropdowns .mo-btn .legend-title{ font-family:'Inter',sans-serif !important; font-size:16.5px !important; font-weight:600 !important; color:var(--ink) !important; letter-spacing:0 !important; }
+  #monthDropdowns .mo-ic{ width:36px !important; height:36px !important; font-size:23px !important; }
 </style>
 </head>
 <body>
@@ -4221,7 +4230,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.28-178</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.28-180</div>
   </main>
 
   <nav class="tabbar">
