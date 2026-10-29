@@ -3559,7 +3559,7 @@
   @media (max-width:385px){ .bc-cal nav.bc-tabs button{ font-size:12px !important; gap:2px !important; } .bc-cal nav.bc-tabs button .bc-tab-ic{ font-size:15px !important; } .bc-cal nav.bc-tabs{ gap:5px !important; } }
 
   /* Trip banner: some breathing room under the top bar, and a raised 3-D edge */
-  .away-banner{ margin:-1px 0 16px !important; box-shadow:0 4px 0 #5FAE7A, 0 6px 12px rgba(47,107,78,.22), inset 0 1px 0 rgba(255,255,255,.7) !important; }
+  .away-banner{ margin:12px 0 16px !important; box-shadow:0 4px 0 #5FAE7A, 0 6px 12px rgba(47,107,78,.22), inset 0 1px 0 rgba(255,255,255,.7) !important; }
   .away-banner:active{ transform:translateY(3px) !important; box-shadow:0 1px 0 #5FAE7A, 0 2px 4px rgba(47,107,78,.22) !important; }
 
   /* Each day-type explanation wears its button's colors and font */
@@ -3571,6 +3571,86 @@
 
   /* 🌱 Germ. filled in automatically from the crop card's dates */
   .gtemp-row-gd input.gd-auto{ background:#EAF7EF !important; border-color:#9FD3B4 !important; color:#2F7D6B !important; }
+
+  /* Garden Beds: crops always showing — no Show/Hide crops button */
+  #bgCollapse{ display:none !important; }
+  #tab-beds .bg-box.collapsed .bg-tools{ display:flex !important; }
+
+  /* Garden Beds header: no size label; the compass lives beside the beds */
+  #tab-beds .bg-head .bg-size{ display:none !important; }
+
+  /* Garden Beds box: no title line at all — just the crops */
+  #tab-beds .bg-head{ display:none !important; }
+
+  .bg-compass .bgc-mini{ display:none; }
+  .bg-compass.in-beds.mini svg:not(.bgc-mini){ display:none !important; }
+  .bg-compass.in-beds.mini .bgc-mini{ display:block; width:var(--cmp, 28px); height:var(--cmp, 28px); filter:drop-shadow(0 1px 0 rgba(255,255,255,.9)); transition:transform .3s; overflow:visible; }
+
+  /* Compass column beside bed 1 */
+  .bg-stage.vert .bg-inner{ grid-template-columns:auto repeat(var(--bg-beds, 4), auto) !important; }
+  .bg-compass.in-grid{ position:static !important; grid-column:1; grid-row:2; align-self:start; justify-self:center; width:30px !important; height:30px !important;
+    margin:2px 0 0 2px !important; padding:0 !important; pointer-events:none; display:block !important; }
+  .bg-compass.in-grid svg:not(.bgc-mini){ display:none !important; }
+  .bg-compass.in-grid .bgc-mini{ display:block !important; width:30px; height:30px; overflow:visible; transition:transform .3s; }
+  .bg-compass.in-grid .bgc-cap{ display:none !important; }
+
+  /* Garden Beds: compass removed; beds use the full width again */
+  #bgCompass{ display:none !important; }
+  .bg-stage.vert .bg-inner{ grid-template-columns:0 repeat(var(--bg-beds, 4), auto) !important; }
+
+  /* ===== Harvests page: section buttons look like the Home buttons ===== */
+  #tab-fruits .legend-card.hv-card{ background:none !important; border:none !important; box-shadow:none !important; padding:0 !important; margin:0 0 12px !important; }
+  #tab-fruits .hv-card > .rain-toggle{ display:flex !important; align-items:center !important; justify-content:flex-start !important; gap:10px; min-height:60px; padding:8px 12px !important; border-radius:14px !important;
+    box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(90,70,110,.07) !important; transition:transform .08s, filter .08s; }
+  #tab-fruits .hv-card > .rain-toggle:active{ transform:translateY(1px); filter:brightness(.97); }
+  #tab-fruits .hv-card > .rain-toggle .legend-title{ font-family:'Inter',sans-serif !important; font-size:15px !important; font-weight:600 !important; color:#222 !important; flex:1; }
+  #tab-fruits .hv-card > .rain-toggle .rain-toggle-right{ display:none !important; }
+  #tab-fruits .hv-ic{ flex:none; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; text-shadow:0 2px 2px rgba(0,0,0,.3);
+    background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%); border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
+  #tab-fruits .hv-card > .rain-toggle + div{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-top:10px !important; box-shadow:var(--shadow); }
+  #harvestFruitToggle{ background:linear-gradient(180deg,#FCECE9 0%,#F3C3BA 48%,#E6A194 100%) !important; border:1px solid #CA8172 !important; }
+  #harvestFruitToggle.open{ box-shadow:inset 0 0 0 2px #A0503F, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestVegToggle{ background:linear-gradient(180deg,#F1FCE9 0%,#D1F3BA 48%,#B6E694 100%) !important; border:1px solid #97CA72 !important; }
+  #harvestVegToggle.open{ box-shadow:inset 0 0 0 2px #5E8A3A, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestChartToggle{ background:linear-gradient(180deg,#E9F1FC 0%,#BAD1F3 48%,#94B6E6 100%) !important; border:1px solid #7297CA !important; }
+  #harvestChartToggle.open{ box-shadow:inset 0 0 0 2px #4F7AB0, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestBestToggle{ background:linear-gradient(180deg,#FCF9E9 0%,#F3EBBA 48%,#E6DB94 100%) !important; border:1px solid #CABE72 !important; }
+  #harvestBestToggle.open{ box-shadow:inset 0 0 0 2px #A08F2E, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestYearToggle{ background:linear-gradient(180deg,#F5E9FC 0%,#E0BAF3 48%,#CA94E6 100%) !important; border:1px solid #AD72CA !important; }
+  #harvestYearToggle.open{ box-shadow:inset 0 0 0 2px #8A4FAD, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestPicsToggle{ background:linear-gradient(180deg,#E9FCF9 0%,#BAF3E9 48%,#94E6D8 100%) !important; border:1px solid #72CABB !important; }
+  #harvestPicsToggle.open{ box-shadow:inset 0 0 0 2px #3F9C86, 0 2px 8px rgba(0,0,0,.12) !important; }
+
+  /* Harvests buttons: pastel rainbow, top to bottom */
+  #harvestFruitToggle{ background:linear-gradient(180deg,#FDEBEB 0%,#F8CACA 48%,#F0A9A9 100%) !important; border:1px solid #D98888 !important; }
+  #harvestFruitToggle.open{ box-shadow:inset 0 0 0 2px #B5544F, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestVegToggle{ background:linear-gradient(180deg,#FEF1E6 0%,#FBD9BC 48%,#F5C095 100%) !important; border:1px solid #DDA06E !important; }
+  #harvestVegToggle.open{ box-shadow:inset 0 0 0 2px #B8733B, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestChartToggle{ background:linear-gradient(180deg,#FEFBE6 0%,#FAF0B8 48%,#F2E290 100%) !important; border:1px solid #D5C46A !important; }
+  #harvestChartToggle.open{ box-shadow:inset 0 0 0 2px #A8952E, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestBestToggle{ background:linear-gradient(180deg,#EDFAEC 0%,#CDEFCB 48%,#ACE2A9 100%) !important; border:1px solid #86C483 !important; }
+  #harvestBestToggle.open{ box-shadow:inset 0 0 0 2px #4F9A4B, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestYearToggle{ background:linear-gradient(180deg,#EAF3FD 0%,#C9DEF8 48%,#A6C7F0 100%) !important; border:1px solid #7FA6D6 !important; }
+  #harvestYearToggle.open{ box-shadow:inset 0 0 0 2px #4A78B5, 0 2px 8px rgba(0,0,0,.12) !important; }
+  #harvestPicsToggle{ background:linear-gradient(180deg,#F3EDFD 0%,#DDCDF8 48%,#C6ADF0 100%) !important; border:1px solid #A58AD6 !important; }
+  #harvestPicsToggle.open{ box-shadow:inset 0 0 0 2px #7454B0, 0 2px 8px rgba(0,0,0,.12) !important; }
+
+  /* ===== Home "By Month": Home-button style, zodiac sign, pastel rainbow ===== */
+  #monthDropdowns .legend-card.month-card{ background:none !important; border:none !important; box-shadow:none !important; padding:0 !important; margin:0 0 12px !important; }
+  #monthDropdowns .mo-btn{ display:flex !important; align-items:center !important; justify-content:flex-start !important; gap:10px; min-height:60px; padding:8px 12px !important; border-radius:14px !important;
+    background:linear-gradient(180deg,var(--mt) 0%,var(--mm) 48%,var(--mb) 100%) !important; border:1px solid var(--me) !important;
+    box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(90,70,110,.07) !important; transition:transform .08s, filter .08s; }
+  #monthDropdowns .mo-btn:active{ transform:translateY(1px); filter:brightness(.97); }
+  #monthDropdowns .mo-btn.open{ box-shadow:inset 0 0 0 2px var(--ma), 0 2px 8px rgba(0,0,0,.12) !important; }
+  #monthDropdowns .mo-btn .legend-title{ font-family:'Inter',sans-serif !important; font-size:15px !important; font-weight:600 !important; color:#222 !important; flex:1; }
+  #monthDropdowns .mo-btn .rain-toggle-right{ display:none !important; }
+  #monthDropdowns .mo-ic{ flex:none; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-size:22px; line-height:1; text-shadow:0 2px 2px rgba(0,0,0,.3);
+    background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%); border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
+  #monthDropdowns .mo-btn + div{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-top:10px !important; box-shadow:var(--shadow); }
+  #monthDropdowns .mo-ic svg{ width:26px; height:26px; filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.25)); }
 </style>
 </head>
 <body>
@@ -4141,7 +4221,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.28-160</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.28-178</div>
   </main>
 
   <nav class="tabbar">
@@ -4453,6 +4533,10 @@
   setTopbarH();
   window.addEventListener("resize", setTopbarH);
   window.addEventListener("load", setTopbarH);
+  window.addEventListener("orientationchange", function(){ setTimeout(setTopbarH, 300); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(setTopbarH);
+  [300, 1000, 2500].forEach(function(t){ setTimeout(setTopbarH, t); });
+  if(window.ResizeObserver){ var tb = document.querySelector("header.topbar"); if(tb) new ResizeObserver(setTopbarH).observe(tb); }
 
   var currentCard = null;
   function updateCropBar(){
@@ -10536,6 +10620,13 @@ function goToCropDirect(sectionKey, slug){
   }
 }
 
+// Home "By Month" buttons: the month's zodiac sign and a pastel rainbow
+// running through the season (August red → July violet).
+// What's ready to pick in an Odessa, FL (Zone 9B) garden each month.
+const MONTH_SIGN = ["🍊","🫛","🍓","🥦","🍅","🥭","🥑","🍌","🫑","svg:pumpkin","svg:starfruit","svg:butterflypeablue"];
+const MONTH_SVG = { pumpkin: '<svg viewBox="0 0 20 20"><path d="M10 5.2C10 3.6 10.6 2.2 12 1.4" stroke="#6B4A22" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M11.2 3.4C13 2.2 15 2.6 15.6 4 13.8 4.6 12.2 4.4 11.2 3.4Z" fill="#5FAE45"/><ellipse cx="5.6" cy="11.6" rx="4.4" ry="6" fill="#E8822C"/><ellipse cx="14.4" cy="11.6" rx="4.4" ry="6" fill="#E8822C"/><ellipse cx="10" cy="11.6" rx="4.2" ry="6.4" fill="#F29A3E"/><path d="M5.8 6.2C4.6 8.6 4.6 14.6 5.8 17M14.2 6.2C15.4 8.6 15.4 14.6 14.2 17" stroke="#C9661C" stroke-width=".8" fill="none"/><path d="M8.6 7.4C8 9.4 8 13.6 8.6 15.8" stroke="#FFC27A" stroke-width=".9" fill="none" stroke-linecap="round"/></svg>', starfruit: '<svg viewBox="0 0 20 20"><path d="M10.00 1.00 L12.70 6.28 L18.56 7.22 L14.37 11.42 L15.29 17.28 L10.00 14.60 L4.71 17.28 L5.63 11.42 L1.44 7.22 L7.30 6.28Z" fill="#F7D24A" stroke="#B88A12" stroke-width="1" stroke-linejoin="round"/><path d="M10 10 L10.00 3.50" stroke="#E2B12E" stroke-width=".6"/><path d="M10 10 L16.18 7.99" stroke="#E2B12E" stroke-width=".6"/><path d="M10 10 L13.82 15.26" stroke="#E2B12E" stroke-width=".6"/><path d="M10 10 L6.18 15.26" stroke="#E2B12E" stroke-width=".6"/><path d="M10 10 L3.82 7.99" stroke="#E2B12E" stroke-width=".6"/><circle cx="10" cy="10" r="1.3" fill="#FFF3B0"/></svg>' };
+const MONTH_TONES = {8:"--mt:#FDE7E7;--mm:#F6C1C1;--mb:#EBA2A2;--me:#CA7272;--ma:#A13636",9:"--mt:#FDF0E7;--mm:#F6D7C1;--mb:#EBC1A2;--me:#CA9772;--ma:#A16236",10:"--mt:#FDF9E7;--mm:#F6EDC1;--mb:#EBDFA2;--me:#CABB72;--ma:#A18E36",11:"--mt:#F8FDE7;--mm:#E9F6C1;--mb:#D9EBA2;--me:#B4CA72;--ma:#86A136",12:"--mt:#EFFDE7;--mm:#D3F6C1;--mb:#BBEBA2;--me:#90CA72;--ma:#5AA136",1:"--mt:#E7FDE9;--mm:#C1F6C5;--mb:#A2EBA8;--me:#72CA79;--ma:#36A13E",2:"--mt:#E7FDF2;--mm:#C1F6DB;--mb:#A2EBC6;--me:#72CA9D;--ma:#36A16A",3:"--mt:#E7FDFB;--mm:#C1F6F1;--mb:#A2EBE4;--me:#72CAC1;--ma:#36A196",4:"--mt:#E7F6FD;--mm:#C1E5F6;--mb:#A2D4EB;--me:#72AECA;--ma:#367EA1",5:"--mt:#E7EDFD;--mm:#C1CFF6;--mb:#A2B6EB;--me:#728ACA;--ma:#3652A1",6:"--mt:#EBE7FD;--mm:#C9C1F6;--mb:#ADA2EB;--me:#8072CA;--ma:#4636A1",7:"--mt:#F4E7FD;--mm:#DFC1F6;--mb:#CCA2EB;--me:#A472CA;--ma:#7236A1"};
+const MONTH_TONE = m => MONTH_TONES[m] || "";
 function renderMonthDropdowns(){
   const container = document.getElementById("monthDropdowns");
   const monthOrder = [8,9,10,11,12,1,2,3,4,5,6,7];
@@ -10560,13 +10651,18 @@ function renderMonthDropdowns(){
     ).join("");
     return `
       <div class="legend-card month-card">
-        <button type="button" class="rain-toggle month-toggle" data-body="${bodyId}">
+        <button type="button" class="rain-toggle month-toggle mo-btn" data-body="${bodyId}" style="${MONTH_TONE(m)}">
+          <span class="mo-ic" aria-hidden="true">${String(MONTH_SIGN[m-1]).startsWith("svg:") ? (MONTH_SVG[MONTH_SIGN[m-1].slice(4)] || (typeof BG_SVG !== "undefined" && BG_SVG[MONTH_SIGN[m-1].slice(4)]) || "🌸") : MONTH_SIGN[m-1]}</span>
           <span class="legend-title" style="margin-bottom:0;">${MONTHS_FULL[m-1]}</span>
           <span class="rain-toggle-right"><span class="rain-chevron">▾</span></span>
         </button>
         <div id="${bodyId}" style="display:none; margin-top:8px;">${rows}</div>
       </div>`;
   }).join("");
+  // Every month button uses the same light cream as the top and bottom bars.
+  container.querySelectorAll(".mo-btn").forEach(btn => {
+    btn.style.cssText = "--mt:#FCFAF4;--mm:#F6F0E2;--mb:#EFE6D2;--me:#DCCFB4;--ma:#A8916A";
+  });
   container.querySelectorAll(".month-toggle").forEach(btn => {
     btn.addEventListener("click", () => {
       const body = document.getElementById(btn.dataset.body);
@@ -13554,7 +13650,8 @@ async function renderBedGrid(){
     fitWindow();
   };
   colBtn.addEventListener("click", () => setCollapsed(!box.classList.contains("collapsed")));
-  try{ if(localStorage.getItem("bedgridCollapsed") === "1") setCollapsed(true); }catch(e){}
+  // Crops always show now (the Show/Hide button is gone).
+  try{ localStorage.removeItem("bedgridCollapsed"); }catch(e){}
   document.getElementById("bgStopBtn").addEventListener("click", () => bgSetTool(null));
   // "See all 4 beds": a full-screen picture of every bed, sized to fit the
   // screen. Turning the phone sideways makes it bigger.
@@ -15813,30 +15910,23 @@ async function checkTomorrowReminder(){
   const cmp = document.getElementById("bgCompass"), scroll = document.getElementById("bgScroll");
   if(!cmp || !scroll) return;
   const home = cmp.parentNode, homeNext = cmp.nextSibling;
+  // Small, easy-to-read north badge for phones: white disc, red arrow, big N.
+  cmp.insertAdjacentHTML("beforeend", `<svg class="bgc-mini" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 9v22M9 20h22" stroke="#C9B39A" stroke-width="1.4"/><circle cx="20" cy="20" r="2.4" fill="#8A5A2B"/><g font-family="Georgia,serif" font-weight="700" font-size="10" text-anchor="middle" dominant-baseline="central"><text x="20" y="5.5" fill="#B03A2E" font-size="12">N</text><text x="35" y="20.5" fill="#5A4636">E</text><text x="20" y="35" fill="#5A4636">S</text><text x="5" y="20.5" fill="#5A4636">W</text></g></svg>`);
   
-  let state = "";
+  // The compass is part of the bed layout itself: its own narrow column to
+  // the left of bed 1, at the top of the beds. It moves with the beds and can
+  // never sit on the window's edge or cover a square.
+  // Compass removed from the Garden Beds page (kept in the code, hidden).
+  cmp.style.display = "none"; cmp.hidden = true;
   function place(){
-    if(!scroll.offsetWidth) return;   // Garden Beds tab not showing
-    const sr = scroll.getBoundingClientRect();
-    const first = scroll.querySelector("#bgInner .bg-label") || scroll.querySelector("#bgInner .bg-bed");
-    const bed = scroll.querySelector("#bgInner .bg-bed");
-    if(!first || !bed) return;
-    const gap = Math.min(first.getBoundingClientRect().left, bed.getBoundingClientRect().left) - sr.left;
-    const size = Math.round(Math.min(150, gap - 18));
-    if(size >= 64){
-      const top = Math.max(8, Math.round(bed.getBoundingClientRect().top - sr.top));
-      const key = `in:${size}:${top}`;
-      if(key === state) return;
-      state = key;
-      if(cmp.parentNode !== scroll) scroll.appendChild(cmp);
-      cmp.classList.add("in-beds");
-      cmp.style.setProperty("--cmp", size + "px");
-      cmp.style.setProperty("--cmpw", Math.round(gap) + "px"); cmp.style.left = "0px"; cmp.style.top = top + "px";
-    } else if(state !== "home"){
-      state = "home";
-      cmp.classList.remove("in-beds"); cmp.style.left = cmp.style.top = ""; cmp.style.removeProperty("--cmp"); cmp.style.removeProperty("--cmpw");
-      if(cmp.parentNode !== home) home.insertBefore(cmp, homeNext && homeNext.parentNode === home ? homeNext : null);
-    }
+    return;
+    const inner = document.getElementById("bgInner");
+    if(!inner || !inner.querySelector(".bg-bed")) return;
+    if(cmp.parentNode === inner && cmp === inner.lastElementChild) return;
+    inner.appendChild(cmp);
+    cmp.classList.add("in-grid"); cmp.classList.remove("in-beds", "mini");
+    cmp.style.left = cmp.style.top = "";
+    if(window.bgApplyView) window.bgApplyView();
   }
   window.addEventListener("resize", () => requestAnimationFrame(place));
   if(window.ResizeObserver) new ResizeObserver(() => requestAnimationFrame(place)).observe(scroll);
@@ -15864,8 +15954,8 @@ async function checkTomorrowReminder(){
   const curDir = () => { const g = bgGardens.find(x => x.id === BG_GARDEN); return (g && g.dir) || ""; };
   // Turn the compass and add the direction to the header.
   function applyDir(){
-    const d = curDir(), svg = document.querySelector("#bgCompass svg");
-    if(svg) svg.style.transform = d ? `rotate(${-A[d]}deg)` : "";
+    const d = curDir();
+    document.querySelectorAll("#bgCompass svg").forEach(svg => { svg.style.transform = d ? `rotate(${-A[d]}deg)` : ""; });
     const cmp = $("bgCompass"); if(cmp) cmp.setAttribute("aria-label", d ? `Compass: the beds run ${NAME[d]} to ${NAME[OPP[d]]}` : "Compass: north is at the top");
     const sz = document.querySelector("#tab-beds .bg-size");
     if(sz){ const base = sz.textContent.replace(/ · [NSEW]{1,2}–[NSEW]{1,2}$/, ""); sz.textContent = d ? `${base} · ${d}–${OPP[d]}` : base; }
@@ -16313,6 +16403,18 @@ function awayRenderPanel(){
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   });
   load();
+})();
+</script>
+<script>
+/* Harvests: give each section button its icon tile (Home-button style). */
+(function(){
+  const IC = { harvestFruitToggle:"🥭", harvestVegToggle:"🍅", harvestChartToggle:"📅", harvestBestToggle:"🏆", harvestYearToggle:"📊", harvestPicsToggle:"📸" };
+  Object.entries(IC).forEach(([id, ic]) => {
+    const b = document.getElementById(id); if(!b || b.querySelector(".hv-ic")) return;
+    b.parentElement.classList.add("hv-card");
+    const t = b.querySelector(".legend-title"); if(t) t.textContent = t.textContent.replace(/^\s*🏆\s*/, "");
+    b.insertAdjacentHTML("afterbegin", `<span class="hv-ic" aria-hidden="true">${ic}</span>`);
+  });
 })();
 </script>
 <script>
