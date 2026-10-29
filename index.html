@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Alessandra Garden</title>
 
 <!-- Prevents the browser (especially iOS's standalone home-screen mode)
@@ -3085,7 +3085,10 @@
   .bc-search-empty{
     margin-top:.8rem; font-size:12px; font-style:italic; color:var(--bc-ink-soft);
   }
-  /* Zoom-on-focus is prevented via the viewport meta tag (user-scalable=no)
+  /* Pinch-to-zoom is allowed on every tab. maximum-scale=1 (without
+     user-scalable=no) still stops iPhone from auto-zooming into a field
+     when it's tapped, while letting fingers pinch the page.
+     Zoom-on-focus is prevented via the viewport meta tag
      instead of changing any field's font-size — resizing a date field the
      instant it's focused was confusing iOS into thinking the field moved,
      which dismissed its native picker immediately after opening it. */
@@ -3660,6 +3663,31 @@
   /* Month names in the same type as the crop names in Coming Up */
   #monthDropdowns .mo-btn .legend-title{ font-family:'Inter',sans-serif !important; font-size:16.5px !important; font-weight:600 !important; color:var(--ink) !important; letter-spacing:0 !important; }
   #monthDropdowns .mo-ic{ width:36px !important; height:36px !important; font-size:23px !important; }
+  /* Harvest log month rows (Fruits / Vegetables): same look as Home "By Month" */
+  .harvest-month-card.legend-card{ background:none !important; border:none !important; box-shadow:none !important; padding:0 !important; margin:0 0 7px !important; }
+  .harvest-month-card > .month-toggle{ display:flex !important; align-items:center !important; justify-content:flex-start !important; gap:9px !important; min-height:0 !important; padding:6px 12px !important; border-radius:14px !important;
+    background:linear-gradient(180deg,#FCFAF4 0%,#F6F0E2 48%,#EFE6D2 100%) !important; border:1px solid #DCCFB4 !important;
+    box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(90,70,110,.07) !important; transition:transform .08s, filter .08s; width:100%; }
+  .harvest-month-card > .month-toggle:active{ transform:translateY(1px); filter:brightness(.97); }
+  .harvest-month-card > .month-toggle.open{ box-shadow:inset 0 0 0 2px #A8916A, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .harvest-month-card > .month-toggle .legend-title{ font-family:'Inter',sans-serif !important; font-size:16.5px !important; font-weight:600 !important; color:var(--ink) !important; letter-spacing:0 !important; flex:1; text-align:left; }
+  .harvest-month-card > .month-toggle .rain-chevron{ display:none !important; }
+  .harvest-month-card > .month-toggle .rain-toggle-right b{ font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#7A6440; background:rgba(255,255,255,.7); border:1px solid #DCCFB4; border-radius:999px; padding:2px 9px; }
+  .harvest-month-card .mo-ic{ flex:none; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:23px; line-height:1; text-shadow:0 2px 2px rgba(0,0,0,.3);
+    background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%); border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -2px 3px rgba(0,0,0,.08); }
+  .harvest-month-card .mo-ic svg{ width:22px; height:22px; filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.25)); }
+  .harvest-month-card > .month-toggle + div{ margin-top:6px !important; }
+  /* Harvest month rows: same spacing as By Month (the list's own 8px gap was adding extra room) */
+  .harvest-log:has(> .harvest-month-card){ gap:0 !important; }
+  .harvest-month-card > .month-toggle{ min-height:50px !important; position:relative; overflow:hidden; }
+  .harvest-month-card > .month-toggle .legend-title{ flex:0 1 auto !important; }
+  .harvest-month-card .hm-count{ font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#7A6440; background:rgba(255,255,255,.7); border:1px solid #DCCFB4; border-radius:999px; padding:2px 9px; flex:none; }
+  .harvest-month-card .hm-deco{ margin-left:auto; display:flex; align-items:center; justify-content:flex-end; flex:none; height:36px; padding-left:6px; }
+  .harvest-month-card .hm-deco > span{ display:inline-block; line-height:1; margin-left:-3px; filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.22)); }
+  /* Harvest month rows: count sits at the far right, after the pictures, all lined up */
+  .harvest-month-card .hm-count{ min-width:34px; box-sizing:border-box; text-align:center; margin-left:8px; }
 </style>
 </head>
 <body>
@@ -4230,7 +4258,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.28-180</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.29-184</div>
   </main>
 
   <nav class="tabbar">
@@ -6239,6 +6267,23 @@ function hpLinkFor(entry, sowings){
   return { sow: hpGuess(entry.fruit, entry.date, sowings), guessed: true };
 }
 
+/* Harvest log month rows: a little scattered cluster of fruits (Fruits log)
+   or vegetables (Vegetables log) along the right side of each button.
+   Picked from the month key so each month keeps the same cluster. */
+function harvestMonthDeco(kind, key){
+  const pool = kind === "vegetable"
+    ? ["🥕","🍅","🥦","🫑","🌽","🥒","🍆","🧅","🧄","🥬","🫛","🥔","🌶️","🍠"]
+    : ["🍓","🥭","🍊","🍋","🍌","🍑","🍒","🍍","🥝","🫐","🍇","🍉","🍎","🍐","🥑","🍈"];
+  let h = 2166136261;
+  for(const c of String(kind) + ":" + String(key)){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+  const rnd = () => { h = (Math.imul(h ^ (h >>> 15), 2246822507) + 0x9E3779B9) >>> 0; return h / 4294967296; };
+  const picks = [], left = pool.slice();
+  for(let i = 0; i < 5; i++) picks.push(left.splice(Math.floor(rnd() * left.length), 1)[0]);
+  return `<span class="hm-deco" aria-hidden="true">${picks.map(e => {
+    const size = Math.round(14 + rnd() * 11), rot = Math.round(-22 + rnd() * 44), dy = Math.round(-6 + rnd() * 12);
+    return `<span style="font-size:${size}px;transform:translateY(${dy}px) rotate(${rot}deg)">${e}</span>`;
+  }).join("")}</span>`;
+}
 async function wireHarvestSection(kind, ids){
   const el = document.getElementById(ids.log);
   let log = await getHarvestLogFor(activeSeason, kind);
@@ -6451,7 +6496,10 @@ async function wireHarvestSection(kind, ids){
       }
       groupByKey[key].entries.push(entry);
     });
-    groups.sort((a, b) => a.key.localeCompare(b.key));
+    // Sort by real date (year, then month number) so December (month 11)
+    // doesn't sort ahead of March (month 2) as text would.
+    const monthNum = k => { if(k === "unknown") return Infinity; const [y, m] = k.split("-").map(Number); return y * 12 + m; };
+    groups.sort((a, b) => monthNum(a.key) - monthNum(b.key));
 
     // Keep whichever entry is mid-edit visible, even if its month group
     // was previously collapsed.
@@ -6485,7 +6533,8 @@ async function wireHarvestSection(kind, ids){
         <div class="legend-card month-card harvest-month-card">
           <button type="button" class="rain-toggle month-toggle${isOpen ? " open" : ""}" data-body="${bodyId}" data-key="${g.key}">
             <span class="legend-title" style="margin-bottom:0;">${g.label}</span>
-            <span class="rain-toggle-right"><b>${g.entries.length}</b><span class="rain-chevron">▾</span></span>
+            ${harvestMonthDeco(kind, g.key)}
+            <b class="hm-count">${g.entries.length}</b>
           </button>
           <div id="${bodyId}" style="display:${isOpen ? "block" : "none"}; margin-top:8px;">
             ${g.entries.map(entryRowHTML).join("")}
