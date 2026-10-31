@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Alessandra Garden</title>
 
 <!-- Prevents the browser (especially iOS's standalone home-screen mode)
@@ -3688,6 +3688,130 @@
   .harvest-month-card .hm-deco > span{ display:inline-block; line-height:1; margin-left:-3px; filter:drop-shadow(0 1.5px 1px rgba(0,0,0,.22)); }
   /* Harvest month rows: count sits at the far right, after the pictures, all lined up */
   .harvest-month-card .hm-count{ min-width:34px; box-sizing:border-box; text-align:center; margin-left:8px; }
+  /* Fertilizer / Pest Control: one-tap "all four beds" button */
+  .fert-allbeds{ display:inline-flex; align-items:center; gap:6px; margin-top:8px; padding:7px 14px; border-radius:999px; border:1px solid #E3CFB2; background:#F7EEDF; color:#8A5A2B; font-family:'Inter',sans-serif; font-size:13.5px; font-weight:700; cursor:pointer; }
+  /* Add Crop window: "Suggest start dates & temperature" */
+  .suggest-btn{ display:block; width:100%; margin-top:10px; padding:10px 12px; border-radius:12px; border:1px solid #C9DDB8; background:linear-gradient(180deg,#F7FCF2 0%,#E6F3D9 100%); color:#3E6B2F; font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; }
+  .crop-suggest{ margin-top:8px; padding:10px 12px; border-radius:12px; background:#FCFAF4; border:1px solid #DCCFB4; font-family:'Inter',sans-serif; font-size:13.5px; color:var(--ink); text-align:left; line-height:1.45; }
+  .crop-suggest .cs-head{ font-weight:700; color:#5B4A2E; margin-bottom:6px; }
+  .crop-suggest .cs-sub{ font-weight:600; margin-top:2px; }
+  .crop-suggest .cs-list{ margin:3px 0 6px 18px; padding:0; }
+  .crop-suggest .cs-line{ margin-top:4px; }
+  .crop-suggest .cs-note, .crop-suggest .cs-empty{ margin-top:6px; font-size:12px; color:var(--ink-soft); font-style:italic; }
+  .crop-suggest .cs-use{ display:flex; align-items:center; gap:8px; margin-top:8px; font-weight:600; color:#3E6B2F; }
+  /* Garden Beds: "What's in Each Bed" button, same shape as My Bed Setup, in green */
+  #bgSumBox{ margin:12px 0 6px !important; }
+  #tab-beds #bgSumHead{ background:linear-gradient(180deg,#F1FCE9 0%,#D1F3BA 48%,#B6E694 100%) !important; border:1px solid #8CC46A !important; color:#3E6B2F !important; }
+  #bgSumHead:active{ box-shadow:0 1px 0 #ABCF98, 0 2px 4px rgba(62,107,47,.18) !important; }
+  #tab-beds #bgSumHead .bgsz-now{ color:#5D8A4C !important; }
+  #bgSumBox .bg-summary-under{ margin:4px 0 0; }
+  #bgSumBox .bg-sum{ font-size:14px; padding:6px 0; border-bottom:1px dashed #E3CFB2; margin:0; }
+  #bgSumBox .bg-sum:last-child{ border-bottom:none; }
+  /* Fruiting log: "Already logged" pop-up */
+  .fdup-text{ font-family:'Inter',sans-serif; font-size:15px; line-height:1.5; color:var(--ink); margin:6px 0 14px; }
+  .fdup-text .fdup-more{ font-size:13px; color:var(--ink-soft); margin-top:6px; }
+  .fdup-text .fdup-q{ margin-top:10px; font-weight:600; }
+  /* Bottom bar with 9 buttons: everything a little smaller so it all fits */
+  nav.tabbar{ padding-left:2px !important; padding-right:2px !important; justify-content:space-between !important; overflow-x:hidden !important; }
+  nav.tabbar .tabbtn{ flex:1 1 auto !important; min-width:35px !important; padding:4px 1px !important; font-size:9px !important; letter-spacing:-.2px; text-align:center; line-height:1.15; white-space:nowrap; }
+  nav.tabbar .tabbtn-icon{ width:33px !important; height:33px !important; font-size:19px !important; border-radius:10px !important; }
+  nav.tabbar .tabbtn-icon svg{ width:21px; height:21px; }
+  .tabbtn.tab-trees.active{ color:#4E7F2E; background:#DCEFD0; }
+  /* Fruit Trees page */
+  .ft-formcard{ padding:14px !important; }
+  .ft-count{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin:14px 2px 6px; }
+  .ft-empty{ font-size:13px; font-style:italic; color:var(--ink-soft); margin:14px 2px; }
+  .ft-card{ margin-bottom:7px; }
+  .ft-head{ display:flex !important; align-items:center; gap:9px; width:100%; min-height:50px; padding:6px 12px !important; border-radius:14px !important; text-align:left;
+    background:linear-gradient(180deg,#F7FCF2 0%,#EDF7E4 48%,#E0F0D2 100%) !important; border:1px solid #C3DBAE !important;
+    box-shadow:0 1px 2px rgba(60,90,40,.06), 0 6px 16px rgba(60,90,40,.07) !important; transition:transform .08s, filter .08s; }
+  .ft-head:active{ transform:translateY(1px); filter:brightness(.97); }
+  .ft-head.open{ box-shadow:inset 0 0 0 2px #7FA866, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .ft-ic{ flex:none; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:23px; text-shadow:0 2px 2px rgba(0,0,0,.3);
+    background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%); border:1px solid rgba(255,255,255,.8);
+    box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9); }
+  .ft-name{ flex:1; min-width:0; font-family:'Inter',sans-serif; font-size:16.5px; font-weight:600; color:var(--ink); }
+  .ft-status{ flex:none; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; color:#4E6B3E; background:rgba(255,255,255,.7); border:1px solid #C3DBAE; border-radius:999px; padding:2px 9px; }
+  .ft-body{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-top:6px; box-shadow:var(--shadow); font-family:'Inter',sans-serif; }
+  .ft-info{ font-size:13.5px; color:#4E6B3E; line-height:1.55; }
+  .ft-about{ color:var(--ink-soft); margin-top:4px; }
+  .ft-sec{ font-weight:700; font-size:13px; color:#5B4A2E; margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
+  .ft-logrow input{ width:100%; box-sizing:border-box; height:40px; border:1px solid #D9C3A5; border-radius:11px; padding:0 10px; font-family:'Inter',sans-serif; font-size:15px; background:#FFFDF8; color:#222; }
+  .ft-stagebtns{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:8px 0 10px; }
+  .ft-stage{ padding:9px 2px !important; border-radius:12px !important; font-size:13px !important; font-weight:700; }
+  .st-flower{ background:#FCE7F1 !important; border:1px solid #EFB9D3 !important; color:#A0457E !important; }
+  .st-set{ background:#E6F4DC !important; border:1px solid #B7DA9E !important; color:#3E7A3A !important; }
+  .st-ripe{ background:#FFEBD6 !important; border:1px solid #F2C08C !important; color:#B9692E !important; }
+  .ft-year{ margin-top:8px; }
+  .ft-year-h{ font-weight:700; font-size:14px; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .ft-span{ font-weight:600; font-size:11.5px; color:var(--ink-soft); background:#F4EFE6; border-radius:999px; padding:1px 8px; }
+  .ft-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:5px; }
+  .ft-chip{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; border-radius:999px; padding:3px 10px; }
+  .ft-x{ border:none !important; background:none !important; box-shadow:none !important; font-size:15px; line-height:1; padding:0 0 0 4px !important; color:inherit; opacity:.6; cursor:pointer; }
+  .ft-noteadd{ display:flex; gap:6px; }
+  .ft-noteadd input{ flex:1; min-width:0; height:40px; border:1px solid #D9C3A5; border-radius:11px; padding:0 10px; font-family:'Inter',sans-serif; font-size:15px; background:#FFFDF8; color:#222; }
+  .ft-noteadd-btn{ flex:none; padding:0 14px !important; border-radius:11px !important; font-weight:700; }
+  .ft-note{ font-size:13.5px; color:var(--ink); padding:7px 0; border-bottom:1px dashed #E3CFB2; }
+  .ft-note:last-of-type{ border-bottom:none; }
+  .ft-note-d{ font-weight:700; color:#8A5A2B; font-size:12.5px; margin-right:4px; }
+  .ft-treeacts{ display:flex; gap:8px; margin-top:14px; }
+  .ft-treeacts button{ flex:1; height:38px; border-radius:11px !important; font-size:13.5px; font-weight:600; }
+  .ft-locked{ margin-top:14px; font-size:12.5px; color:var(--ink-soft); }
+  /* Fruit Trees: Fertilizer / Pest control buttons inside a tree card */
+  .ft-care{ margin-top:14px; }
+  .ft-carepanel{ margin-top:8px; background:#FFFDF8; border:1px solid var(--line); border-radius:12px; padding:8px 10px; }
+  .ft-carelog{ display:block; width:100%; margin-top:8px; height:38px; border-radius:11px !important; font-size:13.5px; font-weight:700; }
+  /* Fruit Trees: kinds with several trees group under one button */
+  .ft-group{ margin-bottom:7px; }
+  .ft-ghead{ display:flex !important; align-items:center; gap:9px; width:100%; min-height:50px; padding:6px 12px !important; border-radius:14px !important; text-align:left;
+    background:linear-gradient(180deg,#FCFAF4 0%,#F6F0E2 48%,#EFE6D2 100%) !important; border:1px solid #DCCFB4 !important;
+    box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(90,70,110,.07) !important; }
+  .ft-ghead.open{ box-shadow:inset 0 0 0 2px #A8916A, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .ft-gcount{ flex:none; font-family:'Inter',sans-serif; font-size:12px; font-weight:700; color:#7A6440; background:rgba(255,255,255,.7); border:1px solid #DCCFB4; border-radius:999px; padding:2px 9px; }
+  .ft-gbody{ margin:7px 0 0 14px; padding-left:10px; border-left:3px solid #E3D6C0; }
+  .ft-name small{ display:block; font-size:12px; font-weight:500; color:var(--ink-soft); }
+  .ft-cmp{ background:#FFFDF8; border:1px solid var(--line); border-radius:12px; padding:9px 10px; margin-bottom:8px; font-family:'Inter',sans-serif; }
+  .ft-cmp-t{ font-weight:700; font-size:13px; color:#5B4A2E; margin-bottom:6px; }
+  .ft-cmp-grid{ display:grid; grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr)); gap:4px 6px; font-size:12.5px; align-items:center; }
+  .ft-cmp-grid .h{ font-weight:700; color:var(--ink-soft); font-size:12px; }
+  .ft-cmp-grid .v{ font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ft-cmp-empty{ font-size:12.5px; font-style:italic; color:var(--ink-soft); margin-bottom:8px; }
+  /* Garden Beds: six buttons, 3 per row, all the same size; Save is last */
+  #tab-beds .bg-grid6{ display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)) !important; gap:8px !important; margin:12px 0 8px !important; }
+  #tab-beds .bg-grid6 > button{ width:auto !important; min-width:0 !important; min-height:62px !important; margin:0 !important; padding:6px 7px !important; display:flex !important; align-items:center !important; gap:6px !important; text-align:left; }
+  #tab-beds .bg-grid6 .gb-ic{ width:30px !important; height:30px !important; font-size:18px !important; border-radius:10px !important; }
+  #tab-beds .bg-grid6 .gb-tx{ font-size:12.5px !important; line-height:1.2; }
+  #tab-beds .bg-grid6 .bgsz-now, #tab-beds .bg-grid6 .bgsz-car{ display:none !important; }
+  #tab-beds .bg-grid6 > button[aria-expanded="true"]{ box-shadow:inset 0 0 0 2px rgba(60,60,80,.45), 0 2px 8px rgba(0,0,0,.12) !important; }
+  /* The boxes below now only hold the panels: no gap when closed */
+  #tab-beds #bgSumBox:not(.open), #tab-beds #bgSize:not(.open), #tab-beds #bgNew:not(.open){ margin:0 !important; }
+  #tab-beds #bgSumBox.open .bgsz-body, #tab-beds #bgSize.open .bgsz-body, #tab-beds #bgNew.open .bgsz-body{ margin-top:4px !important; }
+  /* Fruit Trees: fruit color */
+  .ft-colors{ display:flex; flex-wrap:wrap; gap:6px; }
+  .ft-color{ display:inline-flex !important; align-items:center; gap:6px; padding:6px 11px !important; border-radius:999px !important; font-size:13px !important; font-weight:600; background:#fff !important; border:1px solid #E3D6C4 !important; color:var(--ink) !important; box-shadow:none !important; }
+  .ft-color.on{ background:#F4EFE6 !important; border-color:#8A5A2B !important; box-shadow:inset 0 0 0 1.5px #8A5A2B !important; }
+  .ft-color:disabled{ opacity:.6; }
+  .ft-dot{ display:inline-block; width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,.18); vertical-align:middle; flex:none; }
+  .ft-dots{ display:inline-flex; gap:3px; vertical-align:middle; margin-left:4px; }
+  .ft-dots .ft-dot{ width:10px; height:10px; }
+  .ft-cmp-grid .v .ft-dot{ width:9px; height:9px; margin-right:4px; }
+  /* Fruit Trees: climate needs */
+  .ft-clim{ background:#F3F8FC; border:1px solid #C9DCEB; border-radius:12px; padding:9px 11px; margin:10px 0 8px; font-family:'Inter',sans-serif; }
+  .ft-clim-t{ font-weight:700; font-size:13.5px; color:#2F5E8A; margin-bottom:4px; }
+  .ft-clim-row{ display:grid; grid-template-columns:118px minmax(0,1fr); gap:8px; padding:5px 0; border-top:1px dashed #D6E3EE; font-size:12.5px; line-height:1.4; }
+  .ft-clim-row span{ color:#4D6A85; font-weight:600; }
+  .ft-clim-row b{ font-weight:600; color:var(--ink); }
+  .ft-clim-cold b{ color:#9E2B25; }
+  .ft-clim-src{ font-size:11px; font-style:italic; color:var(--ink-soft); margin-top:5px; }
+  .ft-clim-none{ font-size:12.5px; color:var(--ink-soft); font-style:italic; }
+  /* Crop window: notes that sit at the very top (e.g. a first-time crop) */
+  .plant-topnote{ margin:4px 0 12px; padding:10px 12px; border-radius:12px; background:#F1F8EA; border:1px solid #C9DDB8; font-family:'Inter',sans-serif; font-size:13.5px; line-height:1.6; color:var(--ink); }
+  .plant-topnote b{ color:#3E6B2F; }
+  .harvest-month-card .hm-deco .hm-svg{ display:inline-flex; width:1.05em; height:1.05em; }
+  .harvest-month-card .hm-deco .hm-svg svg{ width:100%; height:100%; }
+  .harvest-month-card > .month-toggle .legend-title{ white-space:nowrap !important; flex:none !important; }
+  .harvest-month-card .hm-deco{ flex:0 1 auto !important; min-width:0; overflow:hidden; justify-content:flex-end; }
+  .harvest-month-card .hm-deco > span{ margin-left:-4px !important; }
 </style>
 </head>
 <body>
@@ -3751,19 +3875,18 @@
       <div class="sub">Every planned task, month by month</div>
       <div id="monthDropdowns"></div>
       <div class="legend-card home-tabs-card" style="margin-top:22px;">
+        <!-- Order: Plan · Every day · Seeds · Plant care · Look back -->
         <div class="home-tabs-row">
           <button type="button" class="home-tab-btn tab-almanac" data-hometab="almanac"><span class="home-tab-icon">🍅</span><span>Choose Your Almanac</span></button>
           <button type="button" class="home-tab-btn tab-calendar sky" id="calendarBtn"><span class="home-tab-icon">🌙</span><span>Biodynamic Calendar</span><i class="sky-deco" aria-hidden="true"><b style="right:10px;top:5px;font-size:9px">✨</b><b style="right:26px;bottom:6px;font-size:8px">⭐</b><b style="right:8px;bottom:5px;font-size:12px">🪐</b><b style="left:52%;top:3px;font-size:7px">⭐</b><b style="left:47%;bottom:3px;font-size:9px;transform:rotate(10deg)">☄️</b></i></button>
           <button type="button" class="home-tab-btn tab-journal" data-hometab="journal"><span class="home-tab-icon">📖</span><span>Daily Journal</span></button>
-          <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
-          <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
-          <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
-        </div>
-        <div class="home-tabs-row" style="margin-top:8px;">
-          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Log</span></button>
           <button type="button" class="home-tab-btn tab-rain" data-hometab="rain"><span class="home-tab-icon">💧</span><span>Rain Log</span></button>
+          <button type="button" class="home-tab-btn tab-germtemp" data-hometab="germtemp"><span class="home-tab-icon">🌡️</span><span>Germination Log</span></button>
+          <button type="button" class="home-tab-btn tab-germination" data-hometab="germination"><span class="home-tab-icon">🌱</span><span>Germination Report</span></button>
           <button type="button" class="home-tab-btn tab-fert" data-hometab="fert"><span class="home-tab-icon">🧪</span><span>Fertilizer Log</span></button>
           <button type="button" class="home-tab-btn tab-opc" data-hometab="opc"><span class="home-tab-icon">🐞</span><span>Organic Pest Control Log</span></button>
+          <button type="button" class="home-tab-btn tab-compare" id="compareBtn"><span class="home-tab-icon">🍆</span><span>Compare Seasons</span></button>
+          <button type="button" class="home-tab-btn tab-reorder" data-hometab="reorder"><span class="home-tab-icon">🛒</span><span>Seeds to Reorder</span></button>
         </div>
         <div id="almanacBody" class="home-tab-body" style="display:none;">
           <div id="seasonButtons">
@@ -3852,7 +3975,7 @@
             <label>Date<input type="date" id="fertDate"></label>
             <label>Crops or beds<input type="text" id="fertCrop" list="fertCropList" placeholder="Add a crop" autocomplete="off"></label>
             <datalist id="fertCropList"></datalist>
-            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you fed — pick from the list or type one and press Enter. Each gets its own entry.</div><div id="fertCrops" class="fert-crops"></div></div>
+            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you fed — pick from the list or type one and press Enter. Each gets its own entry.</div><button type="button" class="fert-allbeds" id="fertAllBeds">🪴 Add Beds 1, 2, 3 &amp; 4</button><div id="fertCrops" class="fert-crops"></div></div>
             <label class="fert-wide">Product<input type="text" id="fertProduct" placeholder="e.g. Espoma Tomato-tone" autocomplete="off"></label>
             <label>N-P-K<input type="text" id="fertNpk" placeholder="e.g. 3-4-6" autocomplete="off"></label>
             <label>Amount<input type="text" id="fertAmount" placeholder="e.g. 2 tbsp/plant" autocomplete="off"></label>
@@ -3879,7 +4002,7 @@
             <label>Date<input type="date" id="opcDate"></label>
             <label>Crops or beds<input type="text" id="opcCrop" list="opcCropList" placeholder="Add a crop" autocomplete="off"></label>
             <datalist id="opcCropList"></datalist>
-            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you treated — pick from the list or type one and press Enter. Each gets its own entry.</div><div id="opcCrops" class="fert-crops"></div></div>
+            <div class="fert-wide"><div class="fert-crop-hint">Add as many crops as you treated — pick from the list or type one and press Enter. Each gets its own entry.</div><button type="button" class="fert-allbeds" id="opcAllBeds">🪴 Add Beds 1, 2, 3 &amp; 4</button><div id="opcCrops" class="fert-crops"></div></div>
             <label>Treatment<select id="opcType">
               <option value="Neem oil">Neem oil</option>
               <option value="Bt (Bacillus thuringiensis)">Bt (Bacillus thuringiensis)</option>
@@ -3992,6 +4115,24 @@
       <div class="grid" id="grid-coverCrops"></div>
     </section>
 
+    <section class="tab-panel" id="tab-fruitTrees">
+      <h2 class="section-title">Fruit Trees</h2>
+      <div class="sub">Every fruit tree in the yard — when it flowers, sets fruit and ripens. Trees of the same kind (all your mangoes) group together, one card per variety.</div>
+      <div class="legend-card ft-formcard">
+        <div class="fert-form">
+          <label>Tree<input type="text" id="ftName" list="ftNameList" placeholder="e.g. Mango" autocomplete="off"></label>
+          <label>Variety<input type="text" id="ftVariety" list="ftVarList" placeholder="e.g. Kent" autocomplete="off"></label>
+          <datalist id="ftVarList"></datalist>
+          <datalist id="ftNameList"></datalist>
+          <label>Where<input type="text" id="ftWhere" placeholder="e.g. by the well" autocomplete="off"></label>
+          <label>Planted<input type="date" id="ftDate"></label>
+          <label class="fert-wide">Notes<input type="text" id="ftNotes" placeholder="Variety, size, care…" autocomplete="off"></label>
+        </div>
+        <button type="button" class="modal-close" id="ftAddBtn">🌳 Add tree</button>
+        <button type="button" class="modal-close" id="ftCancelBtn" style="display:none; background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Cancel edit</button>
+      </div>
+      <div id="ftList" class="ft-list"></div>
+    </section>
     <section class="tab-panel" id="tab-beds">
       <div class="bg-box">
         <div class="bg-head"><h2 class="bg-h">Garden Beds</h2><span class="bg-size">4 beds · 4′ × 44′</span><span id="bgSeasonLabel" hidden></span>
@@ -4006,15 +4147,21 @@
       <div class="bg-scroll" id="bgScroll" style="--bgc:26px;"><div class="bg-stage" id="bgStage"><div class="bg-topband" id="bgTopband"></div><div class="bg-inner" id="bgInner"></div></div>
 </div>
       <div class="bg-zoomctl" id="bgZoomCtl"><button type="button" id="bgZoomOut" aria-label="Zoom out">−</button><span id="bgZoomVal">100%</span><button type="button" id="bgZoomIn" aria-label="Zoom in">+</button></div>
-      <div id="bgSummary" class="bg-summary-under"></div>
-      <div class="bg-actions">
+      <!-- Garden Beds buttons: 3 per row, Save last. Their panels open full width below. -->
+      <div class="bg-actions bg-grid6">
+        <button type="button" class="bgsz-head" id="bgSumHead" aria-expanded="false"><span class="gb-ic">📋</span><span class="gb-tx">What's in Each Bed</span><span class="bgsz-now" id="bgSumNow"></span></button>
         <button type="button" class="bg-act bg-act-all" id="bgAllBtn"><span class="gb-ic">🖼️</span><span class="gb-tx">See all 4 beds</span></button>
-        <button type="button" class="bg-act bg-act-save" id="bgSaveBtn" aria-label="Save garden" title="Save garden"><span class="gb-ic">💾</span><span class="gb-tx">Save</span></button>
         <button type="button" class="bg-act bg-act-log" id="bgLogBtn" aria-expanded="false"><span class="gb-ic">📒</span><span class="gb-tx">My Garden’s Log <i id="bgLogCount"></i></span></button>
+        <button type="button" class="bgsz-head" id="bgSizeHead" aria-expanded="false"><span class="gb-ic">📐</span><span class="gb-tx">My Bed Setup</span><span class="bgsz-now" id="bgSizeNow"></span></button>
+        <button type="button" class="bgsz-head bgng-head" id="bgNewHead" aria-expanded="false"><span class="gb-ic">🌱</span><span class="gb-tx">Add a New Garden</span></button>
+        <button type="button" class="bg-act bg-act-save" id="bgSaveBtn" aria-label="Save garden" title="Save garden"><span class="gb-ic">💾</span><span class="gb-tx">Save</span></button>
+      </div>
+      <div class="bgsz bgsum-box" id="bgSumBox">
+        <div class="bgsz-body"><div id="bgSummary" class="bg-summary-under"></div></div>
       </div>
       <div id="bgSaves" class="bg-saves" hidden></div>
       <div class="bgsz" id="bgSize">
-        <button type="button" class="bgsz-head" id="bgSizeHead" aria-expanded="false"><span class="gb-ic">📐</span><span class="gb-tx">My Bed Setup</span><span class="bgsz-now" id="bgSizeNow"></span></button>
+        
         <div class="bgsz-body">
           <div class="bgsz-row"><div class="bgsz-lbl">Garden name</div><input type="text" class="bgsz-name" id="bgSzName" maxlength="30" placeholder="Main Garden"></div>
           <div class="bgsz-row"><div class="bgsz-lbl">Number of beds</div><div class="bgsz-sp"><button type="button" data-sz="b" data-d="-1" aria-label="Fewer beds">−</button><span id="bgSzB"></span><button type="button" data-sz="b" data-d="1" aria-label="More beds">+</button></div></div>
@@ -4029,7 +4176,7 @@
       </div>
             <button type="button" class="bgsz-del" id="bgSzDel" hidden>🗑️ Delete this garden</button>
       <div class="bgsz bgng" id="bgNew">
-        <button type="button" class="bgsz-head bgng-head" id="bgNewHead" aria-expanded="false"><span class="gb-ic">🌱</span><span class="gb-tx">Add a New Garden</span></button>
+        
         <div class="bgsz-body">
           <div class="bgsz-row"><div class="bgsz-lbl">Garden name</div><input type="text" class="bgsz-name" id="bgNgName" maxlength="30" placeholder="Garden 2"></div>
           <div class="bgsz-row"><div class="bgsz-lbl">Number of beds</div><div class="bgsz-sp"><button type="button" data-ng="b" data-d="-1" aria-label="Fewer beds">−</button><span id="bgNgB"></span><button type="button" data-ng="b" data-d="1" aria-label="More beds">+</button></div></div>
@@ -4258,7 +4405,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.29-184</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.30-198</div>
   </main>
 
   <nav class="tabbar">
@@ -4281,6 +4428,10 @@
     <button class="tabbtn tab-cover" data-tab="coverCrops">
       <span class="tabbtn-icon" style="background:#F5E6C8">🌱</span>
       <span class="tabbtn-2line">Cover<br>Crop</span>
+    </button>
+    <button class="tabbtn tab-trees" data-tab="fruitTrees">
+      <span class="tabbtn-icon" style="background:#DCEFD0">🌳</span>
+      <span class="tabbtn-2line">Fruit<br>Trees</span>
     </button>
     <button class="tabbtn tab-beds" data-tab="beds">
       <span class="tabbtn-icon" style="background:#F1E6D6"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="transform:rotate(90deg)"><rect x="2" y="1.6" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="2.5" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="6.9" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="7.800000000000001" width="17.6" height="2.4" rx="1" fill="#6FAF56"/><rect x="2" y="12.2" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="13.1" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="17.5" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="18.4" width="17.6" height="2.4" rx="1" fill="#6FAF56"/></svg></span>
@@ -4433,6 +4584,8 @@
       <input type="text" id="addCropNameInput" placeholder="Crop name, e.g. Roma Tomatoes" autocomplete="off">
       <div id="addCropStatus" class="backup-status"></div>
     </div>
+    <button type="button" class="suggest-btn" id="addCropSuggestBtn">💡 Suggest start dates &amp; temperature</button>
+    <div id="addCropSuggest" class="crop-suggest" style="display:none;"></div>
     <button class="modal-close" id="addCropSaveBtn">Add to garden</button>
     <button class="modal-close" id="addCropCancelBtn" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Cancel</button>
   </div>
@@ -5051,7 +5204,7 @@ const CROP_EMOJI = {
   lettuce:"🥬", kale:"🥬", collards:"🥬", kalethousandheads:"🥬", treecollards:"🥬",
   radishes:"🔴", beets:"🔴", carrots:"🥕", turnips:"🥕", fennel:"🌿", garlic:"🧄",
   onionslips:"🧅", strawberries:"🍓", muskmelon:"🍈", watermelon:"🍉",
-  longbeans:"🫘", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
+  longbeans:"🫘", wingedbeans:"🫛", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
   basil:"🌿", parsley:"🌿", dill:"🌿", cilantro:"🌿",
   nasturtium:"🌼", roselle:"🌺", zinnia:"🏵️", cosmos:"🌸", marigold:"🌻"
@@ -5196,6 +5349,13 @@ const SEASONS = {
       dates:[[{a:"Start seeds", m:1, d:23, m2:1, d2:25},{a:"Transplant", m:3, d:1, m2:3, d2:2}]]},
     {slug:"longbeans", name:"Beans Red Noodle Long", shape:"oval", color:C.magenta,
       dates:[[{a:"Start (direct)", m:2, d:12, m2:2, d2:13}]]},
+    {slug:"wingedbeans", name:"Beans Winged", shape:"oval", color:C.greenMed,
+      dates:[[{a:"Start (direct)", m:4, d:15, m2:4, d2:17}]],
+      topNote:`<b>🆕 First time growing winged beans</b> (<i>Psophocarpus tetragonolobus</i> — a legume, same bean family as your other beans).<br>
+      🌱 <b>Mid-April:</b> direct sow — they grow best planted straight in the bed. Soil warm, ideally <b>75–85°F</b>.<br>
+      🌿 <b>April – July:</b> vines grow fast in Florida's warm weather — give them a tall, sturdy trellis.<br>
+      🌸 <b>August – September:</b> shorter days trigger flowering.<br>
+      🫛 <b>September – November:</b> pick the pods young and tender, until cold weather slows production.`},
     {slug:"nigerianspinach", name:"Nigerian spinach", shape:"leaf", color:C.greenDark,
       dates:[[{a:"Start seeds", m:2, d:9, m2:2, d2:12}]]},
     {slug:"sweetpotatoslips", name:"Sweet Potatoes", shape:"bulb", color:C.orangeLight,
@@ -5279,6 +5439,10 @@ function slugifyCropName(name){
 // changes elsewhere. Safe to call repeatedly — already-merged slugs skip.
 // Also drops anything the user has deleted, built-in or custom.
 async function loadAllCustomCrops(){
+  // Peanuts fix runs once (remembered in the synced data), so deleting
+  // Peanuts again later on purpose sticks on every device.
+  let peanutsFixDone = false;
+  try{ peanutsFixDone = !!(await window.storage.get("fix:peanutsRestored1", false)); }catch(e){}
   // One-time fix: "tomatoes" was accidentally deleted via the crop delete
   // button. Un-delete it everywhere it was removed from. Harmless to run
   // repeatedly — it's a no-op once tomatoes is no longer in the list.
@@ -5288,8 +5452,14 @@ async function loadAllCustomCrops(){
       if(deleted.includes("tomatoes")){
         await setDeletedCrops(season, sectionKey, deleted.filter(s => s !== "tomatoes"));
       }
+      // Same one-time fix for Peanuts on the Cover Crop tab (Oct 30, 2026).
+      if(sectionKey === "coverCrops" && !peanutsFixDone){
+        const d2 = await getDeletedCrops(season, sectionKey);
+        if(d2.includes("peanuts")) await setDeletedCrops(season, sectionKey, d2.filter(s => s !== "peanuts"));
+      }
     }
   }
+  if(!peanutsFixDone){ try{ await window.storage.set("fix:peanutsRestored1", "1", false); }catch(e){} }
   for(const season of Object.keys(SEASONS)){
     for(const sectionKey of SECTION_KEYS){
       const custom = await getCustomCrops(season, sectionKey);
@@ -5308,10 +5478,32 @@ async function loadAllCustomCrops(){
     }
   }
 }
-async function addCustomCrop(sectionKey, name){
+/* Fruiting log: "already logged" pop-up so the same variety + stage
+   doesn't get entered twice by mistake. Resolves true = add anyway. */
+function fruitDupAsk(html, sameDay){
+  return new Promise(resolve => {
+    let bd = document.getElementById("fruitDupBackdrop");
+    if(!bd){
+      bd = document.createElement("div");
+      bd.id = "fruitDupBackdrop"; bd.className = "modal-backdrop";
+      bd.innerHTML = `<div class="modal fdup-modal"><h3>Already logged</h3><div id="fruitDupText" class="fdup-text"></div>
+        <button type="button" class="modal-close" id="fruitDupNo">Don't add</button>
+        <button type="button" class="modal-close" id="fruitDupYes" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Add it again</button></div>`;
+      document.body.appendChild(bd);
+    }
+    document.getElementById("fruitDupText").innerHTML = html;
+    document.getElementById("fruitDupYes").textContent = sameDay ? "Add it anyway" : "Add it again";
+    const done = v => { bd.classList.remove("show"); bd.onclick = null; resolve(v); };
+    document.getElementById("fruitDupNo").onclick = () => done(false);
+    document.getElementById("fruitDupYes").onclick = () => done(true);
+    bd.onclick = e => { if(e.target === bd) done(false); };
+    bd.classList.add("show");
+  });
+}
+async function addCustomCrop(sectionKey, name, dates){
   const slug = slugifyCropName(name);
   const defaults = CUSTOM_CROP_DEFAULTS[sectionKey] || CUSTOM_CROP_DEFAULTS.vegetables;
-  const crop = { slug, name: name.trim(), shape: defaults.shape, color: defaults.color, dates: [] };
+  const crop = { slug, name: name.trim(), shape: defaults.shape, color: defaults.color, dates: Array.isArray(dates) ? dates : [] };
   SEASONS[activeSeason].data[sectionKey].push(crop);
   const existing = await getCustomCrops(activeSeason, sectionKey);
   existing.push(crop);
@@ -5663,7 +5855,7 @@ function fmtGermDay(iso){
   const q = String(iso).split("-").map(Number);
   return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][q[1]-1] + " " + q[2];
 }
-const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "beets", "carrots", "turnips", "fennel", "longbeans"];
+const DIRECT_SOW_CROPS = ["bushbeans", "snappeas", "lettuce", "rattlesnake", "radishes", "beets", "carrots", "turnips", "fennel", "longbeans", "wingedbeans"];
 // Crops whose card has the "Germinated — days to germinate" section: every
 // direct-sown crop, plus squash, cucumbers and melons (often started in pots).
 const GERM_TRACKED_CROPS = DIRECT_SOW_CROPS.concat(["squash", "cucumbers", "watermelon", "muskmelon"]);
@@ -6267,21 +6459,57 @@ function hpLinkFor(entry, sowings){
   return { sow: hpGuess(entry.fruit, entry.date, sowings), guessed: true };
 }
 
-/* Harvest log month rows: a little scattered cluster of fruits (Fruits log)
-   or vegetables (Vegetables log) along the right side of each button.
-   Picked from the month key so each month keeps the same cluster. */
-function harvestMonthDeco(kind, key){
-  const pool = kind === "vegetable"
-    ? ["🥕","🍅","🥦","🫑","🌽","🥒","🍆","🧅","🧄","🥬","🫛","🥔","🌶️","🍠"]
-    : ["🍓","🥭","🍊","🍋","🍌","🍑","🍒","🍍","🥝","🫐","🍇","🍉","🍎","🍐","🥑","🍈"];
+/* Harvest log month rows: the icons of what was actually harvested that
+   month (most-picked first, bigger), along the right side of the button.
+   Fruits without an emoji (fig, loquat, mulberry, persimmon) get a small
+   drawing. */
+const HARVEST_SVG = {
+  fig:'<svg viewBox="0 0 20 20"><path d="M10 3.4c1 0 1.3 1.5 1.4 2.4 2.8 1.2 4.6 3.9 4.6 6.8A6 6 0 0 1 4 12.6c0-2.9 1.8-5.6 4.6-6.8.1-.9.4-2.4 1.4-2.4z" fill="#6E2F72"/><path d="M10 3.6c.3-1 1-1.7 1.8-1.9" stroke="#5B8A2E" stroke-width="1.3" fill="none" stroke-linecap="round"/><ellipse cx="7.4" cy="10.6" rx="1.3" ry="2.3" fill="#fff" opacity=".28"/></svg>',
+  loquat:'<svg viewBox="0 0 20 20"><path d="M11 3.5c3-1.8 6-.6 7 1.2-2.6 1.2-5 1-7-1.2z" fill="#5B8A2E"/><ellipse cx="7.3" cy="11.5" rx="4" ry="4.6" fill="#F4A62A"/><ellipse cx="13" cy="12.6" rx="3.6" ry="4.2" fill="#F7B840"/><path d="M10 6.5 11 3.5" stroke="#7A5A2E" stroke-width="1" /><ellipse cx="6" cy="10" rx="1" ry="1.6" fill="#fff" opacity=".35"/></svg>',
+  mulberry:'<svg viewBox="0 0 20 20"><path d="M10 3.2v2.4" stroke="#5B8A2E" stroke-width="1.4" stroke-linecap="round"/>' + [[8.2,7],[11.8,7],[10,8.4],[7.4,10],[12.6,10],[10,11.4],[8.2,13],[11.8,13],[10,14.6],[9,16.4],[11,16.4]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="2.1" fill="#3B1240"/><circle cx="${x - .6}" cy="${y - .6}" r=".6" fill="#fff" opacity=".35"/>`).join("") + '</svg>',
+  persimmon:'<svg viewBox="0 0 20 20"><ellipse cx="10" cy="11.6" rx="7.2" ry="6.2" fill="#F07A1E"/><path d="M10 6.2 6.2 4.6l1.8 2.6-3 .6 3.6 1.2L10 8l1.4 1 3.6-1.2-3-.6 1.8-2.6z" fill="#4E7F2E"/><ellipse cx="7" cy="11" rx="1.6" ry="2.4" fill="#fff" opacity=".25"/></svg>'
+};
+const HARVEST_ICON_WORDS = [
+  [/starfruit|star fruit|carambola/, "svg:starfruit"], [/\bfig/, "svg:fig"], [/loquat/, "svg:loquat"], [/mulberr/, "svg:mulberry"], [/persimmon/, "svg:persimmon"],
+  [/avocado/, "🥑"], [/banana|plantain/, "🍌"], [/mango/, "🥭"], [/papaya/, "🥭"], [/pineapple/, "🍍"], [/coconut/, "🥥"],
+  [/lemon|lime/, "🍋"], [/orange|mandarin|tangerine|calamondin|calamodin|kumquat|satsuma|grapefruit|citrus/, "🍊"],
+  [/peach|nectarine|plum|apricot/, "🍑"], [/cherr/, "🍒"], [/strawberr/, "🍓"], [/blueberr|jaboticaba|blackberr|raspberr|berr/, "🫐"],
+  [/grape/, "🍇"], [/watermelon/, "🍉"], [/melon|cantaloupe/, "🍈"], [/kiwi/, "🥝"], [/pear|guava/, "🍐"], [/apple/, "🍎"], [/olive/, "🫒"],
+  [/pomegranate|lychee|litchi/, "🍒"]
+];
+function harvestIcon(name, kind){
+  const n = String(name || "").toLowerCase();
+  const hit = HARVEST_ICON_WORDS.find(([re]) => re.test(n));
+  let ic = hit ? hit[1] : null;
+  if(!ic && typeof bgGuessEmoji === "function"){ try{ ic = bgGuessEmoji(name); }catch(e){} }
+  if(!ic) ic = kind === "vegetable" ? "🥕" : "🍓";
+  if(String(ic).startsWith("svg:")){
+    const k = ic.slice(4);
+    const svg = HARVEST_SVG[k] || (typeof MONTH_SVG !== "undefined" && MONTH_SVG[k]) || (typeof BG_SVG !== "undefined" && BG_SVG[k]);
+    return svg ? `<span class="hm-svg">${svg}</span>` : (kind === "vegetable" ? "🥕" : "🍓");
+  }
+  return ic;
+}
+function harvestMonthDeco(kind, key, entries){
+  // Count each different icon (two kinds of orange share one 🍊).
+  const counts = new Map();
+  (entries || []).forEach(e => {
+    const nm = e && (e.fruit || e.vegetable || e.name); if(!nm) return;
+    const ic = harvestIcon(nm, kind);
+    counts.set(ic, (counts.get(ic) || 0) + 1);
+  });
+  const picks = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if(!picks.length) return `<span class="hm-deco" aria-hidden="true"></span>`;
   let h = 2166136261;
   for(const c of String(kind) + ":" + String(key)){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
   const rnd = () => { h = (Math.imul(h ^ (h >>> 15), 2246822507) + 0x9E3779B9) >>> 0; return h / 4294967296; };
-  const picks = [], left = pool.slice();
-  for(let i = 0; i < 5; i++) picks.push(left.splice(Math.floor(rnd() * left.length), 1)[0]);
-  return `<span class="hm-deco" aria-hidden="true">${picks.map(e => {
-    const size = Math.round(14 + rnd() * 11), rot = Math.round(-22 + rnd() * 44), dy = Math.round(-6 + rnd() * 12);
-    return `<span style="font-size:${size}px;transform:translateY(${dy}px) rotate(${rot}deg)">${e}</span>`;
+  const max = picks[0][1];
+  // Shuffle the order a little so it looks scattered, not ranked.
+  const shown = picks.map((p, i) => ({ ic: p[0], n: p[1], r: rnd() })).sort((a, b) => a.r - b.r);
+  return `<span class="hm-deco" aria-hidden="true">${shown.map(x => {
+    const size = Math.round(14 + 8 * (max > 1 ? (x.n - 1) / (max - 1) : 1) + rnd() * 2);
+    const rot = Math.round(-20 + rnd() * 40), dy = Math.round(-5 + rnd() * 10);
+    return `<span style="font-size:${size}px;transform:translateY(${dy}px) rotate(${rot}deg)">${x.ic}</span>`;
   }).join("")}</span>`;
 }
 async function wireHarvestSection(kind, ids){
@@ -6533,7 +6761,7 @@ async function wireHarvestSection(kind, ids){
         <div class="legend-card month-card harvest-month-card">
           <button type="button" class="rain-toggle month-toggle${isOpen ? " open" : ""}" data-body="${bodyId}" data-key="${g.key}">
             <span class="legend-title" style="margin-bottom:0;">${g.label}</span>
-            ${harvestMonthDeco(kind, g.key)}
+            ${harvestMonthDeco(kind, g.key, g.entries)}
             <b class="hm-count">${g.entries.length}</b>
           </button>
           <div id="${bodyId}" style="display:${isOpen ? "block" : "none"}; margin-top:8px;">
@@ -7523,6 +7751,7 @@ async function renderFertilizerLog(){
     const names = new Set();
     const data = DATA_now();
     Object.keys(data || {}).forEach(k => (Array.isArray(data[k]) ? data[k] : []).forEach(p => p && p.name && names.add(p.name)));
+    (window.__fruitTreeNames || []).forEach(n => names.add(n));
     dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">` + [1,2,3,4].map(n => `<option value="Bed ${n}">`).join("");
   }
   const d = document.getElementById("fertDate");
@@ -7747,6 +7976,7 @@ async function renderOpcLog(){
     const names = new Set();
     const data = DATA_now();
     Object.keys(data || {}).forEach(k => (Array.isArray(data[k]) ? data[k] : []).forEach(p => p && p.name && names.add(p.name)));
+    (window.__fruitTreeNames || []).forEach(n => names.add(n));
     dl.innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("") + `<option value="Whole garden">` + [1,2,3,4].map(n => `<option value="Bed ${n}">`).join("");
   }
   const d = document.getElementById("opcDate");
@@ -7851,6 +8081,11 @@ async function renderOpcLog(){
     refreshCropCardsForFert();
   }));
 }
+
+// "Add Beds 1, 2, 3 & 4" — one tap puts all four beds in the list,
+// each still saved as its own entry like any other crop or bed.
+document.getElementById("fertAllBeds")?.addEventListener("click", () => { [1,2,3,4].forEach(n => addFertCrop(`Bed ${n}`)); });
+document.getElementById("opcAllBeds")?.addEventListener("click", () => { [1,2,3,4].forEach(n => addOpcCrop(`Bed ${n}`)); });
 document.getElementById("opcAddBtn").addEventListener("click", async () => {
   const val = id => document.getElementById(id).value.trim();
   if(val("opcCrop")){ addOpcCrop(val("opcCrop")); document.getElementById("opcCrop").value = ""; }
@@ -8671,6 +8906,7 @@ async function renderGrid(sectionKey, containerId){
       </div>
       <div id="card-body-${p.slug}" class="card-body${isPastSeason ? "" : " has-critter"}" style="display:none;">
       ${isPastSeason ? "" : `<button type="button" class="bug-critter" id="bug-btn-${p.slug}" title="Found a bug on ${p.name}? Tap me" aria-label="Bug Alert for ${p.name}">${bugIcon}${cropBugs.length ? `<span class="bug-btn-count">${cropBugs.length}</span>` : ""}</button>`}
+      ${p.topNote ? `<div class="plant-topnote">${p.topNote}</div>` : ""}
       ${germTempHTML}
       ${p.slug === "leafygreens" ? (() => {
         const lettuceCrop = DATA_now().vegetables.find(c => c.slug === "lettuce");
@@ -10336,6 +10572,20 @@ async function renderGrid(sectionKey, containerId){
           if(READ_ONLY) return;
           if(!fSel.value){ showUndoToast("Pick a variety first.", null, "OK"); return; }
           if(!fDate.value){ showUndoToast("Pick the date.", null, "OK"); return; }
+          // Already logged this variety at this stage? Ask before adding it again.
+          const vKey = fKeyOf(fSel.value);
+          const prior = fLog.filter(e => fKeyOf(e.variety) === vKey && e.stage === fStage).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+          if(prior.length){
+            const last = prior[0], ago = fDays(last.date, fDate.value);
+            const stageWord = fStage === "ripe" ? "ripe" : "green";
+            const sameDay = prior.some(e => e.date === fDate.value);
+            const when = sameDay ? `on <b>${fFmt(fDate.value)}</b> — the same day you picked`
+              : ago > 0 ? `on <b>${fFmt(last.date)}</b> (${ago === 1 ? "1 day" : ago < 14 ? `${ago} days` : `${Math.round(ago / 7)} weeks`} ago)`
+              : `on <b>${fFmt(last.date)}</b>`;
+            const others = prior.length > 1 ? `<div class="fdup-more">Logged ${stageWord} ${prior.length} times: ${prior.map(e => fFmt(e.date)).join(", ")}</div>` : "";
+            const ok = await fruitDupAsk(`${fruitIconFor(p)} <b>${fertEsc(fSel.value)}</b> was already logged as <b>${stageWord}</b> ${when}.${others}<div class="fdup-q">Add it again for ${fFmt(fDate.value)}?</div>`, sameDay);
+            if(!ok) return;
+          }
           fLog.push({ variety: fSel.value, date: fDate.value, stage: fStage, addedAt: Date.now() });
           await fSave(); renderFruit();
           showUndoToast(`${fruitIconFor(p)} ${fSel.value}: ${fStage === "ripe" ? "ripe" : "green"} fruit on ${fFmt(fDate.value)}`, null, "OK");
@@ -10881,6 +11131,355 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     window.scrollTo(0,0);
   });
 });
+
+
+/* ---------------- Fruit Trees tab ----------------
+   One card per tree (opens like the crop cards). Inside: where it is,
+   when it was planted, a log of 🌸 Flowering / 🟢 Fruit set / 🍊 Ripe
+   dates (grouped by year), and dated notes. Kept across seasons. Every
+   entry stays editable for 48 hours, then locks like the rest of the app. */
+(function(){
+  const KEY = "fruitTrees";
+  const $ = id => document.getElementById(id);
+  const STAGES = {
+    flower:{ ic:"🌸", label:"Flowering", cls:"st-flower" },
+    set:{ ic:"🟢", label:"Fruit set", cls:"st-set" },
+    ripe:{ ic:"🍊", label:"Ripe", cls:"st-ripe" }
+  };
+  let trees = [], editingId = null;
+  const openIds = new Set(), openGroups = new Set();
+  const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
+  const save = async () => { trees.forEach(t => { delete t.__solo; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
+  const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const pd = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+  const fmt = (iso, yr) => { const d = pd(iso); return d ? d.toLocaleDateString("en-US", yr ? { month:"short", day:"numeric", year:"numeric" } : { month:"short", day:"numeric" }) : ""; };
+  const daysBetween = (a, b) => Math.round((pd(b) - pd(a)) / 86400000);
+  const age = iso => {
+    const d = pd(iso); if(!d) return ""; const now = new Date();
+    let mo = (now.getFullYear() - d.getFullYear()) * 12 + now.getMonth() - d.getMonth(); if(now.getDate() < d.getDate()) mo--;
+    if(mo < 0) return ""; if(mo < 1) return "this month"; if(mo < 24) return `${mo} mo old`;
+    return `${Math.floor(mo / 12)} yrs old`;
+  };
+  const icon = n => {
+    const t = String(n).toLowerCase();
+    const map = [["avocado","🥑"],["banana","🍌"],["mango","🥭"],["peach","🍑"],["nectarine","🍑"],["plum","🍑"],["cherry","🍒"],["apple","🍎"],["pear","🍐"],["lemon","🍋"],["lime","🍋"],["calamondin","🍊"],["calamodin","🍊"],["orange","🍊"],["tangerine","🍊"],["mandarin","🍊"],["kumquat","🍊"],["grapefruit","🍊"],["citrus","🍊"],["fig","🟣"],["mulberr","🫐"],["blueberr","🫐"],["loquat","🟠"],["papaya","🥭"],["pineapple","🍍"],["coconut","🥥"],["grape","🍇"],["olive","🫒"],["kiwi","🥝"],["pomegranate","🔴"],["persimmon","🟠"],["guava","🟢"],["starfruit","⭐"],["jaboticaba","🫐"]];
+    const hit = map.find(([k]) => t.includes(k)); return hit ? hit[1] : "🌳";
+  };
+  const locked = x => READ_ONLY || isEntryLocked(x && x.addedAt);
+  const fullName = t => t.variety ? `${t.name} ${t.variety}` : t.name;
+  // Fruit colors to pick from, by kind of tree (anything else gets the full set).
+  const FT_HEX = { Yellow:"#F4C430", Orange:"#F28C28", Red:"#D7263D", Pink:"#F48FB1", Purple:"#7B3F9E", Green:"#5BA63C", Black:"#2B2B2B", Brown:"#8A5A2B", White:"#F2EFE6" };
+  const FT_COLORS = [
+    [["mango"], ["Yellow","Red","Green","Orange","Pink","Purple"]],
+    [["avocado"], ["Green","Black"]],
+    [["banana","plantain"], ["Yellow","Green","Red","Purple"]],
+    [["fig"], ["Purple","Black","Brown","Green","Yellow"]],
+    [["mulberr"], ["Black","Purple","Red","White"]],
+    [["loquat"], ["Yellow","Orange"]],
+    [["lemon"], ["Yellow","Green"]],
+    [["lime"], ["Green","Yellow"]],
+    [["orange","tangerine","mandarin","calamondin","calamodin","kumquat","grapefruit","citrus"], ["Orange","Yellow","Red","Pink","Green"]],
+    [["peach","nectarine","plum"], ["Yellow","Orange","Red","Pink","Purple"]],
+    [["papaya"], ["Orange","Yellow","Red"]],
+    [["guava"], ["Green","Yellow","Pink","Red","White"]],
+    [["starfruit","carambola"], ["Yellow","Orange","Green"]],
+    [["persimmon"], ["Orange","Red"]],
+    [["pomegranate"], ["Red","Pink"]],
+    [["jaboticaba"], ["Purple","Black"]],
+    [["blueberr"], ["Purple","Black"]]
+  ];
+  // Climate needs by kind of tree (°F). Approximate guide values from
+  // UF/IFAS and university extension fruit fact sheets; they vary by
+  // variety, tree age, how long the cold lasts, and wind.
+  const FT_CLIMATE = [
+    [["mango"], { chill:"None needed — a cool, dry winter (nights below about 60°F) is what sets off blooming", flower:"Nights 50–60°F, days 70–80°F, dry weather", fruit:"70–90°F; pollination drops below about 55°F", cold:"Flowers and small fruit hurt below 40°F · young trees badly damaged at 30°F · mature trees damaged below 25–28°F" }],
+    [["avocado"], { chill:"None needed", flower:"Days 65–80°F; bloom sets poorly below 60°F or above 90°F", fruit:"68–85°F", cold:"Depends on type: West Indian damaged at 28–32°F · Guatemalan 26–28°F · Mexican-type hybrids (like Brogdon) 20–24°F" }],
+    [["banana","plantain"], { chill:"None needed", flower:"78–86°F", fruit:"78–86°F; growth stops below 57°F", cold:"Leaves burn at 32°F · plant dies back to the ground near 28°F (often regrows from the base)" }],
+    [["fig"], { chill:"Low — about 100–300 hours", flower:"Fruit forms on new growth from spring", fruit:"70–95°F", cold:"New growth hurt at 30°F · dormant wood takes about 15–20°F" }],
+    [["mulberr"], { chill:"Low — Florida types need little (about 0–400 hours)", flower:"Spring warm-up, 60–80°F", fruit:"65–85°F", cold:"Flowers and young fruit hurt near 28–30°F · dormant tree very hardy (below 10°F)" }],
+    [["loquat"], { chill:"None needed", flower:"Blooms fall to winter, 50–75°F", fruit:"60–80°F", cold:"Flowers lost below 28°F · ripening fruit damaged at 27–28°F · tree hardy to about 10–12°F" }],
+    [["lime"], { chill:"None needed", flower:"Spring flush after cool or dry spell", fruit:"70–90°F", cold:"Most tender citrus — damaged at 30–32°F" }],
+    [["lemon"], { chill:"None needed", flower:"Spring flush after cool weather, 60–75°F", fruit:"70–90°F", cold:"Damaged at 28–30°F (Meyer about 22–24°F)" }],
+    [["calamondin","calamodin","kumquat","satsuma","mandarin","tangerine"], { chill:"None needed — winter cool (below about 65°F) sets up the spring bloom", flower:"Days 60–75°F", fruit:"70–85°F", cold:"Fruit damaged near 26–28°F · tree hardy to about 18–22°F (kumquat about 18°F)" }],
+    [["orange","grapefruit","citrus"], { chill:"None needed — winter cool (below about 65°F) sets up the spring bloom", flower:"Days 60–75°F", fruit:"70–85°F", cold:"Fruit damaged at 28°F after a few hours · leaves and twigs at about 24–26°F" }],
+    [["peach","nectarine","plum"], { chill:"Low-chill Florida types: about 150–400 hours (below 45°F)", flower:"55–75°F", fruit:"70–85°F", cold:"Open flowers killed at 28°F · tiny fruit at 30°F · dormant tree very hardy" }],
+    [["papaya"], { chill:"None needed", flower:"70–90°F", fruit:"75–90°F; poor fruit below 60°F", cold:"Damaged at 32°F · killed below 28°F" }],
+    [["guava"], { chill:"None needed", flower:"70–90°F", fruit:"73–90°F", cold:"Young trees killed at 28–29°F · mature trees hurt at 25–27°F" }],
+    [["starfruit","carambola"], { chill:"None needed", flower:"70–90°F", fruit:"70–90°F", cold:"Young trees killed at 27°F · mature trees hurt below 27°F" }],
+    [["lychee","litchi"], { chill:"Needs about 100–200 hours below 68°F (dry, cool winter) to bloom", flower:"Cool winter, then 60–75°F", fruit:"75–90°F", cold:"Young trees damaged at 28–30°F · mature trees at 25°F" }],
+    [["longan"], { chill:"Needs a cool winter (below about 68°F) to bloom", flower:"60–75°F", fruit:"75–90°F", cold:"Young trees damaged at 28–30°F · mature trees at 25°F" }],
+    [["persimmon"], { chill:"Asian types: about 100–400 hours", flower:"Spring, 60–75°F", fruit:"65–85°F", cold:"New growth hurt at 30°F · dormant tree hardy to about 0°F" }],
+    [["pomegranate"], { chill:"Low — about 100–200 hours", flower:"70–90°F", fruit:"75–95°F (likes hot, dry summers)", cold:"Hardy to about 10–12°F when dormant" }],
+    [["jaboticaba"], { chill:"None needed", flower:"Several blooms a year after rain, 65–85°F", fruit:"70–85°F", cold:"Hurt at 26–28°F" }],
+    [["blueberr"], { chill:"Southern highbush: about 150–600 hours", flower:"55–75°F", fruit:"65–85°F", cold:"Open flowers killed at 28°F · buds hold to about 20°F" }],
+    [["olive"], { chill:"Needs about 200–400 hours below 45°F to bloom", flower:"60–75°F", fruit:"75–90°F", cold:"Hurt at 22°F" }],
+    [["sugar apple","sugarapple","atemoya","custard apple","cherimoya","soursop"], { chill:"None needed", flower:"70–85°F with humid air", fruit:"75–90°F", cold:"Sugar apple and soursop hurt at 30–32°F · atemoya about 26–28°F" }],
+    [["apple"], { chill:"Low-chill types (Anna, Dorsett Golden): about 250–400 hours", flower:"55–70°F", fruit:"65–85°F", cold:"Open flowers killed at 28°F" }],
+    [["pear"], { chill:"Low-chill types: about 350–500 hours", flower:"55–70°F", fruit:"65–85°F", cold:"Open flowers killed at 28°F" }]
+  ];
+  const climateFor = n => { const t = String(n).toLowerCase(); const hit = FT_CLIMATE.find(([ks]) => ks.some(k => t.includes(k))); return hit ? hit[1] : null; };
+  const climateHTML = n => {
+    const c = climateFor(n);
+    if(!c) return `<div class="ft-clim ft-clim-none">🌡️ No climate guide for ${fertEsc(n)} yet.</div>`;
+    return `<div class="ft-clim"><div class="ft-clim-t">🌡️ Climate needs</div>
+      <div class="ft-clim-row"><span>❄️ Chill hours</span><b>${fertEsc(c.chill)}</b></div>
+      <div class="ft-clim-row"><span>🌸 Best for flowering</span><b>${fertEsc(c.flower)}</b></div>
+      <div class="ft-clim-row"><span>🍊 Best for fruit</span><b>${fertEsc(c.fruit)}</b></div>
+      <div class="ft-clim-row ft-clim-cold"><span>🥶 Cold damage</span><b>${fertEsc(c.cold)}</b></div>
+      <div class="ft-clim-src">Approximate guide (UF/IFAS & extension fact sheets) — varies by variety, tree age and how long the cold lasts.</div></div>`;
+  };
+  const colorsFor = n => { const t = String(n).toLowerCase(); const hit = FT_COLORS.find(([ks]) => ks.some(k => t.includes(k))); return hit ? hit[1] : Object.keys(FT_HEX); };
+  const dotsHTML = t => (t.colors || []).filter(c => FT_HEX[c]).map(c => `<i class="ft-dot" style="background:${FT_HEX[c]}" title="${c}"></i>`).join("");
+  // "Starfruit Arkin" typed all in the Tree box (Variety left empty) is split
+  // into kind "Starfruit" + variety "Arkin", so trees of the same kind group
+  // together. Works when the first word(s) are a known kind of fruit tree or
+  // the kind of another tree on the list. Stray symbols ("Mango`") are tidied.
+  const FT_KINDS = ["mango","avocado","banana","plantain","fig","mulberry","loquat","lemon","lime","orange","mandarin","tangerine","satsuma","calamondin","calamodin","kumquat","grapefruit","pomelo","peach","nectarine","plum","papaya","guava","starfruit","carambola","persimmon","pomegranate","jaboticaba","blueberry","lychee","litchi","longan","olive","apple","pear","cherry","atemoya","soursop","cherimoya","sapodilla","jackfruit","macadamia","pecan","coconut","dragonfruit","passionfruit","miracle","surinam","acerola","barbados","grumichama","pitanga","sugarapple","date","feijoa","pineapple guava"];
+  const sing = w => w.replace(/(ies)$/, "y").replace(/(es|s)$/, "");
+  const cleanName = n => String(n || "").replace(/[^\p{L}\p{N})]+$/u, "").replace(/^[^\p{L}\p{N}(]+/u, "").replace(/\s+/g, " ").trim();
+  const splitKind = name => {
+    const w = cleanName(name).split(" ");
+    if(w.length < 2) return null;
+    const others = new Set(trees.map(t => kindKey(t.name)));
+    for(const n of [2, 1]){
+      if(w.length <= n) continue;
+      const head = w.slice(0, n).join(" "), k = sing(head.toLowerCase().replace(/[^a-z]/g, ""));
+      if(FT_KINDS.some(x => sing(x.replace(/[^a-z]/g, "")) === k) || others.has(kindKey(head)))
+        return { kind: head, variety: w.slice(n).join(" ") };
+    }
+    return null;
+  };
+  const tidyKind = t => {
+    t.name = cleanName(t.name) || t.name;
+    if(!t.variety){ const sp = splitKind(t.name); if(sp){ t.name = sp.kind; t.variety = sp.variety; } }
+  };
+  const kindKey = n => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "").replace(/(es|s)$/, "");
+  // Latest stage this year, shown on the closed card.
+  const statusOf = t => {
+    const yr = String(new Date().getFullYear());
+    const ev = (t.events || []).filter(e => String(e.date).startsWith(yr)).sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
+    return ev ? `${STAGES[ev.stage].ic} ${STAGES[ev.stage].label} ${fmt(ev.date)}` : "";
+  };
+  const bodyHTML = t => {
+    const tl = locked(t);
+    const years = new Map();
+    t.events.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach((e, _) => {
+      const y = String(e.date).slice(0, 4); if(!years.has(y)) years.set(y, []); years.get(y).push(e);
+    });
+    const timeline = years.size ? [...years.keys()].sort((a, b) => b.localeCompare(a)).map(y => {
+      const evs = years.get(y);
+      const f = evs.find(e => e.stage === "flower"), r = evs.filter(e => e.stage === "ripe").pop();
+      const span = f && r && daysBetween(f.date, r.date) > 0 ? `<span class="ft-span">flower → ripe ${Math.round(daysBetween(f.date, r.date) / 7)} wks</span>` : "";
+      return `<div class="ft-year"><div class="ft-year-h">${y}${span}</div><div class="ft-chips">${evs.map(e => `<span class="ft-chip ${STAGES[e.stage].cls}">${STAGES[e.stage].ic} ${STAGES[e.stage].label} <b>${fmt(e.date)}</b>${locked(e) ? "" : `<button type="button" class="ft-x" data-ev="${e.id}" aria-label="Delete">×</button>`}</span>`).join("")}</div></div>`;
+    }).join("") : `<div class="ft-empty">Nothing logged yet — pick a date and tap a stage.</div>`;
+    const notes = t.log.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map(n => `<div class="ft-note"><span class="ft-note-d">${fmt(n.date, true)}</span> ${fertEsc(n.text)}${locked(n) ? "" : `<button type="button" class="ft-x" data-note="${n.id}" aria-label="Delete note">×</button>`}</div>`).join("");
+    return `
+      <div class="ft-info">${[t.where ? `📍 ${fertEsc(t.where)}` : "", t.date ? `🗓️ Planted ${fmt(t.date, true)}${age(t.date) ? ` · ${age(t.date)}` : ""}` : ""].filter(Boolean).join("<br>") || "<i>No location or planting date yet.</i>"}${t.notes ? `<div class="ft-about">${fertEsc(t.notes)}</div>` : ""}</div>
+      ${t.__solo ? climateHTML(t.name) : ""}
+      <div class="ft-sec">Fruit color</div>
+      <div class="ft-colors">${colorsFor(t.name).map(c => `<button type="button" class="ft-color${(t.colors || []).includes(c) ? " on" : ""}" data-color="${c}"${tl ? " disabled" : ""}><i class="ft-dot" style="background:${FT_HEX[c]}"></i>${c}</button>`).join("")}</div>
+      <div class="ft-sec">Flowering · Fruit set · Ripe</div>
+      <div class="ft-logrow"><input type="date" class="ft-evdate" value="${todayISO()}" aria-label="Date"></div>
+      <div class="ft-stagebtns">${Object.entries(STAGES).map(([k, s]) => `<button type="button" class="ft-stage ${s.cls}" data-stage="${k}">${s.ic} ${s.label}</button>`).join("")}</div>
+      ${timeline}
+      <div class="ft-care" data-care="${t.id}"></div>
+      <div class="ft-sec">Notes</div>
+      <div class="ft-noteadd"><input type="text" class="ft-notein" placeholder="Add a note (pruned, fed, freeze damage…)" autocomplete="off"><button type="button" class="ft-noteadd-btn">Add</button></div>
+      ${notes || ""}
+      ${tl ? `<div class="ft-locked">🔒 Tree details locked (over 48 hours old)</div>` : `<div class="ft-treeacts"><button type="button" class="ft-edit">✎ Edit tree</button><button type="button" class="ft-del">🗑️ Delete tree</button></div>`}`;
+  };
+  const cardHTML = (t, inGroup) => {
+    const open = openIds.has(t.id), st = statusOf(t);
+    const title = inGroup ? (t.variety || "No variety") : fullName(t);
+    return `<div class="ft-card${inGroup ? " ft-in-group" : ""}" data-id="${t.id}">
+      <button type="button" class="ft-head${open ? " open" : ""}" aria-expanded="${open}">
+        <span class="ft-ic" aria-hidden="true">${icon(t.name)}</span>
+        <span class="ft-name">${fertEsc(title)}${dotsHTML(t) ? ` <span class="ft-dots">${dotsHTML(t)}</span>` : ""}${inGroup && t.where ? `<small>${fertEsc(t.where)}</small>` : ""}</span>
+        ${st ? `<span class="ft-status">${st}</span>` : ""}
+      </button>
+      <div class="ft-body"${open ? "" : " hidden"}>${open ? (t.__solo = !inGroup, bodyHTML(t)) : ""}</div>
+    </div>`;
+  };
+  // Side-by-side: when each variety flowered, set fruit and ripened in the
+  // most recent year that has anything logged.
+  const compareHTML = list => {
+    const yrs = list.flatMap(t => t.events.map(e => String(e.date).slice(0, 4)));
+    if(!yrs.length) return `<div class="ft-cmp-empty">Log flowering, fruit set and ripe dates on each variety and they'll line up here to compare.</div>`;
+    const y = yrs.sort().pop();
+    const cell = (t, st) => { const e = t.events.filter(e => e.stage === st && String(e.date).startsWith(y)).sort((a, b) => String(a.date).localeCompare(String(b.date)))[0]; return e ? fmt(e.date) : "—"; };
+    const rows = list.slice().sort((a, b) => { const fa = cell(a, "flower"), fb = cell(b, "flower"); return (fa === "—") - (fb === "—") || String((a.events.find(e => e.stage === "flower" && String(e.date).startsWith(y)) || {}).date || "").localeCompare(String((b.events.find(e => e.stage === "flower" && String(e.date).startsWith(y)) || {}).date || "")); });
+    return `<div class="ft-cmp"><div class="ft-cmp-t">${y} at a glance</div>
+      <div class="ft-cmp-grid"><div class="h">Variety</div><div class="h">🌸</div><div class="h">🟢</div><div class="h">🍊</div>
+      ${rows.map(t => `<div class="v">${dotsHTML(t)}${fertEsc(t.variety || "—")}</div><div>${cell(t, "flower")}</div><div>${cell(t, "set")}</div><div>${cell(t, "ripe")}</div>`).join("")}</div></div>`;
+  };
+  const render = () => {
+    const el = $("ftList");
+    if(!trees.length){ el.innerHTML = `<div class="ft-empty">No trees yet — add your first one above.</div>`; return; }
+    const groups = new Map();
+    trees.forEach(t => { const k = kindKey(t.name); if(!groups.has(k)) groups.set(k, []); groups.get(k).push(t); });
+    const keys = [...groups.keys()].sort((a, b) => groups.get(a)[0].name.localeCompare(groups.get(b)[0].name, undefined, { sensitivity:"base" }));
+    el.innerHTML = `<div class="ft-count">${trees.length} ${trees.length === 1 ? "tree" : "trees"}</div>` + keys.map(k => {
+      const list = groups.get(k).sort((a, b) => (a.variety || "").localeCompare(b.variety || "", undefined, { sensitivity:"base" }));
+      if(list.length === 1) return cardHTML(list[0], false);
+      const open = openGroups.has(k), nm = list[0].name;
+      return `<div class="ft-group" data-k="${k}">
+        <button type="button" class="ft-ghead${open ? " open" : ""}" aria-expanded="${open}">
+          <span class="ft-ic" aria-hidden="true">${icon(nm)}</span>
+          <span class="ft-name">${fertEsc(nm)}</span>
+          <span class="ft-gcount">${list.length} ${list.some(t => t.variety) ? "varieties" : "trees"}</span>
+        </button>
+        <div class="ft-gbody"${open ? "" : " hidden"}>${open ? climateHTML(nm) + compareHTML(list) + list.map(t => cardHTML(t, true)).join("") : ""}</div>
+      </div>`;
+    }).join("");
+    el.querySelectorAll(".ft-ghead").forEach(h => h.addEventListener("click", () => { const k = h.parentElement.dataset.k; if(openGroups.has(k)) openGroups.delete(k); else openGroups.add(k); render(); }));
+    el.querySelectorAll(".ft-card").forEach(card => wire(card, trees.find(x => x.id === card.dataset.id)));
+  };
+  const wire = (card, t) => {
+    card.querySelector(".ft-head").addEventListener("click", () => { if(openIds.has(t.id)) openIds.delete(t.id); else openIds.add(t.id); render(); });
+    const body = card.querySelector(".ft-body"); if(body.hidden) return;
+    body.querySelectorAll(".ft-stage").forEach(btn => btn.addEventListener("click", async () => {
+      if(READ_ONLY) return;
+      const date = body.querySelector(".ft-evdate").value || todayISO(), stage = btn.dataset.stage, S = STAGES[stage];
+      // Same stage already logged this year? Ask before adding it twice.
+      const prior = t.events.filter(e => e.stage === stage && String(e.date).slice(0, 4) === date.slice(0, 4)).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      if(prior.length){
+        const last = prior[0], ago = daysBetween(last.date, date), same = prior.some(e => e.date === date);
+        const when = same ? `on <b>${fmt(date)}</b> — the same day` : ago > 0 ? `on <b>${fmt(last.date)}</b> (${ago < 14 ? `${ago} day${ago === 1 ? "" : "s"}` : `${Math.round(ago / 7)} weeks`} ago)` : `on <b>${fmt(last.date)}</b>`;
+        const ok = await fruitDupAsk(`${icon(t.name)} <b>${fertEsc(fullName(t))}</b> was already logged as <b>${S.ic} ${S.label}</b> ${when}.<div class="fdup-q">Add it again for ${fmt(date)}?</div>`, same);
+        if(!ok) return;
+      }
+      t.events.push({ id:`e${Date.now()}${Math.random().toString(36).slice(2,5)}`, stage, date, addedAt: Date.now() });
+      await save(); render();
+      showUndoToast(`${icon(t.name)} ${fullName(t)}: ${S.label} on ${fmt(date)}`, null, "OK");
+    }));
+    body.querySelectorAll(".ft-x[data-ev]").forEach(x => x.addEventListener("click", async ev => {
+      ev.stopPropagation();
+      const i = t.events.findIndex(e => e.id === x.dataset.ev); if(i < 0) return;
+      const removed = t.events.splice(i, 1)[0]; await save(); render();
+      showUndoToast(`Removed ${STAGES[removed.stage].label} ${fmt(removed.date)}`, async () => { t.events.splice(i, 0, removed); await save(); render(); });
+    }));
+    fillCare(body.querySelector(".ft-care"), t);
+    body.querySelectorAll(".ft-color").forEach(b => b.addEventListener("click", async () => {
+      if(READ_ONLY || locked(t)) return;
+      const c = b.dataset.color; t.colors = t.colors || [];
+      t.colors = t.colors.includes(c) ? t.colors.filter(x => x !== c) : [...t.colors, c];
+      await save(); render();
+    }));
+    const noteIn = body.querySelector(".ft-notein");
+    const addNote = async () => {
+      if(READ_ONLY) return; const text = noteIn.value.trim(); if(!text) return;
+      t.log.push({ id:`n${Date.now()}${Math.random().toString(36).slice(2,5)}`, date: todayISO(), text, addedAt: Date.now() });
+      await save(); render();
+    };
+    body.querySelector(".ft-noteadd-btn").addEventListener("click", addNote);
+    noteIn.addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); addNote(); } });
+    body.querySelectorAll(".ft-x[data-note]").forEach(x => x.addEventListener("click", async () => {
+      const i = t.log.findIndex(n => n.id === x.dataset.note); if(i < 0) return;
+      const removed = t.log.splice(i, 1)[0]; await save(); render();
+      showUndoToast("Note removed", async () => { t.log.splice(i, 0, removed); await save(); render(); });
+    }));
+    body.querySelector(".ft-edit")?.addEventListener("click", () => {
+      editingId = t.id; $("ftName").value = t.name; $("ftVariety").value = t.variety || ""; $("ftWhere").value = t.where || ""; $("ftDate").value = t.date || ""; $("ftNotes").value = t.notes || "";
+      $("ftAddBtn").textContent = "💾 Save changes"; $("ftCancelBtn").style.display = "";
+      $("ftName").scrollIntoView({ behavior:"smooth", block:"center" });
+    });
+    body.querySelector(".ft-del")?.addEventListener("click", async () => {
+      const i = trees.findIndex(x => x.id === t.id); if(i < 0) return;
+      const removed = trees.splice(i, 1)[0]; await save(); render();
+      showUndoToast(`Removed ${fullName(removed)}`, async () => { trees.splice(i, 0, removed); await save(); render(); });
+    });
+  };
+  // 🧪 Fertilizer and 🐞 Pest control buttons, like a crop's window. They list
+  // every feeding / treatment logged for this tree (any season) and have a
+  // "+ Log" that opens the log on Home with the tree already picked.
+  const readAll = async prefix => {
+    const out = [];
+    for(const sk of Object.keys(SEASONS)){
+      try{ const r = await window.storage.get(`${prefix}:${sk}`, false); (r ? (JSON.parse(r.value) || []) : []).forEach(e => out.push(e)); }catch(e){}
+    }
+    return out;
+  };
+  const openCareCard = { };
+  const fillCare = async (el, t) => {
+    if(!el) return;
+    const pFull = { name: fullName(t), slug: String(fullName(t)).toLowerCase().replace(/[^a-z0-9]/g, "") };
+    const pKind = { name: t.name, slug: String(t.name).toLowerCase().replace(/[^a-z0-9]/g, "") };
+    const mineOf = arr => arr.filter(e => fertMatchesCrop(e, pFull) || fertMatchesCrop(e, pKind) || kindKey(e.crop) === kindKey(t.name)).sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.addedAt || 0) - (a.addedAt || 0));
+    const fert = mineOf(await readAll("fertilizer")), opc = mineOf(await readAll("pestcontrol"));
+    const fr = fertRowsHTML(fert, e => [e.product, e.npk ? `N-P-K ${e.npk}` : "", e.amount, e.type].filter(Boolean).map(fertEsc).join(" · "));
+    const or = fertRowsHTML(opc, e => opcBits(e).map(fertEsc).join(" · "));
+    let fNext = "";
+    if(fert[0] && Number(fert[0].every) > 0 && fert[0].date){
+      const next = new Date(`${fert[0].date}T00:00:00`); next.setDate(next.getDate() + Number(fert[0].every) * 7);
+      const days = Math.round((next - new Date(`${fertTodayISO()}T00:00:00`)) / 86400000);
+      fNext = `<div class="cropfert-next">Next feeding: ${opcWhenHTML({ next, days })}</div>`;
+    }
+    const on = opc[0] ? opcNextInfo(opc[0]) : null;
+    const oNext = on ? `<div class="cropfert-next opc-next">Next treatment: ${opcWhenHTML(on)}</div>` : "";
+    const open = openCareCard[t.id] || "";
+    el.innerHTML = `<div class="sub-tiles">
+        <button type="button" class="sub-tile sub-tile-fert" data-k="fert" aria-expanded="${open === "fert"}"><span class="sub-tile-ic">🧪</span><span class="sub-tile-name">Fertilizer</span><span class="sub-tile-count">${fr.count || ""}</span></button>
+        <button type="button" class="sub-tile sub-tile-opc" data-k="opc" aria-expanded="${open === "opc"}"><span class="sub-tile-ic">🐞</span><span class="sub-tile-name">Pest control</span><span class="sub-tile-count">${or.count || ""}</span></button>
+      </div>
+      <div class="sub-panel ft-carepanel" data-k="fert"${open === "fert" ? "" : " hidden"}>${fNext}${fr.html || `<div class="ft-empty">No feedings logged for this tree yet.</div>`}<button type="button" class="ft-carelog" data-go="fert">＋ Log a feeding</button></div>
+      <div class="sub-panel ft-carepanel" data-k="opc"${open === "opc" ? "" : " hidden"}>${oNext}${or.html || `<div class="ft-empty">No treatments logged for this tree yet.</div>`}<button type="button" class="ft-carelog" data-go="opc">＋ Log a treatment</button></div>`;
+    el.querySelectorAll(".sub-tile").forEach(b => b.addEventListener("click", () => {
+      const k = b.dataset.k, now = openCareCard[t.id] === k ? "" : k;
+      openCareCard[t.id] = now;
+      el.querySelectorAll(".sub-tile").forEach(x => x.setAttribute("aria-expanded", String(x.dataset.k === now)));
+      el.querySelectorAll(".sub-panel").forEach(x => { x.hidden = x.dataset.k !== now; });
+    }));
+    el.querySelectorAll(".ft-carelog").forEach(b => b.addEventListener("click", () => {
+      const k = b.dataset.go;
+      document.querySelector('.tabbtn[data-tab="today"]').click();
+      setTimeout(() => {
+        const hb = document.querySelector(`.home-tab-btn[data-hometab="${k}"]`);
+        if(hb && !hb.classList.contains("active")) hb.click();
+        setTimeout(() => {
+          if(k === "fert") addFertCrop(fullName(t)); else addOpcCrop(fullName(t));
+          const wrap = document.getElementById(k === "fert" ? "fertFormWrap" : "opcFormWrap");
+          if(wrap) wrap.scrollIntoView({ behavior:"smooth", block:"center" });
+        }, 150);
+      }, 60);
+    }));
+  };
+  const reset = () => { editingId = null; ["ftName","ftVariety","ftWhere","ftDate","ftNotes"].forEach(id => $(id).value = ""); $("ftAddBtn").textContent = "🌳 Add tree"; $("ftCancelBtn").style.display = "none"; };
+  const fillSuggestions = async () => {
+    const names = new Set();
+    try{ for(const sk of Object.keys(SEASONS)){ (await getHarvestLogFor(sk, "fruit")).forEach(e => { if(e && e.fruit) names.add(String(e.fruit).trim()); }); } }catch(e){}
+    trees.forEach(t => names.add(t.name));
+    $("ftNameList").innerHTML = [...names].sort().map(n => `<option value="${fertEsc(n)}">`).join("");
+  };
+  $("ftName").addEventListener("input", () => {
+    const k = kindKey($("ftName").value);
+    $("ftVarList").innerHTML = [...new Set(trees.filter(t => kindKey(t.name) === k && t.variety).map(t => t.variety))].sort().map(v => `<option value="${fertEsc(v)}">`).join("");
+  });
+  $("ftAddBtn").addEventListener("click", async () => {
+    if(READ_ONLY) return;
+    const name = $("ftName").value.trim();
+    if(!name){ $("ftName").focus(); showUndoToast("Type the tree's name first.", null, "OK"); return; }
+    // Same kind typed a little differently ("mangos", "Mango") joins the existing group.
+    let varIn = $("ftVariety").value.trim(), nameIn = cleanName(name);
+    if(!varIn){ const sp = splitKind(nameIn); if(sp){ nameIn = sp.kind; varIn = sp.variety; } }
+    const same = trees.find(t => kindKey(t.name) === kindKey(nameIn));
+    const data = { name: same ? same.name : nameIn, variety: varIn, where: $("ftWhere").value.trim(), date: $("ftDate").value, notes: $("ftNotes").value.trim() };
+    if(editingId){
+      const t = trees.find(x => x.id === editingId); if(t) Object.assign(t, data);
+    } else {
+      const dup = trees.find(t => fullName(t).toLowerCase() === fullName(data).toLowerCase() && (t.where || "").toLowerCase() === data.where.toLowerCase());
+      if(dup){
+        const ok = await fruitDupAsk(`${icon(dup.name)} <b>${fertEsc(fullName(dup))}</b>${dup.where ? ` (${fertEsc(dup.where)})` : ""} is already on your list.<div class="fdup-q">Add another one?</div>`, false);
+        if(!ok) return;
+      }
+      const t = { id:`t${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), ...data, events: [], log: [] };
+      trees.push(t); openIds.add(t.id); openGroups.add(kindKey(t.name));
+    }
+    await save(); reset(); render();
+  });
+  $("ftCancelBtn").addEventListener("click", reset);
+  document.querySelector('.tabbtn[data-tab="fruitTrees"]').addEventListener("click", async () => { await load(); render(); fillSuggestions(); });
+  load().then(render);
+})();
 
 /* ---------------- night view ----------------
    Removed per request (the toggle button and its wiring). The dark-mode
@@ -11622,6 +12221,7 @@ const GERM_TEMP_DATA = {
   muskmelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10],dtm:[70,90]},
   watermelon:{min:60,optMin:70,optMax:95,max:100,days:[5,10],dtm:[70,90]},
   longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[6,10],daysApprox:true,dtm:[60,80],dtmApprox:true},
+  wingedbeans:{min:65,optMin:75,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
   nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[30,50],dtmApprox:true},
   sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer.", days:[10,14], dtm:[90,120]},
   pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
@@ -11845,6 +12445,8 @@ function openAddCropModal(sectionKey){
   const input = document.getElementById("addCropNameInput");
   input.value = "";
   document.getElementById("addCropStatus").textContent = "";
+  document.getElementById("addCropSuggest").style.display = "none";
+  addCropSuggestedDates = null;
   document.getElementById("addCropModalBackdrop").classList.add("show");
   setTimeout(() => input.focus(), 50);
 }
@@ -11853,6 +12455,117 @@ function closeAddCropModal(){
 }
 document.querySelectorAll(".add-crop-btn").forEach(btn => {
   btn.addEventListener("click", () => openAddCropModal(btn.dataset.section));
+});
+/* "Suggest start dates & temperature" in the Add Crop window.
+   1) If the name matches a crop already in the almanac (any season), it
+      shows that crop's planned dates and germination temperature, and can
+      copy those dates onto the new crop.
+   2) Otherwise it falls back to Central Florida (Zone 9B) planting windows
+      from the UF/IFAS Florida Vegetable Gardening Guide plus standard soil
+      temperature charts — shown as a guide only; dates go on the card. */
+const ADD_CROP_REFERENCE = [
+  { k:["okra"], when:"March – August", temp:{min:60,optMin:70,optMax:95}, days:[7,14], how:"Direct sow" },
+  { k:["kale"], when:"September – February", temp:{min:40,optMin:45,optMax:85}, days:[5,10], how:"Seed or transplants" },
+  { k:["collard","collards"], when:"August – March", temp:{min:40,optMin:45,optMax:85}, days:[5,10], how:"Seed or transplants" },
+  { k:["cabbage"], when:"September – February", temp:{min:40,optMin:45,optMax:85}, days:[4,10], how:"Start seeds, transplant in 4–6 wks" },
+  { k:["cauliflower"], when:"September – January", temp:{min:40,optMin:45,optMax:85}, days:[5,10], how:"Start seeds, transplant in 4–6 wks" },
+  { k:["kohlrabi"], when:"October – February", temp:{min:40,optMin:45,optMax:85}, days:[5,10], how:"Direct sow or transplants" },
+  { k:["mustard"], when:"September – March", temp:{min:40,optMin:45,optMax:85}, days:[3,10], how:"Direct sow" },
+  { k:["spinach"], when:"October – January", temp:{min:35,optMin:45,optMax:75}, days:[7,14], how:"Direct sow" },
+  { k:["chard","swisschard"], when:"September – March", temp:{min:40,optMin:50,optMax:85}, days:[5,10], how:"Direct sow" },
+  { k:["celery"], when:"January – March", temp:{min:40,optMin:60,optMax:70}, days:[14,21], how:"Start seeds, transplant in 8–10 wks" },
+  { k:["corn","sweetcorn"], when:"February – March, August – September", temp:{min:50,optMin:60,optMax:95}, days:[4,7], how:"Direct sow in blocks" },
+  { k:["pumpkin","pumpkins"], when:"February – March, August", temp:{min:60,optMin:70,optMax:95}, days:[5,10], how:"Direct sow" },
+  { k:["zucchini"], when:"February – April, August – September", temp:{min:60,optMin:65,optMax:95}, days:[5,10], how:"Direct sow" },
+  { k:["southernpeas","cowpeas","blackeyedpeas","blackeyed"], when:"March – September", temp:{min:60,optMin:70,optMax:95}, days:[6,10], how:"Direct sow" },
+  { k:["lima","limabeans"], when:"March – April, August – September", temp:{min:60,optMin:65,optMax:85}, days:[7,14], how:"Direct sow" },
+  { k:["polebeans"], when:"February – April, August – September", temp:{min:60,optMin:60,optMax:85}, days:[6,10], how:"Direct sow" },
+  { k:["potato","potatoes"], when:"January – February", soil:"Plant seed pieces once soil is 45°F or warmer.", days:[14,28], how:"Plant seed potatoes" },
+  { k:["leek","leeks"], when:"September – March", temp:{min:35,optMin:50,optMax:85}, days:[7,14], how:"Start seeds, transplant in 8–10 wks" },
+  { k:["shallot","shallots"], when:"September – November", soil:"Plant bulbs once soil is about 50°F.", days:[14,21], how:"Plant bulbs" },
+  { k:["arugula"], when:"September – March", temp:{min:40,optMin:45,optMax:75}, days:[3,7], how:"Direct sow" },
+  { k:["sunflower","sunflowers"], when:"February – September", temp:{min:50,optMin:70,optMax:85}, days:[7,10], how:"Direct sow" },
+  { k:["zinnia","zinnias"], when:"March – August", temp:{min:60,optMin:70,optMax:80}, days:[4,7], how:"Direct sow" },
+  { k:["marigold","marigolds"], when:"February – October", temp:{min:60,optMin:70,optMax:80}, days:[4,14], how:"Direct sow or transplants" },
+  { k:["cosmos"], when:"February – September", temp:{min:60,optMin:70,optMax:85}, days:[5,10], how:"Direct sow" },
+  { k:["thyme"], when:"October – March", temp:{min:55,optMin:60,optMax:70}, days:[14,28], how:"Start seeds or buy plants" },
+  { k:["oregano"], when:"October – March", temp:{min:60,optMin:65,optMax:70}, days:[7,14], how:"Start seeds or buy plants" },
+  { k:["chives"], when:"September – March", temp:{min:45,optMin:60,optMax:70}, days:[7,14], how:"Start seeds" },
+  { k:["mint"], when:"Any time (from plants)", soil:"Best started from plants or cuttings.", how:"Plants or cuttings" },
+  { k:["rosemary"], when:"October – March (from plants)", soil:"Slow and unreliable from seed — buy a plant or root a cutting.", how:"Plants or cuttings" }
+];
+function cropKeyWords(name){
+  const w = String(name || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter(Boolean);
+  const out = new Set();
+  w.forEach(x => { out.add(x); if(x.endsWith("es")) out.add(x.slice(0, -2)); if(x.endsWith("s")) out.add(x.slice(0, -1)); else out.add(x + "s"); });
+  out.add(w.join(""));
+  for(let i = 0; i + 1 < w.length; i++) out.add(w[i] + w[i + 1]);
+  return out;
+}
+function findAlmanacMatch(name){
+  const words = cropKeyWords(name);
+  const order = [activeSeason, ...Object.keys(SEASONS).filter(k => k !== activeSeason)];
+  let best = null;
+  for(const sk of order){
+    for(const sec of SECTION_KEYS){
+      for(const p of (SEASONS[sk].data[sec] || [])){
+        if(!p.dates || !p.dates.length) continue;
+        const pw = cropKeyWords(p.name);
+        const hit = words.has(p.slug) || [...pw].some(x => x.length > 2 && words.has(x));
+        if(hit && (!best || (GERM_TEMP_DATA[p.slug] && !GERM_TEMP_DATA[best.p.slug]))) best = { p, season: sk };
+      }
+    }
+    if(best) return best;
+  }
+  return null;
+}
+function fmtPlanDate(d){
+  const MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const a = `${MS[d.m - 1]} ${d.d}`;
+  return d.m2 ? (d.m2 === d.m ? `${a}–${d.d2}` : `${a} – ${MS[d.m2 - 1]} ${d.d2}`) : a;
+}
+function tempLine(t){
+  if(!t) return "";
+  if(t.special || t.soil) return fertEsc(t.special || t.soil);
+  return `Soil at least <b>${t.min}°F</b> · best <b>${t.optMin}–${t.optMax}°F</b>`;
+}
+let addCropSuggestedDates = null;
+function showAddCropSuggestion(){
+  const box = document.getElementById("addCropSuggest");
+  const name = document.getElementById("addCropNameInput").value.trim();
+  addCropSuggestedDates = null;
+  box.style.display = "";
+  if(!name){ box.innerHTML = `<div class="cs-empty">Type the crop name first, then tap the button.</div>`; return; }
+  const m = findAlmanacMatch(name);
+  if(m){
+    const g = GERM_TEMP_DATA[m.p.slug];
+    const rows = m.p.dates.map(w => `<li>${w.map(d => `${fertEsc(d.a)} <b>${fmtPlanDate(d)}</b>`).join(" → ")}</li>`).join("");
+    const days = g && g.days ? `<div class="cs-line">🌱 Sprouts in about ${g.days[0]}–${g.days[1]} days${g.dtm ? ` · harvest in ${g.dtm[0]}–${g.dtm[1]} days` : ""}</div>` : "";
+    addCropSuggestedDates = JSON.parse(JSON.stringify(m.p.dates));
+    box.innerHTML = `
+      <div class="cs-head">Based on <b>${fertEsc(m.p.name)}</b> in your almanac</div>
+      <div class="cs-sub">📅 Suggested start dates</div><ul class="cs-list">${rows}</ul>
+      ${g ? `<div class="cs-line">🌡️ ${tempLine(g)}</div>` : ""}${days}
+      <label class="cs-use"><input type="checkbox" id="addCropUseDates" checked> Use these dates for the new crop</label>`;
+    return;
+  }
+  const words = cropKeyWords(name);
+  const ref = ADD_CROP_REFERENCE.find(r => r.k.some(k => words.has(k)));
+  if(ref){
+    box.innerHTML = `
+      <div class="cs-head">Suggested for Zone 9B (Central Florida)</div>
+      <div class="cs-line">📅 Plant <b>${ref.when}</b> · ${fertEsc(ref.how)}</div>
+      <div class="cs-line">🌡️ ${tempLine(ref.temp || ref)}</div>
+      ${ref.days ? `<div class="cs-line">🌱 Sprouts in about ${ref.days[0]}–${ref.days[1]} days</div>` : ""}
+      <div class="cs-note">Pick your exact dates on the crop's card after adding it.</div>`;
+    return;
+  }
+  box.innerHTML = `<div class="cs-empty">No suggestion for "${fertEsc(name)}" yet. You can still add it and set dates on its card.</div>`;
+}
+document.getElementById("addCropSuggestBtn").addEventListener("click", showAddCropSuggestion);
+document.getElementById("addCropNameInput").addEventListener("input", () => {
+  const box = document.getElementById("addCropSuggest");
+  if(box.style.display !== "none"){ box.style.display = "none"; addCropSuggestedDates = null; }
 });
 async function submitAddCrop(){
   const input = document.getElementById("addCropNameInput");
@@ -11863,7 +12576,9 @@ async function submitAddCrop(){
     return;
   }
   if(!addCropSection){ closeAddCropModal(); return; }
-  const crop = await addCustomCrop(addCropSection, name);
+  const useBox = document.getElementById("addCropUseDates");
+  const dates = (addCropSuggestedDates && useBox && useBox.checked && document.getElementById("addCropSuggest").style.display !== "none") ? addCropSuggestedDates : null;
+  const crop = await addCustomCrop(addCropSection, name, dates);
   closeAddCropModal();
   const containerId = `grid-${addCropSection}`;
   await renderGrid(addCropSection, containerId);
@@ -13407,7 +14122,21 @@ function bgRenderSummary(){
     html += `<div class="bg-sum"><b>${fertEsc(bgName(b))}:</b> ${parts.length ? parts.join(" · ") + ` · ${BG_ROWS * BG_COLS - used} open` : "empty"}</div>`;
   }
   document.getElementById("bgSummary").innerHTML = html;
+  // Short count on the closed button, e.g. "4 beds · 96 open"
+  const now = document.getElementById("bgSumNow");
+  if(now){
+    let open = 0;
+    for(let b = 1; b <= BG_BEDS; b++){ const used = Object.keys(bgData[b] || {}).filter(k => bgInRange(k)).length; open += BG_ROWS * BG_COLS - used; }
+    now.textContent = `${open} open`;
+  }
 }
+// "What's in Each Bed" opens and closes like My Bed Setup.
+document.getElementById("bgSumHead")?.addEventListener("click", () => {
+  const box = document.getElementById("bgSumBox");
+  const on = !box.classList.contains("open");
+  box.classList.toggle("open", on);
+  document.getElementById("bgSumHead").setAttribute("aria-expanded", on ? "true" : "false");
+});
 /* ---------- Saved gardens: dated snapshots of all four beds ---------- */
 let bgSaves = [];
 const bgSavesKey = () => bgK(`bedgridSaves:${activeSeason}`);
@@ -15157,7 +15886,7 @@ const CROP_BIO_TYPE = {
   tomatoes:"fruit", peppers:"fruit", eggplants:"fruit", squash:"fruit", cucumbers:"fruit", luffa:"fruit",
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
   lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", turnips:"root", garlic:"root", onionslips:"root",
-  strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit",
+  strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit", wingedbeans:"fruit",
   nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
   nasturtium:"flower", roselle:"flower", zinnia:"flower", cosmos:"flower", marigold:"flower",
