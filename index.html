@@ -3727,6 +3727,14 @@
     box-shadow:0 1px 2px rgba(60,90,40,.06), 0 6px 16px rgba(60,90,40,.07) !important; transition:transform .08s, filter .08s; }
   .ft-head:active{ transform:translateY(1px); filter:brightness(.97); }
   .ft-head.open{ box-shadow:inset 0 0 0 2px #7FA866, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .ft-head{ background:linear-gradient(180deg,#FCFAF4 0%,#F6F0E2 48%,#EFE6D2 100%) !important; border:1px solid #DCCFB4 !important; box-shadow:0 1px 2px rgba(90,70,110,.06), 0 6px 16px rgba(90,70,110,.07) !important; }
+  .ft-head.open{ box-shadow:inset 0 0 0 2px #A8916A, 0 2px 8px rgba(0,0,0,.12) !important; }
+  .ft-ic svg{ filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.3)); }
+  body.night-mode .ft-head, body.night-mode .ft-ghead{ background:linear-gradient(180deg,#3E362B 0%,#352E25 50%,#2E2820 100%) !important; border-color:#5A4A33 !important; box-shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 14px rgba(0,0,0,.25) !important; }
+  body.night-mode .ft-head.open, body.night-mode .ft-ghead.open{ box-shadow:inset 0 0 0 2px #A8916A, 0 2px 8px rgba(0,0,0,.35) !important; }
+  body.night-mode .ft-head .ft-name, body.night-mode .ft-ghead .ft-name{ color:#F3EBDD !important; }
+  body.night-mode .ft-name small{ color:#CDBF9F !important; }
+  body.night-mode .ft-gcount{ background:rgba(0,0,0,.25) !important; color:#E3C9A0 !important; border-color:#5A4A33 !important; }
   .ft-ic{ flex:none; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:23px; text-shadow:0 2px 2px rgba(0,0,0,.3);
     background:rgba(255,255,255,.35) linear-gradient(160deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.35) 45%, rgba(0,0,0,.06) 100%); border:1px solid rgba(255,255,255,.8);
     box-shadow:0 3px 0 rgba(0,0,0,.14), 0 5px 10px rgba(60,40,30,.18), inset 0 1px 0 rgba(255,255,255,.9); }
@@ -3795,6 +3803,44 @@
   .ft-dots{ display:inline-flex; gap:3px; vertical-align:middle; margin-left:4px; }
   .ft-dots .ft-dot{ width:10px; height:10px; }
   .ft-cmp-grid .v .ft-dot{ width:9px; height:9px; margin-right:4px; }
+  /* Fruit Trees: variety profile + Google link */
+  .ft-weblink{ display:inline-flex !important; gap:6px; margin:0 0 4px !important; font-size:13px !important; opacity:1 !important; color:#2F5E8A; font-family:'Inter',sans-serif; font-weight:600; }
+  .ft-weblink span{ text-decoration:underline; text-underline-offset:2px; }
+  body.night-mode .ft-weblink{ color:#A6CBEA; }
+  .ft-glink{ flex:none; width:30px; height:30px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; background:#fff; border:1px solid #DADCE0; box-shadow:0 1px 2px rgba(0,0,0,.08); cursor:pointer; }
+  .ft-glink:active{ transform:translateY(1px); }
+  .ft-prof{ background:#FFFBF2; border:1px solid #EBD9B4; border-radius:12px; padding:9px 11px; margin:10px 0 8px; font-family:'Inter',sans-serif; }
+  .ft-prof{ padding:0 !important; }
+  .ft-prof-t{ display:flex; align-items:center; gap:6px; min-height:44px; padding:0 12px; list-style:none; cursor:pointer; font-weight:800; font-size:14px; color:#8A5A2B; }
+  .ft-prof-t::-webkit-details-marker{ display:none; }
+  .ft-prof-car{ margin-left:0; }
+  .ft-globe{ margin-left:auto !important; font-size:20px !important; opacity:1 !important; padding:4px; text-decoration:none !important; }
+  .ft-body > .ft-prof:first-child, .ft-body > .ft-globe-only:first-child{ margin-top:0; }
+  #ftWhereWrap[hidden], #ftRepWrap[hidden], #ftPosWrap[hidden]{ display:none !important; }
+  .ft-kindpick{ display:flex; gap:8px; flex-wrap:wrap; }
+  .ft-check{ flex:1 1 140px; display:flex !important; flex-direction:row !important; align-items:center; gap:8px !important; min-height:44px; padding:6px 12px; border-radius:12px; border:1px solid #D9C3A5; background:#FFFDF8; color:var(--ink) !important; font-size:14px !important; font-weight:600 !important; cursor:pointer; }
+  .ft-check input{ width:20px !important; height:20px !important; margin:0; accent-color:#2E9472; flex:none; }
+  .ft-check:has(input:checked){ border-color:#2E9472; background:#E6F4EE; box-shadow:inset 0 0 0 1.5px #2E9472; }
+  body.night-mode .ft-check{ background:#2A2633; border-color:#4A4458; }
+  body.night-mode .ft-check:has(input:checked){ background:#1E3A30; border-color:#46AE8A; }
+  #ftRow:disabled{ opacity:.5; }
+  .ft-died, .ft-revive{ display:block; width:100%; margin-top:12px; height:38px; border-radius:11px !important; font-size:13.5px !important; font-weight:700; cursor:pointer; background:var(--card) !important; color:#6E5A44 !important; border:1px dashed #BCA98A !important; box-shadow:none !important; }
+  .ft-diednote{ margin-top:10px; padding:8px 10px; border-radius:10px; background:#F2EDE6; border:1px solid #DCCFB4; font-size:13px; color:var(--ink); font-family:'Inter',sans-serif; }
+  body.night-mode .ft-diednote{ background:#2E2A24; border-color:#5A4A33; }
+  .ft-dead .ft-ic{ filter:grayscale(.85); opacity:.75; }
+  .ft-where{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:#7A6440; margin:0 0 8px; }
+  body.night-mode .ft-where{ color:#CDBF9F; }
+  .ft-globe-only{ display:flex; justify-content:flex-end; margin:-4px 0 4px; }
+  .ft-prof[open] .ft-prof-car{ transform:rotate(180deg); }
+  .ft-prof[open] > :not(summary){ margin-left:11px; margin-right:11px; }
+  .ft-prof[open] .ft-prof-src{ padding-bottom:9px; }
+  .ft-prof-row{ display:grid; grid-template-columns:86px minmax(0,1fr); gap:8px; padding:5px 0; border-top:1px dashed #EBD9B4; font-size:12.5px; line-height:1.45; }
+  .ft-prof-row span{ color:#8A6A44; font-weight:700; }
+  .ft-prof-row b{ font-weight:500; color:var(--ink); }
+  .ft-prof-src{ font-size:11px; margin-top:6px; color:var(--ink-soft); line-height:1.5; }
+  .ft-prof-src a{ color:#2F5E8A; }
+  body.night-mode .ft-prof{ background:#2E2A24; border-color:#5A4A33; } body.night-mode .ft-prof-row{ border-color:#5A4A33; }
+  body.night-mode .ft-prof-t, body.night-mode .ft-prof-row span{ color:#E3C9A0; }
   /* Fruit Trees: climate needs */
   .ft-clim{ background:#F3F8FC; border:1px solid #C9DCEB; border-radius:12px; padding:9px 11px; margin:10px 0 8px; font-family:'Inter',sans-serif; }
   .ft-clim-t{ font-weight:700; font-size:13.5px; color:#2F5E8A; margin-bottom:4px; }
@@ -3804,6 +3850,137 @@
   .ft-clim-cold b{ color:#9E2B25; }
   .ft-clim-src{ font-size:11px; font-style:italic; color:var(--ink-soft); margin-top:5px; }
   .ft-clim-none{ font-size:12.5px; color:var(--ink-soft); font-style:italic; }
+  /* Fruit Trees: Orchard Layout button + diagram window */
+  /* Orchard Layout: raised green button with little trees, leaves and fruit scattered in the background */
+  .orch-open{ position:relative; overflow:hidden; display:flex !important; align-items:center; width:100%; min-height:56px; margin:12px 0 10px; padding:8px 16px !important; border-radius:14px !important; text-align:left; cursor:pointer;
+    background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.28) 0%, transparent 55%), linear-gradient(135deg,#4E9A55 0%,#5FAE5F 50%,#7BC06B 100%) !important;
+    border:1px solid #3E7F45 !important; box-shadow:0 4px 0 #2F6B36, 0 6px 14px rgba(47,107,54,.28) !important; font-family:'Inter',sans-serif; }
+  .orch-open:active{ transform:translateY(3px); box-shadow:0 1px 0 #2F6B36, 0 2px 5px rgba(47,107,54,.28) !important; }
+  .orch-open .ft-name{ position:relative; z-index:1; color:#fff !important; font-size:17px !important; font-weight:800 !important; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+  .ft-add-open{ background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.28) 0%, transparent 55%), linear-gradient(135deg,#1F7A5C 0%,#2E9472 50%,#46AE8A 100%) !important; border-color:#196A4F !important; box-shadow:0 4px 0 #145A43, 0 6px 14px rgba(20,90,67,.28) !important; margin-top:0 !important; }
+  .ft-add-open:active{ box-shadow:0 1px 0 #145A43, 0 2px 5px rgba(20,90,67,.28) !important; }
+  .ft-add-open[aria-expanded="true"]{ border-radius:14px 14px 0 0 !important; box-shadow:0 2px 0 #145A43 !important; margin-bottom:0 !important; }
+  .ft-add-open[aria-expanded="true"] + .ft-formcard{ border-radius:0 0 14px 14px !important; margin-top:0 !important; }
+  .ft-formcard[hidden]{ display:none !important; }
+  body.night-mode .orch-open.ft-add-open{ background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.12) 0%, transparent 55%), linear-gradient(135deg,#145441 0%,#1D6B52 50%,#2A7F63 100%) !important; border-color:#0F4334 !important; box-shadow:0 4px 0 #0B3327, 0 6px 14px rgba(0,0,0,.35) !important; }
+  .orch-deco{ position:absolute; inset:0; pointer-events:none; }
+  .orch-deco b{ position:absolute; line-height:1; font-weight:400; font-style:normal; filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.35)); }
+  body.night-mode .orch-open{ background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.12) 0%, transparent 55%), linear-gradient(135deg,#2F5E34 0%,#3B7342 50%,#4B8650 100%) !important; border-color:#244B29 !important; box-shadow:0 4px 0 #1B3A1F, 0 6px 14px rgba(0,0,0,.35) !important; }
+  .orch-modal{ max-width:1100px !important; max-height:94vh !important; padding:18px 14px calc(22px + env(safe-area-inset-bottom)) !important; font-family:'Inter',sans-serif; }
+  .orch-modal h3{ margin-bottom:2px !important; }
+  .orch-sub{ font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin:0 0 10px; }
+  .orch-tools{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 0 8px; }
+  .orch-tools button{ height:34px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:13px; font-weight:600; cursor:pointer; }
+  .orch-tools button.on{ background:#E3F0FA; border-color:#7FAED3; color:#2F5E8A; }
+  .orch-tools .orch-count{ margin-left:auto; font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .orch-scroll{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:14px; background:var(--card); }
+  .orch-scroll svg{ display:block; }
+  .orch-svg text{ font-family:'Inter',sans-serif; }
+  .orch-svg .o-woods{ fill:#DCEBD2; } .orch-svg .o-lake{ fill:#CFE4F3; }
+  .orch-svg .o-woods-t{ fill:#3F6B2F; font-size:12px; font-weight:700; } .orch-svg .o-lake-t{ fill:#2F5E8A; font-size:12px; font-weight:700; }
+  .orch-svg .o-z0{ fill:#FBFAF5; } .orch-svg .o-z1{ fill:#F4F8EE; }
+  .orch-svg .o-zt{ fill:var(--ink); font-size:14px; font-weight:800; } .orch-svg .o-zc{ fill:var(--ink-soft); font-size:11px; font-weight:600; }
+  .orch-svg .o-zline{ stroke:#E07AC0; stroke-width:3; }
+  .orch-svg .o-rline{ stroke:#D9CBB4; stroke-width:1.2; stroke-dasharray:4 4; }
+  .orch-svg .o-cell{ fill:#9C8A6E; font-size:11px; font-weight:800; }
+  .orch-svg .o-empty{ fill:#B9AD99; font-size:10.5px; font-style:italic; }
+  .orch-svg .o-lbl{ fill:var(--ink); font-size:10.5px; font-weight:600; }
+  .orch-svg .o-lbl.q{ fill:#B23A2E; }
+  .orch-svg .o-box{ fill:#EAF3E2; stroke:#A9CB92; stroke-width:1.2; stroke-dasharray:5 3; } body.night-mode .orch-svg .o-box{ fill:#2C3D27; stroke:#5E7F4E; }
+  .orch-svg .ic3d{ font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+  .orch-ic{ display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; font-size:18px; line-height:1; filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.3)); flex:none; }
+  .orch-ic svg{ width:24px; height:24px; }
+  #orchEditTitle .orch-ic{ width:30px; height:30px; font-size:26px; vertical-align:-4px; } #orchEditTitle .orch-ic svg{ width:28px; height:28px; }
+  .orch-chip{ padding-left:7px !important; }
+  .orch-svg .o-kind{ font-weight:800; fill:#7A5236; } .orch-svg .o-lbl.o-kind{ font-size:10px; }
+  body.night-mode .orch-svg .o-kind{ fill:#E3C9A0; }
+  .orch-svg .o-tree{ cursor:pointer; transition:opacity .15s; }
+  .orch-svg .o-tree circle.dot{ stroke:#fff; stroke-width:2; }
+  .orch-svg .o-tree circle.qring{ fill:none; stroke:#C0392B; stroke-width:1.6; stroke-dasharray:3 2.5; }
+  .orch-svg .o-tree text.ic{ font-size:15px; } .orch-svg .o-tree text.ab{ fill:#fff; font-size:10.5px; font-weight:800; }
+  .orch-svg.can-drag{ user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  .orch-svg.can-drag .o-tree{ cursor:grab; touch-action:none; }
+  .orch-svg .o-tree.dragging{ cursor:grabbing; opacity:.9; filter:drop-shadow(0 6px 8px rgba(0,0,0,.3)); }
+  .orch-svg .o-dropline{ stroke:#E07AC0; stroke-width:4; stroke-linecap:round; }
+  .orch-lockmap{ height:34px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:13px; font-weight:700; cursor:pointer; }
+  .orch-lockmap.unlocked{ background:#F9D7E6; border-color:#E7A3C2; }
+  .orch-movehint{ font-size:12.5px; font-weight:600; color:#8A3B66; background:#FCEAF3; border:1px solid #F0C2D8; border-radius:10px; padding:7px 10px; margin:0 0 8px; }
+  .orch-movehint[hidden]{ display:none; }
+  body.night-mode .orch-movehint{ background:#3A2532; color:#F0C2D8; border-color:#6E4558; }
+  .orch-svg .o-tree.dim{ opacity:.14; }
+  .orch-svg .o-tree:hover circle.dot{ stroke:#333; }
+  .orch-svg .o-add{ cursor:pointer; } .orch-svg .o-add circle{ fill:#fff; stroke:#9DBF86; stroke-width:1.5; stroke-dasharray:3 2; } .orch-svg .o-add text{ fill:#5E8A45; font-size:16px; font-weight:700; }
+  .orch-svg .o-compass{ fill:#5B4A2E; font-size:12px; font-weight:800; }
+  body.night-mode .orch-svg .o-z0{ fill:#2A2633; } body.night-mode .orch-svg .o-z1{ fill:#2E2B38; }
+  body.night-mode .orch-svg .o-woods{ fill:#2C3D27; } body.night-mode .orch-svg .o-lake{ fill:#22394C; }
+  body.night-mode .orch-svg .o-woods-t{ fill:#A9CF94; } body.night-mode .orch-svg .o-lake-t{ fill:#A6CBEA; }
+  body.night-mode .orch-svg .o-compass, body.night-mode .orch-svg .o-cell{ fill:#CDBF9F; }
+  body.night-mode .orch-svg .o-add circle{ fill:#2A2633; }
+  .orch-legend[hidden]{ display:none !important; }
+  .orch-legend{ display:flex; flex-wrap:wrap; gap:5px; margin:10px 0 4px; }
+  .orch-chip{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px 4px 4px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:12.5px; font-weight:600; cursor:pointer; }
+  .orch-chip i{ width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-style:normal; font-size:12px; color:#fff; font-weight:800; }
+  .orch-chip.on{ border-color:#2F5E8A; box-shadow:inset 0 0 0 1.5px #2F5E8A; }
+  .orch-chip b{ font-weight:700; color:var(--ink-soft); }
+  .orch-hint{ font-size:12px; color:var(--ink-soft); margin:4px 2px 10px; line-height:1.45; }
+  .orch-list{ margin-top:8px; }
+  .orch-zbtn{ display:flex; align-items:center; gap:10px; width:100%; min-height:48px; margin:8px 0 0; padding:8px 14px; border-radius:14px; cursor:pointer; font-family:'Inter',sans-serif; font-size:16px; font-weight:800; color:var(--ink); text-align:left;
+    border:1px solid var(--zb-edge); background:linear-gradient(180deg, #fff 0%, var(--zb) 70%); box-shadow:0 1px 2px rgba(0,0,0,.05), 0 5px 12px rgba(0,0,0,.06); }
+  .orch-zbtn:active{ transform:translateY(1px); }
+  .orch-zbtn[aria-expanded="true"]{ box-shadow:inset 0 0 0 2px var(--zb-edge); border-radius:14px 14px 0 0; }
+  .orch-zn{ font-size:12.5px; font-weight:600; color:var(--ink-soft); background:rgba(255,255,255,.7); border:1px solid var(--zb-edge); border-radius:999px; padding:1px 9px; }
+  .orch-zcar{ margin-left:auto; color:var(--clay-dark); font-size:42px; line-height:.6; transition:transform .2s; }
+  .orch-zbtn[aria-expanded="true"] .orch-zcar{ transform:rotate(180deg); }
+  .orch-zbody{ border:1px solid var(--zb-edge); border-top:none; border-radius:0 0 14px 14px; padding:2px 10px 8px; background:var(--zb-soft); }
+  .orch-zbody[hidden]{ display:none; }
+  .orch-zbody .orch-row:first-child{ border-top:none; }
+  .orch-zb1{ --zb:#FCE4EE; --zb-soft:#FFF6F9; --zb-edge:#F0BFD2; }
+  .orch-zb2{ --zb:#E1EEFA; --zb-soft:#F5F9FE; --zb-edge:#B8D3EC; }
+  .orch-zb3{ --zb:#E3F3D8; --zb-soft:#F6FBF2; --zb-edge:#BBDBA4; }
+  .orch-zb4{ --zb:#FDEBD6; --zb-soft:#FFF8F0; --zb-edge:#EFCB9F; }
+  body.night-mode .orch-zb1{ --zb:#4A2F3B; --zb-soft:#2E2430; --zb-edge:#6E4558; }
+  body.night-mode .orch-zb2{ --zb:#2C3E52; --zb-soft:#232A36; --zb-edge:#466283; }
+  body.night-mode .orch-zb3{ --zb:#33472A; --zb-soft:#252D22; --zb-edge:#53723F; }
+  body.night-mode .orch-zb4{ --zb:#4D3B26; --zb-soft:#2E2820; --zb-edge:#7A5D39; }
+  body.night-mode .orch-zbtn{ background:linear-gradient(180deg, var(--card) 0%, var(--zb) 70%); }
+  body.night-mode .orch-zn{ background:rgba(0,0,0,.25); color:var(--ink); }
+  .orch-zone-h{ font-weight:800; font-size:13px; color:#5B4A2E; text-transform:uppercase; letter-spacing:.04em; margin:12px 0 4px; }
+  .orch-row{ display:grid; grid-template-columns:34px minmax(0,1fr); gap:6px; padding:6px 0; border-top:1px dashed var(--line); font-size:13px; }
+  .orch-row > b{ color:#8A5A2B; font-size:13px; padding-top:3px; }
+  .orch-row-trees{ display:flex; flex-wrap:wrap; gap:4px; }
+  .orch-row-trees button{ display:inline-flex; align-items:center; gap:4px; padding:3px 9px 3px 3px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:12.5px; cursor:pointer; }
+  .orch-row-trees button i{ width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-style:normal; font-size:11px; color:#fff; font-weight:800; }
+  .orch-row-trees button.q{ border-color:#E3A59D; border-style:dashed; }
+  .orch-row-trees .n{ font-size:10.5px; font-weight:700; color:var(--ink-soft); }
+  /* Tree editor (Save window) */
+  .orch-edit .fert-form{ margin-top:6px; }
+  .orch-edit-where{ font-size:13px; color:var(--ink-soft); margin:-4px 0 8px; }
+  .orch-edit-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .orch-edit-grid label{ display:flex; flex-direction:column; gap:3px; font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .orch-edit-grid label.w{ grid-column:1 / -1; }
+  .orch-edit-grid input, .orch-edit-grid select{ height:40px; border:1px solid #D9C3A5; border-radius:11px; padding:0 10px; font-family:'Inter',sans-serif; font-size:15px; background:#FFFDF8; color:#222; box-sizing:border-box; width:100%; }
+  .orch-edit-grid input:disabled, .orch-edit-grid select:disabled{ opacity:.65; }
+  .orch-q{ display:flex !important; flex-direction:row !important; align-items:center; gap:8px !important; font-size:13.5px !important; color:var(--ink) !important; }
+  .orch-q input{ width:20px !important; height:20px !important; }
+  .orch-move{ display:flex; gap:8px; margin-top:10px; }
+  .orch-move button{ flex:1; height:38px; border-radius:11px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:13px; font-weight:600; cursor:pointer; }
+  .orch-lockbar{ display:flex; align-items:center; gap:10px; margin-top:12px; padding:9px 10px; border-radius:12px; background:#F7F2FA; border:1px solid var(--line); font-size:12.5px; color:var(--ink-soft); }
+  .orch-lockbtn{ flex:none; width:42px; height:42px; border-radius:12px; border:1px solid var(--line); background:var(--card); font-size:20px; cursor:pointer; }
+  .orch-lockbtn.unlocked{ background:#F9D7E6; border-color:#E7A3C2; }
+  body.night-mode .orch-lockbar{ background:#2E2B38; }
+  #orchEdit .modal-close.orch-del{ background:var(--card) !important; background-image:none !important; color:#B23A2E !important; border:1px solid #E3A59D !important; box-shadow:none !important; }
+  #orchEdit .modal-close.orch-goft{ background:#E3F0FA !important; background-image:none !important; color:#2F5E8A !important; border:1px solid #AFCDE6 !important; }
+  .orch-hist:empty{ display:none; }
+  .orch-hist{ margin-top:10px; padding:8px 10px; border-radius:12px; background:#F6F1E8; border:1px solid #E3D6C0; font-size:12.5px; color:var(--ink); line-height:1.5; }
+  .orch-hist b{ color:#7A5236; }
+  body.night-mode .orch-hist{ background:#2E2B38; border-color:#4A4458; }
+  .orch-plant{ margin-top:12px; padding:10px; border-radius:12px; border:1px dashed #A9CB92; background:#F4F9EF; }
+  body.night-mode .orch-plant{ background:#26301F; border-color:#5E7F4E; }
+  .orch-plant-t{ font-size:12.5px; font-weight:700; color:#4E6B3E; margin-bottom:-2px; }
+  .orch-plant .orch-move{ margin-top:8px; }
+  .orch-replace{ display:block; width:100%; margin-top:8px; height:38px; border-radius:11px; border:1px solid #E3A59D; background:var(--card); color:#B23A2E; font-size:13px; font-weight:700; cursor:pointer; }
+  .orch-goft{ background:#E3F0FA !important; color:#2F5E8A !important; border:1px solid #AFCDE6 !important; }
+  .orch-del{ background:var(--card) !important; color:#B23A2E !important; border:1px solid #E3A59D !important; }
   /* Crop window: notes that sit at the very top (e.g. a first-time crop) */
   .plant-topnote{ margin:4px 0 12px; padding:10px 12px; border-radius:12px; background:#F1F8EA; border:1px solid #C9DDB8; font-family:'Inter',sans-serif; font-size:13.5px; line-height:1.6; color:var(--ink); }
   .plant-topnote b{ color:#3E6B2F; }
@@ -3812,6 +3989,22 @@
   .harvest-month-card > .month-toggle .legend-title{ white-space:nowrap !important; flex:none !important; }
   .harvest-month-card .hm-deco{ flex:0 1 auto !important; min-width:0; overflow:hidden; justify-content:flex-end; }
   .harvest-month-card .hm-deco > span{ margin-left:-4px !important; }
+  /* iPhone zooms in (then bounces back out) when you tap a box whose text
+     is under 16px. With pinch-to-zoom kept on, the fix is 16px text in
+     every entry box — on touch screens only, so the computer view is
+     unchanged. Set once here (never changed on focus, which used to close
+     the iPhone date picker). */
+  @media (hover:none) and (pointer:coarse){
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea{ font-size:16px !important; }
+    /* The grey hint text can stay small (iPhone only looks at the typed text size). */
+    input::placeholder, textarea::placeholder{ font-size:14px; }
+    /* Seeded row (date + days to maturity + temperature): with the bigger
+       text, the date gets its own line and the other two sit under it. */
+    .actual-input-row:has(.sow-variety-dtm-input){ flex-wrap:wrap !important; row-gap:8px; }
+    .actual-input-row:has(.sow-variety-dtm-input) > input[type=date]{ flex:1 1 100% !important; width:100% !important; max-width:none !important; }
+    .actual-input-row:has(.sow-variety-dtm-input) > :not(input[type=date]){ flex:1 1 0 !important; min-width:0 !important; width:auto !important; }
+    .actual-input-row:has(.sow-variety-dtm-input) > input.sow-variety-dtm-input.sow-variety-dtm-input{ flex:1.45 1 0 !important; padding-left:10px !important; padding-right:6px !important; }
+  }
 </style>
 </head>
 <body>
@@ -4117,14 +4310,22 @@
 
     <section class="tab-panel" id="tab-fruitTrees">
       <h2 class="section-title">Fruit Trees</h2>
-      <div class="sub">Every fruit tree in the yard — when it flowers, sets fruit and ripens. Trees of the same kind (all your mangoes) group together, one card per variety.</div>
-      <div class="legend-card ft-formcard">
+      <button type="button" class="orch-open" id="orchOpenBtn"><span class="ft-name">Orchard Layout</span><i class="orch-deco" aria-hidden="true"><b style="right:8px;top:2px;font-size:34px;transform:rotate(-4deg)">🌳</b><b style="right:46px;top:31px;font-size:13px;transform:rotate(18deg)">🍋</b><b style="right:62px;top:4px;font-size:21px;transform:rotate(-15deg)">🥭</b><b style="right:52px;bottom:2px;font-size:15px;transform:rotate(25deg)">🍃</b><b style="right:90px;bottom:1px;font-size:28px;transform:rotate(6deg)">🌴</b><b style="right:98px;top:3px;font-size:12px;transform:rotate(-40deg)">🍃</b><b style="right:124px;top:5px;font-size:17px;transform:rotate(10deg)">🍊</b><b style="right:128px;bottom:4px;font-size:15px;transform:rotate(-12deg)">🥑</b><b style="right:150px;bottom:2px;font-size:17px;transform:rotate(-20deg)">🌿</b><b style="right:162px;top:3px;font-size:21px;transform:rotate(3deg)">🌳</b></i></button>
+      <button type="button" class="orch-open ft-add-open" id="ftAddOpen" aria-expanded="false"><span class="ft-name">＋ Add a Tree</span><i class="orch-deco" aria-hidden="true"><b style="right:12px;bottom:4px;font-size:26px;transform:rotate(-4deg)">🌱</b><b style="right:50px;top:4px;font-size:20px;transform:rotate(6deg)">🪴</b><b style="right:80px;bottom:3px;font-size:18px;transform:rotate(-18deg)">🌿</b><b style="right:104px;top:6px;font-size:13px;transform:rotate(12deg)">💧</b><b style="right:122px;bottom:5px;font-size:15px;transform:rotate(28deg)">🍃</b><b style="right:146px;top:5px;font-size:15px;transform:rotate(8deg)">🌱</b><b style="right:40px;top:30px;font-size:11px;transform:rotate(-30deg)">🍃</b></i></button>
+      <div class="legend-card ft-formcard" id="ftFormCard" hidden>
         <div class="fert-form">
           <label>Tree<input type="text" id="ftName" list="ftNameList" placeholder="e.g. Mango" autocomplete="off"></label>
           <label>Variety<input type="text" id="ftVariety" list="ftVarList" placeholder="e.g. Kent" autocomplete="off"></label>
           <datalist id="ftVarList"></datalist>
           <datalist id="ftNameList"></datalist>
-          <label>Where<input type="text" id="ftWhere" placeholder="e.g. by the well" autocomplete="off"></label>
+          <label>Zone<select id="ftZone"><option value="">Choose…</option><option value="1">Zone 1</option><option value="2">Zone 2</option><option value="3">Zone 3</option><option value="4">Zone 4</option><option value="other">Other place</option></select></label>
+          <label>Row<select id="ftRow"><option value="A">Row A</option><option value="B">Row B</option><option value="C">Row C</option><option value="D">Row D</option><option value="E">Row E</option></select></label>
+          <label class="fert-wide" id="ftWhereWrap" hidden>Where<input type="text" id="ftWhere" placeholder="e.g. by the well" autocomplete="off"></label>
+          <div class="fert-wide ft-kindpick" id="ftRepWrap" hidden>
+            <label class="ft-check"><input type="checkbox" id="ftIsNew" checked> 🌱 New tree</label>
+            <label class="ft-check"><input type="checkbox" id="ftIsRep"> 🪦 Replacing a tree that died</label>
+          </div>
+          <label class="fert-wide" id="ftPosWrap" hidden>Which tree died?<select id="ftRep"></select></label>
           <label>Planted<input type="date" id="ftDate"></label>
           <label class="fert-wide">Notes<input type="text" id="ftNotes" placeholder="Variety, size, care…" autocomplete="off"></label>
         </div>
@@ -4405,7 +4606,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.30-198</div>
+    <div class="app-footer">© 2026 Thor · v2026.10.31-243</div>
   </main>
 
   <nav class="tabbar">
@@ -4616,6 +4817,60 @@
     <p id="genericDeleteModalText">Are you sure you want to delete this?</p>
     <button class="modal-close" id="genericDeleteConfirmBtn" style="background:var(--clay-dark);">Delete</button>
     <button class="modal-close" id="genericDeleteCancelBtn" style="background:var(--card); color:var(--ink-soft); border:1px solid var(--line); margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="orchModal">
+  <div class="modal orch-modal" role="dialog" aria-modal="true" aria-labelledby="orchTitle">
+    <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="orchClose" aria-label="Close">✕</button></div>
+    <h3 id="orchTitle">Orchard Layout</h3>
+        <div class="orch-tools">
+      <button type="button" id="orchFit" hidden>🔍 Fit to screen</button>
+      <span class="orch-count" id="orchCount"></span>
+    </div>
+    <div class="orch-movehint" id="orchMoveHint" hidden>✋ Editing unlocked — press and drag a tree to move it. Lock it again from © 2026 Thor when you're done.</div>
+    <div class="orch-scroll" id="orchScroll"></div>
+    <div class="orch-legend" id="orchLegend" hidden></div>
+    <div class="orch-list" id="orchList"></div>
+    <button type="button" class="modal-close" id="orchDone">Close</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="orchEdit">
+  <div class="modal orch-edit" role="dialog" aria-modal="true" aria-labelledby="orchEditTitle">
+    <div class="modal-top-close-wrap"><button type="button" class="modal-top-close" id="orchEditClose" aria-label="Close">✕</button></div>
+    <h3 id="orchEditTitle">Tree</h3>
+    <div class="orch-edit-where" id="orchEditWhere"></div>
+    <div class="orch-edit-grid">
+      <label>Tree<input type="text" id="orchKind" placeholder="e.g. Mango" autocomplete="off"></label>
+      <label>Variety<input type="text" id="orchVar" placeholder="e.g. Kent" autocomplete="off"></label>
+      <label>Zone<select id="orchZone"><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+      <label>Row<select id="orchRow"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></label>
+      <label class="w" id="orchRepWrap">Is it replacing a tree that died?<select id="orchRep"></select></label>
+      <label class="w" id="orchPosWrap">Where in the row<select id="orchPos"></select></label>
+      <label class="w">Planted<input type="date" id="orchDate"></label>
+      <label class="w">Note<input type="text" id="orchNote" placeholder="Optional" autocomplete="off"></label>
+      <input type="checkbox" id="orchUnsure" hidden>
+    </div>
+    <div class="orch-move" id="orchMove">
+      <button type="button" id="orchLeft">◀ Move north</button>
+      <button type="button" id="orchRight">Move south ▶</button>
+    </div>
+    <div class="orch-hist" id="orchHist"></div>
+    <div class="orch-plant" id="orchPlant">
+      <div class="orch-plant-t">New tree here?</div>
+      <div class="orch-move">
+        <button type="button" id="orchAddN">🌱 Plant north of it</button>
+        <button type="button" id="orchAddS">🌱 Plant south of it</button>
+      </div>
+      <button type="button" class="orch-replace" id="orchReplace">🔁 This tree died — replace it</button>
+    </div>
+    <div class="orch-lockbar" id="orchLockbar">
+      <span id="orchLockMsg"></span>
+    </div>
+    <button type="button" class="modal-close" id="orchSave">💾 Save</button>
+    <button type="button" class="modal-close orch-goft" id="orchGoFt">🌳 Open in Fruit Trees</button>
+    <button type="button" class="modal-close orch-del" id="orchDel">🗑️ Remove from layout</button>
   </div>
 </div>
 
@@ -11148,7 +11403,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
   };
   let trees = [], editingId = null;
   const openIds = new Set(), openGroups = new Set();
-  const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
+  const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } let auto = false; auto = fixNamesOnce() || auto; trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); if(autoColors(t)) auto = true; }); if(auto){ try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} } window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
   const save = async () => { trees.forEach(t => { delete t.__solo; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
   const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
   const pd = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
@@ -11217,10 +11472,728 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     [["apple"], { chill:"Low-chill types (Anna, Dorsett Golden): about 250–400 hours", flower:"55–70°F", fruit:"65–85°F", cold:"Open flowers killed at 28°F" }],
     [["pear"], { chill:"Low-chill types: about 350–500 hours", flower:"55–70°F", fruit:"65–85°F", cold:"Open flowers killed at 28°F" }]
   ];
+  // Variety profiles for every tree on the list (researched Oct 31, 2026 from
+  // UF/IFAS, Wikipedia, Top Tropicals, Everglades Farm and other growers'
+  // references; where little is published, it says so). Each entry: the
+  // kind (pattern), the variety names it answers to (including the spellings
+  // used on the list), one main fruit color, and — for mangoes — the skin
+  // color used to draw the icon.
+  const S_TT = ["Top Tropicals — Mango varieties", "https://toptropicals.com/htm/toptropicals/articles/fruit/varieties_mango.htm"];
+  const S_UFM = ["UF/IFAS — Mango varieties for the home landscape", "https://growables.org/information/TropicalFruit/MangoVarietiesForFlorida.htm"];
+  const S_EDISM = ["UF/IFAS EDIS — Mango growing in the Florida home landscape", "https://edis.ifas.ufl.edu/publication/MG216"];
+  const S_LQ = ["UF/IFAS & growers — Loquat varieties", "https://growables.com/information/TropicalFruit/loquatvarieties.htm"];
+  const S_LQ2 = ["UF/IFAS EDIS — Loquat", "https://ask.ifas.ufl.edu/publication/ST237"];
+  const S_AV = ["UF/IFAS — Avocado varieties for Florida", "https://growables.org/information/TropicalFruit/AvocadoVarieties.htm"];
+  const S_PL = ["UF/IFAS EDIS — Plums in Florida", "https://edis.ifas.ufl.edu/publication/HS250"];
+  const FT_PROFILE_LIST = [
+    /* ---------------- Mangoes ---------------- */
+    { k:/mango/, v:["carrie"], colors:["Yellow"], skin:{ base:"#D9D24C", blush:null },
+      origin:"Boynton Beach, Florida — first fruited in 1940 on Laurence Zill's property and named for his mother, Carrie. A seedling of 'Julie' (once thought 'Sophie Fry').",
+      fruit:"Small to medium, about 10–16 oz. Skin stays green-yellow with tiny white dots — no red blush. Flesh deep orange, smooth and completely fiberless.",
+      flavor:"Rich, very sweet and spicy-aromatic — a strong, almost resinous perfume. One of Florida's best-tasting dooryard mangoes.",
+      season:"June – July (early to mid season).",
+      tree:"Dense, rounded canopy with wider-than-usual leaves. Compact habit makes it easy to keep small with yearly pruning after harvest.",
+      health:"Good disease resistance; moderately resistant to anthracnose, so it handles humid Florida summers well.",
+      seed:"Monoembryonic — a seed won't grow a true Carrie; plant grafted trees.",
+      tip:"Pick when the shoulders fill out and the green starts to turn yellow; ripen on the counter. Soft when ripe, so it bruises easily — not a shipper, perfect for home.",
+      src:[["Wikipedia — Carrie (mango)","https://en.wikipedia.org/wiki/Carrie_(mango)"], S_UFM, ["UF/IFAS Mango Program — Carrie","https://mango.ifas.ufl.edu/research/phenology/carrie"]] },
+    { k:/mango/, v:["cabeza","cabessa"], colors:["Green"], skin:{ base:"#A9BE4C", blush:"#D9A43A" },
+      origin:"Believed to come from the Dominican Republic. Also called 'Cabessa' or 'Cabeza de Hombre' — \"man's head\" — for its huge size; folklore once called it the world's largest mango.",
+      fruit:"Very large, oval fruit — some of the biggest mangoes you can grow.",
+      flavor:"Sweet and juicy.",
+      season:"Summer (season not well documented for Florida).",
+      tree:"Vigorous, with large glossy leaves; about 20–25 ft and wide if not pruned. Some growers report fruit soon after planting.",
+      health:"Hardy to about 30°F once established; protect young trees from frost.",
+      tip:"Very few published details exist for this variety — log its flowering and ripe dates here to learn its season in your yard.",
+      src:[["Everglades Farm — Cabeza (Man's Head) mango","https://everglades.farm/products/cabeza-mans-head-mango-tree-grafted"]] },
+    { k:/mango/, v:["cecilove","cecilove3424"], colors:["Yellow"], skin:{ base:"#EBCB4A", blush:null },
+      origin:"A newer Zill selection from 'Carrie' (likely with Zill Indochinese parentage), named by Richard Campbell after his wife, Ceci.",
+      fruit:"Medium, oval fruit that ripens to a soft yellow skin. Completely fiberless, smooth, rich flesh.",
+      flavor:"Starts with a slight tartness that melts into a deep, syrupy sweetness with cola-like notes.",
+      season:"Summer (exact months not yet published).",
+      tree:"Naturally dense and slow-growing — sold as a dwarf, though it can reach 20 ft in the ground if never pruned.",
+      health:"Reported strong disease resistance and steady crops. Frost-sensitive.",
+      seed:"Grafted variety — plant grafted trees.",
+      tip:"A great one to keep small with summer pruning right after harvest.",
+      src:[["Top Tropicals — Mango Cecilove (Ceci Love 34-24)","https://toptropicals.com/store/item/6944.htm"]] },
+    { k:/mango/, v:["cogshall","covshall","cogshal"], colors:["Red"], skin:{ base:"#C4BE48", blush:"#C23B3B" },
+      origin:"Florida — a Fort Myers-area seedling, popular as a \"condo\" mango.",
+      fruit:"Oval, 10–16 oz. Green fruit turn yellow at the bottom and blush red where the sun hits. Soft, juicy, fiberless flesh.",
+      flavor:"Sweet and rich.",
+      season:"June – July.",
+      tree:"Semi-dwarf, compact and slow-growing — easy to keep around 8 ft.",
+      health:"Very good anthracnose resistance.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Ready when the green at the bottom turns yellow. Great choice for a small yard or a large pot.",
+      src:[S_TT] },
+    { k:/mango/, v:["dwarfhawaiian","rapoza"], colors:["Red"], skin:{ base:"#E8B83A", blush:"#A8324A" },
+      origin:"Sold in Florida as 'Dwarf Hawaiian' — usually the Hawaiian variety 'Rapoza', selected by the University of Hawaii in the 1970s from an 'Irwin' seedling.",
+      fruit:"Large and oblong (up to about 28 oz). Yellow skin with a red-purple blush; firm, tangerine-orange flesh.",
+      flavor:"Rich and sweet with notes of Indian spice and a hint of citrus.",
+      season:"Late — mid-July into September/October; can re-flower in summer.",
+      tree:"Compact and manageable with yearly pruning (would reach 20 ft untrimmed). A heavy producer for its size.",
+      health:"Handles humidity and fungus well; selected partly because it re-blooms after spring flowers are lost to anthracnose.",
+      tip:"Keeps and travels well — good for sharing. Nursery 'Dwarf Hawaiian' trees vary, so the tag on your tree is the best guide.",
+      src:[["Top Tropicals — Mango Rapoza (Dwarf Hawaiian)","https://toptropicals.com/store/item/5270.htm"]] },
+    { k:/mango/, v:["edward"], colors:["Yellow"], skin:{ base:"#EFC94A", blush:"#E26A7E" },
+      origin:"Miami, Florida — a 'Haden' × 'Carabao' (Indian × Philippine/Indochinese) cross from the 1940s.",
+      fruit:"Oval to heart-shaped, 12–22 oz. Yellow skin with a pink-red blush; firm, fiberless flesh.",
+      flavor:"Sweet and aromatic with a nice balance of sweetness and tartness — a Florida favorite for flavor.",
+      season:"Late May – July.",
+      tree:"Large and vigorous; needs yearly pruning to keep it manageable.",
+      health:"Very good anthracnose resistance.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Crops can be light some years; good flavor makes it worth it.",
+      src:[S_TT, S_UFM] },
+    { k:/mango/, v:["florigon"], colors:["Yellow"], skin:{ base:"#F2D23C", blush:null },
+      origin:"South Florida (Fort Myers area) — an early-season seedling grown since the 1930s.",
+      fruit:"Round, under 1 lb. Pure yellow skin; firm, deep-yellow, fiberless flesh.",
+      flavor:"Sweet and mild.",
+      season:"Late May – July (early).",
+      tree:"Medium and vigorous.",
+      health:"Excellent anthracnose resistance — one of the most reliable bearers in humid weather.",
+      seed:"Polyembryonic — seedlings come out true to type.",
+      tip:"A dependable early mango that starts the season.",
+      src:[S_TT, S_UFM] },
+    { k:/mango/, v:["fruitcocktail"], colors:["Yellow"], skin:{ base:"#F4C840", blush:"#F09A3A" },
+      origin:"South Florida — a newer Zill/Fairchild-era introduction.",
+      fruit:"Oval, about 1 lb. Yellow skin; fiberless flesh.",
+      flavor:"Sweet with mixed citrus, pineapple and guava notes — like a fruit cocktail.",
+      season:"June – July.",
+      tree:"Medium-size tree.",
+      seed:"Polyembryonic.",
+      tip:"Let it ripen fully on the counter for the full tropical flavor.",
+      src:[S_TT] },
+    { k:/mango/, v:["glenn"], colors:["Orange"], skin:{ base:"#F2B33A", blush:"#E0483A" },
+      origin:"Miami, Florida (1940s) — a seedling of 'Haden'.",
+      fruit:"Oval, 16–20 oz. Orange-yellow skin with a red blush where the sun hits; silky, rich, fiberless flesh.",
+      flavor:"Sweet and tangy with a mild peach note.",
+      season:"June – July (mid season).",
+      tree:"Medium-size and easy to keep about 12 ft — a classic \"condo\" mango.",
+      health:"Very good anthracnose resistance — one of the best for humid Florida.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Pick when the shoulders round out and the color turns; very forgiving for beginners.",
+      src:[S_TT, S_UFM] },
+    { k:/mango/, v:["goldnugget"], colors:["Orange"], skin:{ base:"#F0B238", blush:"#EE8A8A" },
+      origin:"Florida — selected in the 1990s.",
+      fruit:"Oval, about 1 lb. Yellow-orange skin with a little pink blush; fiberless flesh.",
+      flavor:"Mild and sweet.",
+      season:"July – August (late).",
+      tree:"Slow-growing and spreading; a heavy producer.",
+      health:"Good anthracnose resistance.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Good late variety to stretch the mango season after the early ones finish.",
+      src:[S_TT] },
+    { k:/mango/, v:["haden"], colors:["Red"], skin:{ base:"#F0C23C", blush:"#D7263D" },
+      origin:"Coconut Grove, Florida (1910) — the famous 'Mulgoba' seedling that started Florida's mango industry.",
+      fruit:"Medium-large, round-oval. Yellow skin with a big, bright red blush; juicy flesh with some fiber.",
+      flavor:"Full and sweet with a hint of peach.",
+      season:"May – July.",
+      tree:"Medium-large, vigorous, open rounded canopy; relatively cold-hardy.",
+      health:"Prone to anthracnose and powdery mildew in rainy weather — spray or prune for air flow.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"The prettiest mango on the tree; crops can skip a year after a wet bloom season.",
+      src:[S_TT, S_UFM] },
+    { k:/mango/, v:["jahangir","jehangir","jahanager"], colors:["Yellow"], skin:{ base:"#D8C850", blush:null },
+      origin:"An Indian variety (named for the Mughal emperor Jahangir), grown in Florida by collectors.",
+      fruit:"Oval fruit with light-colored, fiberless flesh.",
+      flavor:"Sweet and juicy with a rich flavor.",
+      season:"Summer (season in Florida not well documented).",
+      tree:"Moderate grower, about 15–20 ft if not pruned. Grafted trees can fruit in 2–3 years.",
+      health:"Protect from frost; disease resistance not published.",
+      tip:"Log its bloom and ripe dates — few Florida records exist for this one.",
+      src:[["Everglades Farm — Jahangir mango","https://everglades.farm/products/mango-tree-jahanager-grafted-from-florida"]] },
+    { k:/mango/, v:["juicypeach"], colors:["Yellow"], skin:{ base:"#F0C048", blush:"#EE7A8A" },
+      origin:"South Florida — a Zill selection.",
+      fruit:"Heart-shaped, medium. Yellow skin with a pink blush; very soft, juicy, fiberless flesh.",
+      flavor:"Citrus and peach.",
+      season:"July.",
+      tree:"Very vigorous and spreading — prune every year. Bears heavily and steadily.",
+      health:"Fair anthracnose resistance.",
+      tip:"So soft it doesn't keep long — eat within a day or two of ripening.",
+      src:[S_TT] },
+    { k:/mango/, v:["kent"], colors:["Green"], skin:{ base:"#9DBA4A", blush:"#9E2A3A" },
+      origin:"Coconut Grove, Florida (1945) — from a 'Haden' seed (the pedigree points to 'Brooks').",
+      fruit:"Large, 20–26 oz, oval. Green skin with yellow shading and a dark red blush; tender, juicy, almost fiberless flesh.",
+      flavor:"Very sweet and rich.",
+      season:"July – August (late).",
+      tree:"Large, upright and vigorous.",
+      health:"Susceptible to anthracnose and bacterial black spot in wet summers — spray or pick early.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Stays green when ripe — go by feel (slight give) and the yellow at the shoulders, not the color. Great for drying.",
+      src:[S_TT, S_UFM] },
+    { k:/mango/, v:["lemonzest"], colors:["Yellow"], skin:{ base:"#D6D04A", blush:"#F08A30" },
+      origin:"South Florida — a Zill/Fairchild selection by Richard Campbell.",
+      fruit:"Oblong, 8–12 oz. Yellow-green skin with an orange blush; fiberless flesh.",
+      flavor:"Sweet with a strong lemony citrus tang.",
+      season:"June – July.",
+      tree:"Medium-size tree.",
+      health:"Excellent anthracnose resistance, but can get bacterial black spot.",
+      seed:"Polyembryonic.",
+      tip:"Eat slightly firm for the most zing; softer for more sweetness.",
+      src:[S_TT, ["UF/IFAS Mango Program — Lemon Zest","https://mango.ifas.ufl.edu/research/phenology/lemon-zest"]] },
+    { k:/mango/, v:["namdocmai4","namdocmai"], colors:["Yellow"], skin:{ base:"#E9D85A", blush:null },
+      origin:"Thailand — brought to Florida in 1973. '#4' is a selected Florida line of Nam Doc Mai.",
+      fruit:"Long and slender with a curved tip, 12–20 oz. Green-gold to bright yellow skin; firm, silky, fiberless flesh.",
+      flavor:"Very sweet and aromatic — Thailand's classic dessert mango.",
+      season:"June – July; branches often bloom at different times, giving more than one crop.",
+      tree:"Semi-dwarf, about 15–18 ft — a good condo mango.",
+      health:"Very good anthracnose resistance.",
+      seed:"Polyembryonic — seedlings come true.",
+      tip:"Also delicious eaten green and crunchy, Thai-style, with chili salt.",
+      src:[S_TT] },
+    { k:/mango/, v:["orangesherbet"], colors:["Yellow"], skin:{ base:"#F5C23A", blush:"#F08C3A" },
+      origin:"South Florida — a Zill/Fairchild selection.",
+      fruit:"Oval, 12–16 oz. Yellow skin; fiberless flesh.",
+      flavor:"Sweet citrus-orange — less lemony than Lemon Zest.",
+      season:"June – July.",
+      tree:"Medium, very vigorous and a good producer.",
+      health:"Very good anthracnose resistance and better bacterial black spot resistance than the lemon types.",
+      seed:"Polyembryonic.",
+      tip:"Vigorous — prune right after harvest to keep it in bounds.",
+      src:[S_TT] },
+    { k:/mango/, v:["pickering"], colors:["Yellow"], skin:{ base:"#EFC848", blush:"#E87A7A" },
+      origin:"South Florida — a popular Zill-area condo mango.",
+      fruit:"Oval, 12–24 oz. Yellow skin with a pink blush; firm flesh with very little fiber.",
+      flavor:"Coconut-mango — often called \"piña colada\" — when fully ripe.",
+      season:"June – July.",
+      tree:"Compact and bushy; can be kept around 6 ft. Bears young.",
+      health:"Excellent anthracnose resistance.",
+      seed:"Monoembryonic.",
+      tip:"Be patient: let it sit on the counter until fully soft for the best flavor.",
+      src:[S_TT] },
+    { k:/mango/, v:["rosigold"], colors:["Yellow"], skin:{ base:"#F0C83E", blush:"#E86A3A" },
+      origin:"South Florida, with Southeast Asian (Saigon-type) heritage — likely an 'Ono' seedling.",
+      fruit:"Under 1 lb. Yellow skin, sometimes with an orange-red blush; orange-yellow, fiberless flesh.",
+      flavor:"Rich and sweet.",
+      season:"Very early — can start ripening in March, often blooming more than once.",
+      tree:"Small; can be kept about 8 ft — sold as a condo mango and grows well in a large pot.",
+      seed:"Polyembryonic — seedlings come true.",
+      tip:"The first mango of the year; a late freeze can cost the early bloom, but it usually blooms again.",
+      src:[["Wikipedia — Rosigold","https://en.wikipedia.org/wiki/Rosigold"]] },
+    { k:/mango/, v:["spiritof76","spiritof1976"], colors:["Yellow"], skin:{ base:"#F0C443", blush:"#D84040" },
+      origin:"Boynton Beach, Florida — from Laurence Zill's property; named for first fruiting in the 1976 bicentennial. A 'Zill' × 'Haden' cross.",
+      fruit:"About 1 lb. Yellow skin with a red blush; yellow, completely fiberless flesh.",
+      flavor:"Rich and aromatic.",
+      season:"June – July.",
+      tree:"Moderately vigorous with a spreading canopy.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"Spreading habit: prune the tips after harvest to keep it bushy and low.",
+      src:[["Wikipedia — Spirit of '76 (mango)","https://en.wikipedia.org/wiki/Spirit_of_%2776_(mango)"]] },
+    { k:/mango/, v:["superjulie"], colors:["Green"], skin:{ base:"#A9BC4A", blush:"#9A3A5A" },
+      origin:"An improved form of 'Julie', the Caribbean dwarf mango loved in Jamaica and Trinidad.",
+      fruit:"Flattened-oval, medium fruit; green skin that shades yellow with a red-purple blush.",
+      flavor:"Julie's rich, creamy, coconut-like sweetness.",
+      season:"Summer (Julie ripens June – August).",
+      tree:"Dwarf — about 10–20 ft in the ground, easy to keep smaller or grow in a large pot. More vigorous than Julie.",
+      health:"Better disease resistance than the original Julie (which is prone to anthracnose).",
+      tip:"Julie types like a little extra feeding and good drainage.",
+      src:[["Top Tropicals — Mango Super Julie","https://toptropicals.com/store/item/1758.htm"]] },
+    { k:/mango/, v:["venus"], colors:["Yellow"], skin:{ base:"#F0C848", blush:"#E77A6A" },
+      origin:"South Florida.",
+      fruit:"Round, medium. Yellow skin with a light red blush; firm, light-yellow, fiberless flesh.",
+      flavor:"Sweet-and-sour — rich and complex.",
+      season:"July – August.",
+      tree:"Large but slow-growing and easy to manage (about 15–20 ft).",
+      health:"Excellent anthracnose resistance.",
+      seed:"Monoembryonic — plant grafted trees.",
+      tip:"A good later mango to follow your June varieties.",
+      src:[S_TT, ["Everglades Farm — Venus mango","https://everglades.farm/products/venus-mango-tree-grafted-from-florida"]] },
+    /* ---------------- Avocados ---------------- */
+    { k:/avocado/, v:["bacon"], colors:["Green"], draw:"avocado", skin:{ base:"#5E8E3A", shape:"oval" },
+      origin:"California (1950s) — a cold-hardy Mexican × Guatemalan hybrid, named for grower James Bacon.",
+      fruit:"Medium, 6–12 oz, oval. Thin, smooth green skin that stays green when ripe.",
+      flavor:"Mild, light and buttery; lower oil than Hass.",
+      season:"Late fall – winter.",
+      tree:"Upright and fairly fast; B-type flowers (pairs well with an A-type).",
+      health:"One of the most cold-hardy avocados — leaves take the low 20s °F.",
+      tip:"Pick mature fruit and let it soften on the counter; it doesn't change color, so test a fruit first.",
+      src:[["Top Tropicals — Avocado varieties","https://toptropicals.com/html/toptropicals/articles/fruit/varieties_avocado.htm"]] },
+    { k:/avocado/, v:["brogdon","brogden"], colors:["Purple"], draw:"avocado", skin:{ base:"#3B2340", shape:"pear" },
+      origin:"Florida — a cold-hardy hybrid found in Winter Haven.",
+      fruit:"8–12 oz, pear-shaped. Thin purple skin when ripe.",
+      flavor:"Rich and nutty with good oil content.",
+      season:"Mid July – mid September.",
+      tree:"B-type flowers; high cold tolerance — one of the best for central Florida.",
+      health:"Very cold-hardy; thin skin bruises easily, so it's a home-garden avocado.",
+      tip:"Ready when the skin turns purple; pick and soften indoors.",
+      src:[S_AV, ["Wikipedia — Brogden (avocado)","https://en.wikipedia.org/wiki/Brogden_(avocado)"]] },
+    { k:/avocado/, v:["day"], colors:["Green"], draw:"avocado", skin:{ base:"#6E9A3E", shape:"neck" },
+      origin:"Florida — an early, cold-tolerant variety for central Florida.",
+      fruit:"Medium, pear-shaped with a neck. Smooth green skin.",
+      flavor:"Good, mild avocado flavor.",
+      season:"Early — July – September.",
+      tree:"Small to medium; bears young and fairly heavily.",
+      health:"Cold-tolerant — handles light freezes better than tropical West Indian types.",
+      tip:"One of the first avocados of the year; harvest when fruit size stops increasing and test-ripen one.",
+      src:[["Top Tropicals — Avocado varieties","https://toptropicals.com/html/toptropicals/articles/fruit/varieties_avocado.htm"]] },
+    { k:/avocado/, v:["oohlala","ohlala","ulala"], colors:["Black"], draw:"avocado", skin:{ base:"#2F2A27", shape:"oval", pebbly:true },
+      origin:"Sold in Florida as 'Oh La La' / 'Ulala' — a Hass-type (\"Super Hass\") avocado.",
+      fruit:"Small to medium, about 6–10 oz, with Hass-style skin that darkens as it ripens.",
+      flavor:"Creamy and buttery.",
+      season:"November – February.",
+      tree:"About 20–25 ft if unpruned.",
+      health:"Hardy to about 30°F — protect young trees from frost.",
+      tip:"Like Hass, pick firm and let it darken and soften on the counter.",
+      src:[["Everglades Farm — Oh La La avocado","https://everglades.farm/products/oh-la-la-avocado-tree-grafted-for-sale-from-florida"], ["Top Tropicals — Avocado 'U-La-La'","https://toptropicals.com/catalog/uid/Persea_americana_ULaLa.htm"]] },
+    /* ---------------- Bananas ---------------- */
+    { k:/banana/, v:["lloydmarshtallnamwah","tallnamwah","namwah","namwa"], colors:["Yellow"],
+      origin:"'Namwah' (Pisang Awak) — a Thai ABB banana, one of the toughest and most reliable for Florida.",
+      fruit:"Short, chunky fingers in big bunches; skin turns light yellow.",
+      flavor:"Very sweet with a hint of apple-vanilla when fully ripe.",
+      season:"Fruits about 12–18 months after planting; bunch takes 3–5 months from flower.",
+      tree:"Tall form, 14–18 ft.",
+      health:"Cold-tolerant for a banana and resists wind; leaves burn at freezing but the plant regrows.",
+      tip:"Let the fruit get fully yellow with brown speckles for the best flavor.",
+      src:[["Bananas.org — Namwah","https://www.bananas.org/f12/namwah-dwarf-namwah-17663.html"]] },
+    { k:/banana/, v:["short"], colors:["Yellow"],
+      origin:"A short (dwarf) banana — likely a Dwarf Cavendish-type or Dwarf Namwah.",
+      fruit:"Bunches of yellow bananas.",
+      flavor:"Sweet dessert banana.",
+      season:"About 9–15 months from planting to harvest; a bunch ripens 3–5 months after the flower.",
+      tree:"Short, about 5–8 ft — less wind damage.",
+      health:"Protect from freezes; keep moist and well fed.",
+      tip:"Cut the bunch when the first finger turns yellow and let it finish in the shade.",
+      src:[] },
+    { k:/banana/, v:[""], colors:["Yellow"],
+      origin:"Banana (Musa) — grown from pups.",
+      fruit:"Bunches of yellow bananas.",
+      flavor:"Sweet when fully ripe.",
+      season:"About a year from planting; a bunch ripens 3–5 months after the flower.",
+      tree:"Height depends on the variety (5–20 ft).",
+      health:"Leaves burn at 32°F; plant regrows from the base after cold.",
+      tip:"Keep 2–3 stalks per clump and remove extra pups; feed often.",
+      src:[] },
+    /* ---------------- Citrus ---------------- */
+    { k:/calamondin|calamodin/, v:[""], colors:["Orange"],
+      origin:"Philippines — a natural kumquat × mandarin hybrid.",
+      fruit:"Small, round, about 1 in. Thin orange skin when ripe.",
+      flavor:"Very sour juice, sweet edible peel — great for drinks, marmalade and cooking.",
+      season:"Fruits much of the year; heaviest in winter.",
+      tree:"Small, upright and ornamental (6–15 ft); grows well in pots.",
+      health:"Fairly cold-hardy (about 20°F).",
+      tip:"Use the juice like lime — fantastic on fish and in lemonade.",
+      src:[] },
+    { k:/grapefruit/, v:["rubyred","ruby"], colors:["Yellow"],
+      origin:"Texas (1929) — a red-fleshed sport of 'Thompson' grapefruit.",
+      fruit:"Large; yellow skin with a pink-red blush; red, juicy flesh.",
+      flavor:"Sweet-tart, less bitter than white grapefruit.",
+      season:"November – May.",
+      tree:"Large citrus tree (15–20 ft).",
+      health:"Watch for citrus greening (HLB) and canker; keep well fed.",
+      tip:"Fruit holds on the tree for months — pick as needed.",
+      src:[] },
+    { k:/kumquat/, v:["nagami"], colors:["Orange"],
+      origin:"China — the classic oval kumquat.",
+      fruit:"Small and oval (1–1.5 in). Bright orange skin.",
+      flavor:"Sweet peel and tart flesh — eat it whole.",
+      season:"November – March.",
+      tree:"Small and bushy (8–12 ft); great in pots.",
+      health:"One of the most cold-hardy citrus (about 18°F).",
+      tip:"Roll it between your fingers before eating to release the sweet oils in the peel.",
+      src:[] },
+    { k:/lemon/, v:["meyer","meyers"], colors:["Yellow"],
+      origin:"China — a lemon × mandarin cross brought to the US by Frank Meyer in 1908.",
+      fruit:"Round, thin-skinned; deep yellow-orange when ripe.",
+      flavor:"Sweeter, less acidic and more fragrant than a regular lemon.",
+      season:"Main crop November – March; often more through the year.",
+      tree:"Small (6–10 ft); great in a pot.",
+      health:"More cold-hardy than other lemons (low 20s °F).",
+      tip:"Pick when the color deepens toward orange-yellow and the fruit gives slightly.",
+      src:[] },
+    { k:/mandarin|tangerine/, v:["sugarbelle"], colors:["Orange"],
+      origin:"University of Florida (released 2009) — a 'Clementine' × 'Minneola' cross.",
+      fruit:"Medium, deep orange, easy to peel; few seeds.",
+      flavor:"Very sweet and rich with a nice tang — consistently top-rated in taste tests.",
+      season:"November – December.",
+      tree:"Medium, vigorous.",
+      health:"Notably tolerant of citrus greening (HLB) — one of the best citrus for Florida yards today.",
+      tip:"Taste-test before picking the whole crop; it sweetens as it hangs.",
+      src:[] },
+    { k:/mandarin|tangerine/, v:[""], colors:["Orange"],
+      origin:"Mandarin orange (Citrus reticulata).",
+      fruit:"Easy-peel orange fruit.",
+      flavor:"Sweet and juicy.",
+      season:"Most mandarins ripen October – January in Florida.",
+      tree:"Medium citrus tree.",
+      health:"Watch for citrus greening (HLB); feed regularly.",
+      tip:"If you find the variety on the tag, add it — the details here will update.",
+      src:[] },
+    { k:/orange/, v:["valencia"], colors:["Orange"],
+      origin:"Spain/Portugal origin, named in California — the world's main juice orange.",
+      fruit:"Medium, thin skin, few seeds; very juicy.",
+      flavor:"Sweet-tart and juicy — the classic juice orange.",
+      season:"Late — March – June; can hold on the tree into summer.",
+      tree:"Large citrus tree.",
+      health:"Watch for citrus greening (HLB). Ripe fruit can turn a little green again in warm weather — still ripe.",
+      tip:"Taste, don't look: the skin may re-green while the juice is sweet.",
+      src:[] },
+    /* ---------------- Tropical others ---------------- */
+    { k:/dragon/, v:[""], colors:["Pink"],
+      origin:"Pitaya (Selenicereus) — a climbing cactus from Central America.",
+      fruit:"Bright pink skin with green \"scales\"; white or red flesh with tiny black seeds.",
+      flavor:"Mild and lightly sweet, like kiwi-pear.",
+      season:"Summer – fall, in several flushes after night-blooming flowers.",
+      tree:"Climbing cactus — grow on a sturdy post with a top frame.",
+      health:"Protect from frost; avoid wet roots.",
+      tip:"Many types need hand pollination at night — dab pollen with a soft brush on bloom nights.",
+      src:[] },
+    { k:/jaboticaba/, v:["sabara","sabará"], colors:["Purple"],
+      origin:"Brazil — the most popular jaboticaba.",
+      fruit:"Grape-size, glossy dark purple-black fruit growing right on the trunk.",
+      flavor:"Sweet, grape-like, with a slightly tart skin.",
+      season:"Several crops a year after rains; each crop ripens about a month after bloom.",
+      tree:"Slow-growing, dense, shrubby (10–15 ft).",
+      health:"Hurt at about 26–28°F; likes slightly acidic soil and steady water.",
+      tip:"Eat within a few days — ferments quickly once picked.",
+      src:[] },
+    { k:/jaboticaba/, v:["red"], colors:["Red"],
+      origin:"\"Red jaboticaba\" — a red-fruited relative/hybrid of the jaboticaba from Brazil.",
+      fruit:"Reddish fruit growing on the trunk and branches.",
+      flavor:"Sweet-tart, grape-like.",
+      season:"Several crops a year, mostly after rains.",
+      tree:"Faster-growing than classic jaboticaba; shrubby.",
+      health:"Frost-tender when young.",
+      tip:"Keep evenly moist — dry spells make it drop flowers.",
+      src:[] },
+    { k:/jujube/, v:["thai"], colors:["Green"],
+      origin:"Thai jujube (Indian jujube, Ziziphus mauritiana) — the tropical apple-jujube.",
+      fruit:"Size of a small plum; eaten crisp and light green.",
+      flavor:"Crunchy, juicy and mildly sweet — like a green apple.",
+      season:"Winter — about November – February.",
+      tree:"Fast-growing and often thorny; prune hard after harvest.",
+      health:"Very drought tolerant; hurt by hard freezes.",
+      tip:"Pick while still green-white and crisp; it turns brown and soft as it overripens.",
+      src:[] },
+    { k:/june ?plum/, v:[""], colors:["Yellow"],
+      origin:"June plum / ambarella (Spondias dulcis) — Pacific Islands, popular in the Caribbean.",
+      fruit:"Oval, 2–3 in, ripening from green to golden yellow; spiny seed inside.",
+      flavor:"Crisp and tart like a green apple when green; sweeter and pineapple-mango-like when yellow.",
+      season:"Late summer – winter.",
+      tree:"Dwarf forms stay 6–10 ft and fruit very young.",
+      health:"Frost-tender — protect below about 30°F.",
+      tip:"Eat green with salt and pepper, or ripe for juice.",
+      src:[] },
+    { k:/longan/, v:["kohala","koala"], colors:["Brown"],
+      origin:"Hawaii — selected at Kohala on the Big Island.",
+      fruit:"Large for a longan, in clusters; tan-brown shell; juicy, translucent white flesh.",
+      flavor:"Very sweet with a rich, spicy note.",
+      season:"August – September.",
+      tree:"Vigorous, large and spreading — prune after harvest.",
+      health:"Needs a cool, dry winter to bloom; young trees hurt at 28–30°F.",
+      tip:"Taste a few before picking the whole cluster — they don't ripen after picking.",
+      src:[] },
+    { k:/lychee|litchi/, v:["brewster"], colors:["Red"],
+      origin:"Brought to Florida from China in 1903 — the classic Florida lychee.",
+      fruit:"Large, heart-shaped, bright red bumpy shell; juicy white flesh.",
+      flavor:"Sweet-tart and floral.",
+      season:"June – July.",
+      tree:"Vigorous, upright and large.",
+      health:"Needs a cool, dry winter (about 100–200 hours below 68°F) to bloom; can bear irregularly.",
+      tip:"Pick by the cluster when fully red — they don't ripen off the tree.",
+      src:[] },
+    { k:/papaya/, v:["redlady"], colors:["Orange"],
+      origin:"Taiwan — an F1 hybrid papaya.",
+      fruit:"3–4 lb, yellow-orange skin; thick, sweet red flesh.",
+      flavor:"Very sweet with little papaya muskiness.",
+      season:"Fruits 8–10 months from planting, then almost year-round.",
+      tree:"Short-growing (fruits at about 3 ft); every plant bears (hermaphrodite).",
+      health:"Tolerant of papaya ringspot virus; killed by hard freezes.",
+      tip:"Pick when it's about one-third yellow and finish ripening indoors.",
+      src:[] },
+    { k:/sapodilla/, v:["alano"], colors:["Brown"],
+      origin:"Florida (Homestead) — an improved sapodilla selection.",
+      fruit:"Medium, rough brown skin; sweet, smooth, honey-brown flesh.",
+      flavor:"Very sweet — brown sugar and pear.",
+      season:"Main crop winter – spring.",
+      tree:"Compact, slow-growing and very productive; tolerates wind and salt.",
+      health:"Few pests; young trees need frost protection.",
+      tip:"Pick when the skin scratches to yellow-brown (not green) and let it soften indoors.",
+      src:[] },
+    { k:/starfruit|carambola/, v:["arkin"], colors:["Yellow"],
+      origin:"Florida (1973, Fort Lauderdale) — Florida's main commercial carambola.",
+      fruit:"Medium-large, yellow, five-ridged star slices.",
+      flavor:"Sweet and juicy, low acid.",
+      season:"Main crops late summer – winter, often several a year.",
+      tree:"Medium, bushy and productive.",
+      health:"Young trees hurt at about 27°F.",
+      tip:"Pick when fully yellow with just a hint of green on the ridges.",
+      src:[] },
+    { k:/starfruit|carambola/, v:["kari"], colors:["Yellow"],
+      origin:"Hawaii — a sweet carambola selection.",
+      fruit:"Large, golden-yellow stars.",
+      flavor:"Very sweet and juicy with almost no tartness.",
+      season:"Late summer – winter, several flushes.",
+      tree:"Upright and productive.",
+      health:"Frost-tender; protect below 28°F.",
+      tip:"One of the sweetest — great eaten fresh.",
+      src:[] },
+    { k:/starfruit|carambola/, v:["srikembangan","kembangan"], colors:["Orange"],
+      origin:"Malaysia — 'Sri Kembangan' is a top Malaysian carambola.",
+      fruit:"Large, golden-orange, thick-ribbed stars.",
+      flavor:"Sweet and juicy with a light tang.",
+      season:"Late summer – winter.",
+      tree:"Vigorous and productive.",
+      health:"Frost-tender.",
+      tip:"Let it color fully to orange for the sweetest fruit.",
+      src:[] },
+    /* ---------------- Loquats ---------------- */
+    { k:/loquat/, v:["christmas","xmas"], colors:["Yellow"],
+      origin:"A very early-ripening loquat sold as 'Christmas' / 'X-mas'.",
+      fruit:"Up to about 1.5 in, bright yellow.",
+      flavor:"Tangy, apricot-like.",
+      season:"Very early — ripens so early it often escapes January–February freezes.",
+      tree:"Evergreen, medium tree.",
+      health:"Tree is hardy to about 12°F; flowers and young fruit are hurt below 28°F.",
+      tip:"Its early timing makes it one of the most reliable loquats in central Florida.",
+      src:[S_LQ] },
+    { k:/loquat/, v:["bradenton","brandenton"], colors:["Orange"],
+      origin:"Florida — named for Bradenton.",
+      fruit:"Large (about 2 in), orange-yellow.",
+      flavor:"Excellent, sweet flavor.",
+      season:"Late — around April.",
+      tree:"Vigorous.",
+      health:"Late bloom/ripening means less freeze risk to fruit.",
+      tip:"Pick when fully colored and slightly soft — loquats don't ripen off the tree.",
+      src:[S_LQ] },
+    { k:/loquat/, v:["goldnugget","thales","placentia"], colors:["Orange"],
+      origin:"Also called 'Thales' or 'Placentia' — from Japan, grown in Placentia, California since about 1900.",
+      fruit:"Large, orange skin; firm, juicy, meaty orange flesh.",
+      flavor:"Sweet, apricot-like.",
+      season:"Late February – March (mid-late).",
+      tree:"Upright; self-fertile.",
+      health:"Hardy tree; flowers hurt below 28°F.",
+      tip:"Orange-fleshed loquats are the most apricot-like — great for jam.",
+      src:[S_LQ] },
+    { k:/loquat/, v:["sherrywood","cherrywood","sherry"], colors:["Yellow"],
+      origin:"No published description found for 'Sherry Wood' / 'Cherry Wood'. The closest named variety is 'Sherry'.",
+      fruit:"'Sherry': medium-large, pear-shaped, yellow skin with white to pale-yellow flesh.",
+      flavor:"'Sherry': mildly sweet.",
+      season:"'Sherry': late-midseason.",
+      tree:"Evergreen loquat tree.",
+      tip:"Check the tag or the nursery — if it's 'Sherry', it's a white-fleshed, sweet type.",
+      src:[S_LQ] },
+    { k:/loquat/, v:["edsdelight"], colors:["Orange"],
+      origin:"No published description found for 'Ed's Delight' — likely a local Florida selection.",
+      fruit:"Not documented.",
+      flavor:"Not documented.",
+      season:"Most Florida loquats ripen January – April.",
+      tree:"Evergreen loquat tree.",
+      tip:"Log its bloom and ripe dates here to learn its season.",
+      src:[S_LQ2] },
+    { k:/loquat/, v:[""], colors:["Orange"],
+      origin:"Loquat (Eriobotrya japonica) — from China, long grown in Florida.",
+      fruit:"Small oval fruit in clusters, yellow to orange.",
+      flavor:"Sweet-tart, apricot-like.",
+      season:"January – April in central Florida.",
+      tree:"Evergreen, 15–25 ft; blooms in fall.",
+      health:"Tree very hardy; flowers and fruit hurt below 28°F. Watch for fire blight.",
+      tip:"Seedling trees vary a lot — if you know the variety, add it.",
+      src:[S_LQ2] },
+    /* ---------------- Mulberries ---------------- */
+    { k:/mulberr/, v:["everbearing","dwarfeverbearing"], colors:["Black"], draw:"berry", skin:{ base:"#2C1A33", shape:"small" },
+      origin:"'Everbearing' (often Dwarf Everbearing) — a popular low-chill mulberry for Florida.",
+      fruit:"Small to medium black berries, about 1 in.",
+      flavor:"Sweet with a little tang.",
+      season:"Fruits in flushes most of the warm season.",
+      tree:"Compact shrub or small tree; fruits on new growth.",
+      health:"Very easy; low chill needed.",
+      tip:"Prune lightly after each flush to push new fruiting wood.",
+      src:[] },
+    { k:/mulberr/, v:["pakistan","pakistani"], colors:["Black"], draw:"berry", skin:{ base:"#6A1530", shape:"long" },
+      origin:"Pakistan — a long-fruited mulberry (Morus alba type).",
+      fruit:"Very long berries, 3–4 in; deep red to black when ripe.",
+      flavor:"Sweet and juicy, low acid.",
+      season:"Spring (March – May).",
+      tree:"Vigorous, large tree with big leaves; low chill.",
+      health:"Few problems; birds love it.",
+      tip:"Pick when the berries turn deep red-black and come off with a gentle pull.",
+      src:[] },
+    { k:/mulberr/, v:["shangrila","shanghaila","shangri"], colors:["Black"], draw:"berry", skin:{ base:"#261630", shape:"large" },
+      origin:"Florida — a hybrid mulberry bred for the South.",
+      fruit:"Large, glossy black berries.",
+      flavor:"Sweet, best when fully ripe.",
+      season:"Early spring with a long fruiting period.",
+      tree:"Very fast-growing, 10–25 ft; can be pruned into a shrub. Self-fertile; fruits on new growth within 1–2 years.",
+      health:"Easy, low-water once established.",
+      tip:"Harvest when fully black for the sweetest berries.",
+      src:[["Sow Exotic — Shangri-La mulberry","https://sowexotic.com/pages/shangilamulberry"]] },
+    /* ---------------- Stone fruit ---------------- */
+    { k:/peach/, v:["floridaprince","flordaprince","prince"], colors:["Red"],
+      origin:"University of Florida (1982) — a low-chill Florida peach.",
+      fruit:"Medium, red blush over yellow; yellow, clingstone flesh.",
+      flavor:"Sweet and juicy.",
+      season:"Very early — late April – May.",
+      tree:"About 150 chill hours; prune to an open vase each winter.",
+      health:"Watch for brown rot and bacterial spot; thin fruit for bigger peaches.",
+      tip:"Thin to one peach every 6 inches in March for bigger, sweeter fruit.",
+      src:[] },
+    { k:/peach/, v:["floridaglo","floridaglow","flordaglo"], colors:["Red"],
+      origin:"University of Florida — a low-chill peach.",
+      fruit:"Medium, red blush; yellow, semi-freestone flesh.",
+      flavor:"Sweet, good flavor.",
+      season:"Early — May.",
+      tree:"About 150 chill hours; open-vase pruning.",
+      health:"Watch for brown rot; thin the fruit.",
+      tip:"Pick when the green background turns yellow.",
+      src:[] },
+    { k:/peach/, v:["floridagrande","flordagrande"], colors:["Red"],
+      origin:"University of Florida ('FlordaGrande') — one of the lowest-chill peaches.",
+      fruit:"Large, mostly red skin; yellow, semi-clingstone flesh.",
+      flavor:"Sweet and juicy.",
+      season:"Early — late April – May.",
+      tree:"About 100 chill hours — reliable even in mild winters.",
+      health:"Watch for brown rot and bacterial spot.",
+      tip:"Spray or bag fruit if stinkbugs are a problem.",
+      src:[] },
+    { k:/plum/, v:["scarletbeauty"], colors:["Red"],
+      origin:"A low-chill Japanese-type plum sold for Florida.",
+      fruit:"Medium, red skin; juicy flesh.",
+      flavor:"Sweet with a little tartness at the skin.",
+      season:"Late spring – early summer (about May – June).",
+      tree:"Low chill; prune to an open center.",
+      health:"Plums in Florida get bacterial spot and brown rot — plant in full sun with good air flow.",
+      tip:"Japanese plums set better with another Japanese plum nearby (like Gulf Ruby).",
+      src:[S_PL] },
+    /* ---------------- Persimmons ---------------- */
+    { k:/persimmon/, v:["fuyu","fuyo"], colors:["Orange"],
+      origin:"Japan — the classic non-astringent Asian persimmon.",
+      fruit:"Medium, flat-round, deep orange.",
+      flavor:"Sweet and crisp like an apple — eat it firm.",
+      season:"October – November.",
+      tree:"Small-medium (15–20 ft); low chill (about 100–400 hours).",
+      health:"Few pests; fruit drop can happen on young trees.",
+      tip:"Non-astringent: pick and eat while still firm.",
+      src:[] },
+    { k:/persimmon/, v:["izu"], colors:["Orange"],
+      origin:"Japan — an early non-astringent persimmon.",
+      fruit:"Medium, flat-round, orange-red.",
+      flavor:"Sweet and juicy; eat firm or soft.",
+      season:"Early — September – October.",
+      tree:"Naturally small (semi-dwarf) — good for small spaces.",
+      health:"Few pests.",
+      tip:"Starts the persimmon season weeks before Fuyu.",
+      src:[] },
+    { k:/persimmon/, v:["matsumoto","matsumotowasefuyu","wasefuyu"], colors:["Orange"],
+      origin:"Japan — 'Matsumoto Wase Fuyu', an early-ripening form of Fuyu.",
+      fruit:"Medium, flat, deep orange.",
+      flavor:"Sweet and crisp — eat firm.",
+      season:"Early — about 2–3 weeks before Fuyu (September – October).",
+      tree:"Medium, low chill.",
+      health:"Few pests.",
+      tip:"Non-astringent: eat while firm.",
+      src:[] },
+    { k:/persimmon/, v:["saijo"], colors:["Orange"],
+      origin:"Japan — an old astringent variety.",
+      fruit:"Small-medium, elongated; yellow-orange.",
+      flavor:"Exceptionally sweet once fully soft (very astringent before).",
+      season:"October.",
+      tree:"Medium; very cold-hardy.",
+      health:"Few pests.",
+      tip:"Astringent: wait until it's jelly-soft, or freeze and thaw it to remove the pucker.",
+      src:[] },
+    { k:/persimmon/, v:["somerset","sommerset","summerset"], colors:["Orange"],
+      origin:"An American persimmon (Diospyros virginiana) selection.",
+      fruit:"Small (1–2 in), orange.",
+      flavor:"Rich, sweet and date-like when soft; astringent before.",
+      season:"Late fall.",
+      tree:"Native-type tree; very hardy and adaptable.",
+      health:"Few pests.",
+      tip:"Let fruit get fully soft — or fall on its own — before eating.",
+      src:[] }
+  ];
+  // Spelling corrections accepted Oct 31, 2026 (applied once to the saved list).
+  const NAME_FIXES = [[/mango/, "covshall", "Cogshall"], [/longan/, "koala", "Kohala"], [/persimmon/, "summerset", "Somerset"], [/persimmon/, "sommerset", "Somerset"],
+    [/persimmon/, "fuyo", "Fuyu"], [/mulberr/, "shanghaila", "Shangri-La"], [/peach/, "floridaglow", "Florida Glo"], [/loquat/, "brandenton", "Bradenton"],
+    [/lemon/, "meyers", "Meyer"], [/peach/, "prince", "Florida Prince"]];
+  const fixNamesOnce = () => {
+    let changed = false;
+    trees.forEach(t => { const n = String(t.name || "").toLowerCase(), v = normV(t.variety); const f = NAME_FIXES.find(([re, from]) => re.test(n) && v === from); if(f){ t.variety = f[2]; changed = true; } });
+    return changed;
+  };
+  const normV = s => String(s || "").toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+  const profileFor = t => {
+    const n = String(t.name || "").toLowerCase(), v = normV(t.variety);
+    return FT_PROFILE_LIST.find(p => p.k.test(n) && p.v.includes(v)) || null;
+  };
+  const openProf = new Set();
+  // A mango drawn in the variety's own skin color (base color + its blush, if any).
+  const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16), f = c => Math.max(0, Math.min(255, Math.round(k < 0 ? c * (1 + k) : c + (255 - c) * k))); return "#" + [n >> 16, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, "0")).join(""); };
+  let mangoN = 0;
+  const mangoSVG = (skin, size) => {
+    const id = "mg" + (++mangoN), b = skin.base, bl = skin.blush;
+    const D = "M20 3.5C27.5 3.5 31 11 30.2 20 29.4 29.5 25 36.5 18.4 36.5 12.8 36.5 10.4 31.4 12 26.6 13 23.6 11.4 21.2 11.4 16.8 11.4 9 14.6 3.5 20 3.5z";
+    return `<svg viewBox="0 0 40 40"${size ? ` width="${size}" height="${size}"` : ""} aria-hidden="true"><defs>
+      <radialGradient id="${id}b" cx=".42" cy=".3" r=".8"><stop offset="0" stop-color="${shade(b, .45)}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${shade(b, -.3)}"/></radialGradient>
+      ${bl ? `<radialGradient id="${id}r" cx=".62" cy=".18" r=".7"><stop offset="0" stop-color="${bl}" stop-opacity=".95"/><stop offset=".5" stop-color="${bl}" stop-opacity=".6"/><stop offset="1" stop-color="${bl}" stop-opacity="0"/></radialGradient>` : ""}
+      <clipPath id="${id}c"><path d="${D}"/></clipPath></defs>
+      <g transform="rotate(38 20 20)">
+        <path d="${D}" fill="url(#${id}b)"/>
+        ${bl ? `<rect x="0" y="0" width="40" height="40" fill="url(#${id}r)" clip-path="url(#${id}c)"/>` : ""}
+        <ellipse cx="17" cy="12" rx="2.2" ry="5" fill="#fff" opacity=".33"/>
+        <path d="M20 4c0-1.6.4-2.6 1.2-3.4" stroke="#6B4A22" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M21 1.4c2.8-2.6 7-2.4 8.4-.4-2.8 2-6 2.2-8.4.4z" fill="#4E9A3A" transform="rotate(-20 21 1.4)"/>
+      </g></svg>`;
+  };
+  // Avocado drawn in its ripe skin color; shape: oval, pear, or long-neck.
+  let avoN = 0;
+  const avocadoSVG = (skin, size) => {
+    const id = "av" + (++avoN), b = skin.base;
+    const D = skin.shape === "neck" ? "M20 3.5c3 0 4.4 3 4.6 6.8.2 3.6 5.6 7.4 5.6 14.4 0 7-4.6 11.8-10.2 11.8S9.8 31.7 9.8 24.7c0-7 5.4-10.8 5.6-14.4C15.6 6.5 17 3.5 20 3.5z"
+      : skin.shape === "pear" ? "M20 4c4.2 0 6 4.2 6.6 8.4.6 3.6 4.4 6 4.4 12.2 0 6.6-4.8 11.4-11 11.4S9 31.2 9 24.6c0-6.2 3.8-8.6 4.4-12.2C14 8.2 15.8 4 20 4z"
+      : "M20 4.5c6.2 0 10.2 6.8 10.2 15.6 0 9-4.6 15.4-10.2 15.4S9.8 29.1 9.8 20.1C9.8 11.3 13.8 4.5 20 4.5z";
+    const dots = skin.pebbly ? [[15,14],[22,11],[25,18],[18,21],[13,26],[23,27],[19,31],[27,24],[16,9]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".9" fill="#000" opacity=".28"/>`).join("") : "";
+    return `<svg viewBox="0 0 40 40"${size ? ` width="${size}" height="${size}"` : ""} aria-hidden="true"><defs><radialGradient id="${id}" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${shade(b, .4)}"/><stop offset=".55" stop-color="${b}"/><stop offset="1" stop-color="${shade(b, -.35)}"/></radialGradient></defs>
+      <g transform="rotate(-18 20 20)"><path d="${D}" fill="url(#${id})"/>${dots}<ellipse cx="16.4" cy="14" rx="2" ry="4.2" fill="#fff" opacity=".28"/>
+      <path d="M20 4.4V1.6" stroke="#6B4A22" stroke-width="1.6" stroke-linecap="round"/></g></svg>`;
+  };
+  // Mulberry drawn by variety: small round, very long, or large.
+  const berrySVG = (skin, size) => {
+    const b = skin.base, dim = skin.shape === "long" ? { w:8.4, h:31, cy:22 } : skin.shape === "large" ? { w:14, h:22, cy:21 } : { w:10.5, h:13.5, cy:22 };
+    const top = dim.cy - dim.h / 2, r = skin.shape === "long" ? 1.9 : skin.shape === "large" ? 2.4 : 2.2;
+    let beads = "";
+    for(let y = top + r; y <= top + dim.h - r + .1; y += r * 1.55){
+      const t = (y - dim.cy) / (dim.h / 2), half = dim.w / 2 * Math.sqrt(Math.max(0, 1 - t * t)) - r * .4;
+      const n = Math.max(1, Math.round(half * 2 / (r * 1.6)) + 1);
+      for(let i = 0; i < n; i++){ const x = 20 - half + (n === 1 ? half : i * (half * 2) / (n - 1)); beads += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="${shade(b, (i + Math.round(y)) % 2 ? -.12 : .06)}"/>`; }
+    }
+    const hl = `<circle cx="${(20 - dim.w / 4).toFixed(1)}" cy="${(top + dim.h * .3).toFixed(1)}" r="${(r * .7).toFixed(1)}" fill="#fff" opacity=".45"/>`;
+    return `<svg viewBox="0 0 40 40"${size ? ` width="${size}" height="${size}"` : ""} aria-hidden="true"><g transform="rotate(-14 20 20)">
+      <path d="M20 ${top + 1}V${top - 3.2}" stroke="#5B7A2E" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M20 ${top - 2.4}c2.4-2.4 6-2.2 7.2-.4-2.6 1.4-5.2 1.4-7.2.4z" fill="#5FAE45"/>
+      ${beads}${hl}</g></svg>`;
+  };
+  const varietySVG = (p, size) => !p || !p.skin ? null : p.draw === "avocado" ? avocadoSVG(p.skin, size) : p.draw === "berry" ? berrySVG(p.skin, size) : mangoSVG(p.skin, size);
+  const treeIcon = t => {
+    const p = profileFor(t);
+    if(p && p.skin) return varietySVG(p, 30);
+    return kindIcon(t.name);
+  };
+  // Kinds with no emoji (jujube, dragon fruit, lychee, longan…) use the same little drawings as the Orchard Layout.
+  const kindIcon = n => { const o = typeof window.__orchIconFor === "function" ? window.__orchIconFor(n) : null; if(!o || o === "🌳") return icon(n); return o.startsWith("<svg") ? o.replace("<svg ", '<svg width="28" height="28" ') : o; };
+  window.__ftVarietySVG = (name, variety) => varietySVG(profileFor({ name, variety }), null);
+  // Fill in the fruit colors from the profile (once per tree).
+  // Main fruit color for every tree: from its variety profile when there is one, otherwise the usual color of that kind of fruit.
+  const KIND_COLOR = [[/june ?plum/, "Yellow"], [/mango/, "Yellow"], [/avocado/, "Green"], [/banana|plantain/, "Yellow"], [/\bfig/, "Purple"], [/mulberr/, "Black"],
+    [/loquat/, "Orange"], [/lemon/, "Yellow"], [/lime/, "Green"], [/grapefruit/, "Yellow"], [/orange|mandarin|tangerine|satsuma|calamondin|calamodin|kumquat|citrus/, "Orange"],
+    [/peach|nectarine|plum/, "Red"], [/papaya/, "Orange"], [/guava/, "Green"], [/starfruit|carambola/, "Yellow"], [/persimmon/, "Orange"], [/pomegranate/, "Red"],
+    [/jaboticaba|blueberr/, "Purple"], [/lychee|litchi/, "Red"], [/longan|sapodilla/, "Brown"], [/jujube/, "Green"], [/dragon/, "Pink"]];
+  const autoColorOf = t => { const p = profileFor(t); if(p && p.colors && p.colors[0]) return p.colors[0]; const n = String(t.name || "").toLowerCase(); const k = KIND_COLOR.find(([re]) => re.test(n)); return k ? k[1] : ""; };
+  const autoColors = t => { const c = autoColorOf(t); const want = c ? [c] : []; if(JSON.stringify(t.colors || []) !== JSON.stringify(want)){ t.colors = want; return true; } return false; };
+  const googleURL = t => `https://www.google.com/search?q=${encodeURIComponent(`${t.variety ? `"${t.variety}" ` : ""}${t.name} tree variety`)}`;
+  const GLOGO = '<svg viewBox="0 0 48 48" width="16" height="16" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.8l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+  const profileHTML = t => {
+    const p = profileFor(t); if(!p) return `<div class="ft-globe-only"><a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a></div>`;
+    const row = (ic, k, v) => v ? `<div class="ft-prof-row"><span>${ic} ${k}</span><b>${fertEsc(v)}</b></div>` : "";
+    return `<details class="ft-prof" data-prof="${t.id}"${openProf.has(t.id) ? " open" : ""}><summary class="ft-prof-t">📖 About ${fertEsc(fullName(t))}<a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a><span class="ft-prof-car rain-chevron">▾</span></summary>
+      ${row("📍", "Origin", p.origin)}${row("🍽️", "Fruit", p.fruit)}${row("😋", "Flavor", p.flavor)}${row("📅", "Season", p.season)}
+      ${row("🌳", "Tree", p.tree)}${row("🛡️", "Disease", p.health)}${row("🌰", "Seed", p.seed)}${row("💡", "Tip", p.tip)}
+      <div class="ft-prof-src">${(p.src || []).map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${fertEsc(n)}</a>`).join(" · ")}</div></details>`;
+  };
   const climateFor = n => { const t = String(n).toLowerCase(); const hit = FT_CLIMATE.find(([ks]) => ks.some(k => t.includes(k))); return hit ? hit[1] : null; };
   const climateHTML = n => {
     const c = climateFor(n);
-    if(!c) return `<div class="ft-clim ft-clim-none">🌡️ No climate guide for ${fertEsc(n)} yet.</div>`;
+    if(!c) return "";
     return `<div class="ft-clim"><div class="ft-clim-t">🌡️ Climate needs</div>
       <div class="ft-clim-row"><span>❄️ Chill hours</span><b>${fertEsc(c.chill)}</b></div>
       <div class="ft-clim-row"><span>🌸 Best for flowering</span><b>${fertEsc(c.flower)}</b></div>
@@ -11274,10 +12247,10 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     }).join("") : `<div class="ft-empty">Nothing logged yet — pick a date and tap a stage.</div>`;
     const notes = t.log.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map(n => `<div class="ft-note"><span class="ft-note-d">${fmt(n.date, true)}</span> ${fertEsc(n.text)}${locked(n) ? "" : `<button type="button" class="ft-x" data-note="${n.id}" aria-label="Delete note">×</button>`}</div>`).join("");
     return `
-      <div class="ft-info">${[t.where ? `📍 ${fertEsc(t.where)}` : "", t.date ? `🗓️ Planted ${fmt(t.date, true)}${age(t.date) ? ` · ${age(t.date)}` : ""}` : ""].filter(Boolean).join("<br>") || "<i>No location or planting date yet.</i>"}${t.notes ? `<div class="ft-about">${fertEsc(t.notes)}</div>` : ""}</div>
+      ${t.date || t.notes ? `<div class="ft-info">${t.date ? `🗓️ Planted ${fmt(t.date, true)}${age(t.date) ? ` · ${age(t.date)}` : ""}` : ""}${t.notes ? `<div class="ft-about">${fertEsc(t.notes)}</div>` : ""}</div>` : ""}
+      ${t.__solo && t.where ? `<div class="ft-where">📍 ${fertEsc(t.where)}</div>` : ""}
+      ${profileHTML(t)}
       ${t.__solo ? climateHTML(t.name) : ""}
-      <div class="ft-sec">Fruit color</div>
-      <div class="ft-colors">${colorsFor(t.name).map(c => `<button type="button" class="ft-color${(t.colors || []).includes(c) ? " on" : ""}" data-color="${c}"${tl ? " disabled" : ""}><i class="ft-dot" style="background:${FT_HEX[c]}"></i>${c}</button>`).join("")}</div>
       <div class="ft-sec">Flowering · Fruit set · Ripe</div>
       <div class="ft-logrow"><input type="date" class="ft-evdate" value="${todayISO()}" aria-label="Date"></div>
       <div class="ft-stagebtns">${Object.entries(STAGES).map(([k, s]) => `<button type="button" class="ft-stage ${s.cls}" data-stage="${k}">${s.ic} ${s.label}</button>`).join("")}</div>
@@ -11286,15 +12259,23 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       <div class="ft-sec">Notes</div>
       <div class="ft-noteadd"><input type="text" class="ft-notein" placeholder="Add a note (pruned, fed, freeze damage…)" autocomplete="off"><button type="button" class="ft-noteadd-btn">Add</button></div>
       ${notes || ""}
+      ${t.died ? `<div class="ft-diednote">🪦 Died ${fmt(t.died, true)}${t.replacedBy ? ` · replaced by <b>${fertEsc(t.replacedBy)}</b>` : ""}</div>` : ""}
+      ${READ_ONLY ? "" : t.died ? `<button type="button" class="ft-revive">↩︎ Not dead — put it back on the list</button>` : `<button type="button" class="ft-died">🪦 This tree died</button>`}
       ${tl ? `<div class="ft-locked">🔒 Tree details locked (over 48 hours old)</div>` : `<div class="ft-treeacts"><button type="button" class="ft-edit">✎ Edit tree</button><button type="button" class="ft-del">🗑️ Delete tree</button></div>`}`;
+  };
+  // After closing others, keep the tapped one in view (things above it may have shrunk).
+  const scrollToOpen = sel => {
+    const x = document.querySelector(`#ftList ${sel}`); if(!x) return;
+    const top = x.getBoundingClientRect().top;
+    if(top < 140 || top > window.innerHeight - 120) window.scrollBy({ top: top - 150, behavior: "smooth" });
   };
   const cardHTML = (t, inGroup) => {
     const open = openIds.has(t.id), st = statusOf(t);
-    const title = inGroup ? (t.variety || "No variety") : fullName(t);
-    return `<div class="ft-card${inGroup ? " ft-in-group" : ""}" data-id="${t.id}">
+    const title = t.died ? fullName(t) : inGroup ? (t.variety || "No variety") : fullName(t);
+    return `<div class="ft-card${inGroup ? " ft-in-group" : ""}${t.died ? " ft-dead" : ""}" data-id="${t.id}">
       <button type="button" class="ft-head${open ? " open" : ""}" aria-expanded="${open}">
-        <span class="ft-ic" aria-hidden="true">${icon(t.name)}</span>
-        <span class="ft-name">${fertEsc(title)}${dotsHTML(t) ? ` <span class="ft-dots">${dotsHTML(t)}</span>` : ""}${inGroup && t.where ? `<small>${fertEsc(t.where)}</small>` : ""}</span>
+        <span class="ft-ic" aria-hidden="true">${treeIcon(t)}</span>
+        <span class="ft-name">${fertEsc(title)}${t.died ? `<small>🪦 died ${fmt(t.died, true)}${t.where ? ` · was in ${fertEsc(t.where)}` : ""}</small>` : inGroup && t.where ? `<small>📍 ${fertEsc(t.where)}</small>` : ""}</span>
         ${st ? `<span class="ft-status">${st}</span>` : ""}
       </button>
       <div class="ft-body"${open ? "" : " hidden"}>${open ? (t.__solo = !inGroup, bodyHTML(t)) : ""}</div>
@@ -11304,7 +12285,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
   // most recent year that has anything logged.
   const compareHTML = list => {
     const yrs = list.flatMap(t => t.events.map(e => String(e.date).slice(0, 4)));
-    if(!yrs.length) return `<div class="ft-cmp-empty">Log flowering, fruit set and ripe dates on each variety and they'll line up here to compare.</div>`;
+    if(!yrs.length) return "";
     const y = yrs.sort().pop();
     const cell = (t, st) => { const e = t.events.filter(e => e.stage === st && String(e.date).startsWith(y)).sort((a, b) => String(a.date).localeCompare(String(b.date)))[0]; return e ? fmt(e.date) : "—"; };
     const rows = list.slice().sort((a, b) => { const fa = cell(a, "flower"), fb = cell(b, "flower"); return (fa === "—") - (fb === "—") || String((a.events.find(e => e.stage === "flower" && String(e.date).startsWith(y)) || {}).date || "").localeCompare(String((b.events.find(e => e.stage === "flower" && String(e.date).startsWith(y)) || {}).date || "")); });
@@ -11316,26 +12297,50 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     const el = $("ftList");
     if(!trees.length){ el.innerHTML = `<div class="ft-empty">No trees yet — add your first one above.</div>`; return; }
     const groups = new Map();
-    trees.forEach(t => { const k = kindKey(t.name); if(!groups.has(k)) groups.set(k, []); groups.get(k).push(t); });
+    const alive = trees.filter(t => !t.died), dead = trees.filter(t => t.died);
+    alive.forEach(t => { const k = kindKey(t.name); if(!groups.has(k)) groups.set(k, []); groups.get(k).push(t); });
     const keys = [...groups.keys()].sort((a, b) => groups.get(a)[0].name.localeCompare(groups.get(b)[0].name, undefined, { sensitivity:"base" }));
-    el.innerHTML = `<div class="ft-count">${trees.length} ${trees.length === 1 ? "tree" : "trees"}</div>` + keys.map(k => {
+    const deadOpen = openGroups.has("__dead");
+    const deadHTML = dead.length ? `<div class="ft-group ft-deadgroup" data-k="__dead">
+        <button type="button" class="ft-ghead${deadOpen ? " open" : ""}" aria-expanded="${deadOpen}">
+          <span class="ft-ic" aria-hidden="true">🪦</span><span class="ft-name">Trees that died</span>
+          <span class="ft-gcount">${dead.length}</span></button>
+        <div class="ft-gbody"${deadOpen ? "" : " hidden"}>${deadOpen ? dead.slice().sort((a, b) => String(b.died).localeCompare(String(a.died))).map(t => cardHTML(t, true)).join("") : ""}</div></div>` : "";
+    el.innerHTML = `<div class="ft-count">${alive.length} ${alive.length === 1 ? "tree" : "trees"}</div>` + keys.map(k => {
       const list = groups.get(k).sort((a, b) => (a.variety || "").localeCompare(b.variety || "", undefined, { sensitivity:"base" }));
       if(list.length === 1) return cardHTML(list[0], false);
       const open = openGroups.has(k), nm = list[0].name;
       return `<div class="ft-group" data-k="${k}">
         <button type="button" class="ft-ghead${open ? " open" : ""}" aria-expanded="${open}">
-          <span class="ft-ic" aria-hidden="true">${icon(nm)}</span>
+          <span class="ft-ic" aria-hidden="true">${kindIcon(nm)}</span>
           <span class="ft-name">${fertEsc(nm)}</span>
           <span class="ft-gcount">${list.length} ${list.some(t => t.variety) ? "varieties" : "trees"}</span>
         </button>
         <div class="ft-gbody"${open ? "" : " hidden"}>${open ? climateHTML(nm) + compareHTML(list) + list.map(t => cardHTML(t, true)).join("") : ""}</div>
       </div>`;
-    }).join("");
-    el.querySelectorAll(".ft-ghead").forEach(h => h.addEventListener("click", () => { const k = h.parentElement.dataset.k; if(openGroups.has(k)) openGroups.delete(k); else openGroups.add(k); render(); }));
+    }).join("") + deadHTML;
+    // One group open at a time; switching group also closes any open tree.
+    el.querySelectorAll(".ft-ghead").forEach(h => h.addEventListener("click", () => {
+      const k = h.parentElement.dataset.k;
+      if(openGroups.has(k)){ openGroups.delete(k); openIds.clear(); }
+      else { openGroups.clear(); openIds.clear(); openGroups.add(k); }
+      render(); scrollToOpen(`.ft-group[data-k="${k}"]`);
+    }));
+    el.querySelectorAll(".ft-globe").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+    el.querySelectorAll("details.ft-prof").forEach(d => d.addEventListener("toggle", () => { d.open ? openProf.add(d.dataset.prof) : openProf.delete(d.dataset.prof); }));
+    el.querySelectorAll(".ft-glink").forEach(g => {
+      const go = e => { e.stopPropagation(); e.preventDefault(); window.open(g.dataset.url, "_blank", "noopener"); };
+      g.addEventListener("click", go); g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") go(e); });
+    });
     el.querySelectorAll(".ft-card").forEach(card => wire(card, trees.find(x => x.id === card.dataset.id)));
   };
   const wire = (card, t) => {
-    card.querySelector(".ft-head").addEventListener("click", () => { if(openIds.has(t.id)) openIds.delete(t.id); else openIds.add(t.id); render(); });
+    // One tree open at a time: opening a tree closes any other open tree.
+    card.querySelector(".ft-head").addEventListener("click", () => {
+      if(openIds.has(t.id)) openIds.delete(t.id);
+      else { openIds.clear(); openIds.add(t.id); }
+      render(); scrollToOpen(`.ft-card[data-id="${t.id}"]`);
+    });
     const body = card.querySelector(".ft-body"); if(body.hidden) return;
     body.querySelectorAll(".ft-stage").forEach(btn => btn.addEventListener("click", async () => {
       if(READ_ONLY) return;
@@ -11379,14 +12384,25 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       showUndoToast("Note removed", async () => { t.log.splice(i, 0, removed); await save(); render(); });
     }));
     body.querySelector(".ft-edit")?.addEventListener("click", () => {
-      editingId = t.id; $("ftName").value = t.name; $("ftVariety").value = t.variety || ""; $("ftWhere").value = t.where || ""; $("ftDate").value = t.date || ""; $("ftNotes").value = t.notes || "";
-      $("ftAddBtn").textContent = "💾 Save changes"; $("ftCancelBtn").style.display = "";
+      editingId = t.id; $("ftName").value = t.name; $("ftVariety").value = t.variety || ""; setWhere(t.where || ""); $("ftDate").value = t.date || ""; $("ftNotes").value = t.notes || "";
+      $("ftAddBtn").textContent = "💾 Save changes"; $("ftCancelBtn").style.display = ""; showForm(true);
       $("ftName").scrollIntoView({ behavior:"smooth", block:"center" });
+    });
+    body.querySelector(".ft-died")?.addEventListener("click", async () => {
+      if(READ_ONLY) return;
+      markDied(t, todayISO2()); await save(); await orchSync(t, true);
+      openIds.clear(); render();
+      showUndoToast(`🪦 ${fullName(t)} marked as died and taken off the Orchard Layout`, async () => { delete t.died; delete t.replacedBy; await save(); await orchSync(t); render(); });
+    });
+    body.querySelector(".ft-revive")?.addEventListener("click", async () => {
+      if(READ_ONLY) return;
+      delete t.died; delete t.replacedBy; await save(); await orchSync(t); openIds.clear(); render();
+      showUndoToast(`${fullName(t)} is back on the list`, null, "OK");
     });
     body.querySelector(".ft-del")?.addEventListener("click", async () => {
       const i = trees.findIndex(x => x.id === t.id); if(i < 0) return;
-      const removed = trees.splice(i, 1)[0]; await save(); render();
-      showUndoToast(`Removed ${fullName(removed)}`, async () => { trees.splice(i, 0, removed); await save(); render(); });
+      const removed = trees.splice(i, 1)[0]; await save(); await orchSync(removed, true); render();
+      showUndoToast(`Removed ${fullName(removed)}`, async () => { trees.splice(i, 0, removed); await save(); await orchSync(removed); render(); });
     });
   };
   // 🧪 Fertilizer and 🐞 Pest control buttons, like a crop's window. They list
@@ -11443,7 +12459,90 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       }, 60);
     }));
   };
-  const reset = () => { editingId = null; ["ftName","ftVariety","ftWhere","ftDate","ftNotes"].forEach(id => $(id).value = ""); $("ftAddBtn").textContent = "🌳 Add tree"; $("ftCancelBtn").style.display = "none"; };
+  // Where: Zone 1–4 + Row A–E (or "Other place" typed in). Stored like "3B".
+  const parseWhere = w => { const m = /^\s*([1-4])\s*([a-e])\s*$/i.exec(w || ""); return m ? { z: m[1], r: m[2].toUpperCase() } : null; };
+  const syncWhere = () => {
+    const z = $("ftZone").value, other = z === "other";
+    $("ftWhereWrap").hidden = !other; $("ftRow").disabled = !z || other;
+    if(z && !other) $("ftWhere").value = z + $("ftRow").value;
+    else if(!other) $("ftWhere").value = "";
+  };
+  const setWhere = w => {
+    pickKind(false); setTimeout(cellOpts, 0);
+    const pw = parseWhere(w);
+    if(pw){ $("ftZone").value = pw.z; $("ftRow").value = pw.r; $("ftWhere").value = pw.z + pw.r; }
+    else if(w){ $("ftZone").value = "other"; $("ftWhere").value = w; }
+    else { $("ftZone").value = ""; $("ftRow").value = "A"; $("ftWhere").value = ""; }
+    syncWhere();
+  };
+  $("ftZone").addEventListener("change", () => { if($("ftZone").value === "other") $("ftWhere").value = ""; syncWhere(); if($("ftZone").value === "other") $("ftWhere").focus(); });
+  $("ftRow").addEventListener("change", syncWhere);
+  // Keep the Orchard Layout in step: a tree added with a zone + row goes onto the map
+  // (south end of that row); editing or deleting it updates its spot there too.
+  const sameKind = (a, b) => { const x = kindKey(a).slice(0, 5), y = kindKey(b).slice(0, 5); return x === y; };
+  const ORCH_KEY = "orchardLayout";
+  const orchLoad = async () => { try{ const r = await window.storage.get(ORCH_KEY, false); return r && r.value ? (JSON.parse(r.value) || []) : null; }catch(e){ return null; } };
+  const orchSave = async list => { try{ await window.storage.set(ORCH_KEY, JSON.stringify(list), false); }catch(e){} };
+  const orchSync = async (t, removed) => {
+    const list = await orchLoad(); if(!list) return;
+    const pw = parseWhere(t.where);
+    let i = list.findIndex(o => o.ftId === t.id);
+    if(i < 0 && pw) i = list.findIndex(o => !o.ftId && sameKind(o.name, t.name) && normV(o.variety) === normV(t.variety) && o.zone === +pw.z && o.row === pw.r);
+    if(removed || !pw){ if(i >= 0){ list.splice(i, 1); await orchSave(list); } return; }
+    const entry = i >= 0 ? list[i] : { id:`o${Date.now()}${Math.random().toString(36).slice(2,6)}`, unsure:false, note:"", addedAt: Date.now(), ftId: t.id };
+    const moved = i < 0 || entry.zone !== +pw.z || entry.row !== pw.r;
+    Object.assign(entry, { name: t.name, variety: t.variety || "", zone: +pw.z, row: pw.r, planted: t.date || entry.planted || "" });
+    if(moved){ if(i >= 0) list.splice(i, 1); list.push(entry); }
+    await orchSave(list);
+  };
+  const cellOpts = async () => {
+    const z = $("ftZone").value, show = !editingId && /^[1-4]$/.test(z);
+    $("ftRepWrap").hidden = !show;
+    if(!show){ $("ftPosWrap").hidden = true; return; }
+    const r = $("ftRow").value, list = ((await orchLoad()) || []).filter(o => o.zone === +z && o.row === r);
+    const nm = o => `${o.name}${o.variety ? " " + o.variety : ""}`;
+    const keep = $("ftRep").value;
+    $("ftRep").innerHTML = list.length ? list.map((o, i) => `<option value="${o.id}">#${i + 1} ${fertEsc(nm(o))}</option>`).join("") : `<option value="">No trees in this row yet</option>`;
+    if(list.some(o => o.id === keep)) $("ftRep").value = keep;
+    $("ftPosWrap").hidden = !$("ftIsRep").checked;
+  };
+  $("ftZone").addEventListener("change", cellOpts);
+  $("ftRow").addEventListener("change", cellOpts);
+  // Two check marks, only one at a time: New tree / Replacing a tree that died.
+  const pickKind = rep => { $("ftIsNew").checked = !rep; $("ftIsRep").checked = rep; $("ftPosWrap").hidden = !rep; };
+  $("ftIsNew").addEventListener("change", () => pickKind(!$("ftIsNew").checked));
+  $("ftIsRep").addEventListener("change", () => pickKind($("ftIsRep").checked));
+  const todayISO2 = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  // Place a NEW tree on the map: at a chosen spot in the row, or in the spot of a tree that died.
+  const orchPlace = async (t, pos, repId) => {
+    const list = await orchLoad(); const pw = parseWhere(t.where); if(!list || !pw) return null;
+    const entry = { id:`o${Date.now()}${Math.random().toString(36).slice(2,6)}`, name: t.name, variety: t.variety || "", zone: +pw.z, row: pw.r, unsure:false, note:"", addedAt: Date.now(), planted: t.date || "", ftId: t.id };
+    let old = null;
+    if(repId){ const k = list.findIndex(o => o.id === repId); if(k >= 0){ old = list[k]; entry.replaced = [{ name: old.name, variety: old.variety, date: t.date || todayISO2(), note: old.note || "" }, ...(old.replaced || [])]; list[k] = entry; } }
+    if(!old){
+      const cell = list.filter(o => o.zone === entry.zone && o.row === entry.row);
+      if(!cell.length) list.push(entry);
+      else if(pos == null || pos >= cell.length) list.splice(list.indexOf(cell[cell.length - 1]) + 1, 0, entry);
+      else list.splice(list.indexOf(cell[pos]), 0, entry);
+    }
+    await orchSave(list);
+    return old;
+  };
+  // The Fruit Trees entry that matches a tree on the map.
+  const ftForOrch = o => trees.find(x => x.id === o.ftId) || trees.find(x => !x.died && sameKind(x.name, o.name) && normV(x.variety) === normV(o.variety) && (parseWhere(x.where) || {}).z == o.zone && (parseWhere(x.where) || {}).r === o.row);
+  const markDied = (x, date, byName) => { x.died = date || todayISO2(); if(byName) x.replacedBy = byName; };
+  // Called from the Orchard Layout when a tree is added or replaced there.
+  window.__ftFromOrchard = async (entry, old) => {
+    await load();
+    const t = { id:`t${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), name: entry.name, variety: entry.variety || "", where: `${entry.zone}${entry.row}`, date: entry.planted || "", notes: "", events: [], log: [] };
+    if(old){ const d = ftForOrch(old); if(d && !d.died) markDied(d, entry.planted, fullName(t)); }
+    trees.push(t); await save(); render();
+    return t.id;
+  };
+  window.__ftOrchMoved = async o => { if(!o || !o.ftId) return; await load(); const d = trees.find(x => x.id === o.ftId); if(d){ d.where = `${o.zone}${o.row}`; await save(); render(); } };
+  const showForm = on => { $("ftFormCard").hidden = !on; $("ftAddOpen").setAttribute("aria-expanded", String(on)); };
+  const reset = () => { editingId = null; setWhere(""); ["ftName","ftVariety","ftWhere","ftDate","ftNotes"].forEach(id => $(id).value = ""); $("ftAddBtn").textContent = "🌳 Add tree"; $("ftCancelBtn").style.display = "none"; showForm(false); };
+  $("ftAddOpen").addEventListener("click", () => { const on = $("ftFormCard").hidden; if(!on) reset(); else { showForm(true); setTimeout(() => $("ftName").focus(), 50); } });
   const fillSuggestions = async () => {
     const names = new Set();
     try{ for(const sk of Object.keys(SEASONS)){ (await getHarvestLogFor(sk, "fruit")).forEach(e => { if(e && e.fruit) names.add(String(e.fruit).trim()); }); } }catch(e){}
@@ -11458,13 +12557,15 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     if(READ_ONLY) return;
     const name = $("ftName").value.trim();
     if(!name){ $("ftName").focus(); showUndoToast("Type the tree's name first.", null, "OK"); return; }
+    syncWhere();
+    if(!$("ftZone").value){ $("ftZone").focus(); showUndoToast("Pick the zone and row (or Other place).", null, "OK"); return; }
     // Same kind typed a little differently ("mangos", "Mango") joins the existing group.
     let varIn = $("ftVariety").value.trim(), nameIn = cleanName(name);
     if(!varIn){ const sp = splitKind(nameIn); if(sp){ nameIn = sp.kind; varIn = sp.variety; } }
     const same = trees.find(t => kindKey(t.name) === kindKey(nameIn));
     const data = { name: same ? same.name : nameIn, variety: varIn, where: $("ftWhere").value.trim(), date: $("ftDate").value, notes: $("ftNotes").value.trim() };
     if(editingId){
-      const t = trees.find(x => x.id === editingId); if(t) Object.assign(t, data);
+      const t = trees.find(x => x.id === editingId); if(t){ Object.assign(t, data); await orchSync(t); }
     } else {
       const dup = trees.find(t => fullName(t).toLowerCase() === fullName(data).toLowerCase() && (t.where || "").toLowerCase() === data.where.toLowerCase());
       if(dup){
@@ -11472,15 +12573,580 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
         if(!ok) return;
       }
       const t = { id:`t${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), ...data, events: [], log: [] };
+      openIds.clear(); openGroups.clear();
       trees.push(t); openIds.add(t.id); openGroups.add(kindKey(t.name));
+      const repId = !$("ftRepWrap").hidden && $("ftIsRep").checked ? $("ftRep").value : "", pos = null;
+      const old = parseWhere(t.where) ? await orchPlace(t, pos, repId) : null;
+      if(old){ const d = ftForOrch(old); if(d && d !== t && !d.died) markDied(d, t.date, fullName(t)); }
+      if(old) showUndoToast(`🌳 ${fullName(t)} replaced ${old.name}${old.variety ? " " + old.variety : ""} in ${t.where}`, null, "OK");
+      else if(parseWhere(t.where)) showUndoToast(`🌳 ${fullName(t)} added — also placed on the Orchard Layout in ${t.where}`, null, "OK");
     }
     await save(); reset(); render();
   });
   $("ftCancelBtn").addEventListener("click", reset);
-  document.querySelector('.tabbtn[data-tab="fruitTrees"]').addEventListener("click", async () => { await load(); render(); fillSuggestions(); });
+  // Coming back to Fruit Trees starts with everything closed.
+  document.querySelector('.tabbtn[data-tab="fruitTrees"]').addEventListener("click", async () => { openIds.clear(); openGroups.clear(); reset(); await load(); render(); fillSuggestions(); });
   load().then(render);
 })();
 
+/* ---------------- Fruit Trees: Orchard Layout ----------------
+   A map of where every tree stands, drawn like the drone photo: zones 4-3-2-1
+   from north (left) to south (right), rows A (by the lake, bottom) up to E
+   (by the woods, top). Trees in a row are in the order they were dictated,
+   north to south. Saved under its own key ("orchardLayout"), so it syncs and
+   goes into backups like everything else. Each tree stays editable for 48
+   hours, then locks; the 🔒 button in the tree's Save window unlocks editing
+   (same app-wide unlock as the header padlock). */
+(function(){
+  const KEY = "orchardLayout";
+  const $ = id => document.getElementById(id);
+  const ZONES = [4, 3, 2, 1], ROWS = ["E", "D", "C", "B", "A"];
+  // First layout, as dictated on Oct 31, 2026. "?" = name still to check.
+  const SEED = {
+    "1B": ["Avocado|Ooh La La", "Mango|Carrie", "Starfruit|Kari", "Jaboticaba|Sabará"],
+    "1C": ["Longan|Kohala", "Mandarin|Sugar Belle", "Mango|Edward"],
+    "2A": ["Starfruit|Arkin", "Mango|Ceci Love", "Mango|Florigon", "Mango|Super Julie", "Peach|Florida Grande"],
+    "2B": ["Kumquat|Nagami", "Mango|Nam Doc Mai #4", "Mulberry|Everbearing", "Lemon|Meyer", "Mango|Cabeza", "Mulberry|Shangri-La", "Mango|Glenn", "Persimmon|Matsumoto", "Mango|Fruit Cocktail", "Mango|Gold Nugget", "Mango|Kent"],
+    "2C": ["Persimmon|Somerset", "Mango|Glenn", "Mandarin|Sugar Belle", "Persimmon|Fuyu", "Mandarin|Sugar Belle", "Plum|Scarlet Beauty", "Mandarin|Sugar Belle", "Plum|Scarlet Beauty", "Mango|Spirit of '76", "Mulberry|Pakistan", "Mango|Lemon Zest"],
+    "3A": ["Avocado|Bacon", "Mango|Fruit Cocktail", "Loquat|", "Mango|Venus", "Mango|Orange Sherbet"],
+    "3B": ["Mango|Pickering", "Grapefruit|Ruby Red", "Persimmon|Fuyu", "Lychee|Brewster", "Mango|Jahangir", "Avocado|Brogdon", "Avocado|Brogdon", "Peach|Florida Prince", "Plum|Scarlet Beauty", "June Plum|"],
+    "3C": ["Calamondin|", "Avocado|Bacon", "Peach|Florida Prince", "Mango|Rosigold", "Peach|Florida Prince", "Mango|Haden", "Persimmon|Izu", "Jujube|Thai", "Dragon Fruit|"],
+    "4A": ["Loquat|Bradenton", "Mango|Kent", "Sapodilla|Alano", "Sapodilla|Alano", "Mandarin|"],
+    "4B": ["Banana|", "Avocado|Day", "Loquat|Christmas", "Mango|Juicy Peach", "Calamondin|", "Persimmon|Saijo"],
+    "4C": ["Jujube|Thai", "Dragon Fruit|", "Mango|Fruit Cocktail", "Peach|Florida Glo", "Papaya|Red Lady", "Mango|Frozen", "Loquat|Cherry Wood", "Loquat|Ed's Delight"],
+    "4E": ["Loquat|Gold Nugget", "Orange|Valencia"]
+  };
+  const FIXES = [[2, "A", "Mango", "Sassy Love", "Ceci Love"], [1, "B", "Avocado", "Lula", "Ooh La La"], [2, "C", "Persimmon", "Somerset", "Sommerset"], [2, "B", "Mango", "Cabeza", "Cabeza"], [3, "A", "Mango", "Venus", "Venus"], [4, "C", "Mango", "Frozen", "Frozen"], [4, "C", "Loquat", "Cherry Wood", "Cherry Wood"], [4, "C", "Loquat", "Add the Light", "Ed's Delight"], [2, "C", "Persimmon", "Sommerset", "Somerset"]];
+  // Look of each kind: [match, emoji or 2-letter tag, color]
+  const KINDS = [
+    [/june ?plum/, "JP", "#9DB13F"], [/mango/, "🥭", "#F2B53A"], [/avocado/, "🥑", "#6E9E45"], [/banana|plantain/, "🍌", "#E9CF45"],
+    [/peach|nectarine/, "🍑", "#F29C8A"], [/plum/, "🍑", "#9B4F96"], [/lemon|lime/, "🍋", "#EBD53F"],
+    [/grapefruit/, "🍊", "#EE7F68"], [/mandarin|tangerine|satsuma/, "🍊", "#F59A2E"], [/calamondin|calamodin/, "🍊", "#E9B04F"],
+    [/kumquat/, "🍊", "#E58A1F"], [/orange/, "🍊", "#F07F1E"], [/loquat/, "Lq", "#E39A2D"], [/persimmon/, "Ps", "#D9601F"],
+    [/lychee|litchi/, "Ly", "#D24B5B"], [/longan/, "Lg", "#B8955A"], [/starfruit|carambola/, "⭐", "#E2CF4A"],
+    [/jaboticaba/, "Jb", "#5E3A73"], [/mulberr/, "Mb", "#6B2E5E"], [/jujube/, "Jj", "#A0522D"], [/dragon/, "Df", "#D9367F"],
+    [/papaya/, "Pa", "#EF8A3A"], [/sapodilla/, "Sp", "#86684A"], [/fig/, "Fg", "#6E2F72"], [/guava/, "Gv", "#7FB24E"]
+  ];
+  const look = name => { const n = String(name || "").toLowerCase(); const k = KINDS.find(([re]) => re.test(n)); return k ? { ic:k[1], col:k[2] } : { ic:"🌳", col:"#8BAF7A" }; };
+  // 3D fruit icons (no circle): emoji where one exists, a small drawing otherwise.
+  const ORCH_SVG = {
+    lychee:'<svg viewBox="0 0 20 20"><path d="M10 4.2 9.4 1.6" stroke="#5B8A2E" stroke-width="1.3" stroke-linecap="round"/><path d="M9.6 2.6c1.6-1.4 3.6-1.2 4.6 0-1.6.9-3.2.9-4.6 0z" fill="#5FAE45"/><circle cx="10" cy="11.4" r="6.8" fill="#D63B4B"/>' + [[7,8],[10,7],[13,8],[6,11],[9,10.4],[12,10.4],[14.4,11.6],[7.4,14],[10.4,13.6],[13,14.4],[9,16.4],[11.8,16.6]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r=".85" fill="#A9233A"/>`).join("") + '<ellipse cx="7.6" cy="8.8" rx="1.8" ry="2.4" fill="#fff" opacity=".28"/></svg>',
+    longan:'<svg viewBox="0 0 20 20"><path d="M10 1.6v4M10 5.6 5.6 9M10 5.6l4.6 3.2M10 5.6v5" stroke="#7A5A2E" stroke-width="1.1" fill="none" stroke-linecap="round"/><circle cx="5.4" cy="12" r="3.9" fill="#C9A15E"/><circle cx="14.6" cy="12" r="3.9" fill="#C29654"/><circle cx="10" cy="14.6" r="4.2" fill="#D6AF6A"/><circle cx="8.6" cy="13.2" r="1.2" fill="#fff" opacity=".35"/><circle cx="4.2" cy="10.8" r=".9" fill="#fff" opacity=".3"/><circle cx="13.4" cy="10.8" r=".9" fill="#fff" opacity=".3"/></svg>',
+    jujube:'<svg viewBox="0 0 20 20"><path d="M10 4.4 10.4 1.8" stroke="#6B4A22" stroke-width="1.3" stroke-linecap="round"/><path d="M10.4 2.6c1.8-1.2 3.8-.8 4.6.4-1.8.8-3.4.6-4.6-.4z" fill="#5FAE45"/><ellipse cx="10" cy="11.4" rx="5.6" ry="7" fill="#9FC25A"/><path d="M10 4.4c3.2 0 5.6 3.2 5.6 7s-2.4 7-5.6 7c1.6-2 2.2-4.4 2.2-7S11.6 6.4 10 4.4z" fill="#A0522D"/><path d="M5.6 9.6c.4-2.4 1.6-3.8 3-4.4" stroke="#fff" stroke-width="1.1" fill="none" opacity=".45" stroke-linecap="round"/></svg>',
+    dragon:'<svg viewBox="0 0 20 20"><ellipse cx="10" cy="11" rx="6.6" ry="7.6" fill="#E0367F"/><path d="M10 3.4 8.4 .8l3.2 1.6zM4.2 7.2 1.4 6l3.4-.4zM15.8 7.2l2.8-1.2-3.4-.4zM3.6 12.6.8 13.4l3.2.8zM16.4 12.6l2.8.8-3.2.8zM6.4 17.4l-1.8 2 2.8-.8zM13.6 17.4l1.8 2-2.8-.8zM7 6.8 5 4.8l2.6.6zM13 6.8l2-2-2.6.6z" fill="#7DBA3C"/><path d="M8 9.6 6.6 7.6l2.2.8zM12 9.6l1.4-2-2.2.8zM10 13.6 9 11.6h2zM7.4 14.4 5.8 13l2 .2zM12.6 14.4l1.6-1.4-2 .2z" fill="#9FD15A"/><ellipse cx="7.2" cy="9" rx="1.4" ry="2.6" fill="#fff" opacity=".22"/></svg>',
+    papaya:'<svg viewBox="0 0 20 20"><path d="M10 1.6c2.6 0 4 2.2 4.6 5 .8 3.6 2.4 5.6 2.4 8 0 2.6-3.2 4-7 4s-7-1.4-7-4c0-2.4 1.6-4.4 2.4-8 .6-2.8 2-5 4.6-5z" fill="#F29A3A"/><path d="M10 1.6c2.6 0 4 2.2 4.6 5-1.4-1-3-1.4-4.6-1.4S6.8 5.6 5.4 6.6C6 3.8 7.4 1.6 10 1.6z" fill="#8DBF4A"/><path d="M6.6 9.4c-.6 2-1.6 3.6-1.8 5" stroke="#fff" stroke-width="1.2" fill="none" opacity=".4" stroke-linecap="round"/></svg>',
+    sapodilla:'<svg viewBox="0 0 20 20"><path d="M10 4.4V2" stroke="#5B3A1E" stroke-width="1.3" stroke-linecap="round"/><path d="M10 2.6c1.6-1.2 3.4-1 4.2.2-1.6.8-3 .8-4.2-.2z" fill="#5FAE45"/><ellipse cx="10" cy="11.6" rx="6.4" ry="6.8" fill="#9A7350"/><ellipse cx="10" cy="11.6" rx="6.4" ry="6.8" fill="url(#oSapo)"/><ellipse cx="7.6" cy="9.4" rx="1.8" ry="2.6" fill="#fff" opacity=".22"/><defs><radialGradient id="oSapo" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#C29A70" stop-opacity=".5"/><stop offset="1" stop-color="#6E4E32" stop-opacity=".5"/></radialGradient></defs></svg>',
+    jaboticaba:'<svg viewBox="0 0 20 20"><path d="M1.6 10.4h16.8" stroke="#8A6A48" stroke-width="2.2" stroke-linecap="round"/><circle cx="5" cy="6.6" r="3.2" fill="#3E2550"/><circle cx="11" cy="6.2" r="3.2" fill="#4A2C60"/><circle cx="7.6" cy="14.4" r="3.4" fill="#452A5A"/><circle cx="14" cy="14" r="3.2" fill="#3A2249"/><circle cx="4" cy="5.6" r=".9" fill="#fff" opacity=".5"/><circle cx="10" cy="5.2" r=".9" fill="#fff" opacity=".5"/><circle cx="6.6" cy="13.4" r=".9" fill="#fff" opacity=".5"/><circle cx="13" cy="13" r=".9" fill="#fff" opacity=".5"/></svg>',
+    juneplum:'<svg viewBox="0 0 20 20"><path d="M10 4.6 10.6 1.8" stroke="#6B4A22" stroke-width="1.3" stroke-linecap="round"/><path d="M10.4 2.6c-1.8-1.2-3.8-.8-4.6.4 1.8.8 3.4.6 4.6-.4z" fill="#5FAE45"/><ellipse cx="10" cy="11.8" rx="5.4" ry="6.8" fill="#B9C845"/><path d="M10 5c3 0 5.4 3 5.4 6.8S13 18.6 10 18.6c2-1.6 2.6-4 2.6-6.8S12 6.6 10 5z" fill="#E2C340" opacity=".8"/><ellipse cx="7.6" cy="9.6" rx="1.4" ry="2.6" fill="#fff" opacity=".3"/></svg>'
+  };
+  const iconFor = name => {
+    const n = String(name || "").toLowerCase();
+    const H = typeof HARVEST_SVG !== "undefined" ? HARVEST_SVG : {}, M = typeof MONTH_SVG !== "undefined" ? MONTH_SVG : {};
+    const map = [
+      [/june ?plum/, ORCH_SVG.juneplum], [/mango/, "🥭"], [/avocado/, "🥑"], [/banana|plantain/, "🍌"], [/peach|nectarine|plum/, "🍑"],
+      [/lemon|lime/, "🍋"], [/orange|mandarin|tangerine|satsuma|calamondin|calamodin|kumquat|grapefruit|citrus/, "🍊"],
+      [/loquat/, H.loquat], [/persimmon/, H.persimmon], [/mulberr/, H.mulberry], [/\bfig/, H.fig], [/starfruit|carambola/, M.starfruit],
+      [/lychee|litchi/, ORCH_SVG.lychee], [/longan/, ORCH_SVG.longan], [/jujube/, ORCH_SVG.jujube], [/dragon/, ORCH_SVG.dragon],
+      [/papaya/, ORCH_SVG.papaya], [/sapodilla/, ORCH_SVG.sapodilla], [/jaboticaba/, ORCH_SVG.jaboticaba], [/cherr/, "🍒"], [/apple/, "🍎"], [/pear|guava/, "🍐"]
+    ];
+    const hit = map.find(([re, v]) => re.test(n) && v);
+    return hit ? hit[1] : "🌳";
+  };
+  // Icon inside the map (SVG) or in a chip (HTML), with a soft drop shadow for the 3D look.
+  window.__orchIconFor = n => iconFor(n);
+  const iconSVG = (name, cx, cy, size, variety) => {
+    const ic = (typeof window.__ftVarietySVG === "function" && window.__ftVarietySVG(name, variety)) || iconFor(name);
+    if(ic.startsWith("<svg")){ const s = size * 1.3; return `<g filter="url(#oShadow)">${ic.replace("<svg ", `<svg x="${cx - s / 2}" y="${cy - s / 2 - 1}" width="${s}" height="${s}" `)}</g>`; }
+    return `<text class="ic3d" x="${cx}" y="${cy + size * .36}" text-anchor="middle" style="font-size:${size * .92}px" filter="url(#oShadow)">${ic}</text>`;
+  };
+  const iconHTML = name => { const ic = iconFor(name); return `<span class="orch-ic">${ic}</span>`; };
+  const SHADOW_DEFS = `<defs><filter id="oShadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="1.3" flood-color="#000" flood-opacity=".32"/></filter></defs>`;
+  const isEmoji = s => !/^[A-Za-z]{1,3}$/.test(s);
+  const kk = n => String(n || "").toLowerCase().replace(/[^a-z0-9]/g, "").replace(/(es|s)$/, "");
+  const esc = v => (typeof fertEsc === "function" ? fertEsc(v) : String(v == null ? "" : v).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])));
+  const full = t => t.variety ? `${t.name} ${t.variety}` : t.name;
+  const ro = () => typeof READ_ONLY !== "undefined" && READ_ONLY;
+  const locked = t => ro() || (typeof isEntryLocked === "function" && isEntryLocked(t && t.addedAt));
+  const newId = () => `o${Date.now()}${Math.random().toString(36).slice(2, 6)}`;
+
+  const openZones = new Set();
+  let geo = [], dragJustEnded = false;
+  let trees = [], fit = false, names = true, vert = true, filter = "", editId = null, addAt = null;
+
+  const load = async () => {
+    let r = null;
+    try{ r = await window.storage.get(KEY, false); }catch(e){}
+    if(r && r.value){
+      try{ trees = JSON.parse(r.value) || []; }catch(e){ trees = []; }
+      // Name corrections given after the layout was first saved (applied once; harmless to repeat).
+      // Each correction runs only once (so a tree can still be changed later).
+      let fixed = false, doneN = 0;
+      try{ const d = await window.storage.get("orchardLayoutFixes", false); doneN = d ? (+d.value || 0) : 0; }catch(e){}
+      FIXES.slice(doneN).forEach(([z, row, name, from, to]) => trees.forEach(t => {
+        if(t.zone === z && t.row === row && kk(t.name) === kk(name) && String(t.variety).toLowerCase() === from.toLowerCase()){ t.variety = to; t.unsure = false; fixed = true; }
+      }));
+      if(fixed) await save();
+      if(doneN < FIXES.length){ try{ await window.storage.set("orchardLayoutFixes", String(FIXES.length), false); }catch(e){} }
+      await flipOnce();
+      await fix2BOnce();
+      return;
+    }
+    // First time: start from the dictated layout.
+    const now = Date.now(); trees = [];
+    // Each row was dictated driving south to north, so flip it to north-to-south order.
+    // (except rows driven north to south, which are already in order).
+    Object.entries(SEED).forEach(([cell, list]) => (NORTH_FIRST.includes(cell) ? list : list.slice().reverse()).forEach(s => {
+      const [name, variety, q] = s.split("|");
+      trees.push({ id:newId(), zone:+cell[0], row:cell[1], name, variety:variety || "", unsure:q === "?", note:"", addedAt:now });
+    }));
+    await save();
+    try{ await window.storage.set(FLIP_KEY, "1", false); for(const c of NORTH_FIRST) await window.storage.set(fixKey(c), "1", false); await window.storage.set("orchardLayoutFixes", String(FIXES.length), false); }catch(e){}
+  };
+  // Rows that were dictated driving north to south (no flip needed).
+  const NORTH_FIRST = ["2B", "3B", "4B"];
+  const fixKey = cell => `orchardLayoutFix${cell}`;
+  const reverseCell = cell => {
+    const idx = []; trees.forEach((t, i) => { if(t.zone + t.row === cell) idx.push(i); });
+    const rev = idx.map(i => trees[i]).reverse(); idx.forEach((i, j) => { trees[i] = rev[j]; });
+  };
+  // One-time per row: put north-to-south rows back the right way
+  // (2B: Kumquat Nagami north, Mango Kent south · 3B: Mango Pickering north, June plum south · 4B: Banana north, Persimmon Saijo south).
+  const fix2BOnce = async () => {
+    for(const cell of NORTH_FIRST){
+      let done = null; try{ done = await window.storage.get(fixKey(cell), false); }catch(e){}
+      if(done && done.value) continue;
+      reverseCell(cell); await save();
+      try{ await window.storage.set(fixKey(cell), "1", false); }catch(e){}
+    }
+  };
+  // Layouts saved before Oct 31 had each row in dictated (south-to-north)
+  // order; flip every row once so the top of the map is the north end.
+  const FLIP_KEY = "orchardLayoutFlipped";
+  const flipOnce = async () => {
+    let done = null; try{ done = await window.storage.get(FLIP_KEY, false); }catch(e){}
+    if(done && done.value) return;
+    const cells = new Map();
+    trees.forEach((t, i) => { const k = t.zone + t.row; if(!cells.has(k)) cells.set(k, []); cells.get(k).push(i); });
+    const copy = trees.slice();
+    cells.forEach(idx => { const rev = idx.map(i => copy[i]).reverse(); idx.forEach((i, j) => { trees[i] = rev[j]; }); });
+    await save();
+    try{ await window.storage.set(FLIP_KEY, "1", false); }catch(e){}
+  };
+  const save = async () => { try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
+  const inCell = (z, r) => trees.filter(t => t.zone === z && t.row === r);
+
+  /* ---------- the map ---------- */
+  const STEP = 44, LPAD = 40, RPAD = 76, RH = 122, TOP = 74, BOT = 34;
+  // One tree: colored dot with the fruit's emoji/tag, dashed red ring if the name is unsure.
+  const treeG = (t, z, r, i, cx, cy, label) => {
+    const dim = filter && kk(t.name) !== filter ? " dim" : "";
+    return `<g class="o-tree${dim}" data-id="${t.id}" role="button" aria-label="${esc(full(t))}, zone ${z} row ${r}, tree ${i + 1}">`
+      + `<title>${esc(full(t))} · ${z}${r} #${i + 1}</title>`
+      + `<circle cx="${cx}" cy="${cy}" r="22" fill="transparent"/>`
+      + (t.unsure ? `<circle class="qring" cx="${cx}" cy="${cy}" r="20"/>` : "")
+      + iconSVG(t.name, cx, cy, 30, t.variety)
+      + (names ? label : "") + `</g>`;
+  };
+  // Split a variety into at most 2 short lines so it fits under the dot.
+  const wrap2 = (s, max) => {
+    const words = String(s).split(" "), lines = [""];
+    words.forEach(w => { const cur = lines[lines.length - 1]; if(cur && (cur + " " + w).length > max) lines.push(w); else lines[lines.length - 1] = cur ? cur + " " + w : w; });
+    if(lines.length > 2){ lines[1] = lines.slice(1).join(" "); lines.length = 2; }
+    return lines.map(l => l.length > max + 3 ? l.slice(0, max + 2) + "…" : l);
+  };
+  const addG = (z, r, ax, ay) => `<g class="o-add" data-add="${z}${r}" role="button" aria-label="Add a tree to ${z}${r}"><title>Add a tree to ${z}${r}</title><circle cx="${ax}" cy="${ay}" r="12"/><text x="${ax}" y="${ay + 5.5}" text-anchor="middle">+</text></g>`;
+
+  /* North on top: the photo turned a quarter turn. Zones 4-3-2-1 stack top
+     to bottom; rows A, B, C are columns (A on the lake side, left). Rows D
+     and E hold only a few trees, so instead of their own columns they sit in
+     a small box above rows B and C of their zone. */
+  const W_P = 360, PSIDE = 10, PSTEP = 74, PHEAD = 46, BOXW = 68;
+  const drawPortrait = () => {
+    const canEdit = !ro(), PR = ["A", "B", "C"], colW = (W_P - PSIDE * 2) / 3;
+    const cx = {}; PR.forEach((r, i) => { cx[r] = PSIDE + colW * i + colW / 2; });
+    const W = W_P;
+    // Box for rows D/E (only for zones that have trees there).
+    const boxOf = z => {
+      const list = ["D", "E"].flatMap(r => inCell(z, r));
+      if(!list.length) return null;
+      const bx = PSIDE + colW + 6, bw = colW * 2 - 12, perLine = Math.max(1, Math.floor((bw - 8) / BOXW));
+      const n = list.length + (canEdit ? 1 : 0), lines = Math.ceil(n / perLine);
+      return { list, bx, bw, perLine, h: 26 + lines * PSTEP + 4 };
+    };
+    const zh = {}, boxes = {};
+    ZONES.forEach(z => {
+      const b = boxes[z] = null, extra = canEdit ? 1 : 0;
+      const a = inCell(z, "A").length + extra;
+      const bc = Math.max(inCell(z, "B").length, inCell(z, "C").length) + extra;
+      zh[z] = PHEAD + Math.max(a * PSTEP, (b ? b.h + 8 : 0) + bc * PSTEP, PSTEP) + 6;
+    });
+    const label = (t, x, cy) => {
+      const vl = t.variety ? wrap2(t.variety, 15) : [];
+      if(t.unsure){ if(vl.length) vl[vl.length - 1] += " ?"; else vl.push("?"); }
+      return `<text class="o-lbl o-kind${t.unsure ? " q" : ""}" x="${x}" y="${cy + 29}" text-anchor="middle">${esc(t.name)}</text>`
+        + vl.map((l, k) => `<text class="o-lbl${t.unsure ? " q" : ""}" x="${x}" y="${cy + 41 + k * 11.5}" text-anchor="middle">${esc(l)}</text>`).join("");
+    };    // Rows D / E (only a few trees): a short vertical column above everything, on the woods side.
+    const topCells = []; ZONES.forEach(z => ["E", "D"].forEach(r => { if(inCell(z, r).length) topCells.push(z + r); }));
+    const secN = Math.max(0, ...topCells.map(c => inCell(+c[0], c[1]).length));
+    const secH = topCells.length ? 26 + secN * PSTEP : 0;
+    const TOPP = 58 + secH, H = TOPP + ZONES.reduce((s, z) => s + zh[z], 0) + 30;
+    let bg = "", out = "", y0 = TOPP;
+    geo = [];
+    topCells.forEach((cell, ci) => {
+      const z = +cell[0], r = cell[1], x = cx[PR[PR.length - 1 - ci]] || cx.C, sy = 28;
+      bg += `<rect class="o-box" x="${x - colW / 2 + 6}" y="${sy}" width="${colW - 12}" height="${secH - 4}" rx="10"/>`;
+      out += `<text class="o-cell" x="${x}" y="${sy + 16}" text-anchor="middle">${cell}</text>`;
+      const list = inCell(z, r);
+      if(list.length > 1) out += `<line class="o-rline" x1="${x}" x2="${x}" y1="${sy + 24}" y2="${sy + 24 + (list.length - 1) * PSTEP + 18}"/>`;
+      list.forEach((t, i) => { const cy = sy + 26 + i * PSTEP + 18; out += treeG(t, z, r, i, x, cy, label(t, x, cy)); });
+      geo.push({ z, r, x, w: colW, first: sy + 26 + 18, yMin: sy, yMax: sy + secH });
+    });
+    out += `<text class="o-compass" x="${W / 2}" y="17" text-anchor="middle">⬆ NORTH</text>`;
+    out += `<text class="o-lake-t" x="${PSIDE + 2}" y="17">⬅ 💧 Lake</text><text class="o-woods-t" x="${W - PSIDE - 2}" y="17" text-anchor="end">Woods 🌳 ➡</text>`;
+    PR.forEach(r => { out += `<text class="o-zt" x="${cx[r]}" y="${TOPP - 12}" text-anchor="middle" style="font-size:12.5px">Row ${r}</text>`; });
+    bg += `<rect class="o-lake" x="0" y="${TOPP - 4}" width="${PSIDE}" height="${H - TOPP - 26}"/><rect class="o-woods" x="${W - PSIDE}" y="${TOPP - 4}" width="${PSIDE}" height="${H - TOPP - 26}"/>`;
+
+    ZONES.forEach((z, zi) => {
+      const hgt = zh[z], cnt = trees.filter(t => t.zone === z).length, b = boxes[z];
+      bg += `<rect class="o-z${zi % 2}" x="${PSIDE}" y="${y0}" width="${W - PSIDE * 2}" height="${hgt}"/>`;
+      if(zi > 0) out += `<line class="o-zline" x1="0" x2="${W}" y1="${y0}" y2="${y0}"/>`;
+      out += `<text class="o-zt" x="${W / 2}" y="${y0 + 19}" text-anchor="middle">Zone ${z} <tspan class="o-zc" dx="4">${cnt} ${cnt === 1 ? "tree" : "trees"}</tspan></text>`;
+      // Rows D / E box, above rows B and C.
+      if(b){
+        const by = y0 + PHEAD - 18, rowsIn = [...new Set(b.list.map(t => t.row))];
+        bg += `<rect class="o-box" x="${b.bx}" y="${by}" width="${b.bw}" height="${b.h}" rx="10"/>`;
+        out += `<text class="o-cell" x="${b.bx + 8}" y="${by + 16}">${rowsIn.map(r => z + r).join(" · ")} <tspan class="o-zc" dx="2">(woods side)</tspan></text>`;
+        const both = rowsIn.length > 1, x0b = b.bx + (b.bw - Math.min(b.perLine, b.list.length + (canEdit ? 1 : 0)) * BOXW) / 2 + BOXW / 2;
+        b.list.forEach((t, i) => {
+          const x = x0b + (i % b.perLine) * BOXW, cy = by + 26 + Math.floor(i / b.perLine) * PSTEP + 18;
+          const r = t.row, idx = inCell(z, r).indexOf(t);
+          out += treeG(t, z, r, idx, x, cy, label(t, x, cy) + (both ? `<text class="o-cell" x="${x + 20}" y="${cy - 12}" style="font-size:9px">${z}${r}</text>` : ""));
+        });
+        if(canEdit){ const i = b.list.length; out += addG(z, b.list[b.list.length - 1].row, x0b + (i % b.perLine) * BOXW, by + 26 + Math.floor(i / b.perLine) * PSTEP + 16); }
+      }
+      PR.forEach(r => {
+        const x = cx[r], list = inCell(z, r);
+        // Center each row's trees top-to-bottom within the zone, so A, B and C line up in the middle.
+        const maxN = Math.max(...PR.map(rr => inCell(z, rr).length + (canEdit ? 1 : 0)), 1);
+        const top = y0 + PHEAD + (maxN - (list.length + (canEdit ? 1 : 0))) * PSTEP / 2;
+        out += `<text class="o-cell" x="${x}" y="${top - 8}" text-anchor="middle">${z}${r}</text>`;
+        if(list.length || canEdit) out += `<line class="o-rline" x1="${x}" x2="${x}" y1="${top}" y2="${top + Math.max(1, list.length + (canEdit ? 1 : 0)) * PSTEP - 40}"/>`;
+        list.forEach((t, i) => { const cy = top + i * PSTEP + 18; out += treeG(t, z, r, i, x, cy, label(t, x, cy)); });
+        geo.push({ z, r, x, w: colW, first: top + 18, yMin: y0, yMax: y0 + zh[z] });
+        if(canEdit) out += addG(z, r, x, top + list.length * PSTEP + 16);
+        if(!list.length && !canEdit) out += `<text class="o-empty" x="${x}" y="${top + 18}" text-anchor="middle">—</text>`;
+      });
+      y0 += hgt;
+    });
+    out += `<text class="o-compass" x="${W / 2}" y="${H - 9}" text-anchor="middle">⬇ SOUTH</text>`;
+    return `<svg class="orch-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W * 1.6}px; margin:0 auto" role="img" aria-label="Orchard layout map, north at the top">${SHADOW_DEFS}${bg}${out}</svg>`;
+  };
+  const drawSVG = () => {
+    if(vert) return drawPortrait();
+    const canEdit = !ro();
+    const zw = {}; ZONES.forEach(z => { zw[z] = LPAD + Math.max(4, Math.max(...ROWS.map(r => inCell(z, r).length)) + (canEdit ? 1 : 0)) * STEP + RPAD; });
+    const W = ZONES.reduce((s, z) => s + zw[z], 0), H = TOP + ROWS.length * RH + BOT;
+    let x0 = 0, out = "", bg = "";
+    const mids = []; { let a = 0; ZONES.forEach(z => { mids.push(a + zw[z] / 2); a += zw[z]; }); }
+    out += `<rect class="o-woods" x="0" y="0" width="${W}" height="24"/>`;
+    out += `<text class="o-compass" x="8" y="42">⬅ NORTH</text><text class="o-compass" x="${W - 8}" y="42" text-anchor="end">SOUTH ➡</text>`;
+    ZONES.forEach((z, zi) => {
+      const w = zw[z], cnt = trees.filter(t => t.zone === z).length;
+      bg += `<rect class="o-z${zi % 2}" x="${x0}" y="${TOP - 18}" width="${w}" height="${ROWS.length * RH + 18}"/>`;
+      out += `<text class="o-zt" x="${x0 + w / 2}" y="${TOP - 26}" text-anchor="middle">Zone ${z}</text>`;
+      out += `<text class="o-zc" x="${x0 + w / 2}" y="${TOP - 4}" text-anchor="middle">${cnt} ${cnt === 1 ? "tree" : "trees"}</text>`;
+      ROWS.forEach((r, ri) => {
+        const y = TOP + ri * RH, cy = y + 30, list = inCell(z, r);
+        out += `<line class="o-rline" x1="${x0 + 8}" x2="${x0 + w - 8}" y1="${cy}" y2="${cy}"/>`;
+        out += `<text class="o-cell" x="${x0 + 8}" y="${cy + 4}">${z}${r}</text>`;
+        if(!list.length && !canEdit) out += `<text class="o-empty" x="${x0 + LPAD}" y="${cy + 4}">empty</text>`;
+        list.forEach((t, i) => {
+          const cx = x0 + LPAD + i * STEP + STEP / 2;
+          const lab = `<text class="o-lbl${t.unsure ? " q" : ""}" transform="translate(${cx - 3} ${cy + 23}) rotate(38)"><tspan class="o-kind">${esc(t.name)}</tspan>${t.variety ? " " + esc(t.variety) : ""}${t.unsure ? " ?" : ""}</text>`;
+          out += treeG(t, z, r, i, cx, cy, lab);
+        });
+        if(canEdit){
+          out += addG(z, r, x0 + LPAD + list.length * STEP + STEP / 2, cy);
+        }
+      });
+      if(zi > 0) out += `<line class="o-zline" x1="${x0}" x2="${x0}" y1="${TOP - 52}" y2="${TOP + ROWS.length * RH}"/>`;
+      x0 += w;
+    });
+    out += `<rect class="o-lake" x="0" y="${H - BOT}" width="${W}" height="${BOT}"/>` + mids.map(m => `<text class="o-lake-t" x="${m}" y="${H - BOT + 21}" text-anchor="middle">💧 Lake</text>`).join("") + mids.map(m => `<text class="o-woods-t" x="${m}" y="16" text-anchor="middle">🌳 Woods</text>`).join("");
+    return `<svg class="orch-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" ${fit ? `width="100%"` : `width="${W}" height="${H}"`} role="img" aria-label="Orchard layout map">${SHADOW_DEFS}${bg}${out}</svg>`;
+  };
+
+  /* Drag a tree to a new spot (only while editing is unlocked). Drop it on any
+     row: it goes between the trees above and below where you let go. */
+  const svgPt = (svg, e) => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+  const dropTarget = (p, dragId) => {
+    const cell = geo.filter(c => p.y >= c.yMin && p.y <= c.yMax && Math.abs(p.x - c.x) <= c.w / 2).sort((a, b) => Math.abs(p.x - a.x) - Math.abs(p.x - b.x))[0];
+    if(!cell) return null;
+    const list = inCell(cell.z, cell.r).filter(t => t.id !== dragId);
+    const orig = inCell(cell.z, cell.r);
+    // where each remaining tree sits on screen now
+    const ys = orig.map((t, i) => ({ t, y: cell.first + i * PSTEP })).filter(o => o.t.id !== dragId);
+    const idx = ys.filter(o => o.y < p.y).length;
+    const lineY = idx < ys.length ? ys[idx].y - PSTEP / 2 + 4 : (ys.length ? ys[ys.length - 1].y + PSTEP / 2 : cell.first - 10);
+    return { cell, list, idx, lineY };
+  };
+  const wireDrag = (svg, g) => {
+    let start = null, moved = false, line = null, tgt = null;
+    const onMove = e => {
+      if(!start) return;
+      if(!moved && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) return;
+      if(!moved){ moved = true; g.classList.add("dragging"); svg.appendChild(g); line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("class", "o-dropline"); svg.appendChild(line); }
+      const p = svgPt(svg, e);
+      g.setAttribute("transform", `translate(${p.x - start.p.x} ${p.y - start.p.y})`);
+      tgt = dropTarget(p, g.dataset.id);
+      if(tgt){ line.setAttribute("x1", tgt.cell.x - tgt.cell.w / 2 + 14); line.setAttribute("x2", tgt.cell.x + tgt.cell.w / 2 - 14); line.setAttribute("y1", tgt.lineY); line.setAttribute("y2", tgt.lineY); line.style.display = ""; }
+      else line.style.display = "none";
+      e.preventDefault();
+    };
+    const onUp = async () => {
+      window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerup", onUp); window.removeEventListener("pointercancel", onUp);
+      if(!start) return; start = null;
+      if(!moved) return;
+      dragJustEnded = true; setTimeout(() => { dragJustEnded = false; }, 250);
+      if(line) line.remove();
+      const t = trees.find(x => x.id === g.dataset.id);
+      if(!tgt || !t){ render(); return; }
+      const before = trees.slice(), from = `${t.zone}${t.row}`;
+      trees = trees.filter(x => x.id !== t.id);
+      t.zone = tgt.cell.z; t.row = tgt.cell.r;
+      const list = tgt.list;
+      if(!list.length) trees.push(t);
+      else if(tgt.idx >= list.length) trees.splice(trees.indexOf(list[list.length - 1]) + 1, 0, t);
+      else trees.splice(trees.indexOf(list[tgt.idx]), 0, t);
+      await save(); render();
+      if(typeof window.__ftOrchMoved === "function") window.__ftOrchMoved(t);
+      if(typeof showUndoToast === "function") showUndoToast(`Moved ${full(t)} (${from} → ${t.zone}${t.row}, #${tgt.idx + 1})`, async () => { trees = before; t.zone = +from[0]; t.row = from[1]; await save(); render(); });
+    };
+    g.addEventListener("pointerdown", e => {
+      if(e.button > 0) return;
+      start = { x: e.clientX, y: e.clientY, p: svgPt(svg, e) }; moved = false; tgt = null;
+      window.addEventListener("pointermove", onMove, { passive:false }); window.addEventListener("pointerup", onUp); window.addEventListener("pointercancel", onUp);
+    });
+  };
+
+  const render = () => {
+    const sc = $("orchScroll"); if(!sc) return;
+    const keep = sc.scrollLeft;
+    sc.innerHTML = drawSVG(); sc.scrollLeft = keep;
+    $("orchCount").textContent = `${trees.length} trees`;
+    $("orchFit").classList.toggle("on", fit);
+    $("orchFit").style.display = vert ? "none" : "";
+    // Legend: one chip per kind, with counts; tap to highlight.
+    const kinds = new Map();
+    trees.forEach(t => { const k = kk(t.name); if(!kinds.has(k)) kinds.set(k, { name:t.name, n:0 }); kinds.get(k).n++; });
+    $("orchLegend").innerHTML = [...kinds.entries()].sort((a, b) => b[1].n - a[1].n || a[1].name.localeCompare(b[1].name)).map(([k, v]) => {
+      return `<button type="button" class="orch-chip${filter === k ? " on" : ""}" data-k="${k}">${iconHTML(v.name)}${esc(v.name)} <b>${v.n}</b></button>`;
+    }).join("");
+    // List by zone and row, as dictated (zone 1 first, row A first).
+    $("orchList").innerHTML = [1, 2, 3, 4].map(z => {
+      const rows = ["A", "B", "C", "D", "E"].map(r => ({ r, list:inCell(z, r) })).filter(x => x.list.length);
+      if(!rows.length) return "";
+      const n = rows.reduce((s, x) => s + x.list.length, 0), open = openZones.has(z);
+      return `<button type="button" class="orch-zbtn orch-zb${z}" data-z="${z}" aria-expanded="${open}"><span>Zone ${z}</span><span class="orch-zn">${n} trees</span><span class="orch-zcar">▾</span></button>`
+        + `<div class="orch-zbody orch-zb${z}"${open ? "" : " hidden"}>` + rows.map(({ r, list }) => `<div class="orch-row"><b>${z}${r}</b><div class="orch-row-trees">${list.map((t, i) => {
+        return `<button type="button" class="${t.unsure ? "q" : ""}" data-id="${t.id}">${iconHTML(t.name)}<span class="n">${i + 1}</span> ${esc(full(t))}${t.unsure ? " ❓" : ""}</button>`;
+      }).join("")}</div></div>`).join("") + `</div>`;
+    }).join("");
+    sc.querySelectorAll(".o-tree").forEach(g => g.addEventListener("click", () => { if(dragJustEnded) return; openEdit(g.dataset.id); }));
+    const canDrag = !ro() && typeof GLOBAL_UNLOCK !== "undefined" && GLOBAL_UNLOCK;
+    const svg = sc.querySelector("svg"); svg.classList.toggle("can-drag", canDrag);
+    if(canDrag) sc.querySelectorAll(".o-tree").forEach(g => wireDrag(svg, g));
+    $("orchMoveHint").hidden = !canDrag || ro();
+
+    sc.querySelectorAll(".o-add").forEach(g => g.addEventListener("click", () => openAdd(+g.dataset.add[0], g.dataset.add[1])));
+    $("orchList").querySelectorAll(".orch-zbtn").forEach(b => b.addEventListener("click", () => { const z = +b.dataset.z; openZones.has(z) ? openZones.delete(z) : openZones.add(z); render(); }));
+    $("orchList").querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => openEdit(b.dataset.id)));
+    $("orchLegend").querySelectorAll(".orch-chip").forEach(b => b.addEventListener("click", () => { filter = filter === b.dataset.k ? "" : b.dataset.k; render(); }));
+  };
+
+  const open = async () => { await load(); filter = ""; render(); $("orchModal").classList.add("show"); $("orchScroll").scrollLeft = 0; };
+  const close = () => $("orchModal").classList.remove("show");
+
+  /* ---------- tree editor (Save window) ---------- */
+  const ftCardFor = t => {
+    // Find this tree's card in the Fruit Trees list (same kind, and same variety if there is one).
+    const v = String(t.variety || "").toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+    const group = document.querySelector(`#ftList .ft-group[data-k="${kk(t.name)}"]`);
+    return { group, v };
+  };
+  const hasFt = t => {
+    const names = window.__fruitTreeNames || [];
+    return names.some(n => kk(String(n).split(" ")[0]) === kk(t.name) || kk(n) === kk(t.name));
+  };
+  const fillEdit = t => {
+    const lk = t ? locked(t) : ro();
+    $("orchKind").value = t ? t.name : ""; $("orchVar").value = t ? t.variety : "";
+    $("orchZone").value = String(t ? t.zone : addAt.z); $("orchRow").value = t ? t.row : addAt.r;
+    $("orchNote").value = t ? (t.note || "") : ""; $("orchUnsure").checked = !!(t && t.unsure);
+    $("orchDate").value = t ? (t.planted || "") : todayISO();
+    ["orchKind", "orchVar", "orchZone", "orchRow", "orchNote", "orchUnsure", "orchDate"].forEach(id => $(id).disabled = lk);
+    $("orchPosWrap").style.display = t ? "none" : ""; $("orchRepWrap").style.display = t ? "none" : "";
+    $("orchPlant").style.display = t && !ro() ? "" : "none";
+    $("orchHist").innerHTML = t && (t.replaced || []).length ? "🪦 " + t.replaced.map(o => `Replaced <b>${esc(full(o))}</b>${o.date ? ` on ${fmtD(o.date)}` : ""}`).join("<br>🪦 ") : "";
+    if(!t) fillPos();
+    if(t){
+      const list = inCell(t.zone, t.row), i = list.findIndex(x => x.id === t.id);
+      $("orchEditTitle").innerHTML = `${iconHTML(t.name)} ${esc(full(t))}${t.unsure ? " ❓" : ""}`;
+      $("orchEditWhere").textContent = `Zone ${t.zone} · Row ${t.row} · tree ${i + 1} of ${list.length} (counting from the north)`;
+      $("orchMove").style.display = lk ? "none" : "";
+      $("orchLeft").disabled = i <= 0; $("orchRight").disabled = i >= list.length - 1;
+    } else {
+      const old = addAt.rep && trees.find(x => x.id === addAt.rep);
+      $("orchEditTitle").innerHTML = old ? `🔁 Replace ${esc(full(old))}` : "🌱 Add a tree";
+      $("orchEditWhere").textContent = old ? "The new tree takes the same spot. The old one is kept in its history." : "Pick the row and where it goes in it.";
+      $("orchMove").style.display = "none";
+    }
+    const unlocked = typeof GLOBAL_UNLOCK !== "undefined" && GLOBAL_UNLOCK;
+    $("orchLockbar").style.display = ro() ? "none" : "";
+    $("orchLockMsg").textContent = unlocked ? "🔓 Editing unlocked — lock it again from © 2026 Thor."
+      : lk ? "🔒 Locked (added over 48 hours ago). To change it, unlock from © 2026 Thor."
+      : t ? "Editable for 48 hours after it was added, then it locks." : "New trees stay editable for 48 hours.";
+    $("orchSave").style.display = lk ? "none" : "";
+    $("orchDel").style.display = t && !lk ? "" : "none";
+    $("orchGoFt").style.display = t && hasFt(t) ? "" : "none";
+  };
+  const openEdit = id => { editId = id; addAt = null; fillEdit(trees.find(t => t.id === id)); $("orchEdit").classList.add("show"); };
+  const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const fmtD = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" }) : ""; };
+  // "Where in the row" and "replacing a tree that died?" lists for the chosen zone + row.
+  const fillPos = () => {
+    const z = +$("orchZone").value, r = $("orchRow").value, list = inCell(z, r);
+    if(addAt.z !== z || addAt.r !== r){ addAt.z = z; addAt.r = r; addAt.pos = list.length; addAt.rep = ""; }
+    if(addAt.pos == null || addAt.pos > list.length) addAt.pos = list.length;
+    const opts = [];
+    for(let i = 0; i <= list.length; i++){
+      const lbl = !list.length ? "First tree in this row"
+        : i === 0 ? `North end (top) — before ${full(list[0])}`
+        : i === list.length ? `South end (bottom) — after ${full(list[i - 1])}`
+        : `Between ${full(list[i - 1])} and ${full(list[i])}`;
+      opts.push(`<option value="${i}"${i === addAt.pos ? " selected" : ""}>${esc(lbl)}</option>`);
+    }
+    $("orchPos").innerHTML = opts.join("");
+    $("orchRep").innerHTML = `<option value="">No — it's a new spot</option>` + list.map((t, i) => `<option value="${t.id}"${addAt.rep === t.id ? " selected" : ""}>Yes — replaces #${i + 1} ${esc(full(t))}</option>`).join("");
+    $("orchPos").disabled = !!addAt.rep;
+    $("orchPosWrap").style.display = addAt.rep ? "none" : "";
+  };
+  const openAdd = (z, r, opt) => { if(ro()) return; editId = null; addAt = { z, r, pos: opt && opt.pos != null ? opt.pos : null, rep: (opt && opt.rep) || "" }; $("orchZone").value = String(z); $("orchRow").value = r; fillEdit(null); $("orchEdit").classList.add("show"); setTimeout(() => $("orchKind").focus(), 50); };
+  const closeEdit = () => $("orchEdit").classList.remove("show");
+
+  $("orchSave").addEventListener("click", async () => {
+    if(ro()) return;
+    const name = $("orchKind").value.trim().replace(/\s+/g, " ");
+    if(!name){ $("orchKind").focus(); if(typeof showUndoToast === "function") showUndoToast("Type the kind of tree first.", null, "OK"); return; }
+    const data = { name, variety:$("orchVar").value.trim(), zone:+$("orchZone").value, row:$("orchRow").value, note:$("orchNote").value.trim(), unsure:$("orchUnsure").checked, planted:$("orchDate").value };
+    if(editId){
+      const t = trees.find(x => x.id === editId); if(!t || locked(t)) return;
+      const moved = t.zone !== data.zone || t.row !== data.row;
+      Object.assign(t, data);
+      if(moved){ trees = trees.filter(x => x.id !== t.id); trees.push(t); if(typeof window.__ftOrchMoved === "function") window.__ftOrchMoved(t); } // goes to the south end of its new row
+    } else {
+      const nt = { id:newId(), ...data, addedAt:Date.now() };
+      const old = addAt.rep && trees.find(x => x.id === addAt.rep);
+      if(old){
+        // Same spot as the tree that died; keep what was there before in its history.
+        const k = trees.indexOf(old);
+        nt.zone = old.zone; nt.row = old.row;
+        nt.replaced = [{ name:old.name, variety:old.variety, date:data.planted || todayISO(), note:old.note || "" }, ...(old.replaced || [])];
+        trees[k] = nt;
+        if(typeof window.__ftFromOrchard === "function"){ try{ nt.ftId = await window.__ftFromOrchard(nt, old); }catch(e){} }
+        await save(); closeEdit(); render();
+        if(typeof showUndoToast === "function") showUndoToast(`${full(nt)} replaced ${full(old)}`, async () => { const j = trees.indexOf(nt); if(j >= 0) trees[j] = old; await save(); render(); });
+        return;
+      }
+      const list = inCell(data.zone, data.row), pos = Math.min(+$("orchPos").value || 0, list.length);
+      if(!list.length) trees.push(nt);
+      else if(pos >= list.length) trees.splice(trees.indexOf(list[list.length - 1]) + 1, 0, nt);
+      else trees.splice(trees.indexOf(list[pos]), 0, nt);
+      if(typeof window.__ftFromOrchard === "function"){ try{ nt.ftId = await window.__ftFromOrchard(nt, null); }catch(e){} }
+    }
+    await save(); closeEdit(); render();
+  });
+  const move = async dir => {
+    const t = trees.find(x => x.id === editId); if(!t || locked(t)) return;
+    const list = inCell(t.zone, t.row), i = list.findIndex(x => x.id === t.id), j = i + dir;
+    if(j < 0 || j >= list.length) return;
+    const a = trees.indexOf(list[i]), b = trees.indexOf(list[j]);
+    [trees[a], trees[b]] = [trees[b], trees[a]];
+    await save(); render(); fillEdit(t);
+  };
+  $("orchLeft").addEventListener("click", () => move(-1));
+  const fromTree = () => { const t = trees.find(x => x.id === editId); if(!t) return null; return { t, i: inCell(t.zone, t.row).indexOf(t) }; };
+  $("orchAddN").addEventListener("click", () => { const f = fromTree(); if(f) openAdd(f.t.zone, f.t.row, { pos: f.i }); });
+  $("orchAddS").addEventListener("click", () => { const f = fromTree(); if(f) openAdd(f.t.zone, f.t.row, { pos: f.i + 1 }); });
+  $("orchReplace").addEventListener("click", () => { const f = fromTree(); if(f) openAdd(f.t.zone, f.t.row, { rep: f.t.id }); });
+  ["orchZone", "orchRow"].forEach(id => $(id).addEventListener("change", () => { if(!editId && addAt) fillPos(); }));
+  $("orchPos").addEventListener("change", () => { if(addAt) addAt.pos = +$("orchPos").value; });
+  $("orchRep").addEventListener("change", () => {
+    if(!addAt) return; addAt.rep = $("orchRep").value;
+    const old = addAt.rep && trees.find(x => x.id === addAt.rep);
+    $("orchEditTitle").innerHTML = old ? `🔁 Replace ${esc(full(old))}` : "🌱 Add a tree";
+    $("orchEditWhere").textContent = old ? "The new tree takes the same spot. The old one is kept in its history." : "Pick the row and where it goes in it.";
+    fillPos();
+  });
+  $("orchRight").addEventListener("click", () => move(1));
+  $("orchDel").addEventListener("click", async () => {
+    const i = trees.findIndex(x => x.id === editId); if(i < 0 || locked(trees[i])) return;
+    const removed = trees.splice(i, 1)[0]; await save(); closeEdit(); render();
+    if(typeof showUndoToast === "function") showUndoToast(`Removed ${full(removed)} from ${removed.zone}${removed.row}`, async () => { trees.splice(i, 0, removed); await save(); render(); });
+  });
+  if(false) $("orchLockBtn").addEventListener("click", () => {
+    const g = $("globalUnlockToggle"); if(g) g.click();
+    setTimeout(() => { fillEdit(editId ? trees.find(t => t.id === editId) : null); render(); }, 30);
+  });
+  $("orchGoFt").addEventListener("click", () => {
+    const t = trees.find(x => x.id === editId); if(!t) return;
+    closeEdit(); close();
+    const { group, v } = ftCardFor(t);
+    const pickCard = () => {
+      const cards = [...document.querySelectorAll("#ftList .ft-card")];
+      const norm = s => s.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+      const hit = cards.find(c => { const nm = norm(c.querySelector(".ft-name")?.firstChild?.textContent || ""); return v && (nm === v || nm === norm(t.name) + v || nm.endsWith(v)); })
+        || cards.find(c => norm(c.querySelector(".ft-name")?.firstChild?.textContent || "").startsWith(norm(t.name)));
+      const head = hit && hit.querySelector(".ft-head");
+      if(head && head.getAttribute("aria-expanded") !== "true") head.click();
+      const again = hit && document.querySelector(`#ftList .ft-card[data-id="${hit.dataset.id}"]`);
+      const tgt = again || group || $("ftList");
+      window.scrollBy({ top: tgt.getBoundingClientRect().top - 150, behavior:"smooth" });
+    };
+    if(group){
+      const gh = group.querySelector(".ft-ghead");
+      if(gh && gh.getAttribute("aria-expanded") !== "true") gh.click();
+      setTimeout(pickCard, 60);
+    } else pickCard();
+  });
+
+  $("orchOpenBtn").addEventListener("click", open);
+  $("orchClose").addEventListener("click", close);
+  $("orchDone").addEventListener("click", close);
+  $("orchModal").addEventListener("click", e => { if(e.target === $("orchModal")) close(); });
+  $("orchEditClose").addEventListener("click", closeEdit);
+  $("orchEdit").addEventListener("click", e => { if(e.target === $("orchEdit")) closeEdit(); });
+  $("orchFit").addEventListener("click", () => { fit = !fit; render(); });
+
+  // Keep the 🔒 marks right when the header padlock is used.
+  const ug = $("globalUnlockToggle"); if(ug) ug.addEventListener("click", () => setTimeout(() => { if($("orchModal").classList.contains("show")) render(); }, 0));
+})();
+
+
+/* iPhone tap-zoom fix (see the 16px CSS rule): a few boxes have stronger
+   size rules, so on touch screens every entry box also gets 16px set on
+   itself, including boxes added later. Set once, never on focus. */
+(function(){
+  if(!window.matchMedia || !matchMedia("(hover:none) and (pointer:coarse)").matches) return;
+  const SEL = 'input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]), select, textarea';
+  const fix = root => {
+    if(root.nodeType !== 1) return;
+    if(root.matches && root.matches(SEL)) root.style.setProperty("font-size", "16px", "important");
+    root.querySelectorAll && root.querySelectorAll(SEL).forEach(e => e.style.setProperty("font-size", "16px", "important"));
+  };
+  fix(document.body);
+  new MutationObserver(muts => muts.forEach(m => m.addedNodes.forEach(fix))).observe(document.body, { childList:true, subtree:true });
+})();
 /* ---------------- night view ----------------
    Removed per request (the toggle button and its wiring). The dark-mode
    color variables above (body.night-mode) are simply never applied now —
