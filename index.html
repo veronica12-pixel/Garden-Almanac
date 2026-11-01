@@ -3851,6 +3851,12 @@
   .pv-score{ flex:none; font-size:12px !important; margin-left:auto !important; min-width:44px; box-sizing:border-box; text-align:center; }
   .pv-score + .ft-globe{ margin-left:2px !important; }
   .pv-noprof .ft-prof-t{ cursor:default; }
+  .ft-pins{ display:flex !important; flex-wrap:wrap; gap:2px 10px; }
+  .ft-pin{ white-space:nowrap; }
+  .ft-mbody{ padding:10px !important; }
+  .ft-mbody > .ft-card{ margin:8px 0 0; }
+  .ft-mbody > .ft-card .ft-head{ min-height:42px; }
+  .ft-mbody > .ft-card .ft-name{ font-size:15px; }
   .ft-where{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:#7A6440; margin:0 0 8px; }
   body.night-mode .ft-where{ color:#CDBF9F; }
   .ft-globe-only{ display:flex; justify-content:flex-end; margin:-4px 0 4px; }
@@ -4645,7 +4651,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.11.01-261</div>
+    <div class="app-footer">© 2026 Thor · v2026.11.01-263</div>
   </main>
 
   <nav class="tabbar">
@@ -11785,7 +11791,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     ripe:{ ic:"🍊", label:"Ripe", cls:"st-ripe" }
   };
   let trees = [], editingId = null;
-  const openIds = new Set(), openGroups = new Set();
+  const openIds = new Set(), openGroups = new Set(), openVars = new Set();
   const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } let auto = false; auto = fixNamesOnce() || auto; trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); if(autoColors(t)) auto = true; }); if(auto){ try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} } window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
   const save = async () => { trees.forEach(t => { delete t.__solo; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
   const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -12632,7 +12638,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     return `
       ${t.date || t.notes ? `<div class="ft-info">${t.date ? `🗓️ Planted ${fmt(t.date, true)}${age(t.date) ? ` · ${age(t.date)}` : ""}` : ""}${t.notes ? `<div class="ft-about">${fertEsc(t.notes)}</div>` : ""}</div>` : ""}
       ${t.__solo && t.where ? `<div class="ft-where">📍 ${fertEsc(t.where)}</div>` : ""}
-      ${profileHTML(t)}
+      ${t.__inMulti ? "" : profileHTML(t)}
       ${t.__solo ? climateHTML(t.name) : ""}
       <div class="ft-sec">Flowering · Fruit set · Ripe</div>
       <div class="ft-logrow"><input type="date" class="ft-evdate" value="${todayISO()}" aria-label="Date"></div>
@@ -12652,16 +12658,37 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     const top = x.getBoundingClientRect().top;
     if(top < 140 || top > window.innerHeight - 120) window.scrollBy({ top: top - 150, behavior: "smooth" });
   };
-  const cardHTML = (t, inGroup) => {
+  const cardHTML = (t, inGroup, inMulti) => {
     const open = openIds.has(t.id), st = statusOf(t);
-    const title = t.died ? fullName(t) : inGroup ? (t.variety || "No variety") : fullName(t);
+    t.__inMulti = !!inMulti;
+    const title = inMulti ? `📍 ${t.where || "No location"}` : t.died ? fullName(t) : inGroup ? (t.variety || "No variety") : fullName(t);
     return `<div class="ft-card${inGroup ? " ft-in-group" : ""}${t.died ? " ft-dead" : ""}" data-id="${t.id}">
       <button type="button" class="ft-head${open ? " open" : ""}" aria-expanded="${open}">
         <span class="ft-ic" aria-hidden="true">${treeIcon(t)}</span>
-        <span class="ft-name">${fertEsc(title)}${t.died ? `<small>🪦 died ${fmt(t.died, true)}${t.where ? ` · was in ${fertEsc(t.where)}` : ""}</small>` : inGroup && t.where ? `<small>📍 ${fertEsc(t.where)}</small>` : ""}</span>
+        <span class="ft-name">${fertEsc(title)}${inMulti ? "" : t.died ? `<small>🪦 died ${fmt(t.died, true)}${t.where ? ` · was in ${fertEsc(t.where)}` : ""}</small>` : inGroup && t.where ? `<small>📍 ${fertEsc(t.where)}</small>` : ""}</span>
       </button>
       <div class="ft-body"${open ? "" : " hidden"}>${open ? (t.__solo = !inGroup, bodyHTML(t)) : ""}</div>
     </div>`;
+  };
+  // Trees of the same variety share one button: pins for every location on
+  // top; inside, the variety info once, then each tree (by location).
+  const varKey = t => `${kindKey(t.name)}|${normV(t.variety)}`;
+  const varCards = list => {
+    const by = new Map();
+    list.forEach(t => { const k = varKey(t); if(!by.has(k)) by.set(k, []); by.get(k).push(t); });
+    return [...by.entries()].map(([k, ts]) => {
+      if(ts.length === 1) return cardHTML(ts[0], true);
+      const t0 = ts[0], open = openVars.has(k);
+      const pins = ts.map(t => `<span class="ft-pin">📍 ${fertEsc(t.where || "—")}</span>`).join("");
+      return `<div class="ft-card ft-in-group ft-multi" data-vk="${fertEsc(k)}">
+        <button type="button" class="ft-head ft-mhead${open ? " open" : ""}" aria-expanded="${open}">
+          <span class="ft-ic" aria-hidden="true">${treeIcon(t0)}</span>
+          <span class="ft-name">${fertEsc(t0.variety || "No variety")}<small class="ft-pins">${pins}</small></span>
+          <span class="ft-gcount">${ts.length} trees</span>
+        </button>
+        <div class="ft-body ft-mbody"${open ? "" : " hidden"}>${open ? profileHTML(t0) + ts.map(t => cardHTML(t, true, true)).join("") : ""}</div>
+      </div>`;
+    }).join("");
   };
   // Side-by-side: when each variety flowered, set fruit and ripened in the
   // most recent year that has anything logged.
@@ -12698,12 +12725,13 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
           <span class="ft-name">${fertEsc(nm)}</span>
           <span class="ft-gcount">${list.length} ${list.length === 1 ? "tree" : "trees"}</span>
         </button>
-        <div class="ft-gbody"${open ? "" : " hidden"}>${open ? climateHTML(nm) + compareHTML(list) + list.map(t => cardHTML(t, true)).join("") : ""}</div>
+        <div class="ft-gbody"${open ? "" : " hidden"}>${open ? climateHTML(nm) + compareHTML(list) + varCards(list) : ""}</div>
       </div>`;
     }).join("") + deadHTML;
     // One group open at a time; switching group also closes any open tree.
     el.querySelectorAll(".ft-ghead").forEach(h => h.addEventListener("click", () => {
       const k = h.parentElement.dataset.k;
+      openVars.clear();
       if(openGroups.has(k)){ openGroups.delete(k); openIds.clear(); }
       else { openGroups.clear(); openIds.clear(); openGroups.add(k); }
       render(); scrollToOpen(`.ft-group[data-k="${k}"]`);
@@ -12714,7 +12742,12 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       const go = e => { e.stopPropagation(); e.preventDefault(); window.open(g.dataset.url, "_blank", "noopener"); };
       g.addEventListener("click", go); g.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") go(e); });
     });
-    el.querySelectorAll(".ft-card").forEach(card => wire(card, trees.find(x => x.id === card.dataset.id)));
+    el.querySelectorAll(".ft-mhead").forEach(hd => hd.addEventListener("click", () => {
+      const k = hd.parentElement.dataset.vk;
+      if(openVars.has(k)) openVars.delete(k); else { openVars.clear(); openVars.add(k); }
+      openIds.clear(); render();
+    }));
+    el.querySelectorAll(".ft-card[data-id]").forEach(card => wire(card, trees.find(x => x.id === card.dataset.id)));
   };
   const wire = (card, t) => {
     // One tree open at a time: opening a tree closes any other open tree.
@@ -13349,7 +13382,16 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     $("orchLegend").querySelectorAll(".orch-chip").forEach(b => b.addEventListener("click", () => { filter = filter === b.dataset.k ? "" : b.dataset.k; render(); }));
   };
 
-  const open = async () => { await load(); filter = ""; render(); $("orchModal").classList.add("show"); $("orchScroll").scrollLeft = 0; };
+  // Opens at the south end of the map (zone 1, by the house), with "SOUTH" at the bottom of the screen.
+  const open = async () => {
+    await load(); filter = ""; render(); $("orchModal").classList.add("show"); $("orchScroll").scrollLeft = 0;
+    const toSouth = () => {
+      const m = document.querySelector("#orchModal .orch-modal"), sc = $("orchScroll"); if(!m || !sc) return;
+      const mb = m.getBoundingClientRect(), sb = sc.getBoundingClientRect();
+      m.scrollTop += (sb.bottom - mb.bottom) + 12;
+    };
+    requestAnimationFrame(() => { toSouth(); setTimeout(toSouth, 60); });
+  };
   const close = () => $("orchModal").classList.remove("show");
 
   /* ---------- tree editor (Save window) ---------- */
