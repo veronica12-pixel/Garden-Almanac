@@ -3857,6 +3857,13 @@
   .ft-mbody > .ft-card{ margin:8px 0 0; }
   .ft-mbody > .ft-card .ft-head{ min-height:42px; }
   .ft-mbody > .ft-card .ft-name{ font-size:15px; }
+  .ft-body{ position:relative; }
+  .ft-body > .ft-critter{ top:-4px; right:-4px; z-index:2; }
+  .ft-body:has(> .ft-critter) > .ft-prof:first-of-type, .ft-body:has(> .ft-critter) > .ft-where, .ft-body:has(> .ft-critter) > .ft-globe-only{ margin-right:46px !important; }
+  .ft-pests{ font-family:'Inter',sans-serif; font-size:12.5px; line-height:1.5; color:var(--ink); background:#F7F2FA; border:1px solid var(--line); border-radius:10px; padding:7px 10px; margin:6px 0 4px; }
+  .ft-pests b{ color:#6C4AB0; }
+  .bug-usual{ font-family:'Inter',sans-serif; font-size:12.5px; font-weight:700; color:#6C4AB0; margin:2px 0 -2px; }
+  .bug-usual[hidden]{ display:none !important; }
   .ft-where{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:#7A6440; margin:0 0 8px; }
   body.night-mode .ft-where{ color:#CDBF9F; }
   .ft-globe-only{ display:flex; justify-content:flex-end; margin:-4px 0 4px; }
@@ -3873,6 +3880,9 @@
   /* Fruit Trees: climate needs */
   .ft-clim{ background:#F3F8FC; border:1px solid #C9DCEB; border-radius:12px; padding:9px 11px; margin:10px 0 8px; font-family:'Inter',sans-serif; }
   .ft-clim-t{ font-weight:700; font-size:13.5px; color:#2F5E8A; margin-bottom:4px; }
+  .ft-clim.has-critter{ position:relative; }
+  .ft-clim.has-critter .ft-clim-t{ min-height:34px; display:flex; align-items:center; padding-right:46px; }
+  .ft-clim > .ft-critter{ top:-2px; right:-2px; z-index:2; }
   .ft-clim-row{ display:grid; grid-template-columns:118px minmax(0,1fr); gap:8px; padding:5px 0; border-top:1px dashed #D6E3EE; font-size:12.5px; line-height:1.4; }
   .ft-clim-row span{ color:#4D6A85; font-weight:600; }
   .ft-clim-row b{ font-weight:600; color:var(--ink); }
@@ -4651,7 +4661,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.11.01-263</div>
+    <div class="app-footer">© 2026 Thor · v2026.11.01-269</div>
   </main>
 
   <nav class="tabbar">
@@ -4937,6 +4947,7 @@
       <label>Date found<input type="date" id="bugDate"></label>
       <label>Bug<input type="text" id="bugName" list="bugNameList" placeholder="e.g. Tomato hornworm" autocomplete="off"></label>
       <datalist id="bugNameList"></datalist>
+      <div class="bug-usual" id="bugUsual" hidden>🐛 Usual pests — tap one to log it</div>
       <div class="bug-quick" id="bugQuick"></div>
       <label>What it was doing (optional)<input type="text" id="bugNote" placeholder="e.g. ate the top leaves on 2 plants" autocomplete="off"></label>
     </div>
@@ -5127,6 +5138,25 @@ if (typeof window.storage === "undefined") {
   // skip snapshots that were caused by our own writes.
   let sawInitialValue = false;
   let reloadTimer = null;
+  let lastData = null;   // last snapshot we saw, to tell real changes from echoes
+  const RELOAD_LOG = "almSyncReloads", BACK_TO = "almSyncBackTo";
+  function syncBanner(){
+    if(document.getElementById("syncBanner")) return;
+    const b = document.createElement("button");
+    b.id = "syncBanner"; b.type = "button";
+    b.textContent = "🔄 Updated on another device — tap to refresh";
+    b.style.cssText = "position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:12px;border:1px solid #c9b48a;background:#fff8e7;color:#4a3b1c;font:600 14px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.18)";
+    b.addEventListener("click", () => { try{ sessionStorage.removeItem(RELOAD_LOG); }catch(e){} doReload(); });
+    document.body.appendChild(b);
+  }
+  function doReload(){
+    // Remember which page was open so the refresh doesn't drop you on Home.
+    try{
+      const t = document.querySelector(".tabbtn.active");
+      sessionStorage.setItem(BACK_TO, JSON.stringify({ tab: t ? t.dataset.tab : "", y: window.scrollY, at: Date.now() }));
+    }catch(e){}
+    window.location.reload();
+  }
   function scheduleReload(){
     // Don't yank the page out from under someone mid-edit — a reload while
     // an input/textarea (including a native date picker, which keeps its
@@ -5136,14 +5166,28 @@ if (typeof window.storage === "undefined") {
     const isEditing = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
     if(isEditing){
       reloadTimer = setTimeout(scheduleReload, 1500);
-    } else {
-      window.location.reload();
+      return;
     }
+    // Safety brake: never more than 2 automatic refreshes a minute. If two
+    // devices keep answering each other, stop and offer a tap-to-refresh instead.
+    let log = [];
+    try{ log = JSON.parse(sessionStorage.getItem(RELOAD_LOG) || "[]").filter(t => Date.now() - t < 60000); }catch(e){}
+    if(log.length >= 2){ syncBanner(); return; }
+    log.push(Date.now());
+    try{ sessionStorage.setItem(RELOAD_LOG, JSON.stringify(log)); }catch(e){}
+    doReload();
   }
   rootRef.on("value", (snapshot) => {
-    if (!sawInitialValue) { sawInitialValue = true; return; }
     const data = snapshot.val() || {};
+    const prev = lastData; lastData = data;
+    if (!sawInitialValue) { sawInitialValue = true; return; }
     if (data.__lastWriter === CLIENT_ID) return;
+    // Only refresh when some saved value really changed.
+    const keys = new Set([...Object.keys(prev || {}), ...Object.keys(data)]);
+    keys.delete("__lastWriter");
+    let changed = false;
+    for (const k of keys){ if (JSON.stringify((prev || {})[k]) !== JSON.stringify(data[k])) { changed = true; break; } }
+    if (!changed) return;
     clearTimeout(reloadTimer);
     reloadTimer = setTimeout(scheduleReload, 700);
   });
@@ -5155,6 +5199,8 @@ if (typeof window.storage === "undefined") {
       return value === null || value === undefined ? null : { key, value, shared: false };
     },
     async set(key, value){
+      // Nothing new to save → don't write (a write makes other devices refresh).
+      if (lastData && lastData[encodeKey(key)] === value) return { key, value, shared: false };
       const updates = {};
       updates[encodeKey(key)] = value;
       updates["__lastWriter"] = CLIENT_ID;
@@ -6388,6 +6434,51 @@ const CROP_ABOUT = {
   sunnhemp: { ic:"🌱", part:"Biomass", origin:"India (Crotalaria juncea) — summer cover crop.", fruit:"Tall green stems and yellow flowers.", flavor:"Not edible — soil builder.", days:"Cut at about 60 days or at first bloom.", plant:"Fast, 4–8 ft; fixes nitrogen.", tip:"Suppresses root-knot nematodes and weeds; chop and drop before it gets woody." }
 };
 const cropOpenProf = {};
+// General info matched by crop name — for crops added later that have no entry above.
+const CROP_ABOUT_BY_NAME = [
+  [/okra/, { ic:"🫛", part:"Pod", origin:"West Africa (Abelmoschus esculentus).", fruit:"Ridged green or red pods.", flavor:"Mild, grassy; tender when small.", days:"About 50–60 days.", plant:"Tall, 4–6 ft; loves heat.", tip:"Pick pods at 3–4 in every day or two." }],
+  [/corn/, { ic:"🌽", part:"Ear", origin:"Mexico (Zea mays).", fruit:"Ears of kernels.", flavor:"Sweet when fresh.", days:"About 70–90 days.", plant:"Tall stalks; plant in blocks for pollination.", tip:"Ready when silks turn brown and kernels squirt milky juice." }],
+  [/collard/, { ic:"🥬", part:"Leaves", origin:"Mediterranean (Brassica oleracea).", fruit:"Large smooth leaves.", flavor:"Mild cabbage flavor, sweeter after cool nights.", days:"About 60–75 days.", plant:"Upright, 2–3 ft; heat tolerant.", tip:"Harvest lower leaves and it keeps growing for months." }],
+  [/kale/, { ic:"🥬", part:"Leaves", origin:"Europe (Brassica oleracea).", fruit:"Curly or flat leaves.", flavor:"Earthy; sweeter in cool weather.", days:"About 50–65 days.", plant:"1–3 ft.", tip:"Grow October–March in Florida." }],
+  [/cabbage/, { ic:"🥬", part:"Head", origin:"Europe (Brassica oleracea).", fruit:"Firm heads.", flavor:"Sweet and crisp.", days:"About 60–90 days.", plant:"Compact heads.", tip:"Plant in fall; harvest when heads feel firm." }],
+  [/cauliflower/, { ic:"🥦", part:"Head", origin:"Mediterranean (Brassica oleracea).", fruit:"White, orange or purple curds.", flavor:"Mild and nutty.", days:"About 60–80 days.", plant:"Needs steady cool weather.", tip:"Tie leaves over white types to keep curds white." }],
+  [/kohlrabi/, { ic:"🥬", part:"Bulb", origin:"Europe.", fruit:"Swollen stem 'bulb'.", flavor:"Sweet, like broccoli stems.", days:"About 45–60 days.", plant:"Low, compact.", tip:"Harvest at tennis-ball size." }],
+  [/arugula|rocket/, { ic:"🥬", part:"Leaves", origin:"Mediterranean.", fruit:"Lobed leaves.", flavor:"Peppery.", days:"About 30–40 days.", plant:"Low rosette.", tip:"Cool season only — bolts in heat." }],
+  [/spinach/, { ic:"🥬", part:"Leaves", origin:"Persia (Spinacia oleracea).", fruit:"Tender leaves.", flavor:"Mild, earthy.", days:"About 40–50 days.", plant:"Low rosette.", tip:"True spinach needs cool weather; use Malabar or Okinawa spinach in summer." }],
+  [/onion|scallion|leek|shallot|chive/, { ic:"🧅", part:"Bulb/leaves", origin:"Central Asia (Allium).", fruit:"Bulbs or green stems.", flavor:"Pungent to sweet.", days:"About 60–120 days.", plant:"Upright hollow leaves.", tip:"Use short-day onions in Florida; green onions grow year-round." }],
+  [/potato/, { ic:"🥔", part:"Tuber", origin:"Andes (Solanum tuberosum).", fruit:"Underground tubers.", flavor:"Earthy, starchy.", days:"About 80–110 days.", plant:"Bushy; hill soil around stems.", tip:"Plant January–February in central Florida." }],
+  [/cassava|yuca/, { ic:"🥔", part:"Root", origin:"South America (Manihot esculenta).", fruit:"Long starchy roots.", flavor:"Mild, starchy — must be cooked.", days:"About 8–12 months.", plant:"Shrub, 5–8 ft.", tip:"Grow from stem cuttings; always peel and cook." }],
+  [/ginger/, { ic:"🫚", part:"Rhizome", origin:"Southeast Asia (Zingiber officinale).", fruit:"Spicy rhizomes.", flavor:"Hot and zesty.", days:"About 8–10 months.", plant:"Leafy, 2–3 ft; likes shade.", tip:"Plant in spring, harvest when leaves yellow in winter." }],
+  [/turmeric/, { ic:"🫚", part:"Rhizome", origin:"South Asia (Curcuma longa).", fruit:"Orange rhizomes.", flavor:"Earthy, peppery.", days:"About 8–10 months.", plant:"Broad leaves, 3 ft; part shade.", tip:"Dig in winter when the leaves die back." }],
+  [/malabar/, { ic:"🥬", part:"Leaves", origin:"Tropical Asia (Basella).", fruit:"Thick glossy leaves.", flavor:"Mild, slightly lemony.", days:"About 70 days.", plant:"Climbing vine; loves heat.", tip:"The best summer 'spinach' for Florida." }],
+  [/okinawa|longevity spinach|gynura/, { ic:"🥬", part:"Leaves", origin:"Southeast Asia (Gynura).", fruit:"Purple-backed leaves.", flavor:"Mild, crunchy.", days:"Perennial — harvest any time.", plant:"Low spreading perennial.", tip:"Grows easily from cuttings." }],
+  [/chaya/, { ic:"🥬", part:"Leaves", origin:"Mexico (Cnidoscolus).", fruit:"Large leaves.", flavor:"Like spinach — must be cooked.", days:"Perennial.", plant:"Shrub, 6 ft.", tip:"Always boil 15+ minutes before eating." }],
+  [/zucchini|summer squash|yellow squash/, { ic:"🥒", part:"Fruit", origin:"Americas (Cucurbita pepo).", fruit:"Tender summer squash.", flavor:"Mild.", days:"About 45–55 days.", plant:"Bushy.", tip:"Squash vine borers — plant in fall or early spring in Florida." }],
+  [/pumpkin|squash/, { ic:"🎃", part:"Fruit", origin:"Americas (Cucurbita).", fruit:"Hard-skinned winter squash.", flavor:"Sweet, nutty.", days:"About 85–110 days.", plant:"Vining.", tip:"C. moschata types resist vine borers best." }],
+  [/bitter ?melon|bitter ?gourd|karela/, { ic:"🥒", part:"Fruit", origin:"Tropical Asia (Momordica charantia).", fruit:"Warty green fruit.", flavor:"Very bitter.", days:"About 55–70 days.", plant:"Climbing vine.", tip:"Pick young and green." }],
+  [/chayote/, { ic:"🥒", part:"Fruit", origin:"Mexico (Sechium edule).", fruit:"Pear-shaped green squash.", flavor:"Mild, crisp.", days:"Fruits in fall.", plant:"Very vigorous perennial vine.", tip:"Plant the whole sprouting fruit." }],
+  [/melon|cantaloupe/, { ic:"🍈", part:"Fruit", origin:"Africa/Asia (Cucumis melo).", fruit:"Sweet melons.", flavor:"Sweet, aromatic.", days:"About 80–90 days.", plant:"Sprawling vines.", tip:"Plant in spring before summer rains." }],
+  [/pea\b|peas|cowpea|black-?eyed|crowder|southern pea/, { ic:"🫛", part:"Pod", origin:"Africa (cowpeas) / Mediterranean (garden peas).", fruit:"Pods of peas.", flavor:"Sweet to earthy.", days:"About 60–90 days.", plant:"Bush or vining.", tip:"Southern peas love Florida summer; garden peas need cool months." }],
+  [/bean|edamame|soy/, { ic:"🫘", part:"Pod", origin:"Americas/Asia.", fruit:"Pods or dry beans.", flavor:"Fresh and tender.", days:"About 50–90 days.", plant:"Bush or pole.", tip:"Pick often to keep them producing." }],
+  [/celery/, { ic:"🌿", part:"Stalks", origin:"Mediterranean.", fruit:"Stalks and leaves.", flavor:"Fresh, savory.", days:"About 80–120 days.", plant:"Needs rich, moist soil.", tip:"Leaf/cutting celery is far easier in Florida." }],
+  [/sunflower/, { ic:"🌻", part:"Flower", origin:"North America (Helianthus).", fruit:"Big flowers and seeds.", flavor:"Seeds are edible.", days:"About 70–100 days.", plant:"3–10 ft.", tip:"Great for pollinators and birds." }],
+  [/celosia|cockscomb/, { ic:"🌸", part:"Flower", origin:"Tropics (Celosia).", fruit:"Plume or crested flowers; leaves edible.", flavor:"Ornamental/edible leaves.", days:"About 60–80 days.", plant:"1–3 ft; heat lover.", tip:"Thrives in Florida summers." }],
+  [/salvia|sage/, { ic:"🌿", part:"Leaves", origin:"Mediterranean (Salvia).", fruit:"Aromatic leaves; flowers for pollinators.", flavor:"Earthy, savory.", days:"About 75 days.", plant:"Shrubby perennial.", tip:"Needs excellent drainage in Florida." }],
+  [/mint/, { ic:"🌿", part:"Leaves", origin:"Europe/Asia (Mentha).", fruit:"Aromatic leaves.", flavor:"Cool, fresh.", days:"Harvest any time.", plant:"Spreads fast.", tip:"Grow in a pot to keep it from taking over." }],
+  [/oregano|marjoram/, { ic:"🌿", part:"Leaves", origin:"Mediterranean.", fruit:"Small aromatic leaves.", flavor:"Warm, peppery.", days:"About 80 days.", plant:"Low perennial.", tip:"Cuban oregano handles Florida summer best." }],
+  [/thyme/, { ic:"🌿", part:"Leaves", origin:"Mediterranean.", fruit:"Tiny leaves.", flavor:"Earthy, lemony.", days:"About 85 days.", plant:"Low woody perennial.", tip:"Keep it dry — hates wet feet." }],
+  [/rosemary/, { ic:"🌿", part:"Leaves", origin:"Mediterranean.", fruit:"Needle leaves.", flavor:"Piney, savory.", days:"Slow; buy plants.", plant:"Woody shrub.", tip:"Sandy, dry soil and full sun." }],
+  [/lemongrass/, { ic:"🌿", part:"Stalks", origin:"South Asia (Cymbopogon).", fruit:"Fragrant stalks.", flavor:"Lemony.", days:"Harvest after 3–4 months.", plant:"Big clump, 3–5 ft.", tip:"Thrives in Florida heat; divide clumps." }],
+  [/basil/, { ic:"🌿", part:"Leaves", origin:"Tropical Asia.", fruit:"Aromatic leaves.", flavor:"Sweet, clove-anise.", days:"About 60 days.", plant:"Bushy.", tip:"Pinch flowers to keep leaves coming." }],
+  [/cilantro|coriander|culantro/, { ic:"🌿", part:"Leaves", origin:"Mediterranean / Caribbean (culantro).", fruit:"Leaves and seeds.", flavor:"Bright, citrusy.", days:"About 45–70 days.", plant:"Rosette.", tip:"Culantro handles summer heat; cilantro is a cool-season herb." }],
+  [/marigold|zinnia|cosmos|flower/, { ic:"🌼", part:"Flower", origin:"Mostly Mexico.", fruit:"Bright flowers.", flavor:"Ornamental; pollinator magnet.", days:"About 50–70 days to bloom.", plant:"1–4 ft.", tip:"Deadhead to keep blooms coming." }]
+];
+function cropAboutFor(slug, name){
+  if(CROP_ABOUT[slug]) return CROP_ABOUT[slug];
+  const s = String(name || slug || "").toLowerCase();
+  const hit = CROP_ABOUT_BY_NAME.find(([re]) => re.test(s));
+  return hit ? hit[1] : null;
+}
 async function fillCropVarieties(card, slug){
   const box = card.querySelector(".pv-wrap"); if(!box) return;
   let list = [];
@@ -6403,7 +6494,7 @@ async function fillCropVarieties(card, slug){
   const cropNm = (DATA_now().vegetables.concat(DATA_now().herbs || [], DATA_now().flowers || [], DATA_now().coverCrops || []).find(c => c.slug === slug) || {}).name || "";
   if(!names.length){
     // Nothing planted yet: show what the crop itself is like.
-    const a = CROP_ABOUT[slug];
+    const a = cropAboutFor(slug, cropNm);
     if(!a || !dd){ if(dd) dd.hidden = true; box.innerHTML = ""; return; }
     dd.hidden = false;
     dd.querySelector(".sub-tile-name").textContent = `About ${cropNm}`;
@@ -6425,7 +6516,13 @@ async function fillCropVarieties(card, slug){
     const p = cropProfileFor(slug, n), nm = clean(n), id = p ? p.v[0] : cropVarKey(n);
     const sc = scoreOf[id] ? ` <span class="variety-score pv-score" style="background:${scoreColor(scoreOf[id])}" title="Your score: ${scoreOf[id]} out of 10">⭐${scoreOf[id]}</span>` : "";
     const globe = `<a class="variety-search-link ft-globe" href="${varietySearchUrl(nm, crop)}" target="_blank" rel="noopener" title="Search for ${fertEsc(nm)} online" aria-label="Search for ${fertEsc(nm)} online">🌐</a>`;
-    if(!p) return `<div class="ft-prof pv-noprof"><div class="ft-prof-t">${fertEsc(nm)}${sc}${globe}</div></div>`;
+    if(!p){
+      const g = cropAboutFor(slug, crop);
+      if(!g) return `<div class="ft-prof pv-noprof"><div class="ft-prof-t">${fertEsc(nm)}${sc}${globe}</div></div>`;
+      return `<details class="ft-prof" data-pv="${id}"${open === id ? " open" : ""}><summary class="ft-prof-t"><span class="pv-ic">${g.ic || part[0]}</span> ${fertEsc(nm)}${sc}${globe}<span class="ft-prof-car rain-chevron">▾</span></summary>
+        ${row("📍", "Origin", g.origin)}${row(g.ic || part[0], g.part || part[1], g.fruit)}${row("😋", "Flavor", g.flavor)}${row("📅", "Days", g.days)}${row("🌱", "Plant", g.plant)}${row("💡", "Tip", g.tip)}
+        <div class="ft-prof-src">General info for ${fertEsc(crop)} — no sheet for '${fertEsc(nm)}' yet.</div></details>`;
+    }
     return `<details class="ft-prof" data-pv="${id}"${open === id ? " open" : ""}><summary class="ft-prof-t"><span class="pv-ic">${p.ic || part[0]}</span> ${fertEsc(nm)}${sc}${globe}<span class="ft-prof-car rain-chevron">▾</span></summary>
       ${row("📍", "Origin", p.origin)}${row(part[0], part[1], p.fruit)}${row("😋", "Flavor", p.flavor)}${row("📅", "Days", p.days)}${row("🌱", "Plant", p.plant)}${row("💡", "Tip", p.tip)}
       ${(p.src || []).length ? `<div class="ft-prof-src">${p.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fertEsc(t)}</a>`).join(" · ")}</div>` : ""}</details>`;
@@ -11792,8 +11889,8 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
   };
   let trees = [], editingId = null;
   const openIds = new Set(), openGroups = new Set(), openVars = new Set();
-  const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } let auto = false; auto = fixNamesOnce() || auto; trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); if(autoColors(t)) auto = true; }); if(auto){ try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} } window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
-  const save = async () => { trees.forEach(t => { delete t.__solo; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
+  const load = async () => { try{ const r = await window.storage.get(KEY, false); trees = r ? (JSON.parse(r.value) || []) : []; }catch(e){ trees = []; } let auto = false; auto = fixNamesOnce() || auto; if(typeof getBugs === "function"){ await Promise.all(trees.map(async x => { try{ x.__bugN = (await getBugs(`tree-${x.id}`)).length; }catch(e){} })); } trees.forEach(t => { t.events = t.events || []; t.log = t.log || []; tidyKind(t); if(autoColors(t)) auto = true; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; };
+  const save = async () => { trees.forEach(t => { delete t.__solo; }); window.__fruitTreeNames = [...new Set(trees.flatMap(t => [t.name, fullName(t)]))]; try{ await window.storage.set(KEY, JSON.stringify(trees, (k, v) => (k.startsWith("__") ? undefined : v)), false); }catch(e){} };
   const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
   const pd = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
   const fmt = (iso, yr) => { const d = pd(iso); return d ? d.toLocaleDateString("en-US", yr ? { month:"short", day:"numeric", year:"numeric" } : { month:"short", day:"numeric" }) : ""; };
@@ -11806,7 +11903,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
   };
   const icon = n => {
     const t = String(n).toLowerCase();
-    const map = [["avocado","🥑"],["banana","🍌"],["mango","🥭"],["peach","🍑"],["nectarine","🍑"],["plum","🍑"],["cherry","🍒"],["apple","🍎"],["pear","🍐"],["lemon","🍋"],["lime","🍋"],["calamondin","🍊"],["calamodin","🍊"],["orange","🍊"],["tangerine","🍊"],["mandarin","🍊"],["kumquat","🍊"],["grapefruit","🍊"],["citrus","🍊"],["fig","🟣"],["mulberr","🫐"],["blueberr","🫐"],["loquat","🟠"],["papaya","🥭"],["pineapple","🍍"],["coconut","🥥"],["grape","🍇"],["olive","🫒"],["kiwi","🥝"],["pomegranate","🔴"],["persimmon","🟠"],["guava","🟢"],["starfruit","⭐"],["jaboticaba","🫐"]];
+    const map = [["passion","🟣"],["avocado","🥑"],["banana","🍌"],["mango","🥭"],["peach","🍑"],["nectarine","🍑"],["plum","🍑"],["cherry","🍒"],["apple","🍎"],["pear","🍐"],["lemon","🍋"],["lime","🍋"],["calamondin","🍊"],["calamodin","🍊"],["orange","🍊"],["tangerine","🍊"],["mandarin","🍊"],["kumquat","🍊"],["grapefruit","🍊"],["citrus","🍊"],["fig","🟣"],["mulberr","🫐"],["blueberr","🫐"],["loquat","🟠"],["papaya","🥭"],["pineapple","🍍"],["coconut","🥥"],["grape","🍇"],["olive","🫒"],["kiwi","🥝"],["pomegranate","🔴"],["persimmon","🟠"],["guava","🟢"],["starfruit","⭐"],["jaboticaba","🫐"]];
     const hit = map.find(([k]) => t.includes(k)); return hit ? hit[1] : "🌳";
   };
   const locked = x => READ_ONLY || isEntryLocked(x && x.addedAt);
@@ -11850,6 +11947,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     [["papaya"], { chill:"None needed", flower:"70–90°F", fruit:"75–90°F; poor fruit below 60°F", cold:"Damaged at 32°F · killed below 28°F" }],
     [["guava"], { chill:"None needed", flower:"70–90°F", fruit:"73–90°F", cold:"Young trees killed at 28–29°F · mature trees hurt at 25–27°F" }],
     [["starfruit","carambola"], { chill:"None needed", flower:"70–90°F", fruit:"70–90°F", cold:"Young trees killed at 27°F · mature trees hurt below 27°F" }],
+    [["passion","passiflora","maracuja","lilikoi"], { chill:"None needed", flower:"Warm days 68–85°F; needs bees or hand-pollination", fruit:"70–90°F", cold:"Purple types survive light frost (about 28°F); yellow types damaged near 32°F · vines often regrow from the base" }],
     [["lychee","litchi"], { chill:"Needs about 100–200 hours below 68°F (dry, cool winter) to bloom", flower:"Cool winter, then 60–75°F", fruit:"75–90°F", cold:"Young trees damaged at 28–30°F · mature trees at 25°F" }],
     [["longan"], { chill:"Needs a cool winter (below about 68°F) to bloom", flower:"60–75°F", fruit:"75–90°F", cold:"Young trees damaged at 28–30°F · mature trees at 25°F" }],
     [["persimmon"], { chill:"Asian types: about 100–400 hours", flower:"Spring, 60–75°F", fruit:"65–85°F", cold:"New growth hurt at 30°F · dormant tree hardy to about 0°F" }],
@@ -12567,16 +12665,86 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     [/loquat/, "Orange"], [/lemon/, "Yellow"], [/lime/, "Green"], [/grapefruit/, "Yellow"], [/orange|mandarin|tangerine|satsuma|calamondin|calamodin|kumquat|citrus/, "Orange"],
     [/peach|nectarine|plum/, "Red"], [/papaya/, "Orange"], [/guava/, "Green"], [/starfruit|carambola/, "Yellow"], [/persimmon/, "Orange"], [/pomegranate/, "Red"],
     [/jaboticaba|blueberr/, "Purple"], [/lychee|litchi/, "Red"], [/longan|sapodilla/, "Brown"], [/jujube/, "Green"], [/dragon/, "Pink"]];
-  const autoColorOf = t => { const p = profileFor(t); if(p && p.colors && p.colors[0]) return p.colors[0]; const n = String(t.name || "").toLowerCase(); const k = KIND_COLOR.find(([re]) => re.test(n)); return k ? k[1] : ""; };
+  const autoColorOf = t => { const p = profileFor(t) || kindAboutFor(t.name); if(p && p.colors && p.colors[0]) return p.colors[0]; const n = String(t.name || "").toLowerCase(); const k = KIND_COLOR.find(([re]) => re.test(n)); return k ? k[1] : ""; };
   const autoColors = t => { const c = autoColorOf(t); const want = c ? [c] : []; if(JSON.stringify(t.colors || []) !== JSON.stringify(want)){ t.colors = want; return true; } return false; };
   const googleURL = t => `https://www.google.com/search?q=${encodeURIComponent(`${t.variety ? `"${t.variety}" ` : ""}${t.name} tree variety`)}`;
   const GLOGO = '<svg viewBox="0 0 48 48" width="16" height="16" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.8l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+  // General info by kind of fruit tree — used automatically for any tree whose
+  // variety has no sheet yet (e.g. a newly added kind like passion fruit).
+  const FT_KIND_ABOUT = [
+    [/passion ?fruit|passiflora|maracuja|lilikoi/, { name:"Passion Fruit", colors:["Purple"], origin:"South America (Passiflora edulis). Purple types are sweeter; yellow (flavicarpa) are tarter and more vigorous.", fruit:"Round, 2–3 in; wrinkles when ripe. Juicy, aromatic pulp full of crunchy seeds.", flavor:"Sweet-tart and intensely tropical.", season:"Main crops summer and late fall/winter in Florida.", tree:"Fast evergreen vine, 15–20 ft — needs a strong fence or trellis.", health:"Vines live 5–7 years; watch for root rot in wet soil and nematodes. Purple types take light frost better.", tip:"Let fruit drop on its own — it's ripe when it falls. Hand-pollinate with a brush if bees are scarce." }],
+    [/mango/, { name:"Mango", colors:["Yellow"], origin:"South Asia (Mangifera indica).", fruit:"Oval to round drupes, green to yellow-red.", flavor:"Sweet, aromatic.", season:"May – September in Florida.", tree:"Large evergreen; prune after harvest to keep it small.", health:"Watch for anthracnose in rainy bloom seasons.", tip:"Add the variety name to get its own sheet." }],
+    [/avocado/, { name:"Avocado", colors:["Green"], origin:"Mexico/Central America (Persea americana).", fruit:"Green to black, buttery flesh.", flavor:"Rich and nutty.", season:"Summer – winter depending on type.", tree:"Large evergreen; A and B flower types.", health:"Needs excellent drainage; Mexican hybrids are most cold-hardy.", tip:"Pick mature and ripen on the counter." }],
+    [/banana|plantain/, { name:"Banana", colors:["Yellow"], origin:"Southeast Asia (Musa).", fruit:"Bunches of fingers.", flavor:"Sweet (dessert) or starchy (plantain).", season:"About a year from planting.", tree:"Giant herb; grows from pups.", health:"Leaves burn at 32°F; regrows from the base.", tip:"Keep 2–3 stalks per clump." }],
+    [/\bfig/, { name:"Fig", colors:["Purple"], origin:"Western Asia/Mediterranean (Ficus carica).", fruit:"Soft, pear-shaped fruit, green to purple.", flavor:"Honey-sweet.", season:"Main crop June – August.", tree:"Deciduous shrub/small tree, 10–15 ft.", health:"Root-knot nematodes are the main problem in Florida — mulch heavily.", tip:"'Celeste' and 'Brown Turkey' do well in central Florida." }],
+    [/guava/, { name:"Guava", colors:["Green"], origin:"Tropical Americas (Psidium guajava).", fruit:"Round to pear-shaped; white or pink flesh.", flavor:"Sweet, musky, tropical.", season:"Summer and winter crops.", tree:"Small tree, 10–20 ft.", health:"Caribbean fruit fly — bag fruit or pick early.", tip:"Strawberry guava is hardier and easier." }],
+    [/pomegranate/, { name:"Pomegranate", colors:["Red"], origin:"Iran/Central Asia (Punica granatum).", fruit:"Leathery red fruit full of juicy arils.", flavor:"Sweet-tart.", season:"August – October.", tree:"Shrub/small tree, 10–15 ft; drought tolerant.", health:"Fruit can split after heavy rain.", tip:"'Wonderful' and 'Vkusnyi' do well in Florida." }],
+    [/blueberr/, { name:"Blueberry", colors:["Purple"], origin:"North America (southern highbush and rabbiteye for Florida).", fruit:"Small blue berries.", flavor:"Sweet-tart.", season:"April – June.", tree:"Shrub, 4–8 ft; needs acidic soil (pH 4.5–5.5).", health:"Plant two varieties for better pollination.", tip:"Mulch with pine bark and water often." }],
+    [/pineapple/, { name:"Pineapple", colors:["Yellow"], origin:"South America (Ananas comosus).", fruit:"One fruit per plant.", flavor:"Sweet and tangy.", season:"About 18–24 months from a top.", tree:"Low rosette, 2–3 ft.", health:"Frost-tender; great in pots.", tip:"Plant the leafy top of a store pineapple." }],
+    [/lime/, { name:"Lime", colors:["Green"], origin:"Southeast Asia (Persian/Key lime).", fruit:"Small green citrus.", flavor:"Sour, aromatic.", season:"Most of the year.", tree:"Small citrus tree.", health:"Most cold-tender citrus — protect below 30°F.", tip:"Key limes turn yellow when fully ripe." }],
+    [/lemon/, { name:"Lemon", colors:["Yellow"], origin:"Asia (Citrus limon).", fruit:"Yellow citrus.", flavor:"Sour.", season:"Mostly fall – winter.", tree:"Small citrus tree.", health:"Watch for citrus greening; feed regularly.", tip:"Meyer is the hardiest and sweetest." }],
+    [/orange|mandarin|tangerine|satsuma|tangelo|citrus|grapefruit|pomelo|kumquat|calamondin|calamodin/, { name:"Citrus", colors:["Orange"], origin:"Southeast Asia (Citrus).", fruit:"Juicy citrus fruit.", flavor:"Sweet to tart.", season:"Mostly October – May.", tree:"Evergreen tree.", health:"Citrus greening (HLB) and canker — feed with citrus fertilizer with micronutrients.", tip:"Taste-test before picking the whole crop." }],
+    [/peach|nectarine/, { name:"Peach", colors:["Red"], origin:"China (Prunus persica); Florida uses low-chill UF varieties.", fruit:"Fuzzy stone fruit.", flavor:"Sweet and juicy.", season:"April – May.", tree:"Deciduous, 10–15 ft; open-vase pruning.", health:"Brown rot and bacterial spot — thin and prune for air.", tip:"Thin fruit to 6 in apart." }],
+    [/plum/, { name:"Plum", colors:["Red"], origin:"Asia/Europe; Florida uses low-chill Japanese types.", fruit:"Smooth stone fruit.", flavor:"Sweet-tart.", season:"May – June.", tree:"Deciduous small tree.", health:"Plant two varieties for pollination.", tip:"Gulf Ruby and Gulf Beauty pair well." }],
+    [/loquat/, { name:"Loquat", colors:["Orange"], origin:"China (Eriobotrya japonica).", fruit:"Small oval fruit in clusters.", flavor:"Sweet-tart, apricot-like.", season:"January – April.", tree:"Evergreen, 15–25 ft.", health:"Watch for fire blight.", tip:"Grafted trees give much better fruit than seedlings." }],
+    [/persimmon/, { name:"Persimmon", colors:["Orange"], origin:"China/Japan (Diospyros kaki).", fruit:"Orange fruit; astringent or non-astringent.", flavor:"Honey-sweet.", season:"September – November.", tree:"Deciduous, 15–25 ft.", health:"Few pests.", tip:"Eat non-astringent types firm; astringent types only when soft." }],
+    [/mulberr/, { name:"Mulberry", colors:["Black"], origin:"Asia (Morus).", fruit:"Small berries.", flavor:"Sweet.", season:"Spring.", tree:"Fast-growing tree/shrub.", health:"Very easy.", tip:"Prune to keep fruit in reach." }],
+    [/lychee|litchi/, { name:"Lychee", colors:["Red"], origin:"Southern China.", fruit:"Red bumpy shell, white flesh.", flavor:"Sweet, floral.", season:"June – July.", tree:"Large evergreen.", health:"Needs a cool dry winter to bloom.", tip:"Pick whole clusters when fully red." }],
+    [/longan/, { name:"Longan", colors:["Brown"], origin:"Southern China/Southeast Asia.", fruit:"Tan shell, translucent flesh.", flavor:"Very sweet.", season:"August – September.", tree:"Large evergreen.", health:"Needs a cool winter to bloom.", tip:"Taste before harvesting the cluster." }],
+    [/starfruit|carambola/, { name:"Starfruit", colors:["Yellow"], origin:"Southeast Asia (Averrhoa carambola).", fruit:"Five-ridged star-shaped fruit.", flavor:"Sweet-tart, juicy.", season:"Several crops, mostly late summer – winter.", tree:"Small bushy tree.", health:"Frost-tender when young.", tip:"Pick when fully yellow." }],
+    [/jaboticaba/, { name:"Jaboticaba", colors:["Purple"], origin:"Brazil (Plinia cauliflora).", fruit:"Grape-like fruit on the trunk.", flavor:"Sweet, grape-like.", season:"Several crops a year after rains.", tree:"Slow, shrubby.", health:"Likes acidic soil and steady water.", tip:"Eat within days of picking." }],
+    [/jujube/, { name:"Jujube", colors:["Green"], origin:"Asia (Ziziphus).", fruit:"Small apple-like fruit.", flavor:"Crisp, sweet.", season:"Winter (Indian jujube).", tree:"Fast, often thorny.", health:"Very drought tolerant.", tip:"Pick crisp and green-white." }],
+    [/dragon|pitaya|pitahaya/, { name:"Dragon Fruit", colors:["Pink"], origin:"Central America (Selenicereus).", fruit:"Pink scaly fruit, white or red flesh.", flavor:"Mild, lightly sweet.", season:"Summer – fall.", tree:"Climbing cactus on a post.", health:"Avoid wet roots.", tip:"Many types need night hand-pollination." }],
+    [/papaya/, { name:"Papaya", colors:["Orange"], origin:"Central America (Carica papaya).", fruit:"Large melon-like fruit.", flavor:"Sweet, musky.", season:"Almost year-round once bearing.", tree:"Fast single trunk.", health:"Killed by hard freezes; ringspot virus.", tip:"Pick when one-third yellow." }],
+    [/sapodilla|chicozapote/, { name:"Sapodilla", colors:["Brown"], origin:"Central America (Manilkara zapota).", fruit:"Brown rough fruit.", flavor:"Brown-sugar sweet.", season:"Winter – spring.", tree:"Slow, tough evergreen.", health:"Wind and salt tolerant.", tip:"Ripen picked fruit indoors." }],
+    [/june ?plum|ambarella/, { name:"June Plum", colors:["Yellow"], origin:"Pacific Islands (Spondias dulcis).", fruit:"Oval green-to-golden fruit.", flavor:"Tart to sweet.", season:"Late summer – winter.", tree:"Dwarf forms 6–10 ft.", health:"Frost-tender.", tip:"Eat green with salt or ripe for juice." }],
+    [/sugar ?apple|atemoya|custard ?apple|cherimoya|soursop|annona/, { name:"Annona (sugar apple family)", colors:["Green"], origin:"Tropical Americas (Annona).", fruit:"Bumpy green fruit, creamy custard flesh.", flavor:"Sweet, custard-like.", season:"Late summer – fall.", tree:"Small tree.", health:"Atemoya is the most cold-tolerant.", tip:"Pick when the segments separate slightly." }],
+    [/coconut/, { name:"Coconut", colors:["Brown"], origin:"Tropical Pacific (Cocos nucifera).", fruit:"Nuts in clusters.", flavor:"Sweet water and meat.", season:"Year-round once bearing.", tree:"Palm, very cold-tender.", health:"Only reliable in South Florida.", tip:"Green nuts for water, brown for meat." }],
+    [/olive/, { name:"Olive", colors:["Black"], origin:"Mediterranean (Olea europaea).", fruit:"Small oily drupes.", flavor:"Bitter until cured.", season:"Fall.", tree:"Evergreen, drought tolerant.", health:"Fruits poorly without enough chill in Florida.", tip:"'Arbequina' is the best bet." }],
+    [/grape|muscadine/, { name:"Grape", colors:["Purple"], origin:"Muscadines are native to the Southeast.", fruit:"Clusters of berries.", flavor:"Sweet, musky.", season:"August – September.", tree:"Vine on a trellis.", health:"Muscadines resist Pierce's disease.", tip:"Plant muscadines in Florida, not European grapes." }],
+    [/acerola|barbados ?cherry/, { name:"Barbados Cherry", colors:["Red"], origin:"Caribbean (Malpighia emarginata).", fruit:"Small red cherries.", flavor:"Tart, extremely high vitamin C.", season:"Several crops spring – fall.", tree:"Shrub, 6–10 ft.", health:"Nematodes; frost-tender.", tip:"Eat fresh — fruit spoils fast." }],
+    [/miracle ?fruit/, { name:"Miracle Fruit", colors:["Red"], origin:"West Africa (Synsepalum dulcificum).", fruit:"Small red berries.", flavor:"Makes sour foods taste sweet.", season:"Several crops a year.", tree:"Slow shrub; needs acidic soil.", health:"Grow in a pot with peat mix.", tip:"Let a berry coat your tongue, then eat a lemon." }],
+    [/jackfruit/, { name:"Jackfruit", colors:["Green"], origin:"India (Artocarpus heterophyllus).", fruit:"Huge spiky fruit.", flavor:"Sweet like juicy fruit gum.", season:"Summer – fall.", tree:"Large evergreen.", health:"Cold-tender.", tip:"Oil your hands — the latex is sticky." }],
+    [/mamey|canistel|egg ?fruit/, { name:"Sapote", colors:["Orange"], origin:"Central America.", fruit:"Sweet orange flesh.", flavor:"Like sweet potato custard.", season:"Varies.", tree:"Large evergreen.", health:"Cold-tender.", tip:"Pick when the skin color changes and soften indoors." }],
+    [/cherry/, { name:"Cherry", colors:["Red"], origin:"Florida-suited 'cherries' include Barbados and Surinam cherry.", fruit:"Small red fruit.", flavor:"Sweet-tart.", season:"Spring.", tree:"Shrub/small tree.", health:"True sweet cherries don't fruit in Florida.", tip:"Surinam cherry is ripe when nearly black-red." }],
+    [/apple/, { name:"Apple", colors:["Red"], origin:"Low-chill types (Anna, Dorsett Golden) for Florida.", fruit:"Small apples.", flavor:"Sweet-tart.", season:"June – July.", tree:"Plant two varieties for pollination.", health:"Needs some winter chill.", tip:"Anna + Dorsett Golden pollinate each other." }],
+    [/pear/, { name:"Pear", colors:["Green"], origin:"Asia/Europe; sand pears do best in Florida.", fruit:"Firm pears.", flavor:"Crisp, sweet.", season:"July – August.", tree:"Deciduous tree.", health:"Fire blight — pick resistant types.", tip:"'Hood' and 'Flordahome' pair well." }]
+  ];
+  const kindAboutFor = n => { const s = String(n || "").toLowerCase(); const hit = FT_KIND_ABOUT.find(([re]) => re.test(s)); return hit ? hit[1] : null; };
+  // Pests that usually attack each kind of fruit tree in Florida (UF/IFAS).
+  const FT_PESTS = [
+    [/mango/, ["Mango scale", "Mealybugs", "Thrips", "Mites", "Caribbean fruit fly", "Mango seed weevil"]],
+    [/avocado/, ["Avocado lace bug", "Scale", "Mites", "Thrips", "Redbay ambrosia beetle (laurel wilt)"]],
+    [/banana|plantain/, ["Banana weevil", "Nematodes", "Spider mites", "Aphids (bunchy top)", "Scale"]],
+    [/orange|mandarin|tangerine|satsuma|lemon|lime|grapefruit|kumquat|calamondin|calamodin|citrus|pomelo/, ["Asian citrus psyllid (greening)", "Citrus leafminer", "Scale", "Aphids", "Mites", "Orange dog caterpillar"]],
+    [/peach|nectarine|plum/, ["Plum curculio", "Stink bugs", "Scale", "Peachtree borer", "Caribbean fruit fly"]],
+    [/loquat/, ["Caribbean fruit fly", "Scale", "Aphids", "Fire blight (disease)"]],
+    [/persimmon/, ["Twig girdler", "Scale", "Mealybugs", "Persimmon psylla"]],
+    [/mulberr/, ["Scale", "Whiteflies", "Mealybugs", "Birds"]],
+    [/lychee|longan/, ["Lychee erinose mite", "Scale", "Stink bugs", "Birds and squirrels"]],
+    [/starfruit|carambola/, ["Stink bugs", "Caribbean fruit fly", "Scale", "Reniform nematode"]],
+    [/jaboticaba/, ["Scale", "Mealybugs", "Birds"]],
+    [/jujube/, ["Jujube fruit fly", "Scale", "Mealybugs"]],
+    [/dragon|pitaya/, ["Mealybugs", "Ants", "Scale", "Snails and slugs"]],
+    [/papaya/, ["Papaya fruit fly", "Whiteflies", "Mites", "Papaya webworm", "Aphids (ringspot virus)"]],
+    [/sapodilla/, ["Caribbean fruit fly", "Scale", "Mealybugs"]],
+    [/june ?plum|ambarella/, ["Caribbean fruit fly", "Scale", "Mealybugs"]],
+    [/passion|passiflora/, ["Gulf fritillary caterpillars", "Stink bugs", "Nematodes", "Mites"]],
+    [/fig/, ["Root-knot nematodes", "Fig rust (disease)", "Scale", "Birds"]],
+    [/guava/, ["Caribbean fruit fly", "Red-banded thrips", "Scale", "Guava moth"]],
+    [/pomegranate/, ["Leaf-footed bugs", "Aphids", "Scale", "Whiteflies"]],
+    [/blueberr/, ["Blueberry gall midge", "Thrips", "Scale", "Birds"]]
+  ];
+  const pestsFor = n => { const s = String(n || "").toLowerCase(); const hit = FT_PESTS.find(([re]) => re.test(s)); return hit ? hit[1] : []; };
   const profileHTML = t => {
-    const p = profileFor(t); if(!p) return `<div class="ft-globe-only"><a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a></div>`;
+    let p = profileFor(t), general = false;
+    if(!p && !(/mango/i.test(t.name) && normV(t.variety) === "frozen")){ p = kindAboutFor(t.name); general = !!p; }
+    if(!p) return `<div class="ft-globe-only"><a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a></div>`;
     const row = (ic, k, v) => v ? `<div class="ft-prof-row"><span>${ic} ${k}</span><b>${fertEsc(v)}</b></div>` : "";
-    return `<details class="ft-prof" data-prof="${t.id}"${openProf.has(t.id) ? " open" : ""}><summary class="ft-prof-t">📖 About ${fertEsc(fullName(t))}<a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a><span class="ft-prof-car rain-chevron">▾</span></summary>
+    return `<details class="ft-prof" data-prof="${t.id}"${openProf.has(t.id) ? " open" : ""}><summary class="ft-prof-t">📖 About ${fertEsc(general ? (t.variety ? fullName(t) : p.name) : fullName(t))}<a class="variety-search-link ft-globe" href="${googleURL(t)}" target="_blank" rel="noopener" title="Search for ${fertEsc(fullName(t))} online" aria-label="Search for ${fertEsc(fullName(t))} online">🌐</a><span class="ft-prof-car rain-chevron">▾</span></summary>
       ${row("📍", "Origin", p.origin)}${row("🍽️", "Fruit", p.fruit)}${row("😋", "Flavor", p.flavor)}${row("📅", "Season", p.season)}
       ${row("🌳", "Tree", p.tree)}${row("🛡️", "Disease", p.health)}${row("🌰", "Seed", p.seed)}${row("💡", "Tip", p.tip)}
+      ${general ? `<div class="ft-prof-src">General info for ${fertEsc(p.name)}${t.variety ? ` — no sheet for '${fertEsc(t.variety)}' yet` : ""}.</div>` : ""}
       <div class="ft-prof-src">${(p.src || []).map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${fertEsc(n)}</a>`).join(" · ")}</div></details>`;
   };
   const climateFor = n => { const t = String(n).toLowerCase(); const hit = FT_CLIMATE.find(([ks]) => ks.some(k => t.includes(k))); return hit ? hit[1] : null; };
@@ -12596,7 +12764,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
   // into kind "Starfruit" + variety "Arkin", so trees of the same kind group
   // together. Works when the first word(s) are a known kind of fruit tree or
   // the kind of another tree on the list. Stray symbols ("Mango`") are tidied.
-  const FT_KINDS = ["mango","avocado","banana","plantain","fig","mulberry","loquat","lemon","lime","orange","mandarin","tangerine","satsuma","calamondin","calamodin","kumquat","grapefruit","pomelo","peach","nectarine","plum","papaya","guava","starfruit","carambola","persimmon","pomegranate","jaboticaba","blueberry","lychee","litchi","longan","olive","apple","pear","cherry","atemoya","soursop","cherimoya","sapodilla","jackfruit","macadamia","pecan","coconut","dragonfruit","passionfruit","miracle","surinam","acerola","barbados","grumichama","pitanga","sugarapple","date","feijoa","pineapple guava"];
+  const FT_KINDS = ["passion fruit","passionfruit","mango","avocado","banana","plantain","fig","mulberry","loquat","lemon","lime","orange","mandarin","tangerine","satsuma","calamondin","calamodin","kumquat","grapefruit","pomelo","peach","nectarine","plum","papaya","guava","starfruit","carambola","persimmon","pomegranate","jaboticaba","blueberry","lychee","litchi","longan","olive","apple","pear","cherry","atemoya","soursop","cherimoya","sapodilla","jackfruit","macadamia","pecan","coconut","dragonfruit","passionfruit","miracle","surinam","acerola","barbados","grumichama","pitanga","sugarapple","date","feijoa","pineapple guava"];
   const sing = w => w.replace(/(ies)$/, "y").replace(/(es|s)$/, "");
   const cleanName = n => String(n || "").replace(/[^\p{L}\p{N})]+$/u, "").replace(/^[^\p{L}\p{N}(]+/u, "").replace(/\s+/g, " ").trim();
   const splitKind = name => {
@@ -12637,6 +12805,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     const notes = t.log.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map(n => `<div class="ft-note"><span class="ft-note-d">${fmt(n.date, true)}</span> ${fertEsc(n.text)}${locked(n) ? "" : `<button type="button" class="ft-x" data-note="${n.id}" aria-label="Delete note">×</button>`}</div>`).join("");
     return `
       ${t.date || t.notes ? `<div class="ft-info">${t.date ? `🗓️ Planted ${fmt(t.date, true)}${age(t.date) ? ` · ${age(t.date)}` : ""}` : ""}${t.notes ? `<div class="ft-about">${fertEsc(t.notes)}</div>` : ""}</div>` : ""}
+      ${READ_ONLY ? "" : `<button type="button" class="bug-critter ft-critter" title="Found a bug on ${fertEsc(fullName(t))}? Tap me" aria-label="Bug Alert for ${fertEsc(fullName(t))}">${typeof BUG_ICONS !== "undefined" ? BUG_ICONS[(trees.indexOf(t) + 1) % BUG_ICONS.length] : "🐛"}${t.__bugN ? `<span class="bug-btn-count">${t.__bugN}</span>` : ""}</button>`}
       ${t.__solo && t.where ? `<div class="ft-where">📍 ${fertEsc(t.where)}</div>` : ""}
       ${t.__inMulti ? "" : profileHTML(t)}
       ${t.__solo ? climateHTML(t.name) : ""}
@@ -12757,6 +12926,15 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       render(); scrollToOpen(`.ft-card[data-id="${t.id}"]`);
     });
     const body = card.querySelector(".ft-body"); if(body.hidden) return;
+    const critter = body.querySelector(".ft-critter");
+    // Bug button sits in the upper-right corner of the Climate needs box (when the tree has one).
+    const clim = body.querySelector(".ft-clim");
+    if(critter && clim){ clim.classList.add("has-critter"); clim.appendChild(critter); }
+    if(critter) critter.addEventListener("click", e => {
+      e.stopPropagation();
+      const icon = critter.querySelector("svg") ? critter.querySelector("svg").outerHTML : null;
+      openBugSheet({ slug: `tree-${t.id}`, name: fullName(t), quickBugs: pestsFor(t.name) }, async () => { const l = await getBugs(`tree-${t.id}`); t.__bugN = l.length; render(); }, null, icon);
+    });
     body.querySelectorAll(".ft-stage").forEach(btn => btn.addEventListener("click", async () => {
       if(READ_ONLY) return;
       const date = body.querySelector(".ft-evdate").value || todayISO(), stage = btn.dataset.stage, S = STAGES[stage];
@@ -12988,6 +13166,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
         if(!ok) return;
       }
       const t = { id:`t${Date.now()}${Math.random().toString(36).slice(2,6)}`, addedAt: Date.now(), ...data, events: [], log: [] };
+      autoColors(t);
       openIds.clear(); openGroups.clear();
       trees.push(t); openIds.add(t.id); openGroups.add(kindKey(t.name));
       const repId = !$("ftRepWrap").hidden && $("ftIsRep").checked ? $("ftRep").value : "", pos = null;
@@ -13052,13 +13231,14 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     papaya:'<svg viewBox="0 0 20 20"><path d="M10 1.6c2.6 0 4 2.2 4.6 5 .8 3.6 2.4 5.6 2.4 8 0 2.6-3.2 4-7 4s-7-1.4-7-4c0-2.4 1.6-4.4 2.4-8 .6-2.8 2-5 4.6-5z" fill="#F29A3A"/><path d="M10 1.6c2.6 0 4 2.2 4.6 5-1.4-1-3-1.4-4.6-1.4S6.8 5.6 5.4 6.6C6 3.8 7.4 1.6 10 1.6z" fill="#8DBF4A"/><path d="M6.6 9.4c-.6 2-1.6 3.6-1.8 5" stroke="#fff" stroke-width="1.2" fill="none" opacity=".4" stroke-linecap="round"/></svg>',
     sapodilla:'<svg viewBox="0 0 20 20"><path d="M10 4.4V2" stroke="#5B3A1E" stroke-width="1.3" stroke-linecap="round"/><path d="M10 2.6c1.6-1.2 3.4-1 4.2.2-1.6.8-3 .8-4.2-.2z" fill="#5FAE45"/><ellipse cx="10" cy="11.6" rx="6.4" ry="6.8" fill="#9A7350"/><ellipse cx="10" cy="11.6" rx="6.4" ry="6.8" fill="url(#oSapo)"/><ellipse cx="7.6" cy="9.4" rx="1.8" ry="2.6" fill="#fff" opacity=".22"/><defs><radialGradient id="oSapo" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#C29A70" stop-opacity=".5"/><stop offset="1" stop-color="#6E4E32" stop-opacity=".5"/></radialGradient></defs></svg>',
     jaboticaba:'<svg viewBox="0 0 20 20"><path d="M1.6 10.4h16.8" stroke="#8A6A48" stroke-width="2.2" stroke-linecap="round"/><circle cx="5" cy="6.6" r="3.2" fill="#3E2550"/><circle cx="11" cy="6.2" r="3.2" fill="#4A2C60"/><circle cx="7.6" cy="14.4" r="3.4" fill="#452A5A"/><circle cx="14" cy="14" r="3.2" fill="#3A2249"/><circle cx="4" cy="5.6" r=".9" fill="#fff" opacity=".5"/><circle cx="10" cy="5.2" r=".9" fill="#fff" opacity=".5"/><circle cx="6.6" cy="13.4" r=".9" fill="#fff" opacity=".5"/><circle cx="13" cy="13" r=".9" fill="#fff" opacity=".5"/></svg>',
+    passion:'<svg viewBox="0 0 20 20"><path d="M10 3.6 10.6 1.4" stroke="#5B7A2E" stroke-width="1.3" stroke-linecap="round"/><path d="M10.4 2.2c1.8-1.4 4-1.2 5 .2-1.8 1-3.6 1-5-.2z" fill="#5FAE45"/><circle cx="10" cy="11.4" r="7" fill="#5B2A5E"/>' + [[7,9],[12.4,8.4],[9.6,12.6],[13.6,12.8],[6.6,13.8],[11,16]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r=".7" fill="#C9A9D6" opacity=".7"/>`).join("") + '<ellipse cx="7.4" cy="8.4" rx="1.8" ry="2.6" fill="#fff" opacity=".25"/></svg>',
     juneplum:'<svg viewBox="0 0 20 20"><path d="M10 4.6 10.6 1.8" stroke="#6B4A22" stroke-width="1.3" stroke-linecap="round"/><path d="M10.4 2.6c-1.8-1.2-3.8-.8-4.6.4 1.8.8 3.4.6 4.6-.4z" fill="#5FAE45"/><ellipse cx="10" cy="11.8" rx="5.4" ry="6.8" fill="#B9C845"/><path d="M10 5c3 0 5.4 3 5.4 6.8S13 18.6 10 18.6c2-1.6 2.6-4 2.6-6.8S12 6.6 10 5z" fill="#E2C340" opacity=".8"/><ellipse cx="7.6" cy="9.6" rx="1.4" ry="2.6" fill="#fff" opacity=".3"/></svg>'
   };
   const iconFor = name => {
     const n = String(name || "").toLowerCase();
     const H = typeof HARVEST_SVG !== "undefined" ? HARVEST_SVG : {}, M = typeof MONTH_SVG !== "undefined" ? MONTH_SVG : {};
     const map = [
-      [/june ?plum/, ORCH_SVG.juneplum], [/mango/, "🥭"], [/avocado/, "🥑"], [/banana|plantain/, "🍌"], [/peach|nectarine|plum/, "🍑"],
+      [/passion ?fruit|passiflora|maracuja/, ORCH_SVG.passion], [/june ?plum/, ORCH_SVG.juneplum], [/mango/, "🥭"], [/avocado/, "🥑"], [/banana|plantain/, "🍌"], [/peach|nectarine|plum/, "🍑"],
       [/lemon|lime/, "🍋"], [/orange|mandarin|tangerine|satsuma|calamondin|calamodin|kumquat|grapefruit|citrus/, "🍊"],
       [/loquat/, H.loquat], [/persimmon/, H.persimmon], [/mulberr/, H.mulberry], [/\bfig/, H.fig], [/starfruit|carambola/, M.starfruit],
       [/lychee|litchi/, ORCH_SVG.lychee], [/longan/, ORCH_SVG.longan], [/jujube/, ORCH_SVG.jujube], [/dragon/, ORCH_SVG.dragon],
@@ -13147,7 +13327,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     await save();
     try{ await window.storage.set(FLIP_KEY, "1", false); }catch(e){}
   };
-  const save = async () => { try{ await window.storage.set(KEY, JSON.stringify(trees), false); }catch(e){} };
+  const save = async () => { try{ await window.storage.set(KEY, JSON.stringify(trees, (k, v) => (k.startsWith("__") ? undefined : v)), false); }catch(e){} };
   const inCell = (z, r) => trees.filter(t => t.zone === z && t.row === r);
 
   /* ---------- the map ---------- */
@@ -14881,7 +15061,8 @@ async function openBugSheet(p, onChange, editId, icon){
   let bugs = await getBugs(p.slug);
   let editing = null;
   const syncQuick = () => quick.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.textContent.toLowerCase() === nameEl.value.trim().toLowerCase()));
-  quick.innerHTML = QUICK_BUGS.map(n => `<button type="button">${n}</button>`).join("");
+  document.getElementById("bugUsual").hidden = !(p.quickBugs && p.quickBugs.length);
+  quick.innerHTML = ((p.quickBugs && p.quickBugs.length) ? p.quickBugs : QUICK_BUGS).map(n => `<button type="button">${n}</button>`).join("");
   quick.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { nameEl.value = b.textContent; syncQuick(); }));
   nameEl.oninput = syncQuick;
   function loadForm(entry){
@@ -19328,6 +19509,15 @@ function awayRenderPanel(){
   document.addEventListener("pointerleave", hide);
   window.addEventListener("blur", hide);
   window.addEventListener("scroll", hide, { passive:true, capture:true });
+})();
+</script>
+<script>
+(function(){
+  let b = null;
+  try{ b = JSON.parse(sessionStorage.getItem("almSyncBackTo") || "null"); sessionStorage.removeItem("almSyncBackTo"); }catch(e){}
+  if(!b || !b.tab || b.tab === "today" || Date.now() - b.at > 20000) return;
+  const go = () => { const t = document.querySelector(`.tabbtn[data-tab="${b.tab}"]`); if(t){ t.click(); setTimeout(() => window.scrollTo(0, b.y || 0), 400); } };
+  if(document.readyState === "complete") setTimeout(go, 300); else window.addEventListener("load", () => setTimeout(go, 300));
 })();
 </script>
 </body></html>
