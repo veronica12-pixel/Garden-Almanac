@@ -3828,6 +3828,29 @@
   .ft-diednote{ margin-top:10px; padding:8px 10px; border-radius:10px; background:#F2EDE6; border:1px solid #DCCFB4; font-size:13px; color:var(--ink); font-family:'Inter',sans-serif; }
   body.night-mode .ft-diednote{ background:#2E2A24; border-color:#5A4A33; }
   .ft-dead .ft-ic{ filter:grayscale(.85); opacity:.75; }
+  .pv-dd{ margin:6px 0 0; }
+  .pv-dd[hidden]{ display:none !important; }
+  /* Tighter, even spacing between the buttons inside a crop card */
+  .card-body .pv-dd + .sub-wrap, .card-body .sub-wrap{ margin-top:6px !important; }
+  .card-body .sub-tiles{ gap:6px !important; }
+  .card-body .af-stack{ margin-top:6px !important; }
+  .card-body .season-actions-row{ margin-top:6px !important; }
+  .pv-dd > summary{ list-style:none; width:100%; box-sizing:border-box; }
+  .pv-dd > summary::-webkit-details-marker{ display:none; }
+  .pv-tile{ background:linear-gradient(160deg, #FFF6E6 0%, #F7E3C2 100%); border-color:#E8CFA0 !important; color:#8A5A2B; }
+  .pv-car{ flex:none; font-size:30px !important; line-height:.6 !important; transition:transform .2s; }
+  .pv-dd[open] > summary .pv-car{ transform:rotate(180deg); }
+  .pv-dd[open] > summary{ box-shadow:inset 0 0 0 2px currentColor; }
+  .pv-wrap{ margin:8px 0 4px; }
+  .pv-wrap:empty{ display:none; }
+  .pv-title{ font-family:'Inter',sans-serif; font-weight:800; font-size:13px; color:#5B4A2E; text-transform:uppercase; letter-spacing:.04em; margin:2px 2px 6px; }
+  .pv-wrap .ft-prof{ margin:0 0 6px !important; }
+  .pv-ic{ font-size:18px; }
+  .pv-about{ padding-bottom:6px !important; }
+  .pv-about > :not(.ft-prof-t){ margin:0 11px; }
+  .pv-score{ flex:none; font-size:12px !important; margin-left:auto !important; min-width:44px; box-sizing:border-box; text-align:center; }
+  .pv-score + .ft-globe{ margin-left:2px !important; }
+  .pv-noprof .ft-prof-t{ cursor:default; }
   .ft-where{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:600; color:#7A6440; margin:0 0 8px; }
   body.night-mode .ft-where{ color:#CDBF9F; }
   .ft-globe-only{ display:flex; justify-content:flex-end; margin:-4px 0 4px; }
@@ -3859,8 +3882,12 @@
   .orch-open .ft-name{ position:relative; z-index:1; color:#fff !important; font-size:17px !important; font-weight:800 !important; text-shadow:0 1px 2px rgba(0,0,0,.3); }
   .ft-add-open{ background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.28) 0%, transparent 55%), linear-gradient(135deg,#1F7A5C 0%,#2E9472 50%,#46AE8A 100%) !important; border-color:#196A4F !important; box-shadow:0 4px 0 #145A43, 0 6px 14px rgba(20,90,67,.28) !important; margin-top:0 !important; }
   .ft-add-open:active{ box-shadow:0 1px 0 #145A43, 0 2px 5px rgba(20,90,67,.28) !important; }
-  .ft-add-open[aria-expanded="true"]{ border-radius:14px 14px 0 0 !important; box-shadow:0 2px 0 #145A43 !important; margin-bottom:0 !important; }
-  .ft-add-open[aria-expanded="true"] + .ft-formcard{ border-radius:0 0 14px 14px !important; margin-top:0 !important; }
+  .ft-toprow{ display:flex; gap:8px; align-items:stretch; margin:12px 0 10px; }
+  .ft-toprow > .orch-open{ margin:0 !important; }
+  .ft-toprow > #orchOpenBtn{ flex:1 1 auto; min-width:0; }
+  .ft-toprow > .ft-add-open{ flex:none; width:58px !important; min-height:58px !important; height:auto; padding:0 !important; justify-content:center !important; }
+  .ft-plus{ color:#fff; font-size:30px; font-weight:800; line-height:1; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+  .ft-add-open[aria-expanded="true"]{ box-shadow:inset 0 0 0 2px #B9E8D4, 0 2px 0 #145A43 !important; transform:translateY(2px); }
   .ft-formcard[hidden]{ display:none !important; }
   body.night-mode .orch-open.ft-add-open{ background:radial-gradient(120% 140% at 0% 0%, rgba(255,255,255,.12) 0%, transparent 55%), linear-gradient(135deg,#145441 0%,#1D6B52 50%,#2A7F63 100%) !important; border-color:#0F4334 !important; box-shadow:0 4px 0 #0B3327, 0 6px 14px rgba(0,0,0,.35) !important; }
   .orch-deco{ position:absolute; inset:0; pointer-events:none; }
@@ -3924,6 +3951,16 @@
   .orch-chip b{ font-weight:700; color:var(--ink-soft); }
   .orch-hint{ font-size:12px; color:var(--ink-soft); margin:4px 2px 10px; line-height:1.45; }
   .orch-list{ margin-top:8px; }
+  .orch-zrow{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin-top:10px; }
+  .orch-zrow .orch-zbtn{ flex-direction:column !important; justify-content:center; gap:2px !important; min-height:84px !important; margin:0 !important; padding:8px 4px 4px !important; text-align:center !important; border-radius:14px !important; }
+  .orch-zrow .orch-zt{ font-size:15px; font-weight:800; }
+  .orch-zrow .orch-zn{ font-size:11.5px !important; padding:1px 7px !important; }
+  .orch-zrow .orch-zcar{ margin:0 !important; font-size:30px !important; line-height:.6 !important; }
+  .orch-zrow .orch-zbtn[aria-expanded="true"]{ border-radius:14px !important; box-shadow:inset 0 0 0 2.5px var(--zb-edge), 0 2px 6px rgba(0,0,0,.12) !important; }
+  .orch-zrow + .orch-zbody{ margin-top:8px; border-top:1px solid var(--zb-edge) !important; border-radius:14px !important; }
+  .orch-row-empty{ font-size:13px; color:var(--ink-soft); padding:10px 2px; font-style:italic; }
+  .orch-done{ display:flex !important; align-items:center; justify-content:center; width:calc((100% - 18px) / 4) !important; min-height:44px !important; height:44px; margin:12px auto 0 !important; padding:0 !important; border-radius:14px !important; }
+  .orch-done-car{ display:inline-block; color:currentColor !important; font-size:30px !important; line-height:.6 !important; transform:rotate(180deg); margin-top:2px; }
   .orch-zbtn{ display:flex; align-items:center; gap:10px; width:100%; min-height:48px; margin:8px 0 0; padding:8px 14px; border-radius:14px; cursor:pointer; font-family:'Inter',sans-serif; font-size:16px; font-weight:800; color:var(--ink); text-align:left;
     border:1px solid var(--zb-edge); background:linear-gradient(180deg, #fff 0%, var(--zb) 70%); box-shadow:0 1px 2px rgba(0,0,0,.05), 0 5px 12px rgba(0,0,0,.06); }
   .orch-zbtn:active{ transform:translateY(1px); }
@@ -4310,8 +4347,10 @@
 
     <section class="tab-panel" id="tab-fruitTrees">
       <h2 class="section-title">Fruit Trees</h2>
-      <button type="button" class="orch-open" id="orchOpenBtn"><span class="ft-name">Orchard Layout</span><i class="orch-deco" aria-hidden="true"><b style="right:8px;top:2px;font-size:34px;transform:rotate(-4deg)">🌳</b><b style="right:46px;top:31px;font-size:13px;transform:rotate(18deg)">🍋</b><b style="right:62px;top:4px;font-size:21px;transform:rotate(-15deg)">🥭</b><b style="right:52px;bottom:2px;font-size:15px;transform:rotate(25deg)">🍃</b><b style="right:90px;bottom:1px;font-size:28px;transform:rotate(6deg)">🌴</b><b style="right:98px;top:3px;font-size:12px;transform:rotate(-40deg)">🍃</b><b style="right:124px;top:5px;font-size:17px;transform:rotate(10deg)">🍊</b><b style="right:128px;bottom:4px;font-size:15px;transform:rotate(-12deg)">🥑</b><b style="right:150px;bottom:2px;font-size:17px;transform:rotate(-20deg)">🌿</b><b style="right:162px;top:3px;font-size:21px;transform:rotate(3deg)">🌳</b></i></button>
-      <button type="button" class="orch-open ft-add-open" id="ftAddOpen" aria-expanded="false"><span class="ft-name">＋ Add a Tree</span><i class="orch-deco" aria-hidden="true"><b style="right:12px;bottom:4px;font-size:26px;transform:rotate(-4deg)">🌱</b><b style="right:50px;top:4px;font-size:20px;transform:rotate(6deg)">🪴</b><b style="right:80px;bottom:3px;font-size:18px;transform:rotate(-18deg)">🌿</b><b style="right:104px;top:6px;font-size:13px;transform:rotate(12deg)">💧</b><b style="right:122px;bottom:5px;font-size:15px;transform:rotate(28deg)">🍃</b><b style="right:146px;top:5px;font-size:15px;transform:rotate(8deg)">🌱</b><b style="right:40px;top:30px;font-size:11px;transform:rotate(-30deg)">🍃</b></i></button>
+      <div class="ft-toprow">
+        <button type="button" class="orch-open" id="orchOpenBtn"><span class="ft-name">Orchard Layout</span><i class="orch-deco" aria-hidden="true"><b style="right:8px;top:2px;font-size:34px;transform:rotate(-4deg)">🌳</b><b style="right:46px;top:31px;font-size:13px;transform:rotate(18deg)">🍋</b><b style="right:62px;top:4px;font-size:21px;transform:rotate(-15deg)">🥭</b><b style="right:52px;bottom:2px;font-size:15px;transform:rotate(25deg)">🍃</b><b style="right:90px;bottom:1px;font-size:28px;transform:rotate(6deg)">🌴</b><b style="right:98px;top:3px;font-size:12px;transform:rotate(-40deg)">🍃</b><b style="right:124px;top:5px;font-size:17px;transform:rotate(10deg)">🍊</b></i></button>
+        <button type="button" class="orch-open ft-add-open" id="ftAddOpen" aria-expanded="false" aria-label="Add a tree" title="Add a tree"><span class="ft-plus">＋</span></button>
+      </div>
       <div class="legend-card ft-formcard" id="ftFormCard" hidden>
         <div class="fert-form">
           <label>Tree<input type="text" id="ftName" list="ftNameList" placeholder="e.g. Mango" autocomplete="off"></label>
@@ -4606,7 +4645,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.10.31-243</div>
+    <div class="app-footer">© 2026 Thor · v2026.11.01-261</div>
   </main>
 
   <nav class="tabbar">
@@ -4630,13 +4669,13 @@
       <span class="tabbtn-icon" style="background:#F5E6C8">🌱</span>
       <span class="tabbtn-2line">Cover<br>Crop</span>
     </button>
-    <button class="tabbtn tab-trees" data-tab="fruitTrees">
-      <span class="tabbtn-icon" style="background:#DCEFD0">🌳</span>
-      <span class="tabbtn-2line">Fruit<br>Trees</span>
-    </button>
     <button class="tabbtn tab-beds" data-tab="beds">
       <span class="tabbtn-icon" style="background:#F1E6D6"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style="transform:rotate(90deg)"><rect x="2" y="1.6" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="2.5" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="6.9" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="7.800000000000001" width="17.6" height="2.4" rx="1" fill="#6FAF56"/><rect x="2" y="12.2" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="13.1" width="17.6" height="2.4" rx="1" fill="#8FC46A"/><rect x="2" y="17.5" width="20" height="4.2" rx="1.6" fill="#7A5236"/><rect x="3.2" y="18.4" width="17.6" height="2.4" rx="1" fill="#6FAF56"/></svg></span>
       <span class="tabbtn-2line">Garden<br>Beds</span>
+    </button>
+    <button class="tabbtn tab-trees" data-tab="fruitTrees">
+      <span class="tabbtn-icon" style="background:#DCEFD0">🌳</span>
+      <span class="tabbtn-2line">Fruit<br>Trees</span>
     </button>
     <button class="tabbtn tab-harvests" data-tab="fruits">
       <span class="tabbtn-icon" style="background:#FBE3D2">🧺</span>
@@ -4832,7 +4871,7 @@
     <div class="orch-scroll" id="orchScroll"></div>
     <div class="orch-legend" id="orchLegend" hidden></div>
     <div class="orch-list" id="orchList"></div>
-    <button type="button" class="modal-close" id="orchDone">Close</button>
+    <button type="button" class="modal-close orch-done" id="orchDone" aria-label="Close" title="Close"><span class="rain-chevron orch-done-car">▾</span></button>
   </div>
 </div>
 
@@ -6030,10 +6069,10 @@ function openScoreSheet(varietyLabel, current, onPick){
   grid.innerHTML = Array.from({length:10}, (_, k) => k + 1).map(n =>
     `<button type="button" data-score="${n}" class="${Number(current) === n ? "on" : ""}" style="--sc:${scoreColor(n)}">${n}</button>`).join("");
   const close = () => sheet.classList.remove("show");
-  grid.querySelectorAll("button").forEach(b => b.onclick = async () => { close(); await onPick(Number(b.dataset.score)); });
+  grid.querySelectorAll("button").forEach(b => b.onclick = async () => { close(); await onPick(Number(b.dataset.score)); refreshVarietyLists(); });
   const clearBtn = document.getElementById("scoreClearBtn");
   clearBtn.style.display = current ? "" : "none";
-  clearBtn.onclick = async () => { close(); await onPick(0); };
+  clearBtn.onclick = async () => { close(); await onPick(0); refreshVarietyLists(); };
   document.getElementById("scoreCancelBtn").onclick = close;
   sheet.onclick = e => { if(e.target === sheet) close(); };
   sheet.classList.add("show");
@@ -6059,6 +6098,347 @@ function varietyNoGermReason(v){ return (typeof v === "object" && v && v.noGermR
 function varietySearchUrl(name, cropName){
   const q = encodeURIComponent(`${name} ${cropName} seeds`.trim());
   return `https://www.google.com/search?q=${q}`;
+}
+// ---- Pepper variety profiles (trial — peppers only) ----
+// One "About" dropdown per pepper variety in this season's list, shown inside
+// the Peppers card. Researched Nov 1, 2026 from seed-company and reference pages.
+const PEPPER_PROFILES = [
+  { v:["thaihot","thaipepperhot","thai","thaipepper"], ic:"🌶️",
+    origin:"Thailand — the classic small Thai bird's-eye-type chili (Capsicum annuum).",
+    fruit:"Tiny, about 1–1½ in, slender; held upright on the plant. Green ripening to bright red.",
+    flavor:"Very hot — roughly 50,000–100,000 Scoville. Sharp, clean heat.",
+    days:"About 85 days from transplant.",
+    plant:"Compact and bushy, 1–2 ft, covered with dozens of peppers — pretty enough for pots.",
+    tip:"Pick red for the most heat; dries easily on the plant or a string. Wear gloves when cutting lots of them.",
+    src:[] },
+  { v:["jimmynardello","jimmynardellos","nardello"], ic:"🌶️",
+    origin:"Basilicata, southern Italy — brought to Connecticut in 1887 by the Nardello family; named for seed-saver Jimmy Nardello. On Slow Food's Ark of Taste.",
+    fruit:"Long and thin, about 6–9 in; green, then streaked brown-burgundy, then bright red.",
+    flavor:"Sweet, fruity and light raw; soft and creamy when fried. No heat.",
+    days:"About 75–90 days from transplant.",
+    plant:"About 2 ft tall and very productive.",
+    tip:"One of the best frying peppers — fry or grill whole until soft, then salt. Sweetest when fully red.",
+    src:[["Slow Food — Jimmy Nardello's pepper","https://www.fondazioneslowfood.com/en/ark-of-taste-slow-food/jimmy-nardellos-sweet-italian-frying-pepper/"]] },
+  { v:["goldencaliforniawonder","californiawondergolden","goldencalwonder"], ic:"🫑",
+    origin:"A golden-yellow form of the classic 'California Wonder' bell (USA, 1920s).",
+    fruit:"Blocky 4-lobed bell, about 4 in; green ripening to golden yellow. Thick walls.",
+    flavor:"Sweet and mild, no heat — sweetest when fully yellow.",
+    days:"About 70–75 days from transplant.",
+    plant:"Upright, about 2 ft; benefits from staking when loaded.",
+    tip:"Bells need steady water and calcium to avoid blossom-end rot; mulch well.",
+    src:[] },
+  { v:["lesyared","lesya"], ic:"🫑",
+    origin:"Ukraine — bred in the early 2000s by Nadiya Bilous over about 9 years.",
+    fruit:"Large, heart- or teardrop-shaped, very thick-walled; ripens deep red.",
+    flavor:"Extremely sweet and juicy — sweeter than a red bell, almost no bitterness.",
+    days:"About 75 days from transplant.",
+    plant:"Compact, about 2 ft; holds 6–8 big fruits at a time, usually without staking.",
+    tip:"Let them ripen fully on the plant for the best flavor. Can split or get blossom-end rot — keep watering even.",
+    src:[["Pepper Geek — Lesya peppers","https://peppergeek.com/lesya-pepper/"]] },
+  { v:["lesyaorange","orangelesya"], ic:"🫑",
+    origin:"Ukraine — the orange-ripening form of 'Lesya'.",
+    fruit:"Heart-shaped, thick-walled; ripens bright orange.",
+    flavor:"Very sweet and juicy, no heat.",
+    days:"About 75 days from transplant.",
+    plant:"Compact, about 2 ft.",
+    tip:"Same care as Lesya Red; great raw, roasted or stuffed.",
+    src:[["Baker Creek — Orange Lesya","https://www.rareseeds.com/sweet-pepper-seeds-orange-lesya"]] },
+  { v:["giantaconcagua","aconcagua","aconcaguagiant"], ic:"🌶️",
+    origin:"Argentina — named for Mount Aconcagua.",
+    fruit:"Huge, up to about 12 in long and 2 in wide, thick-walled; light green ripening to red.",
+    flavor:"Sweet and mild with a fruity, apple-like note when red.",
+    days:"About 75–85 days from transplant.",
+    plant:"Tall, over 3 ft — needs staking.",
+    tip:"Excellent for frying and roasting. Give it a stake early, the fruits get heavy.",
+    src:[["Baker Creek — Giant Aconcagua","https://www.rareseeds.com/pepper-sweet-giant-aconcagua"]] },
+  { v:["melrose"], ic:"🌶️",
+    origin:"Melrose Park, Chicago — brought by Italian immigrants from Belsito, Calabria in the early 1900s; known as the \"Chicago pepper\".",
+    fruit:"Medium frying pepper, about 4 in; green ripening to bright red.",
+    flavor:"Sweet, rich and tender; no heat.",
+    days:"About 70–80 days from transplant.",
+    plant:"Compact and productive; usually no staking. Fine in a 5-gallon pot.",
+    tip:"Classic for frying, sautéing and antipasto.",
+    src:[["Baker Creek — Melrose","https://www.rareseeds.com/pepper-sweet-melrose"]] },
+  { v:["ajvarski","ajvar"], ic:"🌶️",
+    origin:"North Macedonia — seed from the villages of Kalugeritsa and Zleovo; the pepper used for ajvar.",
+    fruit:"Broad wedge shape, 6–7 in long, thick flesh; green ripening to deep red.",
+    flavor:"Sweet, very fragrant, with a rich roasted taste.",
+    days:"About 80–90 days from transplant.",
+    plant:"Stocky, about 2 ft; stake it — the fruit is large and heavy.",
+    tip:"Roast, peel and grind into ajvar; also great on the grill.",
+    src:[["Baker Creek — Ajvarski","https://www.rareseeds.com/pepper-sweet-ajvarski"]] },
+  { v:["carolinawonder","carolinawonderbell","carolinawonderbellpepper","carolinawondersweetbell"], ic:"🫑",
+    origin:"USDA (Charleston, South Carolina) — bred by Richard Fery; released 1997–98.",
+    fruit:"Blocky bell; dark green ripening to bright red.",
+    flavor:"Sweet bell flavor.",
+    days:"About 63–75 days from transplant.",
+    plant:"Standard bell plant, about 2 ft.",
+    tip:"Highly resistant to southern root-knot nematode — the best bell for sandy Florida soil where nematodes are a problem.",
+    src:[["USDA ARS — Nematode-resistant bell peppers","https://agresearchmag.ars.usda.gov/1997/oct/pepper"]] }
+];
+function pepperKey(name){
+  return String(name || "").toLowerCase().normalize("NFD")
+    .replace(/\([^)]*\)/g, "").replace(/[^a-z0-9 ]/g, "")
+    .replace(/\b(sweet|pepper|peppers|new|hot)\b/g, m => (m === "hot" ? "hot" : ""))
+    .replace(/\s+/g, "");
+}
+function pepperProfileFor(name){
+  const k = pepperKey(name), k2 = k.replace(/hot$/, "");
+  return PEPPER_PROFILES.find(p => p.v.includes(k) || p.v.includes(k2)) || null;
+}
+const pepperOpenProf = new Set();
+async function fillPepperProfiles(card){
+  const box = card.querySelector(".pv-wrap"); if(!box) return;
+  let list = [];
+  try{ const r = await window.storage.get(`variety:${activeSeason}:peppers`, false); list = r ? (JSON.parse(r.value) || []) : []; }catch(e){}
+  try{ const r = await window.storage.get(`actual:sow:${activeSeason}:peppers`, false); (r ? (JSON.parse(r.value) || []) : []).forEach(e => (e && e.varieties || []).forEach(v => list.push(v))); }catch(e){}
+  const names = [], seen = new Set();
+  list.forEach(v => { const n = typeof v === "string" ? v : (v && v.name) || ""; const p = pepperProfileFor(n); const key = p ? p.v[0] : pepperKey(n); if(n && !seen.has(key)){ seen.add(key); names.push(n); } });
+  if(!names.length){ box.innerHTML = ""; return; }
+  const clean = n => String(n).replace(/\([^)]*\)/g, "").replace(/[❤️]/g, "").replace(/\s+/g, " ").trim();
+  const row = (ic, k, v) => v ? `<div class="ft-prof-row"><span>${ic} ${k}</span><b>${fertEsc(v)}</b></div>` : "";
+  const cnt = card.querySelector(".pv-count"); if(cnt) cnt.textContent = names.length;
+  box.innerHTML = names.map(n => {
+    const p = pepperProfileFor(n), nm = clean(n), id = pepperKey(n);
+    const globe = `<a class="variety-search-link ft-globe" href="${varietySearchUrl(nm, "pepper")}" target="_blank" rel="noopener" title="Search for ${fertEsc(nm)} online" aria-label="Search for ${fertEsc(nm)} online">🌐</a>`;
+    if(!p) return `<div class="ft-prof pv-noprof"><div class="ft-prof-t">${fertEsc(nm)}${globe}</div></div>`;
+    return `<details class="ft-prof" data-pv="${id}"${pepperOpenProf.has(id) ? " open" : ""}><summary class="ft-prof-t"><span class="pv-ic">${p.ic}</span> ${fertEsc(nm)}${globe}<span class="ft-prof-car rain-chevron">▾</span></summary>
+      ${row("📍", "Origin", p.origin)}${row("🫑", "Pepper", p.fruit)}${row("😋", "Flavor", p.flavor)}${row("📅", "Days", p.days)}${row("🌱", "Plant", p.plant)}${row("💡", "Tip", p.tip)}
+      ${(p.src || []).length ? `<div class="ft-prof-src">${p.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fertEsc(t)}</a>`).join(" · ")}</div>` : ""}</details>`;
+  }).join("");
+  box.querySelectorAll(".ft-globe").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+  // Only one pepper open at a time: opening one closes the others.
+  box.querySelectorAll("details[data-pv]").forEach(d => d.addEventListener("toggle", () => {
+    if(d.open){
+      box.querySelectorAll("details[data-pv]").forEach(x => { if(x !== d && x.open) x.open = false; });
+      pepperOpenProf.clear(); pepperOpenProf.add(d.dataset.pv);
+    } else pepperOpenProf.delete(d.dataset.pv);
+  }));
+}
+// ---- Variety profiles for every crop (vegetables, herbs, flowers, cover crops) ----
+// One "About" dropdown per variety planted, inside a "Your <Crop> varieties"
+// button on each crop card. Researched Nov 1, 2026 (seed-company, university
+// and reference pages; well-known varieties from standard references).
+// A variety that isn't in this list still shows with its 🌐 search link.
+const BC = (slug, name) => ["Baker Creek — " + name, "https://www.rareseeds.com/" + slug];
+const CROP_VARIETY_INFO = {
+  tomatoes: { label:"Tomato", part:["🍅","Fruit"], list:[
+    { v:["apricotzebra"], ic:"🍅", origin:"Modern open-pollinated cherry tomato, sold by Baker Creek.", fruit:"Golf-ball size, slightly oval; tangerine-orange with fine yellow stripes (green-striped before ripe).", flavor:"Sweet, fruity and firm.", days:"About 65 days from transplant.", plant:"Indeterminate, vigorous vines — can run 9 ft; needs a tall stake or cage.", tip:"Pick when the stripes turn gold.", src:[BC("tomato-apricot-zebra","Apricot Zebra")] },
+    { v:["blackcherry"], ic:"🍅", origin:"Florida-bred (Vince Sapp, Tomato Growers Supply, 1990s) — the first true black cherry tomato.", fruit:"1 in round cherries, dusky purple-brown.", flavor:"Rich, complex, smoky-sweet — like a black heirloom in cherry size.", days:"About 65–75 days.", plant:"Indeterminate, tall and very productive.", tip:"Pick when the shoulders turn deep brown; handles Florida heat well.", src:[] },
+    { v:["blackopal"], ic:"🍅", origin:"Open-pollinated black cherry tomato (USA).", fruit:"Small round cherries, deep purple-black, in long trusses.", flavor:"Rich, sweet and savory.", days:"About 70 days.", plant:"Indeterminate, vigorous; stake well.", tip:"Pick when fully dark — color deepens to mahogany-black.", src:[] },
+    { v:["blackstrawberry"], ic:"🍅", origin:"Modern cherry-type from the striped 'Blue'/'black' tomato breeding lines.", fruit:"Strawberry-shaped cherries, purple-red with dark shoulders and faint stripes.", flavor:"Sweet and fruity with a rich black-tomato depth.", days:"About 70 days.", plant:"Indeterminate.", tip:"Shoulders stay dark — go by the red underside and slight give.", src:[] },
+    { v:["bronzetorch"], ic:"🍅", origin:"Modern hybrid (Wild Boar Farms 'Torch' series).", fruit:"Elongated 2-in grape-plum; bronze-orange with olive-green stripes.", flavor:"Sweet and tangy.", days:"About 70 days.", plant:"Indeterminate, heavy-bearing clusters.", tip:"Crack-resistant — good for Florida's rainy spells.", src:[] },
+    { v:["celebrityplus"], ic:"🍅", origin:"USA — an improved 'Celebrity' hybrid with extra disease resistance (adds tomato mosaic and more).", fruit:"Medium-large red globes, 8–10 oz, smooth and crack-resistant.", flavor:"Classic balanced tomato flavor.", days:"About 70 days.", plant:"Semi-determinate, about 3–4 ft; cage it.", tip:"Even tougher than Celebrity — a dependable Florida slicer.", src:[] },
+    { v:["celebrity"], ic:"🍅", origin:"USA — Burpee/Colorado hybrid; All-America Selections winner (1984).", fruit:"Medium-large red globes, 7–10 oz, smooth and crack-resistant.", flavor:"Classic balanced tomato flavor.", days:"About 70–72 days.", plant:"Semi-determinate, about 3–4 ft; cage it.", tip:"One of the most reliable slicers for Florida; resists Fusarium, Verticillium and nematodes.", src:[] },
+    { v:["chocolatepear"], ic:"🍅", origin:"Open-pollinated pear cherry.", fruit:"Small pear-shaped fruit, chocolate-brown.", flavor:"Sweet and rich, low acid.", days:"About 70 days.", plant:"Indeterminate, very productive.", tip:"Great mixed with yellow and red pears in salads.", src:[] },
+    { v:["goldnugget"], ic:"🍅", origin:"Oregon State University (Jim Baggett) — bred for cool, short seasons.", fruit:"Golden-yellow cherries, often seedless early in the season.", flavor:"Sweet, mild and low acid.", days:"About 55–60 days — very early.", plant:"Determinate and compact, about 2 ft; great in pots.", tip:"Perfect for Florida's cooler months; harvest often.", src:[] },
+    { v:["grappolidinverno","agrappolidinverno"], ic:"🍅", origin:"Italy — the old 'winter grape' tomato: whole vines were hung in cool barns to keep fruit into winter.", fruit:"Small plum/Roma-shaped fruit in heavy clusters, red.", flavor:"Mild fresh; best cooked, dried or in sauce.", days:"About 75 days.", plant:"Indeterminate, about 4 ft; needs staking.", tip:"Hang whole trusses in a cool, dry place — they keep ripening slowly for months.", src:[BC("tomato-a-grappoli-d-inverno","A Grappoli D'Inverno")] },
+    { v:["greenzebra"], ic:"🍅", origin:"Washington State — bred by Tom Wagner (1983).", fruit:"2–3 in, chartreuse-green with dark green stripes, turning yellow-green when ripe.", flavor:"Bright, tangy and zesty.", days:"About 75–80 days.", plant:"Indeterminate.", tip:"Ripe when it turns amber-yellow and gives slightly — it never turns red.", src:[] },
+    { v:["homestead24","homestead"], ic:"🍅", origin:"USA (USDA PI 644754) — a classic Florida-adapted heirloom.", fruit:"Red, 8–12 oz slicers.", flavor:"Good all-purpose tomato flavor.", days:"About 80–83 days.", plant:"Determinate.", tip:"Heat- and humidity-tolerant; sets fruit in hot weather. Resists Fusarium race 1.", src:[["Reimer Seeds — Homestead 24","https://www.reimerseeds.com/homestead-24-tomato-seeds"]] },
+    { v:["jauneflamme"], ic:"🍅", origin:"France — heirloom ('yellow flame').", fruit:"Apricot-size, 1½–2 in, bright persimmon-orange inside and out.", flavor:"Fruity, sweet-tart and very rich.", days:"About 70–80 days.", plant:"Indeterminate, prolific clusters.", tip:"Wonderful dried — keeps its color.", src:[] },
+    { v:["juliet"], ic:"🍅", origin:"Hybrid grape-plum; All-America Selections winner (1999).", fruit:"1-oz elongated red grape tomatoes in big clusters.", flavor:"Sweet and rich.", days:"About 60 days.", plant:"Indeterminate, vigorous.", tip:"Very crack- and disease-resistant — a great Florida performer.", src:[] },
+    { v:["marmande"], ic:"🍅", origin:"France (1890s) — classic French heirloom.", fruit:"Medium-large, ribbed, flattened red fruit.", flavor:"Rich and full, slightly tart.", days:"About 65–75 days.", plant:"Semi-determinate.", tip:"Sets fruit well in cooler weather — good for fall/winter.", src:[] },
+    { v:["miniorange"], ic:"🍅", origin:"Small orange cherry tomato.", fruit:"Bright orange mini cherries.", flavor:"Sweet and fruity.", days:"About 60–70 days.", plant:"Indeterminate.", tip:"Pick when fully orange.", src:[] },
+    { v:["mortgagelifter","mortgagelifterpvn","mortgagelifttervfn","mortgagelifterpn"], ic:"🍅", origin:"West Virginia (1930s) — M.C. 'Radiator Charlie' Byles paid off his mortgage selling the seedlings. VFN = disease-resistant version.", fruit:"Huge pink-red beefsteaks, 1–2 lb.", flavor:"Sweet, meaty and mild.", days:"About 80–85 days.", plant:"Indeterminate; needs strong support.", tip:"Big fruit needs steady water to avoid cracking.", src:[] },
+    { v:["orangeicicle"], ic:"🍅", origin:"Open-pollinated paste type.", fruit:"4–5 in long, pointed 'icicle' shape; bright orange.", flavor:"Sweet, fruity, meaty.", days:"About 75–80 days.", plant:"Indeterminate.", tip:"Great for sauce — few seeds, lots of flesh.", src:[] },
+    { v:["orangepeach"], ic:"🍅", origin:"Pennsylvania — a chance cross found in James Weaver's tomato patch; descended from French 'Yellow Peach'.", fruit:"Golf-ball to tennis-ball size, 2–4 oz; peachy-orange with lightly fuzzy skin.", flavor:"Sweet and fruity.", days:"About 75 days.", plant:"Indeterminate; stake or cage.", tip:"Best eaten fresh.", src:[BC("tomato-orange-peach","Orange Peach")] },
+    { v:["principeborghese"], ic:"🍅", origin:"Italy — the classic sun-drying tomato.", fruit:"Small plum-shaped red fruit, 1–2 oz, dry flesh.", flavor:"Intense, concentrates beautifully when dried.", days:"About 70–75 days.", plant:"Determinate, heavy clusters.", tip:"Pull whole plants or trusses and hang to dry, the Italian way.", src:[] },
+    { v:["rebelstarfighterprime","rebelstarfighter"], ic:"🍅", origin:"Bred by gardener and seed saver Russ Crowe.", fruit:"Large heart shape; red-purple with black shoulders and green-blue-red streaks; burgundy flesh.", flavor:"Tangy, old-fashioned and savory; meaty and sweet.", days:"About 70 days.", plant:"Indeterminate, wispy leaves, up to 6 ft.", tip:"Support early — the hearts get heavy.", src:[BC("tomato-seeds-rebel-starfighter-prime","Rebel Starfighter Prime")] },
+    { v:["redtorch"], ic:"🍅", origin:"Modern hybrid (Wild Boar Farms 'Torch' series); All-America Selections winner.", fruit:"Elongated 2-in grape-plum; red with gold stripes.", flavor:"Sweet and tangy.", days:"About 65–70 days.", plant:"Indeterminate, heavy clusters.", tip:"Crack-resistant and prolific.", src:[] },
+    { v:["sungoldselect"], ic:"🍅", origin:"An open-pollinated selection from the hybrid 'Sun Gold', so you can save seed.", fruit:"Golden-orange 1-in cherries; a few plants may vary.", flavor:"Very sweet and fruity, close to Sun Gold.", days:"About 60–65 days.", plant:"Indeterminate, vigorous.", tip:"Save seed from your best-tasting plant.", src:[] },
+    { v:["sungold"], ic:"🍅", origin:"Japan (Tokita) hybrid.", fruit:"Golden-orange 1-in cherries in long trusses.", flavor:"Extremely sweet and fruity — often rated the best-tasting cherry.", days:"About 57–65 days.", plant:"Indeterminate, very vigorous.", tip:"Can split after heavy rain — pick when just orange.", src:[] },
+    { v:["sunsettorch"], ic:"🍅", origin:"Modern hybrid (Wild Boar Farms 'Torch' series); All-America Selections winner.", fruit:"Elongated grape; orange with yellow-red stripes.", flavor:"Very sweet and fruity.", days:"About 70 days.", plant:"Indeterminate, heavy clusters.", tip:"Crack-resistant — a reliable producer.", src:[] },
+    { v:["supersweet100"], ic:"🍅", origin:"USA hybrid (Burpee).", fruit:"Small red cherries in huge clusters of 100+.", flavor:"Very sweet, high vitamin C.", days:"About 60–70 days.", plant:"Indeterminate, very tall — needs strong support.", tip:"Resists Fusarium and Verticillium; keep picking to keep it producing.", src:[] },
+    { v:["sweetmillion"], ic:"🍅", origin:"USA hybrid — an improved 'Sweet 100' type.", fruit:"Red 1-in cherries in long clusters.", flavor:"Very sweet.", days:"About 60–65 days.", plant:"Indeterminate.", tip:"More crack-resistant and disease-resistant than Sweet 100.", src:[] },
+    { v:["tropicvfn","tropic"], ic:"🍅", origin:"University of Florida (1960s) — bred for hot, humid climates.", fruit:"Red globe slicers, 8–10 oz.", flavor:"Classic, balanced.", days:"About 80 days.", plant:"Indeterminate.", tip:"Resists Verticillium, Fusarium, nematodes, leaf mold and gray leaf spot — made for Florida.", src:[] },
+    { v:["ufifasimprovedbwhybrid","ufimprovedbw","bwhybrid"], ic:"🍅", origin:"University of Florida (Harry Klee's flavor program) — improved hybrid line.", fruit:"Red slicing tomato.", flavor:"Bred for better flavor and sweetness than store tomatoes.", days:"About 70–80 days.", plant:"Hybrid; support needed.", tip:"Part of UF's citizen-science flavor trials.", src:[["UF/IFAS — New garden cultivars","https://hos.ifas.ufl.edu/kleelab/new-garden-cultivars/citizen-science-initiative-2022-data/"]] },
+    { v:["ufifasimprovedgardengem","gardengem"], ic:"🍅", origin:"University of Florida (Harry Klee) — 'Garden Gem', sold as Tempting Tomatoes.", fruit:"Small red plum/saladette, 1–2 oz.", flavor:"Very sweet, intense heirloom-like flavor.", days:"About 70 days.", plant:"Compact determinate; very productive.", tip:"Great for Florida gardens; also delicious roasted.", src:[["UF/IFAS — A new taste for the tomato","https://blogs.ifas.ufl.edu/highlandsco/2018/08/24/a-new-taste-for-the-tomato/"]] },
+    { v:["ufifasimprovedgardentreasure","gardentreasure"], ic:"🍅", origin:"University of Florida (Harry Klee) — 'Garden Treasure', sold as Tempting Tomatoes.", fruit:"Large red beefsteak-type slicers.", flavor:"Rich, heirloom-like flavor with modern disease resistance.", days:"About 75–80 days.", plant:"Determinate.", tip:"Holds well on the vine; very productive.", src:[["UF/IFAS — A new taste for the tomato","https://blogs.ifas.ufl.edu/highlandsco/2018/08/24/a-new-taste-for-the-tomato/"]] },
+    { v:["uluruochredwarf","uluruochre"], ic:"🍅", origin:"Dwarf Tomato Project (Australia/USA) — cross made by Patrina Nuske Small in 2009.", fruit:"Medium-large oblate, 8–16 oz; unusual orange-green ochre color.", flavor:"Juicy, tender and sweet.", days:"Early to mid-season.", plant:"Dwarf, about 4 ft, sturdy; great in big pots — support the heavy fruit.", tip:"Ripe when the green turns ochre and the fruit gives slightly.", src:[["OSSI — Uluru Ochre","https://osseeds.org/ossi_variety/uluru-ochre/"]] },
+    { v:["yellowfloridaeverglades","yelloweverglades","everglades"], ic:"🍅", origin:"Florida — the wild 'Everglades' currant tomato (Solanum pimpinellifolium), yellow form.", fruit:"Tiny, berry-size, thin-skinned.", flavor:"Sweet and intense.", days:"About 60 days; then fruits for months.", plant:"Sprawling, about 3–4 ft wide; can reseed itself.", tip:"Thrives in Florida heat and humidity when other tomatoes quit; pick gently.", src:[["UF/IFAS — Everglades tomato","https://blogs.ifas.ufl.edu/clayco/2020/03/27/everglades-tomato/"]] }
+  ]},
+  eggplants: { label:"Eggplant", part:["🍆","Fruit"], list:[
+    { v:["blackbeauty"], ic:"🍆", origin:"USA — Burpee, 1902; the classic American eggplant.", fruit:"Large, oval, glossy purple-black, 1–2 lb.", flavor:"Mild and creamy.", days:"About 75–80 days.", plant:"Sturdy, about 2½ ft.", tip:"Pick while glossy — dull skin means overripe and seedy.", src:[] },
+    { v:["floridamarket"], ic:"🍆", origin:"Florida (1940s) — bred for Florida growers.", fruit:"Long oval, glossy dark purple.", flavor:"Mild, few seeds.", days:"About 80–85 days.", plant:"Tall and upright; good in heat.", tip:"Resists Phomopsis blight — one of the best for Florida.", src:[] },
+    { v:["rosabianca"], ic:"🍆", origin:"Sicily, Italy — heirloom.", fruit:"Round-teardrop, lavender-rose with white; 3–5 in.", flavor:"Creamy, mild, never bitter.", days:"About 75–80 days.", plant:"Medium, about 2 ft.", tip:"Perfect for eggplant parmigiana.", src:[] },
+    { v:["saitamaaodaimaru","aodaimaru"], ic:"🍆", origin:"Saitama, Japan — traditional green round eggplant.", fruit:"Round, apple-size, glossy green.", flavor:"Tender, mild and sweet.", days:"About 70 days.", plant:"Productive, medium plant.", tip:"Great grilled or simmered Japanese-style.", src:[BC("eggplant-saitama-ao-daimaru","Saitama Ao Daimaru")] },
+    { v:["thaipurpleribbed"], ic:"🍆", origin:"Thailand.", fruit:"Plum-shaped, deeply ribbed, vivid purple; 3–4 in.", flavor:"Rich, tender and not bitter.", days:"About 70–80 days.", plant:"Very productive; keeps fruiting in hot weather.", tip:"Can be slow to settle in after transplanting — keep watered.", src:[BC("eggplant-thai-purple-ribbed","Thai Purple Ribbed")] },
+    { v:["white","whitevista"], ic:"🍆", origin:"White-fruited eggplant.", fruit:"Ivory-white, oval fruit.", flavor:"Mild, creamy, thin-skinned.", days:"About 70–80 days.", plant:"Medium bush.", tip:"Pick while white and glossy — turns yellow and seedy when overripe.", src:[] }
+  ]},
+  peppers: { label:"Pepper", part:["🫑","Pepper"] },
+  leafygreens: { label:"Leafy Greens", part:["🥬","Leaves"], list:[
+    { v:["celeryamsterdam","amsterdam"], ic:"🌿", origin:"Netherlands — Dutch cutting/leaf celery.", fruit:"Thin stems with lots of glossy leaves.", flavor:"Strong celery flavor — a little goes a long way.", days:"About 60–80 days; cut again and again.", plant:"Bushy, about 1½ ft.", tip:"Much easier than stalk celery in Florida; use like parsley in soups.", src:[] },
+    { v:["chijimisai"], ic:"🥬", origin:"Japan — a tatsoi × komatsuna cross.", fruit:"Lightly savoyed, velvety dark leaves in a rosette.", flavor:"Mild, nutty, lightly umami — never bitter.", days:"About 30 days baby, 55 days full.", plant:"Low rosette; cut-and-come-again.", tip:"Use like spinach — great in soups and stir-fries.", src:[BC("chijimisai","Chijimisai")] },
+    { v:["dapingpuchinesemustard","dapingpu"], ic:"🥬", origin:"China — 'big flat leaf' Chinese mustard.", fruit:"Broad, flat green leaves with wide stems.", flavor:"Mild mustard bite.", days:"About 45–60 days.", plant:"Large and upright.", tip:"Stir-fry or pickle; harvest outer leaves.", src:[] },
+    { v:["feasterfamilyheirloommustardgreens","feasterfamilyheirloommustard","feasterfamily"], ic:"🥬", origin:"A Southern family heirloom preserved by Seed Savers Exchange.", fruit:"Large, frilly green leaves.", flavor:"Classic peppery Southern mustard.", days:"About 40–50 days.", plant:"Vigorous; cut-and-come-again.", tip:"Cook Southern-style or eat young in salads.", src:[["Seed Savers — Feaster Family mustard","https://www.seedsavers.org/feaster-family-heirloom-mustard"]] },
+    { v:["floridaheirloombroadleafmustard","floridabroadleafmustard","floridabroadleaf"], ic:"🥬", origin:"USA — 'Florida Broadleaf', a classic Southern mustard.", fruit:"Large, smooth, broad green leaves.", flavor:"Mildly pungent.", days:"About 45–50 days.", plant:"Upright and fast; slow to bolt.", tip:"Pick leaves young for salads, older for cooking.", src:[] },
+    { v:["giantgreenleaftreecollard","treecollard"], ic:"🥬", origin:"A rare perennial 'tree collard' (Brassica oleracea), usually grown from cuttings.", fruit:"Large, tender green collard leaves.", flavor:"Mild collard flavor.", days:"Leaves year-round once established.", plant:"Perennial, 5–10 ft tall.", tip:"Root cuttings to make more; seed-grown plants may vary.", src:[["Planting Justice — Giant Green Leaf tree collard","https://plantingjustice.org/products/giant-green-leaf-tree-collard-seed-open-pollinated"]] },
+    { v:["kalethousandhead","thousandhead"], ic:"🥬", origin:"England — old heirloom 'Thousand-headed kale'.", fruit:"Many side shoots of smooth green leaves.", flavor:"Mild and sweet, especially after cool nights.", days:"About 55–65 days.", plant:"Tall and branching; very hardy.", tip:"Harvest the side shoots and it keeps producing for months.", src:[] },
+    { v:["komatsunajapanesespinachmustard","komatsuna"], ic:"🥬", origin:"Japan — 'Japanese mustard spinach'.", fruit:"Glossy, dark green spoon-shaped leaves.", flavor:"Mild — between spinach and mustard.", days:"About 21 days baby, 35–40 full.", plant:"Upright rosette; tolerates heat and cold.", tip:"Great in miso soup and stir-fries.", src:[] },
+    { v:["mustardserifonsuehlihung","serifon","suehlihung"], ic:"🥬", origin:"China — 'Serifon' / xue li hong ('red in snow').", fruit:"Deeply cut, frilly leaves.", flavor:"Pungent, peppery mustard.", days:"About 40–50 days.", plant:"Vigorous and cold-tolerant.", tip:"Traditionally salted and pickled; also good stir-fried.", src:[["True Leaf — Serifon mustard","https://www.trueleafmarket.com/a/amp/products/mustard-seeds-serifon-suehlihung"]] },
+    { v:["mustardshuidong","shuidong"], ic:"🥬", origin:"China (Guangdong) — Shuidong mustard.", fruit:"Thick, juicy stems with green leaves.", flavor:"Crisp, mildly bitter and sweet.", days:"About 45–60 days.", plant:"Upright.", tip:"Stir-fry with garlic — a Cantonese favorite.", src:[["True Leaf — Shuidong mustard","https://trueleafmarket.com/collections/mustard/products/mustard-seeds-shuidong"]] },
+    { v:["napacabbagekogane","kogane"], ic:"🥬", origin:"Japan — early Napa (Chinese) cabbage.", fruit:"Compact, barrel-shaped heads; light green outside, creamy inside.", flavor:"Sweet and crisp.", days:"About 50–60 days.", plant:"Compact heads.", tip:"Plant in the cool months; great for kimchi.", src:[] },
+    { v:["smallgaichoichinesemustard","gaichoi","smallgaichoi"], ic:"🥬", origin:"China — gai choi (leaf mustard).", fruit:"Smaller, tender green leaves.", flavor:"Pleasantly bitter-peppery.", days:"About 40–50 days.", plant:"Compact.", tip:"Used in soups and for pickled mustard greens.", src:[] },
+    { v:["swisschardfordhook","fordhook","fordhookgiant"], ic:"🥬", origin:"USA — Burpee 'Fordhook Giant' (1934).", fruit:"Big savoyed dark leaves with thick white ribs.", flavor:"Mild, earthy.", days:"About 50–60 days.", plant:"Large, about 2 ft; very heat-tolerant.", tip:"Harvests for months in Florida — pick outer leaves.", src:[] },
+    { v:["swisschardlargewhiterib","largewhiterib"], ic:"🥬", origin:"Europe — classic white-rib chard.", fruit:"Broad white ribs, dark green leaves.", flavor:"Mild; ribs are tender like celery.", days:"About 55–60 days.", plant:"Upright, about 2 ft.", tip:"Cook ribs and leaves separately.", src:[] },
+    { v:["tatsoi"], ic:"🥬", origin:"China/Japan — spoon mustard.", fruit:"Small, glossy dark spoon-shaped leaves in a flat rosette.", flavor:"Mild, sweet, slightly mustardy.", days:"About 21 days baby, 45 full.", plant:"Low, flat rosette.", tip:"Sweetest in cool weather; great raw.", src:[] },
+    { v:["tokyobekana"], ic:"🥬", origin:"Japan — loose-headed Chinese cabbage.", fruit:"Light green, frilly, tender leaves with white stems.", flavor:"Very mild and crisp — lettuce-like.", days:"About 21 days baby, 45 full.", plant:"Loose rosette; quick.", tip:"Great as a lettuce substitute in Florida's warmer months.", src:[] },
+    { v:["whiterussiankale","whiterussian"], ic:"🥬", origin:"Russia/Siberia type — like Red Russian, with white stems.", fruit:"Flat, oak-shaped blue-green leaves.", flavor:"Tender and sweet.", days:"About 50–60 days.", plant:"About 2–3 ft; very hardy.", tip:"Tender enough to eat raw.", src:[] }
+  ]},
+  broccoli: { label:"Broccoli", part:["🥦","Head"], list:[
+    { v:["calabrese"], ic:"🥦", origin:"Calabria, Italy — the original Italian green sprouting broccoli.", fruit:"Medium blue-green main head, then many side shoots.", flavor:"Classic sweet broccoli.", days:"About 60–90 days.", plant:"About 2–3 ft.", tip:"Cut the main head and keep picking side shoots for weeks.", src:[] },
+    { v:["diciccoitalian","dicicco"], ic:"🥦", origin:"Italy → New York (1890s) — Italian-American heirloom.", fruit:"Small main head, then loads of side shoots.", flavor:"Tender and sweet.", days:"About 50–65 days.", plant:"Compact; staggered harvest.", tip:"Great for a long, steady harvest rather than one big head.", src:[] },
+    { v:["piracicababraziliansprouting","piracicaba"], ic:"🥦", origin:"Brazil (named for the city of Piracicaba) — heat-tolerant.", fruit:"Loose, small heads of tender sprouts; edible leaves and stems too.", flavor:"Very sweet and tender.", days:"About 60 days.", plant:"Tolerates heat better than most broccoli.", tip:"Perfect for Florida — harvest often before flowers open.", src:[] },
+    { v:["solstice"], ic:"🥦", origin:"Open-pollinated organic broccoli (OSSI), nicknamed 'Oregon Long Neck'.", fruit:"4–5 in mild, sweet heads; turns purple in frost.", flavor:"Sweet and mild.", days:"About 71 days from transplant.", plant:"Tall and leggy; makes tons of side shoots.", tip:"Best as a fall/winter crop.", src:[["Fedco — Solstice broccoli","https://fedcoseeds.com/seeds/solstice-broccoli-3306"]] },
+    { v:["waltham29","waltham"], ic:"🥦", origin:"Massachusetts (Waltham, 1950).", fruit:"Large blue-green heads.", flavor:"Classic broccoli.", days:"About 75–85 days.", plant:"Compact, cold-tolerant.", tip:"Bred for cool weather — plant in fall in Florida.", src:[] }
+  ]},
+  bushbeans: { label:"Bean", part:["🫛","Pod"], list:[
+    { v:["frenchgarden"], ic:"🫛", origin:"French filet (haricot vert) bush bean.", fruit:"Slender, straight green pods.", flavor:"Tender and delicate.", days:"About 50–55 days.", plant:"Compact bush.", tip:"Pick small and often — every 2 days.", src:[["True Leaf — French Garden bean","https://trueleafmarket.com/products/bean-seeds-bush-french-garden-organic"]] },
+    { v:["goldrushwax","goldrush"], ic:"🫛", origin:"USA — yellow wax bush bean.", fruit:"Straight, bright yellow pods, 5–6 in.", flavor:"Mild and buttery.", days:"About 54 days.", plant:"Bush, about 18 in.", tip:"Easy to spot when picking.", src:[] },
+    { v:["purplequeen"], ic:"🫛", origin:"Purple-podded bush bean.", fruit:"Glossy purple pods, about 6 in; turn green when cooked.", flavor:"Tender, stringless.", days:"About 52–55 days.", plant:"Bush.", tip:"Easy to see among the leaves.", src:[] },
+    { v:["royalburgundy"], ic:"🫛", origin:"USA — purple bush bean.", fruit:"Deep purple pods, 5–6 in; green when cooked.", flavor:"Tender, stringless.", days:"About 55 days.", plant:"Bush; tolerates cooler soil.", tip:"Purple leaves and pods discourage bean beetles.", src:[] }
+  ]},
+  beets: { label:"Beet", part:["🫜","Root"], list:[
+    { v:["chioggiabassano","chioggia"], ic:"🫜", origin:"Chioggia, Italy (1840s).", fruit:"Round beets with red-and-white candy-cane rings inside.", flavor:"Sweet and mild.", days:"About 55 days.", plant:"Greens are edible too.", tip:"Rings fade when cooked — slice raw or roast whole.", src:[] },
+    { v:["cylindra"], ic:"🫜", origin:"Denmark — heirloom.", fruit:"Long cylindrical roots, 6–8 in.", flavor:"Sweet, tender.", days:"About 55–60 days.", plant:"Roots grow partly above ground.", tip:"Easy to slice evenly — great for pickling.", src:[] }
+  ]},
+  carrots: { label:"Carrot", part:["🥕","Root"], list:[
+    { v:["danvers126halflong","danvers126","denver126","danvers"], ic:"🥕", origin:"Danvers, Massachusetts (1870s); '126' is a heat-tolerant improved line.", fruit:"Tapered, 6–7 in, deep orange.", flavor:"Sweet, classic carrot.", days:"About 70–75 days.", plant:"Strong tops; tolerates heavier soil.", tip:"Good for Florida's sandy or clay soils.", src:[] },
+    { v:["organicrainbowblend","rainbowblend","rainbow"], ic:"🥕", origin:"A mix: Little Finger, Cosmic Purple, Atomic Red, Lunar White and Solar Yellow.", fruit:"Orange, purple, red, white and yellow carrots.", flavor:"Each color tastes a little different — sweet to spicy.", days:"About 60–75 days.", plant:"Mixed sizes.", tip:"Little Finger is ready first; pull as each sizes up.", src:[] },
+    { v:["purpledragon","purpledragoncarrot"], ic:"🥕", origin:"Modern open-pollinated purple carrot.", fruit:"Reddish-purple skin, bright orange core.", flavor:"Sweet and slightly spicy.", days:"About 70–90 days.", plant:"Medium tops.", tip:"Stunning sliced raw.", src:[] }
+  ]},
+  cucumbers: { label:"Cucumber", part:["🥒","Fruit"], list:[
+    { v:["westindianburrgherkin","burrgherkin","westindiangherkin"], ic:"🥒", origin:"Africa, via the Caribbean (Cucumis anguria).", fruit:"Small, oval, spiny pale green fruit, 1–2 in.", flavor:"Mild cucumber; great pickled.", days:"About 60–65 days.", plant:"Vigorous vine; extremely heat-tolerant.", tip:"Thrives in Florida summer when regular cucumbers fail.", src:[] }
+  ]},
+  radishes: { label:"Radish", part:["🫜","Root"], list:[
+    { v:["cherrybelle"], ic:"🫜", origin:"Netherlands — All-America Selections winner (1949).", fruit:"Round, cherry-red, white inside.", flavor:"Crisp, mild.", days:"About 22–24 days.", plant:"Short tops.", tip:"Pick on time — they get pithy fast in warm weather.", src:[] },
+    { v:["farmerjohnsdaikonradish","farmerjohnsdaikon","daikon"], ic:"🫜", origin:"Daikon (Japanese long white radish).", fruit:"Long white roots.", flavor:"Crisp, mild, juicy.", days:"About 50–60 days.", plant:"Large tops.", tip:"Also breaks up hard soil — a great fall crop.", src:[] }
+  ]},
+  snappeas: { label:"Snap Pea", part:["🫛","Pod"], list:[
+    { v:["peasnapsugarann","sugarann"], ic:"🫛", origin:"USA — All-America Selections winner (1984).", fruit:"Plump, edible-pod snap peas.", flavor:"Very sweet and crunchy.", days:"About 52–56 days — earliest snap pea.", plant:"Dwarf, about 2 ft; little support needed.", tip:"Plant in the cool months in Florida.", src:[] }
+  ]},
+  squash: { label:"Squash", part:["🎃","Fruit"], list:[
+    { v:["butternut","waltham butternut","walthambutternut"], ic:"🎃", origin:"Massachusetts (1940s) — Waltham Butternut.", fruit:"Bell-shaped tan squash, 3–5 lb; deep orange flesh.", flavor:"Sweet and nutty.", days:"About 85–100 days.", plant:"Vining (C. moschata) — resists squash vine borer.", tip:"Cure 2 weeks in a warm spot; keeps for months.", src:[] },
+    { v:["seminolepumpkin","seminole"], ic:"🎃", origin:"Florida — grown by the Seminole people for centuries.", fruit:"Small round-to-bell tan pumpkins, 2–5 lb; orange flesh.", flavor:"Sweet, like butternut.", days:"About 90–110 days.", plant:"Long vines that will climb trees.", tip:"The most pest- and heat-tolerant squash for Florida.", src:[] },
+    { v:["sikil"], ic:"🎃", origin:"Maya / Yucatán, Mexico (Cucurbita argyrosperma) — grown for its seeds.", fruit:"Green-and-white striped squash with large edible seeds.", flavor:"Seeds are rich and nutty — used in sikil pak dip.", days:"About 90–120 days.", plant:"Vigorous vine; loves heat.", tip:"Roast and grind the seeds for sikil pak.", src:[["Slow Food — Yucatán pumpkin seeds","https://www.fondazioneslowfood.com/en/slow-food-presidia/yucatan-peninsula-pumpkin-seeds/"]] }
+  ]},
+  turnips: { label:"Turnip", part:["🫜","Root"], list:[
+    { v:["purpletopwhiteglobe","purpletop"], ic:"🫜", origin:"USA — classic heirloom (before 1880).", fruit:"Round white roots with a purple top.", flavor:"Mild and sweet when small.", days:"About 50–55 days.", plant:"Greens are edible too.", tip:"Harvest at 2–3 in for best flavor.", src:[] }
+  ]},
+  lettuce: { label:"Lettuce", part:["🥬","Leaves"], list:[
+    { v:["leafblend","leaf"], ic:"🥬", origin:"A mix of loose-leaf lettuces.", fruit:"Mixed red and green leaves.", flavor:"Mild and tender.", days:"About 30–45 days.", plant:"Loose heads; cut-and-come-again.", tip:"Grow in the cool months; shade helps delay bolting.", src:[] }
+  ]},
+  parsley: { label:"Parsley", part:["🌿","Leaves"], list:[
+    { v:["curled","curly"], ic:"🌿", origin:"Europe — curly-leaf parsley.", fruit:"Tightly curled bright green leaves.", flavor:"Mild and fresh.", days:"About 70–80 days.", plant:"Compact, about 1 ft.", tip:"Host plant for black swallowtail caterpillars — plant extra.", src:[] },
+    { v:["italian","flatleaf","italianflatleaf"], ic:"🌿", origin:"Italy — flat-leaf parsley.", fruit:"Flat, dark green leaves.", flavor:"Stronger, sweeter than curly.", days:"About 70–80 days.", plant:"Taller, about 2 ft.", tip:"The best parsley for cooking.", src:[] }
+  ]},
+  fennel: { label:"Fennel", part:["🌿","Leaves"], list:[
+    { v:["fennelsweet","sweet","sweetfennel"], ic:"🌿", origin:"Mediterranean — sweet fennel (Foeniculum vulgare).", fruit:"Feathery leaves and aromatic seeds.", flavor:"Sweet anise.", days:"About 60–90 days.", plant:"Tall, 3–5 ft.", tip:"Host plant for swallowtail butterflies; keep it away from dill so they don't cross.", src:[] }
+  ]},
+  nasturtium: { label:"Nasturtium", part:["🌸","Flower"], list:[
+    { v:["alaskamix","alaska"], ic:"🌺", origin:"Heirloom (1920s) — famous for its leaves.", fruit:"Mixed red, orange, yellow flowers over cream-marbled leaves.", flavor:"Leaves and flowers peppery, like watercress.", days:"About 45–55 days to bloom.", plant:"Compact bush, about 1 ft.", tip:"Grows best in Florida's cool months.", src:[] },
+    { v:["alaskaredshades","alaskared"], ic:"🌺", origin:"Alaska series.", fruit:"Red-toned flowers over cream-marbled leaves.", flavor:"Peppery, edible.", days:"About 45–55 days to bloom.", plant:"Compact bush.", tip:"Lovely in salads.", src:[] },
+    { v:["babyorange"], ic:"🌺", origin:"Dwarf nasturtium.", fruit:"Bright orange flowers on a small plant.", flavor:"Peppery, edible.", days:"About 45 days to bloom.", plant:"Very compact — great for pots and edges.", tip:"Don't over-fertilize — more leaves, fewer flowers.", src:[] },
+    { v:["bloodymary"], ic:"🌺", origin:"Compact nasturtium.", fruit:"Cream-yellow flowers splashed with red.", flavor:"Peppery, edible.", days:"About 50 days to bloom.", plant:"Compact bush.", tip:"Cheerful edible garnish.", src:[] },
+    { v:["cherryrosejewel","cherryrose"], ic:"🌺", origin:"Jewel series.", fruit:"Semi-double cherry-rose flowers held above the leaves.", flavor:"Peppery, edible.", days:"About 50 days to bloom.", plant:"Compact, about 1 ft.", tip:"Great container nasturtium.", src:[] },
+    { v:["phoenix"], ic:"🌺", origin:"Modern nasturtium.", fruit:"Flame-like split petals in yellow, orange and red.", flavor:"Peppery, edible.", days:"About 50 days to bloom.", plant:"Compact.", tip:"Petals look like flames — showy in salads.", src:[] },
+    { v:["tiptopblush"], ic:"🌺", origin:"Tip Top series.", fruit:"Soft blush-pink flowers held above the leaves.", flavor:"Peppery, edible.", days:"About 45–50 days to bloom.", plant:"Dwarf, mounding.", tip:"Flowers show above the foliage — great for borders.", src:[] },
+    { v:["tiptopmahogany"], ic:"🌺", origin:"Tip Top series.", fruit:"Deep mahogany-red flowers.", flavor:"Peppery, edible.", days:"About 45–50 days to bloom.", plant:"Dwarf, mounding.", tip:"Rich dark color — beautiful with orange types.", src:[] },
+    { v:["vistasorange","vistaorange","orange"], ic:"🌺", origin:"Orange nasturtium (Vista seeds).", fruit:"Bright orange flowers.", flavor:"Peppery, edible.", days:"About 45–55 days to bloom.", plant:"Bushy.", tip:"Attracts aphids away from vegetables — a good trap crop.", src:[] }
+  ]}
+};
+const cropVarKey = name => String(name || "").toLowerCase().normalize("NFD")
+  .replace(/\([^)]*\)/g, " ").replace(/[❤️]/g, "").replace(/[^a-z0-9 ]/g, "")
+  .replace(/\b(new|vista|pepper|peppers|sweet|seeds?|my)\b/g, " ").replace(/\s+/g, "");
+function cropProfileFor(slug, name){
+  if(slug === "peppers"){ const p = pepperProfileFor(name); return p ? Object.assign({ fruit:p.fruit, plant:p.plant }, p) : null; }
+  const info = CROP_VARIETY_INFO[slug]; if(!info || !info.list) return null;
+  const k = cropVarKey(name), full = String(name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  return info.list.find(p => p.v.includes(k) || p.v.includes(full)) || info.list.find(p => p.v.some(x => x.length > 4 && (k.startsWith(x) || x === k.replace(/hybrid$/, "")))) || null;
+}
+// About each crop, for crops with no variety logged yet (the crop name is the variety).
+const CROP_ABOUT = {
+  rattlesnake: { ic:"🫘", part:"Pod", origin:"USA (Southwest) — 'Rattlesnake' pole bean, an heirloom.", fruit:"Green pods streaked with purple, 7–8 in; tan seeds with brown streaks.", flavor:"Tender snap bean when young; good dry bean later.", days:"About 60–70 days (snap), 90 (dry).", plant:"Pole bean, 8–10 ft vines — needs a trellis.", tip:"One of the most heat- and drought-tolerant pole beans — great in Florida summer." },
+  longbeans: { ic:"🫛", part:"Pod", origin:"Asia — 'Red Noodle' yard-long bean (Vigna unguiculata).", fruit:"Burgundy pods, 16–20 in long.", flavor:"Nutty and firm; keeps its color when lightly cooked.", days:"About 75–80 days.", plant:"Vigorous climbing vine, 8–10 ft; loves heat.", tip:"Pick before pods bulge with seeds — every day or two in summer." },
+  wingedbeans: { ic:"🫛", part:"Pod", origin:"Tropical Asia — winged bean (Psophocarpus tetragonolobus).", fruit:"Four-winged pods; leaves, flowers and tubers are edible too.", flavor:"Crisp, like a green bean with a hint of asparagus.", days:"Flowers when days shorten — fall in Florida.", plant:"Climbing vine, 10+ ft.", tip:"Plant in summer; it blooms and pods in late summer–fall as days shorten." },
+  garlic: { ic:"🧄", part:"Bulb", origin:"Central Asia. In Florida, softneck types (Creole, Turban, Artichoke) do best.", fruit:"Bulbs of cloves.", flavor:"Pungent; mellow when roasted.", days:"About 6–8 months: plant Oct–Nov, harvest Apr–May.", plant:"Tall leaves; softnecks don't make scapes.", tip:"Chill cloves in the fridge 6–8 weeks before planting to help bulbing in Florida." },
+  luffa: { ic:"🥒", part:"Fruit", origin:"Tropical Asia — sponge gourd (Luffa aegyptiaca).", fruit:"Long cylindrical gourds; eat young, or dry for sponges.", flavor:"Young fruit is mild, like zucchini.", days:"About 90 days to eat; 150+ for sponges.", plant:"Very vigorous vine, 15–30 ft — needs a strong trellis.", tip:"For sponges, leave on the vine until brown and light, then peel." },
+  muskmelon: { ic:"🍈", part:"Fruit", origin:"Muskmelon/cantaloupe (Cucumis melo).", fruit:"Netted rind, orange flesh.", flavor:"Sweet and aromatic.", days:"About 80–90 days.", plant:"Sprawling vines.", tip:"Ripe when the stem slips off easily ('full slip'). Plant in spring — powdery mildew in summer rains." },
+  nigerianspinach: { ic:"🥬", part:"Leaves", origin:"West Africa — 'Nigerian spinach' (Celosia argentea, 'soko').", fruit:"Tender leaves and young shoots.", flavor:"Mild, spinach-like.", days:"About 30–45 days for leaves.", plant:"Upright, 2–3 ft; pretty flower plumes.", tip:"A true summer spinach for Florida — keeps producing in the heat." },
+  onionslips: { ic:"🧅", part:"Bulb", origin:"Onion transplants (short-day types like Granex/Texas Grano for Florida).", fruit:"Sweet bulbs.", flavor:"Sweet and mild.", days:"About 100–120 days from slips.", plant:"Hollow leaves; bulbs form as days lengthen.", tip:"Plant slips Oct–Jan; use short-day varieties only in Florida." },
+  pigeonpeas: { ic:"🫛", part:"Pod", origin:"India/Africa (Cajanus cajan) — Caribbean favorite (gandules).", fruit:"Pods with round peas; eaten green or dry.", flavor:"Nutty, earthy.", days:"About 4–6 months; perennial shrub.", plant:"Woody shrub, 4–10 ft; fixes nitrogen.", tip:"Excellent windbreak and chop-and-drop mulch plant." },
+  strawberries: { ic:"🍓", part:"Fruit", origin:"Garden strawberry; in Florida grown as a winter annual (e.g. 'Florida Brilliance', 'Sweet Sensation').", fruit:"Red berries.", flavor:"Sweet-tart.", days:"Plant Oct–Nov; berries Dec–Mar.", plant:"Low plants with runners.", tip:"Mulch with straw or plastic and protect blooms on frost nights." },
+  sweetpotatoslips: { ic:"🍠", part:"Root", origin:"Tropical Americas (Ipomoea batatas).", fruit:"Sweet tuberous roots; leaves edible too.", flavor:"Sweet, earthy.", days:"About 90–120 days.", plant:"Sprawling vines; love heat.", tip:"Plant slips in spring–summer; cure roots 7–10 days warm before storing." },
+  watermelon: { ic:"🍉", part:"Fruit", origin:"Africa (Citrullus lanatus).", fruit:"Large melons, red or yellow flesh.", flavor:"Sweet and juicy.", days:"About 80–95 days.", plant:"Sprawling vines; need space.", tip:"Ripe when the tendril by the fruit dries and the ground spot turns creamy yellow." },
+  basil: { ic:"🌿", part:"Leaves", origin:"Tropical Asia (Ocimum basilicum).", fruit:"Aromatic leaves.", flavor:"Sweet, clove-anise.", days:"About 60 days; pick from 4 weeks.", plant:"Bushy, 1–2 ft; loves heat.", tip:"Pinch flower buds to keep leaves coming; Thai basil handles Florida summers best." },
+  cilantro: { ic:"🌿", part:"Leaves", origin:"Mediterranean (Coriandrum sativum).", fruit:"Leaves; seeds are coriander.", flavor:"Bright, citrusy.", days:"About 45–70 days; bolts fast in heat.", plant:"Low rosette, then tall flower stalks.", tip:"Grow Oct–Mar in Florida and sow every 3 weeks for a steady supply." },
+  dill: { ic:"🌿", part:"Leaves", origin:"Mediterranean (Anethum graveolens).", fruit:"Feathery leaves and seed heads.", flavor:"Fresh, tangy.", days:"About 40–60 days for leaves.", plant:"Tall, 2–3 ft.", tip:"Swallowtail caterpillars love it; keep away from fennel." },
+  cosmos: { ic:"🌼", part:"Flower", origin:"Mexico (Cosmos bipinnatus / sulphureus).", fruit:"Daisy flowers — pink, white, orange, yellow.", flavor:"Ornamental (pollinator magnet).", days:"About 60–75 days to bloom.", plant:"Tall and airy, 3–5 ft; drought tolerant.", tip:"Don't fertilize — lean soil gives more flowers; reseeds itself." },
+  marigold: { ic:"🌼", part:"Flower", origin:"Mexico/Central America (Tagetes).", fruit:"Orange and yellow flowers.", flavor:"Ornamental; some types edible.", days:"About 50–60 days to bloom.", plant:"Compact to tall depending on type.", tip:"French marigolds planted densely help reduce root-knot nematodes." },
+  roselle: { ic:"🌺", part:"Calyx", origin:"West Africa (Hibiscus sabdariffa) — 'Florida cranberry'.", fruit:"Red fleshy calyxes around the seed pod.", flavor:"Tart, cranberry-like — for tea, jam, sauce.", days:"Flowers Oct–Nov as days shorten.", plant:"Shrubby, 4–7 ft.", tip:"Plant in spring; harvest calyxes about 10 days after flowers fall." },
+  zinnia: { ic:"🌸", part:"Flower", origin:"Mexico (Zinnia elegans).", fruit:"Bright flowers in every color.", flavor:"Ornamental; butterfly magnet.", days:"About 60–70 days to bloom.", plant:"1–4 ft depending on type.", tip:"Cut often — more flowers come. Water at the base to avoid mildew." },
+  puertoricanblackbeans: { ic:"🫘", part:"Seed", origin:"Caribbean — black bean (Phaseolus vulgaris) grown as a cover/dry bean.", fruit:"Pods with small black beans.", flavor:"Rich, earthy dry bean.", days:"About 85–100 days for dry beans.", plant:"Bush; fixes nitrogen.", tip:"Leave pods to dry on the plant; turn the plants into the soil afterward." },
+  peanuts: { ic:"🥜", part:"Seed", origin:"South America (Arachis hypogaea).", fruit:"Pods that form underground.", flavor:"Nutty; boil green or roast dry.", days:"About 110–150 days.", plant:"Low bush; fixes nitrogen.", tip:"Loose sandy soil is perfect; dig when leaves start to yellow." },
+  sunnhemp: { ic:"🌱", part:"Biomass", origin:"India (Crotalaria juncea) — summer cover crop.", fruit:"Tall green stems and yellow flowers.", flavor:"Not edible — soil builder.", days:"Cut at about 60 days or at first bloom.", plant:"Fast, 4–8 ft; fixes nitrogen.", tip:"Suppresses root-knot nematodes and weeds; chop and drop before it gets woody." }
+};
+const cropOpenProf = {};
+async function fillCropVarieties(card, slug){
+  const box = card.querySelector(".pv-wrap"); if(!box) return;
+  let list = [];
+  try{ const r = await window.storage.get(`variety:${activeSeason}:${slug}`, false); list = r ? (JSON.parse(r.value) || []) : []; }catch(e){}
+  for(const kind of ["sow", "transplant"]){
+    try{ const r = await window.storage.get(`actual:${kind}:${activeSeason}:${slug}`, false); (r ? (JSON.parse(r.value) || []) : []).forEach(e => (e && e.varieties || []).forEach(v => list.push(v))); }catch(e){}
+  }
+  const junk = n => !n || /^\d{4}-\d{2}-\d{2}$/.test(n) || /^(my seeds?|cilantro|dill)$/i.test(String(n).trim());
+  const names = [], seen = new Set(), scoreOf = {};
+  list.forEach(v => { const n = typeof v === "string" ? v : (v && v.name) || ""; const s = v && typeof v === "object" ? Number(v.score) || 0 : 0; if(s){ const pk = (cropProfileFor(slug, n) || {}).v; const key = pk ? pk[0] : cropVarKey(n); scoreOf[key] = Math.max(scoreOf[key] || 0, s); } });
+  list.forEach(v => { const n = typeof v === "string" ? v : (v && v.name) || ""; if(junk(n)) return; const p = cropProfileFor(slug, n); const key = p ? p.v[0] : cropVarKey(n); if(!seen.has(key)){ seen.add(key); names.push(n); } });
+  const dd = card.querySelector(".pv-dd");
+  const cropNm = (DATA_now().vegetables.concat(DATA_now().herbs || [], DATA_now().flowers || [], DATA_now().coverCrops || []).find(c => c.slug === slug) || {}).name || "";
+  if(!names.length){
+    // Nothing planted yet: show what the crop itself is like.
+    const a = CROP_ABOUT[slug];
+    if(!a || !dd){ if(dd) dd.hidden = true; box.innerHTML = ""; return; }
+    dd.hidden = false;
+    dd.querySelector(".sub-tile-name").textContent = `About ${cropNm}`;
+    const cnt0 = card.querySelector(".pv-count"); if(cnt0) cnt0.textContent = "";
+    const r0 = (ic, k, v) => v ? `<div class="ft-prof-row"><span>${ic} ${k}</span><b>${fertEsc(v)}</b></div>` : "";
+    box.innerHTML = `<div class="ft-prof pv-about"><div class="ft-prof-t"><span class="pv-ic">${a.ic}</span> ${fertEsc(cropNm)}<a class="variety-search-link ft-globe" href="${varietySearchUrl(cropNm, "")}" target="_blank" rel="noopener" title="Search for ${fertEsc(cropNm)} online" aria-label="Search for ${fertEsc(cropNm)} online">🌐</a></div>
+      ${r0("📍", "Origin", a.origin)}${r0(a.ic, a.part, a.fruit)}${r0("😋", "Flavor", a.flavor)}${r0("📅", "Days", a.days)}${r0("🌱", "Plant", a.plant)}${r0("💡", "Tip", a.tip)}</div>`;
+    box.querySelectorAll(".ft-globe").forEach(x => x.addEventListener("click", e => e.stopPropagation()));
+    return;
+  }
+  if(dd){ dd.hidden = false; dd.querySelector(".sub-tile-name").textContent = `Your ${CROP_VARIETY_INFO[slug] && CROP_VARIETY_INFO[slug].label || cropNm} varieties`; }
+  const cnt = card.querySelector(".pv-count"); if(cnt) cnt.textContent = names.length;
+  const info = CROP_VARIETY_INFO[slug] || {}, part = info.part || ["🌱", "Harvest"];
+  const crop = (DATA_now().vegetables.concat(DATA_now().herbs || [], DATA_now().flowers || [], DATA_now().coverCrops || []).find(c => c.slug === slug) || {}).name || "";
+  const clean = n => String(n).replace(/\([^)]*\)/g, "").replace(/[❤️]/g, "").replace(/\s+/g, " ").trim();
+  const row = (ic, k, v) => v ? `<div class="ft-prof-row"><span>${ic} ${k}</span><b>${fertEsc(v)}</b></div>` : "";
+  const open = cropOpenProf[slug] || "";
+  box.innerHTML = names.map(n => {
+    const p = cropProfileFor(slug, n), nm = clean(n), id = p ? p.v[0] : cropVarKey(n);
+    const sc = scoreOf[id] ? ` <span class="variety-score pv-score" style="background:${scoreColor(scoreOf[id])}" title="Your score: ${scoreOf[id]} out of 10">⭐${scoreOf[id]}</span>` : "";
+    const globe = `<a class="variety-search-link ft-globe" href="${varietySearchUrl(nm, crop)}" target="_blank" rel="noopener" title="Search for ${fertEsc(nm)} online" aria-label="Search for ${fertEsc(nm)} online">🌐</a>`;
+    if(!p) return `<div class="ft-prof pv-noprof"><div class="ft-prof-t">${fertEsc(nm)}${sc}${globe}</div></div>`;
+    return `<details class="ft-prof" data-pv="${id}"${open === id ? " open" : ""}><summary class="ft-prof-t"><span class="pv-ic">${p.ic || part[0]}</span> ${fertEsc(nm)}${sc}${globe}<span class="ft-prof-car rain-chevron">▾</span></summary>
+      ${row("📍", "Origin", p.origin)}${row(part[0], part[1], p.fruit)}${row("😋", "Flavor", p.flavor)}${row("📅", "Days", p.days)}${row("🌱", "Plant", p.plant)}${row("💡", "Tip", p.tip)}
+      ${(p.src || []).length ? `<div class="ft-prof-src">${p.src.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${fertEsc(t)}</a>`).join(" · ")}</div>` : ""}</details>`;
+  }).join("");
+  box.querySelectorAll(".ft-globe").forEach(a => a.addEventListener("click", e => e.stopPropagation()));
+  // Only one variety open at a time.
+  box.querySelectorAll("details[data-pv]").forEach(d => d.addEventListener("toggle", () => {
+    if(d.open){ box.querySelectorAll("details[data-pv]").forEach(x => { if(x !== d && x.open) x.open = false; }); cropOpenProf[slug] = d.dataset.pv; }
+    else if(cropOpenProf[slug] === d.dataset.pv) cropOpenProf[slug] = "";
+  }));
+}
+// Redraw every "Your … varieties" list (e.g. after a score changes).
+function refreshVarietyLists(){
+  document.querySelectorAll(".pv-dd").forEach(dd => { const body = dd.closest('[id^="card-body-"]'); if(body) fillCropVarieties(body, body.id.replace("card-body-", "")); });
+}
+function cropVarietyLabel(p){
+  const info = CROP_VARIETY_INFO[p.slug];
+  if(info && info.label) return info.label;
+  return String(p.name || "").replace(/ies$/, "y").replace(/(oes|s)$/, m => m === "oes" ? "o" : "");
 }
 // Tomatoes only: sorts a list of varieties by days-to-maturity, shortest
 // first, so quicker-maturing varieties always list before slower ones.
@@ -9049,6 +9429,7 @@ async function renderGrid(sectionKey, containerId){
           ${sowActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">${p.slug === "garlic" ? "Actual transplant" : "Actual sow"}:</span> ${sowActualCheck.map(d => sowSummaryLabel(d, sowTemp)).join("; ")}</div>` : ""}
           ${pottedUpActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Potted in individual pots:</span> ${pottedUpActualCheck.map(d => fmtActualEntry(d, pottedUpTemp)).join(", ")}</div>` : ""}
           ${transplantActualCheck.length ? `<div class="done-summary-line"><span class="done-summary-label">Actual transplant:</span> ${transplantActualCheck.map(d => fmtActualEntry(d, transplantTemp)).join(", ")}</div>` : ""}
+          ${`<details class="pv-dd" hidden><summary class="sub-tile pv-tile"><span class="sub-tile-ic">📖</span><span class="sub-tile-name">Your ${cropVarietyLabel(p)} varieties</span><span class="sub-tile-count pv-count"></span><span class="rain-chevron pv-car">▾</span></summary><div class="pv-wrap"></div></details>`}
           ${subTilesHTML(p, [["pc", plantCountFieldHTML], ["fert", fertOnlyHTML], ["opc", opcOnlyHTML]])}
           ${bugFieldHTML}
           ${notesFieldHTML}
@@ -9136,6 +9517,7 @@ async function renderGrid(sectionKey, containerId){
             </div>`}
           </div>
           <div class="combo-summary" id="combo-summary-${p.slug}" style="display:none;"></div>
+          ${`<details class="pv-dd" hidden><summary class="sub-tile pv-tile"><span class="sub-tile-ic">📖</span><span class="sub-tile-name">Your ${cropVarietyLabel(p)} varieties</span><span class="sub-tile-count pv-count"></span><span class="rain-chevron pv-car">▾</span></summary><div class="pv-wrap"></div></details>`}
           ${subTilesHTML(p, [["pc", plantCountFieldHTML], ["fruit", fruitFieldHTML], ["fert", fertOnlyHTML], ["opc", opcOnlyHTML]])}
           ${bugFieldHTML}
           <div class="af-stack" hidden></div>
@@ -9176,6 +9558,7 @@ async function renderGrid(sectionKey, containerId){
     el.appendChild(card);
     tidyCard(card);
     initSubTiles(card);
+    if(card.querySelector(".pv-dd")) fillCropVarieties(card, p.slug);
 
     if(!isPastSeason){
       const refreshBugs = async () => {
@@ -12276,7 +12659,6 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       <button type="button" class="ft-head${open ? " open" : ""}" aria-expanded="${open}">
         <span class="ft-ic" aria-hidden="true">${treeIcon(t)}</span>
         <span class="ft-name">${fertEsc(title)}${t.died ? `<small>🪦 died ${fmt(t.died, true)}${t.where ? ` · was in ${fertEsc(t.where)}` : ""}</small>` : inGroup && t.where ? `<small>📍 ${fertEsc(t.where)}</small>` : ""}</span>
-        ${st ? `<span class="ft-status">${st}</span>` : ""}
       </button>
       <div class="ft-body"${open ? "" : " hidden"}>${open ? (t.__solo = !inGroup, bodyHTML(t)) : ""}</div>
     </div>`;
@@ -12314,7 +12696,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
         <button type="button" class="ft-ghead${open ? " open" : ""}" aria-expanded="${open}">
           <span class="ft-ic" aria-hidden="true">${kindIcon(nm)}</span>
           <span class="ft-name">${fertEsc(nm)}</span>
-          <span class="ft-gcount">${list.length} ${list.some(t => t.variety) ? "varieties" : "trees"}</span>
+          <span class="ft-gcount">${list.length} ${list.length === 1 ? "tree" : "trees"}</span>
         </button>
         <div class="ft-gbody"${open ? "" : " hidden"}>${open ? climateHTML(nm) + compareHTML(list) + list.map(t => cardHTML(t, true)).join("") : ""}</div>
       </div>`;
@@ -12943,15 +13325,18 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
       return `<button type="button" class="orch-chip${filter === k ? " on" : ""}" data-k="${k}">${iconHTML(v.name)}${esc(v.name)} <b>${v.n}</b></button>`;
     }).join("");
     // List by zone and row, as dictated (zone 1 first, row A first).
-    $("orchList").innerHTML = [1, 2, 3, 4].map(z => {
-      const rows = ["A", "B", "C", "D", "E"].map(r => ({ r, list:inCell(z, r) })).filter(x => x.list.length);
-      if(!rows.length) return "";
-      const n = rows.reduce((s, x) => s + x.list.length, 0), open = openZones.has(z);
-      return `<button type="button" class="orch-zbtn orch-zb${z}" data-z="${z}" aria-expanded="${open}"><span>Zone ${z}</span><span class="orch-zn">${n} trees</span><span class="orch-zcar">▾</span></button>`
-        + `<div class="orch-zbody orch-zb${z}"${open ? "" : " hidden"}>` + rows.map(({ r, list }) => `<div class="orch-row"><b>${z}${r}</b><div class="orch-row-trees">${list.map((t, i) => {
+    // Four zone buttons side by side; the open zone's trees show underneath.
+    const zoneRows = z => ["A", "B", "C", "D", "E"].map(r => ({ r, list:inCell(z, r) })).filter(x => x.list.length);
+    const openZ = [...openZones][0];
+    $("orchList").innerHTML = `<div class="orch-zrow">` + [1, 2, 3, 4].map(z => {
+      const n = zoneRows(z).reduce((s, x) => s + x.list.length, 0), open = openZ === z;
+      return `<button type="button" class="orch-zbtn orch-zb${z}" data-z="${z}" aria-expanded="${open}"><span class="orch-zt">Zone ${z}</span><span class="orch-zn">${n} ${n === 1 ? "tree" : "trees"}</span><span class="orch-zcar rain-chevron">▾</span></button>`;
+    }).join("") + `</div>` + (openZ ? (() => {
+      const rows = zoneRows(openZ);
+      return `<div class="orch-zbody orch-zb${openZ}">` + (rows.length ? rows.map(({ r, list }) => `<div class="orch-row"><b>${openZ}${r}</b><div class="orch-row-trees">${list.map((t, i) => {
         return `<button type="button" class="${t.unsure ? "q" : ""}" data-id="${t.id}">${iconHTML(t.name)}<span class="n">${i + 1}</span> ${esc(full(t))}${t.unsure ? " ❓" : ""}</button>`;
-      }).join("")}</div></div>`).join("") + `</div>`;
-    }).join("");
+      }).join("")}</div></div>`).join("") : `<div class="orch-row-empty">No trees in Zone ${openZ} yet.</div>`) + `</div>`;
+    })() : "");
     sc.querySelectorAll(".o-tree").forEach(g => g.addEventListener("click", () => { if(dragJustEnded) return; openEdit(g.dataset.id); }));
     const canDrag = !ro() && typeof GLOBAL_UNLOCK !== "undefined" && GLOBAL_UNLOCK;
     const svg = sc.querySelector("svg"); svg.classList.toggle("can-drag", canDrag);
@@ -12959,7 +13344,7 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     $("orchMoveHint").hidden = !canDrag || ro();
 
     sc.querySelectorAll(".o-add").forEach(g => g.addEventListener("click", () => openAdd(+g.dataset.add[0], g.dataset.add[1])));
-    $("orchList").querySelectorAll(".orch-zbtn").forEach(b => b.addEventListener("click", () => { const z = +b.dataset.z; openZones.has(z) ? openZones.delete(z) : openZones.add(z); render(); }));
+    $("orchList").querySelectorAll(".orch-zbtn").forEach(b => b.addEventListener("click", () => { const z = +b.dataset.z; const was = openZones.has(z); openZones.clear(); if(!was) openZones.add(z); render(); }));
     $("orchList").querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => openEdit(b.dataset.id)));
     $("orchLegend").querySelectorAll(".orch-chip").forEach(b => b.addEventListener("click", () => { filter = filter === b.dataset.k ? "" : b.dataset.k; render(); }));
   };
