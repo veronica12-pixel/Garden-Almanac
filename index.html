@@ -671,6 +671,43 @@
   /* Last home row holds four buttons now: 2 x 2 so labels still fit on a phone. */
   .home-tabs-row.home-tabs-row-3.home-tabs-row-4{ grid-template-columns:1fr 1fr; }
   .opc-due b, .opc-next{ color:#2F7A4E !important; }
+  .log-strip{ display:flex; gap:10px; overflow-x:auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; padding:4px 6px 12px; margin:0 -6px 2px; scrollbar-width:none; }
+  .log-strip::-webkit-scrollbar{ display:none; }
+  .log-strip-btn{ flex:0 0 auto; scroll-snap-align:start; border:none; background:none; padding:3px 4px 5px; border-radius:10px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .log-strip .log-strip-btn{ background:none !important; box-shadow:none !important; border:none !important; min-height:0 !important; width:auto !important; transform:none !important; }
+  .log-strip .log-strip-btn.on{ background:#fff !important; box-shadow:0 0 0 2px #C9B48A !important; }
+  .log-cal{ --mc:#B5561B; position:relative; display:block; width:58px; padding-top:6px; text-align:center; line-height:1; font-family:'Inter',sans-serif; }
+  .log-cal-pg{ display:block; background:linear-gradient(#fff 0%, #fff 80%, #F4EFE6 100%); border:1px solid #CFC4B4; border-radius:5px; overflow:hidden; box-shadow:1px 2px 0 #E2D8C9, 2px 4px 0 #EDE5D8, 0 5px 9px rgba(70,50,30,.18); }
+  .log-cal-m{ display:block; background:var(--mc); color:#fff; font-family:'Fraunces',Georgia,serif; font-size:11px; font-weight:700; letter-spacing:.12em; padding:7px 0 4px; border-bottom:2px solid rgba(0,0,0,.18); }
+  .log-cal-d{ display:block; font-family:'Fraunces',Georgia,serif; font-size:25px; font-weight:700; color:#2E261E; padding:5px 0 1px; }
+  .log-cal-w{ display:block; font-size:8.5px; font-weight:700; letter-spacing:.14em; color:#8C7E6E; text-transform:uppercase; padding-bottom:6px; }
+  .log-cal::before, .log-cal::after{ content:""; position:absolute; top:0; width:5px; height:12px; border-radius:3px; background:linear-gradient(90deg, #6E6458, #C9C0B3 45%, #6E6458); box-shadow:0 1px 1px rgba(0,0,0,.25); z-index:2; }
+  .log-cal::before{ left:14px; } .log-cal::after{ right:14px; }
+  .log-m1{ --mc:#2C4A7A; } .log-m2{ --mc:#B5476A; } .log-m3{ --mc:#3E8A4F; } .log-m4{ --mc:#8A5BB0; } .log-m5{ --mc:#D19A1E; } .log-m6{ --mc:#21868A; }
+  .log-m7{ --mc:#C0392B; } .log-m8{ --mc:#D9702A; } .log-m9{ --mc:#7A7F2E; } .log-m10{ --mc:#B5561B; } .log-m11{ --mc:#7A3B2E; } .log-m12{ --mc:#1F6B45; }
+  .log-panel[hidden]{ display:none !important; }
+  .mini-panel{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:7px 10px; }
+  .mini-panel .log-panel-date{ font-size:13px; }
+  .mini-panel .cropfert-row{ border-bottom:none; padding:3px 0; }
+  /* Easier reading inside every crop card: darker text everywhere. */
+  .plant-card{ --ink:#2A2233; --ink-soft:#4E4460; }
+  .plant-card .card-body{ color:#2A2233; }
+  .plant-card .plant-note{ color:#6B2347 !important; font-size:13px; }
+  .plant-card .plant-germtemp{ color:#2A2233 !important; }
+  .plant-card .tidy-season-title{ color:#2F5E45 !important; font-weight:700; }
+  .plant-card .tidy-cal-wk, .plant-card .tidy-cal-unit{ color:#3F3550 !important; }
+  .plant-card .ft-prof-t{ color:#6B4220 !important; }
+  .plant-card .ft-prof-row span{ color:#6B4E2C !important; }
+  .plant-card .ft-prof-row b, .plant-card .cropfert-row, .plant-card .cropfert-row span{ color:#2A2233 !important; }
+  .plant-card .ft-prof-src, .plant-card .ft-prof-src a{ color:#3F3550 !important; }
+  .plant-card .sub-tile-name{ filter:brightness(.75); }
+  .plant-card .cropfert-next{ color:#2A2233 !important; }
+  .plant-card .log-cal-w{ color:#4E4460; }
+  .plant-card .harvest-empty, .plant-card .ft-empty{ color:#4E4460 !important; }
+  .plant-card .tidy-fold{ color:#4A2C7A !important; border-color:#B9A6D6 !important; }
+  .plant-card .pv-count{ color:#2A2233 !important; }
+
+  .log-panel-date{ font-family:'Inter',sans-serif; font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:2px; }
   .opc-day-head{ font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:2px; }
   .opc-batch-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
   .opc-tags{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
@@ -3850,6 +3887,10 @@
   .pv-about > :not(.ft-prof-t){ margin:0 11px; }
   .pv-score{ flex:none; font-size:12px !important; margin-left:auto !important; min-width:44px; box-sizing:border-box; text-align:center; }
   .pv-score + .ft-globe{ margin-left:2px !important; }
+  .ft-prof:has(> .ft-critter.in-prof){ position:relative; }
+  .ft-prof > .ft-critter.in-prof{ position:absolute; top:50px; right:4px; width:46px; height:46px; padding:3px; z-index:2; }
+  .ft-prof:has(> .ft-critter.in-prof) > div.ft-prof-row:first-of-type{ padding-right:48px; }
+  .ft-prof > .ft-critter.in-prof svg{ width:40px; height:40px; }
   .pv-noprof .ft-prof-t{ cursor:default; }
   .ft-pins{ display:flex !important; flex-wrap:wrap; gap:2px 10px; }
   .ft-pin{ white-space:nowrap; }
@@ -4661,7 +4702,7 @@
       function ready(){ document.body.classList.add("home-ready"); }
       window.addEventListener("error", ready); window.addEventListener("unhandledrejection", ready);
       setTimeout(ready, 20000); })();</script>
-    <div class="app-footer">© 2026 Thor · v2026.11.01-269</div>
+    <div class="app-footer">© 2026 Thor · v2026.11.05-277</div>
   </main>
 
   <nav class="tabbar">
@@ -5129,16 +5170,85 @@ if (typeof window.storage === "undefined") {
     return key.replace(/~(\d+)~/g, (_, code) => String.fromCharCode(Number(code)));
   }
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const rootRef = db.ref(ROOT);
+  // ---- Offline copy ----
+  // Everything is also kept on this device (IndexedDB), so the app opens with
+  // all your data in airplane mode. Changes made offline wait in a "pending"
+  // list on the device and are sent the next time there's a connection.
+  const OFF = (() => {
+    let dbp = null;
+    const open = () => dbp || (dbp = new Promise((res, rej) => {
+      try{
+        const r = indexedDB.open("alessandraGardenOffline", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("kv");
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+      }catch(e){ rej(e); }
+    }));
+    return {
+      async get(k){ try{ const db = await open(); return await new Promise(res => { const q = db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); }catch(e){ return undefined; } },
+      async put(k, v){ try{ const db = await open(); await new Promise(res => { const tx = db.transaction("kv", "readwrite"); tx.objectStore("kv").put(v, k); tx.oncomplete = tx.onerror = tx.onabort = () => res(); }); }catch(e){} }
+    };
+  })();
+  let lastData = null;   // the live copy of everything (server data + this device's unsent changes)
+  let pending = {};      // changes not yet confirmed by the server: encodedKey -> value (null = deleted)
+  let servedFromCopy = false;
+  let copyTimer = null;
+  const saveCopy = () => { clearTimeout(copyTimer); copyTimer = setTimeout(() => { if(lastData) OFF.put("data", lastData); }, 800); };
+  const savePending = () => { OFF.put("pending", pending); offlineBadge(); };
+  const applyPending = d => { for (const [k, v] of Object.entries(pending)){ if (v === null) delete d[k]; else d[k] = v; } return d; };
+  window.addEventListener("pagehide", () => { if(lastData) OFF.put("data", lastData); });
+
+  // Small pill at the top while offline or while changes are waiting to sync.
+  let isOnline = navigator.onLine !== false;
+  function offlineBadge(){
+    const n = Object.keys(pending).length;
+    let b = document.getElementById("offlineBadge");
+    if(isOnline && !n){ if(b) b.remove(); return; }
+    if(!document.body) return;
+    if(!b){ b = document.createElement("div"); b.id = "offlineBadge";
+      b.style.cssText = "position:fixed;left:50%;top:calc(env(safe-area-inset-top, 0px) + 6px);transform:translateX(-50%);z-index:99998;padding:5px 12px;border-radius:999px;border:1px solid #c9b48a;background:#fff8e7;color:#4a3b1c;font:600 12.5px system-ui;box-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:none;white-space:nowrap";
+      document.body.appendChild(b); }
+    b.textContent = isOnline ? `🔄 Syncing ${n} change${n === 1 ? "" : "s"}…`
+      : `✈️ Offline${n ? ` · ${n} change${n === 1 ? "" : "s"} saved on this device` : " · showing saved copy"}`;
+  }
+  window.addEventListener("offline", () => { isOnline = false; offlineBadge(); });
+  window.addEventListener("online", () => { isOnline = true; offlineBadge(); });
+  document.addEventListener("DOMContentLoaded", offlineBadge);
+
+  const hasFirebase = typeof firebase !== "undefined";
+  let rootRef = null;
+  if (hasFirebase) {
+    try{
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      rootRef = db.ref(ROOT);
+      db.ref(".info/connected").on("value", s => { if(s.val() === true){ isOnline = true; offlineBadge(); } });
+    }catch(e){ rootRef = null; }
+  }
+  // Send one change to the server; forget it from "pending" once the server has it.
+  function push(ek, value){
+    if(!rootRef) return;
+    const updates = {}; updates[ek] = value; updates["__lastWriter"] = CLIENT_ID;
+    rootRef.update(updates).then(() => {
+      if (ek in pending && pending[ek] === value){ delete pending[ek]; savePending(); }
+    }).catch(() => {});
+  }
+
+  // Data is ready when the server answers — or, with no connection, from the saved copy.
+  let markReady;
+  const dataReady = new Promise(r => { markReady = r; });
+  (async () => {
+    const p = await OFF.get("pending"); if (p && typeof p === "object") pending = Object.assign(p, pending);
+    const copy = await OFF.get("data");
+    const useCopy = () => { if (!lastData){ lastData = applyPending(copy && typeof copy === "object" ? copy : {}); servedFromCopy = true; } markReady(); offlineBadge(); };
+    if (!rootRef || navigator.onLine === false) useCopy();
+    else setTimeout(useCopy, copy ? 2500 : 8000);
+  })();
 
   // Debounced "something changed elsewhere" handler. We skip the very
   // first snapshot (that's just the initial load, not a remote change) and
   // skip snapshots that were caused by our own writes.
   let sawInitialValue = false;
   let reloadTimer = null;
-  let lastData = null;   // last snapshot we saw, to tell real changes from echoes
   const RELOAD_LOG = "almSyncReloads", BACK_TO = "almSyncBackTo";
   function syncBanner(){
     if(document.getElementById("syncBanner")) return;
@@ -5155,7 +5265,7 @@ if (typeof window.storage === "undefined") {
       const t = document.querySelector(".tabbtn.active");
       sessionStorage.setItem(BACK_TO, JSON.stringify({ tab: t ? t.dataset.tab : "", y: window.scrollY, at: Date.now() }));
     }catch(e){}
-    window.location.reload();
+    if(lastData) OFF.put("data", lastData).then(() => window.location.reload()); else window.location.reload();
   }
   function scheduleReload(){
     // Don't yank the page out from under someone mid-edit — a reload while
@@ -5177,48 +5287,61 @@ if (typeof window.storage === "undefined") {
     try{ sessionStorage.setItem(RELOAD_LOG, JSON.stringify(log)); }catch(e){}
     doReload();
   }
-  rootRef.on("value", (snapshot) => {
-    const data = snapshot.val() || {};
-    const prev = lastData; lastData = data;
-    if (!sawInitialValue) { sawInitialValue = true; return; }
+  const differs = (a, b) => {
+    const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+    keys.delete("__lastWriter");
+    for (const k of keys){ if (JSON.stringify((a || {})[k]) !== JSON.stringify((b || {})[k])) return true; }
+    return false;
+  };
+  if (rootRef) rootRef.on("value", (snapshot) => {
+    const data = applyPending(snapshot.val() || {});
+    const prev = lastData; lastData = data; saveCopy();
+    isOnline = true; offlineBadge();
+    if (!sawInitialValue) {
+      sawInitialValue = true; markReady();
+      // Changes made offline (even in an earlier visit) go to the server now.
+      for (const [k, v] of Object.entries(pending)) push(k, v);
+      // The page was drawn from the saved copy and the server has newer data → refresh once.
+      if (servedFromCopy && differs(prev, data)) { clearTimeout(reloadTimer); reloadTimer = setTimeout(scheduleReload, 700); }
+      return;
+    }
     if (data.__lastWriter === CLIENT_ID) return;
     // Only refresh when some saved value really changed.
-    const keys = new Set([...Object.keys(prev || {}), ...Object.keys(data)]);
-    keys.delete("__lastWriter");
-    let changed = false;
-    for (const k of keys){ if (JSON.stringify((prev || {})[k]) !== JSON.stringify(data[k])) { changed = true; break; } }
-    if (!changed) return;
+    if (!differs(prev, data)) return;
     clearTimeout(reloadTimer);
     reloadTimer = setTimeout(scheduleReload, 700);
   });
 
+  // Every save lands on this device first (works offline), then goes to the server.
+  function write(key, value){
+    const ek = encodeKey(key);
+    if (!lastData) lastData = {};
+    if (value === null) delete lastData[ek]; else lastData[ek] = value;
+    pending[ek] = value; savePending(); saveCopy();
+    push(ek, value);
+  }
   window.storage = {
     async get(key){
-      const snap = await rootRef.child(encodeKey(key)).once("value");
-      const value = snap.val();
+      await dataReady;
+      const value = lastData ? lastData[encodeKey(key)] : undefined;
       return value === null || value === undefined ? null : { key, value, shared: false };
     },
     async set(key, value){
+      await dataReady;
       // Nothing new to save → don't write (a write makes other devices refresh).
       if (lastData && lastData[encodeKey(key)] === value) return { key, value, shared: false };
-      const updates = {};
-      updates[encodeKey(key)] = value;
-      updates["__lastWriter"] = CLIENT_ID;
-      await rootRef.update(updates);
+      write(key, value);
       return { key, value, shared: false };
     },
     async delete(key){
-      const existing = await window.storage.get(key);
-      const updates = {};
-      updates[encodeKey(key)] = null;
-      updates["__lastWriter"] = CLIENT_ID;
-      await rootRef.update(updates);
-      return { key, deleted: !!existing, shared: false };
+      await dataReady;
+      const existed = !!(lastData && lastData[encodeKey(key)] != null);
+      write(key, null);
+      return { key, deleted: existed, shared: false };
     },
     async list(prefix){
-      const snap = await rootRef.once("value");
-      const all = snap.val() || {};
-      const keys = Object.keys(all)
+      await dataReady;
+      const keys = Object.keys(lastData || {})
         .filter((k) => k !== "__lastWriter")
         .map(decodeKey)
         .filter((k) => k.startsWith(prefix || ""));
@@ -5550,7 +5673,7 @@ const CROP_EMOJI = {
   lettuce:"🥬", kale:"🥬", collards:"🥬", kalethousandheads:"🥬", treecollards:"🥬",
   radishes:"🔴", beets:"🔴", carrots:"🥕", turnips:"🥕", fennel:"🌿", garlic:"🧄",
   onionslips:"🧅", strawberries:"🍓", muskmelon:"🍈", watermelon:"🍉",
-  longbeans:"🫘", wingedbeans:"🫛", nigerianspinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
+  longbeans:"🫘", wingedbeans:"🫛", nigerianspinach:"🥬", spinach:"🥬", sweetpotatoslips:"🥔", pigeonpeas:"🫛",
   puertoricanblackbeans:"🫘", sunnhemp:"🌱", peanuts:"🥜",
   basil:"🌿", parsley:"🌿", dill:"🌿", cilantro:"🌿",
   nasturtium:"🌼", roselle:"🌺", zinnia:"🏵️", cosmos:"🌸", marigold:"🌻"
@@ -5670,6 +5793,9 @@ const SEASONS = {
     {slug:"lettuce", name:"Lettuce", shape:"leaf", color:C.yellowGreen,
       dates:[[{a:"Start (direct)", m:10, d:23, m2:10, d2:25}]],
       note:"Moved up from the Nov 1-2 leaf window to Oct 23-25 — away all of November."},
+    {slug:"spinach", name:"Spinach", shape:"leaf", color:C.greenDark,
+      dates:[[{a:"Start (direct)", m:12, d:17, m2:12, d2:18}],[{a:"Start (direct)", m:1, d:4, m2:1, d2:5}]],
+      note:"Leaf crop. Tampa window Dec 11–21 (Nov 19–29 skipped — away). Sow in the Dec 16–19 leaf window (best Dec 17–18), then again Jan 3–5 for a steady harvest. First cutting late Jan. Suggested variety: Space F1."},
     {slug:"radishes", name:"Radishes", shape:"circle", color:C.pinkRed,
       dates:[[{a:"Start (direct)", m:10, d:27}],[{a:"Start (direct)", m:10, d:29}]]},
     {slug:"beets", name:"Beets", shape:"circle", color:C.magenta,
@@ -6384,6 +6510,9 @@ const CROP_VARIETY_INFO = {
     { v:["curled","curly"], ic:"🌿", origin:"Europe — curly-leaf parsley.", fruit:"Tightly curled bright green leaves.", flavor:"Mild and fresh.", days:"About 70–80 days.", plant:"Compact, about 1 ft.", tip:"Host plant for black swallowtail caterpillars — plant extra.", src:[] },
     { v:["italian","flatleaf","italianflatleaf"], ic:"🌿", origin:"Italy — flat-leaf parsley.", fruit:"Flat, dark green leaves.", flavor:"Stronger, sweeter than curly.", days:"About 70–80 days.", plant:"Taller, about 2 ft.", tip:"The best parsley for cooking.", src:[] }
   ]},
+  spinach: { label:"Spinach", part:["🥬","Leaves"], list:[
+    { v:["spacef1","space"], ic:"🥬", origin:"Hybrid smooth-leaf spinach (Johnny's Selected Seeds). Cold tolerant, sold as an all-season variety.", fruit:"Medium-green, smooth to slightly savoyed leaves.", flavor:"Mild and tender, not gritty — easy to wash.", days:"About 25 days for baby leaves; 3–5 weeks to full leaves.", plant:"Upright rosette; cut above the base for repeat harvests. Highly resistant to downy mildew (many races).", tip:"Soil above 85°F means poor sprouting — sow in cool weather and keep the soil moist. Likes pH 6.5–7.5, so add lime to acidic Florida sand.", src:[["Johnny's — Space (F1) spinach","https://www.johnnyseeds.com/vegetables/spinach/smooth-leaf-spinach/space-f1-spinach-seed-644.html"]] }
+  ]},
   fennel: { label:"Fennel", part:["🌿","Leaves"], list:[
     { v:["fennelsweet","sweet","sweetfennel"], ic:"🌿", origin:"Mediterranean — sweet fennel (Foeniculum vulgare).", fruit:"Feathery leaves and aromatic seeds.", flavor:"Sweet anise.", days:"About 60–90 days.", plant:"Tall, 3–5 ft.", tip:"Host plant for swallowtail butterflies; keep it away from dill so they don't cross.", src:[] }
   ]},
@@ -6416,6 +6545,7 @@ const CROP_ABOUT = {
   garlic: { ic:"🧄", part:"Bulb", origin:"Central Asia. In Florida, softneck types (Creole, Turban, Artichoke) do best.", fruit:"Bulbs of cloves.", flavor:"Pungent; mellow when roasted.", days:"About 6–8 months: plant Oct–Nov, harvest Apr–May.", plant:"Tall leaves; softnecks don't make scapes.", tip:"Chill cloves in the fridge 6–8 weeks before planting to help bulbing in Florida." },
   luffa: { ic:"🥒", part:"Fruit", origin:"Tropical Asia — sponge gourd (Luffa aegyptiaca).", fruit:"Long cylindrical gourds; eat young, or dry for sponges.", flavor:"Young fruit is mild, like zucchini.", days:"About 90 days to eat; 150+ for sponges.", plant:"Very vigorous vine, 15–30 ft — needs a strong trellis.", tip:"For sponges, leave on the vine until brown and light, then peel." },
   muskmelon: { ic:"🍈", part:"Fruit", origin:"Muskmelon/cantaloupe (Cucumis melo).", fruit:"Netted rind, orange flesh.", flavor:"Sweet and aromatic.", days:"About 80–90 days.", plant:"Sprawling vines.", tip:"Ripe when the stem slips off easily ('full slip'). Plant in spring — powdery mildew in summer rains." },
+  spinach: { ic:"🥬", part:"Leaves", origin:"Persia (Spinacia oleracea) — a true cool-season leaf crop.", fruit:"Tender leaves; harvest baby leaves or full rosettes.", flavor:"Mild and earthy; sweetest after cool nights.", days:"About 25–45 days. Tampa: sow Dec 11–21 (or Nov 19–29), first harvest about Jan 20–30.", plant:"Low rosette. Sprouts in soil as cold as 35°F; best at 55–75°F. Bolts once it's over 75°F, so plant Oct–Feb, never Apr–Jun.", tip:"Sandy soil drains fast — water every 2–3 days, about 1 inch a week split up, and add plenty of compost. Raised beds do best. Sow again every 10 days for steady picking. Suggested variety: Space F1." },
   nigerianspinach: { ic:"🥬", part:"Leaves", origin:"West Africa — 'Nigerian spinach' (Celosia argentea, 'soko').", fruit:"Tender leaves and young shoots.", flavor:"Mild, spinach-like.", days:"About 30–45 days for leaves.", plant:"Upright, 2–3 ft; pretty flower plumes.", tip:"A true summer spinach for Florida — keeps producing in the heat." },
   onionslips: { ic:"🧅", part:"Bulb", origin:"Onion transplants (short-day types like Granex/Texas Grano for Florida).", fruit:"Sweet bulbs.", flavor:"Sweet and mild.", days:"About 100–120 days from slips.", plant:"Hollow leaves; bulbs form as days lengthen.", tip:"Plant slips Oct–Jan; use short-day varieties only in Florida." },
   pigeonpeas: { ic:"🫛", part:"Pod", origin:"India/Africa (Cajanus cajan) — Caribbean favorite (gandules).", fruit:"Pods with round peas; eaten green or dry.", flavor:"Nutty, earthy.", days:"About 4–6 months; perennial shrub.", plant:"Woody shrub, 4–10 ft; fixes nitrogen.", tip:"Excellent windbreak and chop-and-drop mulch plant." },
@@ -8219,11 +8349,23 @@ function fertRowsHTML(mine, bitsOf){
     const n = fertBedNum(e.crop);
     if(n && !byKey[k].beds.includes(n)) byKey[k].beds.push(n);
   });
-  return { count: groups.length, html: groups.map(g => {
-    const tags = g.beds.sort((a, b) => a - b).map(n => `<span class="cropfert-bed">Bed ${n}</span>`).join(" ");
-    return `<div class="cropfert-row">${tags ? tags + " " : ""}${fertFmtDate(g.e.date)}${g.bits ? ` — <span>${g.bits}</span>` : ""}</div>`;
-  }).join("") };
+  // Same look as the logs: a row of calendar pages to swipe, the tapped date's details underneath.
+  const days = [];
+  groups.forEach(g => { let d = days.find(x => x.date === g.e.date); if(!d){ d = { date: g.e.date, rows: [] }; days.push(d); } d.rows.push(g); });
+  const html = !days.length ? "" : `<div class="log-strip mini-strip">${days.map((d, i) => `<button type="button" class="log-strip-btn${i ? "" : " on"}" data-day="${fertEsc(d.date)}" aria-label="${fertEsc(fertFmtDate(d.date))}" aria-pressed="${!i}">${logCalPage(d.date)}</button>`).join("")}</div>`
+    + days.map((d, i) => `<div class="log-panel mini-panel" data-day="${fertEsc(d.date)}"${i ? " hidden" : ""}><div class="log-panel-date">${fertFmtDate(d.date)}</div>${d.rows.map(g => {
+        const tags = g.beds.sort((a, b) => a - b).map(n => `<span class="cropfert-bed">Bed ${n}</span>`).join(" ");
+        return `<div class="cropfert-row">${tags ? tags + " " : ""}${g.bits ? `<span>${g.bits}</span>` : ""}</div>`;
+      }).join("")}</div>`).join("");
+  return { count: groups.length, html };
 }
+// Taps on the little calendar pages inside crop and tree windows.
+document.addEventListener("click", e => {
+  const b = e.target.closest(".mini-strip .log-strip-btn"); if(!b) return;
+  const strip = b.parentElement, box = strip.parentElement, day = b.dataset.day;
+  strip.querySelectorAll(".log-strip-btn").forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", String(on)); });
+  box.querySelectorAll(":scope > .mini-panel").forEach(p => { p.hidden = p.dataset.day !== day; });
+});
 // A feeding belongs to a crop when its "Crop or bed" matches the crop's
 // name or slug (case/spacing ignored).
 function fertMatchesCrop(e, p){
@@ -8453,6 +8595,36 @@ function cropFertFieldHTML(p, allFeedings){
   return `<details class="cropfert-field sub-dd sub-fert"><summary><span>🧪 Fertilizer</span><span class="sub-count">${fr.count}</span><span class="sub-caret">▾</span></summary><div class="sub-body">${rows}</div></details>`;
 }
 function fertEsc(v){ return String(v == null ? "" : v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+// A classic tear-off calendar page for a log date: rings on top, month band
+// (its own color for each month), big day number, weekday.
+function logCalPage(iso){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return `<span class="log-cal"><span class="log-cal-pg"><span class="log-cal-m">—</span><span class="log-cal-d">?</span><span class="log-cal-w">&nbsp;</span></span></span>`;
+  const d = new Date(`${iso}T00:00:00`);
+  const mon = d.toLocaleDateString(undefined, { month:"short" }).replace(".", "").toUpperCase();
+  const wk = d.toLocaleDateString(undefined, { weekday:"short" }).replace(".", "");
+  return `<span class="log-cal log-m${d.getMonth() + 1}" aria-hidden="true"><span class="log-cal-pg"><span class="log-cal-m">${mon}</span><span class="log-cal-d">${d.getDate()}</span><span class="log-cal-w">${wk}</span></span></span>`;
+}
+// A row of calendar pages you swipe sideways; the details of the tapped date show underneath.
+const logOpenDay = { fert:null, opc:null };
+function logDayBox(kind, day, preview, inner, keepOpen){ return { date: day.date, inner, keep: !!keepOpen }; }
+function logStripHTML(kind, items){
+  const kept = items.find(i => i.keep);
+  const sel = kept ? kept.date : (items.some(i => i.date === logOpenDay[kind]) ? logOpenDay[kind] : (items[0] ? items[0].date : null));
+  logOpenDay[kind] = sel;
+  return `<div class="log-strip">${items.map(i => `<button type="button" class="log-strip-btn${i.date === sel ? " on" : ""}" data-day="${fertEsc(i.date)}" aria-label="${fertEsc(fertFmtDate(i.date))}" aria-pressed="${i.date === sel}">${logCalPage(i.date)}</button>`).join("")}</div>`
+    + items.map(i => `<div class="fert-entry log-panel log-${kind}" data-day="${fertEsc(i.date)}"${i.date === sel ? "" : " hidden"}><div class="log-panel-date">${fertFmtDate(i.date)}</div>${i.inner}</div>`).join("");
+}
+function wireLogDays(listEl, kind){
+  const strip = listEl.querySelector(".log-strip"); if(!strip) return;
+  const show = day => {
+    logOpenDay[kind] = day;
+    strip.querySelectorAll(".log-strip-btn").forEach(b => { const on = b.dataset.day === day; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+    listEl.querySelectorAll(".log-panel").forEach(p => { p.hidden = p.dataset.day !== day; });
+  };
+  strip.querySelectorAll(".log-strip-btn").forEach(b => b.addEventListener("click", () => show(b.dataset.day)));
+  const on = strip.querySelector(".log-strip-btn.on");
+  if(on) requestAnimationFrame(() => { const l = on.offsetLeft - strip.offsetLeft; if(l + on.offsetWidth > strip.scrollLeft + strip.clientWidth || l < strip.scrollLeft) strip.scrollLeft = Math.max(0, l - 8); });
+}
 function fertFmtDate(iso){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return iso || "";
   return new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
@@ -8548,9 +8720,8 @@ async function renderFertilizerLog(){
   )));
   const batchKey = b => b.items.map(x => x.id).join(",");
   window.__fertBatches = {};
-  listEl.innerHTML = days.map(day => `
-    <div class="fert-entry opc-day">
-      <div class="opc-day-head">🗓️ ${fertFmtDate(day.date)}</div>
+  const fertPreview = day => { const all = day.batches.flatMap(b => b.items); const prods = [...new Set(all.map(x => x.product).filter(Boolean))]; return fertEsc(prods.length ? prods.join(" · ") : `${all.length} feeding${all.length === 1 ? "" : "s"}`); };
+  listEl.innerHTML = logStripHTML("fert", days.map(day => logDayBox("fert", day, fertPreview(day), `
       ${day.batches.map(b => {
         const e = b.items[0];
         const key = batchKey(b);
@@ -8569,8 +8740,8 @@ async function renderFertilizerLog(){
           ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
           ${locked ? "" : `<div class="fert-entry-actions opc-actions"><button type="button" data-fert-edit="${key}">Edit</button><button type="button" class="fert-del" data-fert-del="${key}">Delete${b.items.length > 1 ? ` all ${b.items.length}` : ""}</button></div>`}
         </div>`;
-      }).join("")}
-    </div>`).join("");
+      }).join("")}`, fertEditingIds.length && day.batches.some(b => b.items.some(x => fertEditingIds.includes(x.id))))));
+  wireLogDays(listEl, "fert");
   listEl.querySelectorAll("[data-fert-edit]").forEach(btn => btn.addEventListener("click", () => {
     const items = window.__fertBatches[btn.dataset.fertEdit]; if(!items || !items.length) return;
     const e = items[0];
@@ -8766,9 +8937,8 @@ async function renderOpcLog(){
   )));
   const batchKey = b => b.items.map(x => x.id).join(",");
   window.__opcBatches = {};
-  listEl.innerHTML = days.map(day => `
-    <div class="fert-entry opc-day">
-      <div class="opc-day-head">🗓️ ${fertFmtDate(day.date)}</div>
+  const opcPreview = day => { const all = day.batches.flatMap(b => b.items); const names = [...new Set(all.map(x => x.product || x.type).filter(Boolean))]; return fertEsc(names.length ? names.join(" · ") : `${all.length} treatment${all.length === 1 ? "" : "s"}`); };
+  listEl.innerHTML = logStripHTML("opc", days.map(day => logDayBox("opc", day, opcPreview(day), `
       ${day.batches.map(b => {
         const e = b.items[0];
         const key = batchKey(b);
@@ -8787,8 +8957,8 @@ async function renderOpcLog(){
           ${every ? `<div class="fert-entry-detail">${every}</div>` : ""}
           ${locked ? "" : `<div class="fert-entry-actions opc-actions"><button type="button" data-opc-edit="${key}">Edit</button><button type="button" class="fert-del" data-opc-del="${key}">Delete${b.items.length > 1 ? ` all ${b.items.length}` : ""}</button></div>`}
         </div>`;
-      }).join("")}
-    </div>`).join("");
+      }).join("")}`, opcEditingIds.length && day.batches.some(b => b.items.some(x => opcEditingIds.includes(x.id))))));
+  wireLogDays(listEl, "opc");
   listEl.querySelectorAll("[data-opc-edit]").forEach(btn => btn.addEventListener("click", () => {
     const items = window.__opcBatches[btn.dataset.opcEdit]; if(!items || !items.length) return;
     const e = items[0];
@@ -12930,8 +13100,13 @@ document.querySelectorAll(".tabbtn").forEach(btn => {
     // Bug button sits in the upper-right corner of the Climate needs box (when the tree has one).
     const clim = body.querySelector(".ft-clim");
     if(critter && clim){ clim.classList.add("has-critter"); clim.appendChild(critter); }
+    // No Climate box on this tree (it's in a group): the bug sits inside the About box, shown once it's opened.
+    else if(critter){
+      const sum = body.querySelector(":scope > .ft-prof > summary");
+      if(sum){ sum.after(critter); critter.classList.add("in-prof"); }
+    }
     if(critter) critter.addEventListener("click", e => {
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       const icon = critter.querySelector("svg") ? critter.querySelector("svg").outerHTML : null;
       openBugSheet({ slug: `tree-${t.id}`, name: fullName(t), quickBugs: pestsFor(t.name) }, async () => { const l = await getBugs(`tree-${t.id}`); t.__bugN = l.length; render(); }, null, icon);
     });
@@ -14496,6 +14671,7 @@ const GERM_TEMP_DATA = {
   longbeans:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[6,10],daysApprox:true,dtm:[60,80],dtmApprox:true},
   wingedbeans:{min:65,optMin:75,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
   nigerianspinach:{min:65,optMin:70,optMax:85,max:95,approx:true,days:[7,14],daysApprox:true,dtm:[30,50],dtmApprox:true},
+  spinach:{min:35,optMin:45,optMax:75,max:85,days:[7,14],dtm:[25,45]},
   sweetpotatoslips:{special:"Grown from slips, not seed — slips root best once soil is 65°F or warmer.", days:[10,14], dtm:[90,120]},
   pigeonpeas:{min:65,optMin:75,optMax:95,max:105,approx:true,days:[7,14],daysApprox:true,dtm:[120,180],dtmApprox:true},
   basil:{min:60,optMin:70,optMax:85,max:95,days:[5,10],dtm:[50,75]},
@@ -18161,7 +18337,7 @@ const CROP_BIO_TYPE = {
   leafygreens:"leaf", broccoli:"flower", bushbeans:"fruit", snappeas:"fruit", rattlesnake:"fruit",
   lettuce:"leaf", radishes:"root", beets:"root", carrots:"root", turnips:"root", garlic:"root", onionslips:"root",
   strawberries:"fruit", muskmelon:"fruit", watermelon:"fruit", longbeans:"fruit", wingedbeans:"fruit",
-  nigerianspinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
+  nigerianspinach:"leaf", spinach:"leaf", fennel:"leaf", sweetpotatoslips:"root", pigeonpeas:"fruit",
   basil:"leaf", parsley:"leaf", dill:"leaf", cilantro:"leaf",
   nasturtium:"flower", roselle:"flower", zinnia:"flower", cosmos:"flower", marigold:"flower",
   sunnhemp:"leaf", puertoricanblackbeans:"fruit", peanuts:"root"
@@ -19519,5 +19695,11 @@ function awayRenderPanel(){
   const go = () => { const t = document.querySelector(`.tabbtn[data-tab="${b.tab}"]`); if(t){ t.click(); setTimeout(() => window.scrollTo(0, b.y || 0), 400); } };
   if(document.readyState === "complete") setTimeout(go, 300); else window.addEventListener("load", () => setTimeout(go, 300));
 })();
+</script>
+<script>
+// Save the app on this device so it opens in airplane mode (needs sw.js next to this file).
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
 </script>
 </body></html>
